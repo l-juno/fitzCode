@@ -267,5 +267,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Gradle 관련 파일들 무시
+.gradle/
+*.bin
+*.lock
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,eclipse,macos,windows,java
 
