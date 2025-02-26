@@ -6,18 +6,28 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class HtmlCssTest {
 
-    @GetMapping("/fragment/footer")
+    @GetMapping("/fragments/footer")
     public String footer() {
-        return "/fragment/footer";
+        return "fragments/footer";
     }
 
-    @GetMapping("/fragment/header")
+    @GetMapping("/fragments/header")
     public String header() {
-        return "/fragment/header";
+        return "fragments/header";
     }
 
-    @GetMapping("/admin/managerSidebar")
+    @GetMapping("/fragments/managerSidebar")
     public String sidebar() {
-        return "/admin/managerSidebar";
+        return "fragments/managerSidebar";
+    }
+
+    @GetMapping("/fragment/weeklyNewUsers")
+    public String weeklyNewUsers() {
+        return "fragments/weeklyNewUsers";
+    }
+
+    @GetMapping("/admin/dashboard")
+    public String dashboard() {
+        return "admin/dashboard/dashboard";
     }
 }

@@ -7,14 +7,14 @@
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
 </head>
 <body>
-
-<!-- 사이드바 전체 -->
-<div class="adminSidebarWrap">
-  <!-- 사이드바 -->
+<!-- 사이드바 프래그먼트 -->
+<div th:fragment="sidebar" class="adminSidebarWrap">
   <div class="sidebar">
     <div class="sidebar-header">
-      <!-- 로고 이미지 추가 -->
-      <img src="/img/fitzLogo.png" alt="관리자 로고" class="sidebar-logo">
+      <!-- 로고 이미지 -->
+      <a href="/">
+        <img src="/img/fitzLogo.png" alt="관리자 로고" class="sidebar-logo">
+      </a>
       <h2>관리자 대시보드</h2>
     </div>
 
@@ -47,8 +47,16 @@
     <div class="sidebar-section">
       <h3>공지사항 관리</h3>
       <div class="submenu">
-        <a href="/notice">공지사항 목록</a>
-        <a href="/admin/notice">공지사항 작성</a>
+        <a th:href="@{/templates/admin/notice}">공지사항 목록</a>
+        <a th:href="@{/admin/notice/add}">공지사항 작성</a>
+      </div>
+    </div>
+
+    <!-- 문의 관리 -->
+    <div class="sidebar-section">
+      <h3>1:1 문의 관리</h3>
+      <div class="submenu">
+        <a href="/admin/inquiries">1:1 문의 목록</a>
       </div>
     </div>
 
@@ -61,6 +69,5 @@
     </div>
   </div>
 </div>
-
 </body>
 </html>
