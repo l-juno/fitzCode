@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>공지사항 상세보기</title>
+</head>
+<body>
+
+<h3>공지사항 상세보기</h3>
+
+<div>
+  <h2 th:text="${notice.title}">공지사항 제목</h2>
+  <p><strong>작성자:</strong> <span th:text="${notice.userId}">작성자 ID</span></p>
+  <p><strong>작성일:</strong> <span th:text="${notice.createdAt}">작성일</span></p>
+  <p><strong>수정일:</strong> <span th:text="${notice.updatedAt}">수정일</span></p>
+  <p><strong>내용:</strong></p>
+  <div th:text="${notice.content}">공지사항 내용</div>
+</div>
+
+<div>
+  <a href="/admin/notice/{id}/edit" th:href="@{/admin/notice/{id}/edit(id=${notice.noticeId})}">수정</a>
+  <a href="/admin/notice/{id}/delete" th:href="@{/admin/notice/{id}/delete(id=${notice.noticeId})}">삭제</a>
+</div>
+
+</body>
+</html>

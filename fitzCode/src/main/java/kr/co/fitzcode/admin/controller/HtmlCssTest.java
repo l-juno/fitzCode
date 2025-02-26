@@ -1,10 +1,10 @@
-package kr.co.fitzcode.admin.dto;
+package kr.co.fitzcode.admin.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class test {
+public class HtmlCssTest {
 
     @GetMapping("/fragment/footer")
     public String footer() {
