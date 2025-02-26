@@ -10,4 +10,14 @@ public class test {
     public String footer() {
         return "/fragment/footer";
     }
+
+    @GetMapping("/fragment/header")
+    public String header() {
+        return "/fragment/header";
+    }
+
+    @GetMapping("/admin/managerSidebar")
+    public String sidebar() {
+        return "/admin/managerSidebar";
+    }
 }

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>헤더 디자인</title>
+    <link rel="stylesheet" th:href="@{/css/fragment/header.css}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<!-- 헤더 래퍼 -->
+<header th:fragment="header" class="header-wrap">
+    <div class="header-container">
+
+        <!-- 좌측 메뉴 -->
+        <nav class="header-menu">
+            <a href="/product/shoes">신발</a>
+            <a href="/product/tops">상의</a>
+            <a href="/product/bottoms">하의</a>
+            <a href="/product/hats">모자</a>
+        </nav>
+
+        <!-- 중앙 로고 -->
+        <div class="header-logo">
+            <a href="/">
+                <img src="/img/fitzLogo.png" alt="사이트 로고">
+            </a>
+        </div>
+
+        <!-- 우측 메뉴 -->
+        <nav class="header-utils">
+            <a href="/notice">공지사항</a>
+            <a href="#" id="search-btn">검색</a>
+            <a href="/login">로그인</a>
+            <a href="/cart">CART</a>
+            <a href="/notification">알림</a>
+        </nav>
+    </div>
+
+    <!-- 검색창 -->
+    <div class="search-overlay" style="display: none;">
+        <div class="search-container">
+            <input type="text" placeholder="Search...">
+            <button id="close-search">✕</button>
+        </div>
+    </div>
+</header>
+
+<script>
+    $(document).ready(function () {
+        // 검색창 열기 (헤더를 덮고 표시)
+        $('#search-btn').click(function (e) {
+            e.preventDefault();
+            $('.search-overlay').fadeIn();
+        });
+
+        // 검색창 닫기
+        $('#close-search').click(function () {
+            $('.search-overlay').fadeOut();
+        });
+    });
+</script>
+</body>
+</html>
