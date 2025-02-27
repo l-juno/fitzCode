@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 상세 정보</title>
+</head>
+<body>
+
+<h2>회원 상세 정보</h2>
+<table>
+  <tr><th>ID</th><td th:text="${member.userId}"></td></tr>
+  <tr><th>이름</th><td th:text="${member.userName}"></td></tr>
+  <tr><th>닉네임</th><td th:text="${member.nickname}"></td></tr>
+  <tr><th>이메일</th><td th:text="${member.email}"></td></tr>
+  <tr><th>전화번호</th><td th:text="${member.phoneNumber}"></td></tr>
+  <tr><th>생년월일</th><td th:text="${member.birthDate}"></td></tr>
+  <tr><th>가입일</th><td th:text="${#temporals.format(member.createdAt, 'yyyy-MM-dd HH:mm')}"></td></tr>
+  <tr><th>등급</th><td th:text="${tierName}"></td></tr>
+  <tr><th>할인율</th><td th:text="|${discountRate}%|"></td></tr>
+</table>
+
+<h3>등급 변경</h3>
+<form th:action="@{/admin/members/{id}/tier(id=${member.userId})}" method="post">
+  <select name="tierLevel">
+    <option value="1" th:selected="${member.tierLevel == 1}">BRONZE</option>
+    <option value="2" th:selected="${member.tierLevel == 2}">SILVER</option>
+    <option value="3" th:selected="${member.tierLevel == 3}">GOLD</option>
+    <option value="4" th:selected="${member.tierLevel == 4}">PLATINUM</option>
+  </select>
+  <button type="submit">변경</button>
+</form>
+
+</body>
+</html>

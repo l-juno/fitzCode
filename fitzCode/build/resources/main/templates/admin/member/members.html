@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>회원 목록</title>
+  <style>
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    tr:hover { background-color: #f1f1f1; cursor: pointer; }
+    .pagination { text-align: center; margin-top: 20px; }
+    .page-btn { margin: 5px; padding: 10px; cursor: pointer; border: 1px solid #000; }
+  </style>
+</head>
+<body>
+
+<h2>회원 목록</h2>
+<table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>이름</th>
+    <th>이메일</th>
+    <th>가입일</th>
+    <th>관리</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="member : ${members}">
+    <td th:text="${member.userId}"></td>
+    <td th:text="${member.userName}"></td>
+    <td th:text="${member.email}"></td>
+    <td th:text="${#temporals.format(member.createdAt, 'yyyy-MM-dd')}"></td>
+    <td>
+      <a th:href="@{/admin/members/{id}(id=${member.userId})}">상세</a>
+      <form th:action="@{/admin/members/{id}/delete(id=${member.userId})}" method="post" style="display:inline;">
+        <button type="submit">삭제</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="pagination">
+    <span th:each="i : ${#numbers.sequence(1, (totalCount / pageSize) + 1)}">
+        <a th:href="@{/admin/members(page=${i})}" th:text="${i}" class="page-btn"></a>
+    </span>
+</div>
+
+</body>
+</html>
