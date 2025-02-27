@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>공지사항 목록</title>
+</head>
+<body>
+
+<h3>공지사항 목록</h3>
+<a href="/admin/notice/add" th:href="@{/admin/notice/add}">글쓰기</a>
+<table>
+    <thead>
+    <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>작성일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="notice, iterStat : ${notices}">
+        <td th:text="${iterStat.size - iterStat.count + 1}"></td>
+        <td><a th:href="@{/admin/notice/{id}(id=${notice.noticeId})}" th:text="${notice.title}"></a></td>
+        <td th:text="${#temporals.format(notice.createdAt, 'yy/MM/dd')}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
