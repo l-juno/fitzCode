@@ -6,7 +6,7 @@
 <mapper namespace="kr.co.fitzcode.admin.mapper.MembersMapper">
 
     <!-- 전체 회원 조회 (최근 가입순, 페이징) -->
-    <select id="getAllMembers" resultType="kr.co.fitzcode.admin.dto.MemberDTO">
+    <select id="getAllMembers" resultType="MemberDTO">
         SELECT u.user_id, u.user_name, u.email, u.created_at
         FROM USER u
         ORDER BY u.created_at DESC
@@ -19,7 +19,7 @@
     </select>
 
     <!-- 회원 상세 조회 -->
-    <select id="getMemberDetail" resultType="kr.co.fitzcode.admin.dto.MemberDetailDTO">
+    <select id="getMemberDetail" resultType="MemberDetailDTO">
         SELECT
         u.*, t.tier_level, t.total_spent, t.tier_updated_at
         FROM USER u

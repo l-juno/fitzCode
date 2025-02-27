@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1주일간 신규 가입자 수 그래프</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 500px;
+            height: 400px;
+            margin: 0 auto;
+            padding: 50px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div th:fragment="weeklyNewUsersChart" class="chart-container">
+    <h3>1주일간 신규 가입자 수</h3>
+    <canvas id="newUsersChart"></canvas>
+
+    <script>
+        const ctx = document.getElementById('newUsersChart').getContext('2d');
+
+        const newUsersData = {
+            labels: ['일', '월', '화', '수', '목', '금', '토'],
+            datasets: [{
+                label: '신규 가입자 수',
+                data: [25, 30, 22, 28, 35, 40, 50],
+                backgroundColor: 'rgb(73,107,154)',
+                borderColor: 'rgb(73,107,154)',
+                borderWidth: 1
+            }]
+        };
+
+        const config = {
+            type: 'bar',
+            data: newUsersData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top' },
+                    title: { display: false, text: '1주일간 신규 가입자 수' }
+                }
+            }
+        };
+
+        new Chart(ctx, config);
+    </script>
+</div>
+
+</body>
+</html>

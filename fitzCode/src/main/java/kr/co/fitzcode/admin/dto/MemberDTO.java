@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class MemberDTO {
-    private int userId;
-    private String userName;
-    private String email;
-    private LocalDateTime createdAt;
+    private int userId;                 // 사용자 ID
+    private String userName;            // 사용자 이름
+    private String email;               // 이메일 주소
+    private LocalDateTime createdAt;    // 회원 가입 날짜
 }

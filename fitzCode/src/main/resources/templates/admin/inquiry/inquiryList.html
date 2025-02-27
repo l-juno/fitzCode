@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>1:1 문의 목록</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    .status-pending {
+      color: red;
+      font-weight: bold;
+    }
+    .status-answered {
+      color: green;
+    }
+    .status-closed {
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+
+<h2>1:1 문의 목록</h2>
+<table>
+  <tr>
+    <th>번호</th>
+    <th>사용자</th>
+    <th>제목</th>
+    <th>카테고리</th>
+    <th>상태</th>
+    <th>등록일</th>
+  </tr>
+  <tr th:each="inquiry : ${inquiries}">
+    <td th:text="${inquiry.inquiryId}"></td>
+    <td th:text="${inquiry.userName}"></td>
+    <td>
+      <a th:href="@{/admin/inquiries/{id}(id=${inquiry.inquiryId})}" th:text="${inquiry.subject}"></a>
+    </td>
+    <td th:text="${inquiry.category.description}"></td>
+    <td>
+            <span th:text="${inquiry.status.description}"
+                  th:classappend="${inquiry.status.name() == 'PENDING' ? 'status-pending' :
+                                  (inquiry.status.name() == 'ANSWERED' ? 'status-answered' : 'status-closed')}">
+            </span>
+    </td>
+    <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+  </tr>
+</table>
+
+</body>
+</html>

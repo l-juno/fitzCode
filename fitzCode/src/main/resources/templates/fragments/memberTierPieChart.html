@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>등급별 회원 비율</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container {
+            width: 500px;
+            height: 400px;
+            margin: 0 auto;
+            padding: 0;
+            position: relative;
+            left: 0;
+        }
+        #memberTierChart {
+            width: 500px !important;
+            height: 400px !important;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="memberTierPieChart" class="chart-container">
+    <h3>등급별 회원 비율</h3>
+    <canvas id="memberTierChart"></canvas>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const data = {
+                labels: ['브론즈', '실버', '골드', '플래티넘'],
+                datasets: [{
+                    label: '회원 등급 비율',
+                    data: [20, 40, 25, 15],
+                    backgroundColor: [
+                        'rgba(205, 127, 50, 0.8)',
+                        'rgba(192, 192, 192, 1)',
+                        'rgba(255, 215, 0, 1)',
+                        'rgba(100, 200, 185, 1)'
+                    ],
+                    borderColor: [
+                        'rgba(205, 127, 50, 0.8)',
+                        'rgba(192, 192, 192, 1)',
+                        'rgba(255, 215, 0, 1)',
+                        'rgba(100, 200, 185, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'pie',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false,
+                            text: '등급별 회원 비율'
+                        }
+                    }
+                },
+            };
+
+            const ctx = document.getElementById('memberTierChart').getContext('2d');
+            new Chart(ctx, config);
+        });
+    </script>
+</div>
+</body>
+</html>
