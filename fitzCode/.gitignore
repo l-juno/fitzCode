@@ -264,6 +264,11 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 
+# Gradle 관련 파일들 무시
+.gradle/
+*.bin
+*.lock
+
 # Windows shortcuts
 *.lnk
 
