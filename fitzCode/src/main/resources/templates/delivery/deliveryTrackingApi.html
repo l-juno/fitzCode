@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>fitzCode</title>
+    <link rel="stylesheet" th:href="@{/css/common/footer.css}"/>
+    <link rel="stylesheet" th:href="@{/css/delivery/tracking.css}">
+</head>
+<body>
+<div class="container">
+    <h3>택배 조회하기</h3>
+<form action="https://info.sweettracker.co.kr/tracking/3" method="post">
+        <input type="hidden" class="form-control" name="t_key" value="SUXr60hetBnVCS6h5UjeOw">
+    <div class="form-group">
+        <label for="t_code">택배사</label>
+        <select id="t_code" name="t_code">
+            <option value="01">우체국 택배</option>
+            <option value="04">CJ 대한통운</option>
+            <option value="05">한진택배</option>
+            <option value="06">로젠택배</option>
+            <option value="08">롯데택배</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="t_invoice">운송장 번호</label>
+        <input type="text" class="form-control" name="t_invoice" id="t_invoice" value="689944557965">
+    </div>
+    <button type="submit" class="btn btn-default">조회하기</button>
+
+</form>
+</div>
+
+<div th:replace="~{common/footer.html :: footer }"></div>
+
+</body>
+</html>
