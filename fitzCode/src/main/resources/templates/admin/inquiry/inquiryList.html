@@ -3,59 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <title>1:1 문의 목록</title>
-  <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-    .status-pending {
-      color: red;
-      font-weight: bold;
-    }
-    .status-answered {
-      color: green;
-    }
-    .status-closed {
-      color: gray;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/admin/inquiryList.css}"/>
 </head>
 <body>
+<div class="container">
+  <div class="sidebar" th:replace="~{fragments/managerSidebar}"></div>
+  <div class="content">
+    <h2>1:1 문의 목록</h2>
 
-<h2>1:1 문의 목록</h2>
-<table>
-  <tr>
-    <th>번호</th>
-    <th>사용자</th>
-    <th>제목</th>
-    <th>카테고리</th>
-    <th>상태</th>
-    <th>등록일</th>
-  </tr>
-  <tr th:each="inquiry : ${inquiries}">
-    <td th:text="${inquiry.inquiryId}"></td>
-    <td th:text="${inquiry.userName}"></td>
-    <td>
-      <a th:href="@{/admin/inquiries/{id}(id=${inquiry.inquiryId})}" th:text="${inquiry.subject}"></a>
-    </td>
-    <td th:text="${inquiry.category.description}"></td>
-    <td>
-            <span th:text="${inquiry.status.description}"
-                  th:classappend="${inquiry.status.name() == 'PENDING' ? 'status-pending' :
-                                  (inquiry.status.name() == 'ANSWERED' ? 'status-answered' : 'status-closed')}">
-            </span>
-    </td>
-    <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-  </tr>
-</table>
+    <div class="filters">
+      <select id="categoryFilter">
+        <option value="">모든 카테고리</option>
+        <option value="2">상품문의</option>
+        <option value="3">환불문의</option>
+        <option value="1">일반문의</option>
+        <option value="4">결제문의</option>
+        <option value="5">반품문의</option>
+      </select>
 
+      <select id="statusFilter">
+        <option value="">모든 상태</option>
+        <option value="1">대기 중</option>
+        <option value="2">답변 완료</option>
+        <option value="3">종료됨</option>
+      </select>
+
+      <button onclick="filterInquiries()">확인</button>
+    </div>
+
+    <table>
+      <tr>
+        <th>번호</th>
+        <th>사용자</th>
+        <th>제목</th>
+        <th>카테고리</th>
+        <th>상태</th>
+        <th>등록일</th>
+      </tr>
+      <tr th:each="inquiry : ${inquiries}">
+        <td th:text="${inquiry.inquiryId}"></td>
+        <td th:text="${inquiry.userName}"></td>
+        <td>
+          <a th:href="@{/admin/inquiries/{id}(id=${inquiry.inquiryId})}" th:text="${inquiry.subject}"></a>
+        </td>
+        <td th:text="${inquiry.category.description}"></td>
+        <td>
+          <span th:text="${inquiry.status.description}"
+                th:classappend="${inquiry.status.name() == 'PENDING' ? 'status-pending' :
+                                (inquiry.status.name() == 'ANSWERED' ? 'status-answered' : 'status-closed')}">
+          </span>
+        </td>
+        <td th:text="${#temporals.format(inquiry.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+      </tr>
+      <tr th:if="${#lists.isEmpty(inquiries)}">
+        <td colspan="6" class="empty-message">문의가 없습니다.</td>
+      </tr>
+    </table>
+
+    <div class="pagination">
+      <a th:if="${currentPage > 1}" th:href="@{/admin/inquiries(page=${currentPage - 1}, size=${size}, category=${category}, status=${status})}"><</a>
+      <th:block th:with="startPage=${currentPage > 5 ? currentPage - 5 : 1},
+                         endPage=${startPage + 9 > totalPages ? totalPages : startPage + 9}">
+        <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+           th:href="@{/admin/inquiries(page=${i}, size=${size}, category=${category}, status=${status})}"
+           th:text="${i}"
+           th:class="${currentPage == i} ? 'active' : ''"></a>
+      </th:block>
+      <a th:if="${currentPage < totalPages}" th:href="@{/admin/inquiries(page=${currentPage + 1}, size=${size}, category=${category}, status=${status})}">></a>
+    </div>
+  </div>
+</div>
+
+<script>
+  function filterInquiries() {
+    var category = document.getElementById("categoryFilter").value;
+    var status = document.getElementById("statusFilter").value;
+    var url = '/admin/inquiries?';
+
+    if (category) {
+      url += 'category=' + category + '&';
+    }
+
+    if (status) {
+      url += 'status=' + status;
+    }
+
+    window.location.href = url;
+  }
+</script>
 </body>
 </html>
