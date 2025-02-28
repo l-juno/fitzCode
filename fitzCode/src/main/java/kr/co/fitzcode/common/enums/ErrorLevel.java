@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ErrorLevel {
-    WARNING(1, "WARNING"),
-    ERROR(2, "ERROR"),
-    CRITICAL(3, "CRITICAL");
+    WARNING(1, "경고"),
+    ERROR(2, "오류"),
+    CRITICAL(3, "치명적오류");
 
     private final int code;
     private final String description;
