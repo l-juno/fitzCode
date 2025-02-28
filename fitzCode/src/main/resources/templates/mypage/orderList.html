@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>fitzCode</title>
@@ -8,21 +8,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </head>
 <body>
-<!-- 여기가 주문한 상품에서 배송조회 누르면 바로 조회할 수 있도록 하는 거 페이지 만들기
-하려면 우선 주문한 상품 폼 가져오고
-api 템플릿에서 파라미터 가져오고
-그걸 모달창에 띄우는것 까지 ? -> 시간되면 .. -->
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<!-- 메인 콘텐츠 -->
+
+<h1>orderList</h1>
+
 <div class="container">
-    <table class="table">
-        <tr>
-            <td rowspan="4"><img th:src="@{/img/sampleimg.jpg}" width="50" height="70"></td>
+    <table>
+        <tr th:if="${!empty orderMap}">
+            <th></th>
             <th>상품명</th>
-            <td>카멜 하이넥 스웨이드 자켓</td>
-            <th>가격</th>
-            <td>KRW 1,880,000</td>
-            <td><input type="submit" value="배송조회"></td>
+            <th>상품가격</th>
+            <th></th>
+        </tr>
+        <tr th:each="orderlist : ${orderMap}">
+            <td><img th:src="${orderlist['image_url']}"></td>
+            <td th:text="${orderlist['product_name']}"/>
+            <td th:text="${orderlist['price']}"/>
+            <td><a href="delivery/tracking"><button class="btn">배송조회</button></a></td>
         </tr>
     </table>
 </div>
+
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
 </body>
 </html>

@@ -6,5 +6,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class DeliveryDTO {
+public class DeliveryDto {
 }
