@@ -1,8 +1,7 @@
-package kr.co.fitzcode.mypage.dto;
+package kr.co.fitzcode.order.dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

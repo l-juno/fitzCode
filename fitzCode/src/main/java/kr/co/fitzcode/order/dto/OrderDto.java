@@ -1,4 +1,4 @@
-package kr.co.fitzcode.mypage.dto;
+package kr.co.fitzcode.order.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

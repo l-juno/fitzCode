@@ -1,9 +1,6 @@
-package kr.co.fitzcode.mypage.service;
-
-import kr.co.fitzcode.mypage.dto.ProductDto;
+package kr.co.fitzcode.order.service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public interface MypageService {

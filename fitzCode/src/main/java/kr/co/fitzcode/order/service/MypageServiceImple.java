@@ -1,12 +1,10 @@
-package kr.co.fitzcode.mypage.service;
+package kr.co.fitzcode.order.service;
 
-import kr.co.fitzcode.mypage.dao.MypageDao;
-import kr.co.fitzcode.mypage.dto.ProductDto;
+import kr.co.fitzcode.order.dao.MypageDao;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 @Service

@@ -1,10 +1,8 @@
-package kr.co.fitzcode.mypage.control;
+package kr.co.fitzcode.order.control;
 
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import kr.co.fitzcode.mypage.dto.ProductDto;
-import kr.co.fitzcode.mypage.service.MypageService;
+import kr.co.fitzcode.order.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 @Controller
