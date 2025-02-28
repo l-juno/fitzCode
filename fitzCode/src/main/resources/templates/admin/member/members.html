@@ -3,48 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <title>회원 목록</title>
+
+  <!-- 사이드바 CSS -->
+  <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}">
+
   <style>
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-    tr:hover { background-color: #f1f1f1; cursor: pointer; }
-    .pagination { text-align: center; margin-top: 20px; }
-    .page-btn { margin: 5px; padding: 10px; cursor: pointer; border: 1px solid #000; }
+    /* 전체 페이지 레이아웃 */
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* 사이드바 설정 */
+    .adminSidebarWrap {
+      width: 250px;
+      flex-shrink: 0;
+    }
+
+    .sidebar {
+      position: fixed;
+      width: 250px;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    /* 회원 목록 컨텐츠 */
+    .member-list-container {
+      flex-grow: 1;
+      padding: 20px;
+      max-width: 800px;
+      margin: 100px auto 0 auto;
+      height: 822px;
+      overflow-y: auto;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    }
+
+    .member-list table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .member-list th, .member-list td {
+      padding: 10px;
+      border: 1px solid #e1e1e1;
+      text-align: left;
+    }
+
+    .member-list th {
+      background-color: #f9f9f9;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .member-list tr {
+      cursor: pointer;
+    }
+
+    .member-list tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .member-list .actions {
+      white-space: nowrap;
+    }
+
+    .member-list form {
+      display: inline-block;
+      margin: 0;
+    }
+
+    .member-list button {
+      padding: 5px 10px;
+      text-decoration: none;
+      color: white;
+      background-color: #34495e;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .member-list button:hover {
+      opacity: 0.8;
+    }
+
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      display: inline-block;
+      padding: 8px 12px;
+      margin: 0 5px;
+      text-decoration: none;
+      color: #333;
+      border: 1px solid #e1e1e1;
+      border-radius: 4px;
+      background-color: #ffffff;
+    }
+
+    .pagination a:hover {
+      background-color: #f9f9f9;
+    }
+
+    .pagination a.active {
+      background-color: #59758c;
+      color: white;
+      border-color: #59758c;
+    }
   </style>
 </head>
 <body>
 
-<h2>회원 목록</h2>
-<table>
-  <thead>
-  <tr>
-    <th>ID</th>
-    <th>이름</th>
-    <th>이메일</th>
-    <th>가입일</th>
-    <th>관리</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr th:each="member : ${members}">
-    <td th:text="${member.userId}"></td>
-    <td th:text="${member.userName}"></td>
-    <td th:text="${member.email}"></td>
-    <td th:text="${#temporals.format(member.createdAt, 'yyyy-MM-dd')}"></td>
-    <td>
-      <a th:href="@{/admin/members/{id}(id=${member.userId})}">상세</a>
-      <form th:action="@{/admin/members/{id}/delete(id=${member.userId})}" method="post" style="display:inline;">
-        <button type="submit">삭제</button>
-      </form>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<div class="wrapper">
+  <!-- 사이드바 추가 -->
+  <div class="adminSidebarWrap">
+    <div class="sidebar" th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+  </div>
 
-<div class="pagination">
-    <span th:each="i : ${#numbers.sequence(1, (totalCount / pageSize) + 1)}">
-        <a th:href="@{/admin/members(page=${i})}" th:text="${i}" class="page-btn"></a>
-    </span>
+  <!-- 회원 목록 컨텐츠 -->
+  <div class="member-list-container">
+    <h2>회원 목록</h2>
+    <div class="member-list">
+      <table>
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>이름</th>
+          <th>이메일</th>
+          <th>가입일</th>
+          <th>관리</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="member : ${members}" class="member-row" th:data-id="${member.userId}" style="user-select: none;">
+          <td th:text="${member.userId}"></td>
+          <td th:text="${member.userName}"></td>
+          <td th:text="${member.email}"></td>
+          <td th:text="${#temporals.format(member.createdAt, 'yyyy-MM-dd')}"></td>
+          <td class="actions">
+            <form th:action="@{/admin/members/{id}/delete(id=${member.userId})}" method="post" style="display:inline;" onsubmit="return confirm('삭제하시겠습니까?')">
+              <button type="submit">삭제</button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <span th:each="i : ${#numbers.sequence(1, (totalCount / pageSize) + 1)}">
+        <a th:href="@{/admin/members(page=${i})}" th:text="${i}" th:class="${currentPage == i} ? 'active' : ''" class="page-btn"></a>
+      </span>
+    </div>
+  </div>
 </div>
+
+<script th:inline="javascript">
+  document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.member-row');
+    rows.forEach(row => {
+      row.addEventListener('click', function(e) {
+        // "관리" 열(마지막 열) 또는 그 안의 버튼을 클릭한 경우 무시
+        if (e.target.closest('.actions') || e.target.tagName === 'BUTTON' || e.target.tagName === 'FORM') {
+          return;
+        }
+        const userId = this.getAttribute('data-id');
+        window.location.href = '/admin/members/' + userId;
+      });
+    });
+  });
+</script>
 
 </body>
 </html>
