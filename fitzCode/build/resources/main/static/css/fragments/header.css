@@ -1,0 +1,131 @@
+/* 헤더 전체 */
+.header-wrap {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 100px;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+
+/* 헤더 컨테이너 */
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* 좌측 메뉴 */
+.header-menu {
+    display: flex;
+    gap: 20px;
+}
+
+.header-menu a {
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    line-height: 100px;
+}
+
+.header-menu a:hover {
+    color: #000;
+}
+
+.header-logo {
+    margin-left: 70px;
+}
+
+.header-logo img {
+    height: 50px;
+    object-fit: contain;
+}
+
+/* 우측 메뉴 */
+.header-utils a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: #555;
+    font-size: 14px;
+    line-height: 100px;
+}
+
+.header-utils a:hover {
+    color: #000;
+}
+
+/* 검색 오버레이 */
+.search-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: rgba(245, 245, 245, 0.95);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 2000;
+}
+
+/* 검색 입력 컨테이너 */
+.search-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 23px;
+}
+
+/* 검색창 입력 필드 */
+.search-overlay input[type="text"] {
+    width: 500px;
+    height: 40px;
+    padding: 6px 12px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+    text-align: left;
+    outline: none;
+}
+
+/* 닫기 버튼 */
+.search-overlay #close-search {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-left: 12px;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    .header-logo img {
+        height: 50px;
+        object-fit: contain;
+        margin-left: 70px;
+    }
+    .header-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .header-menu, .header-utils {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .header-logo img {
+        height: 50px;
+    }
+}
