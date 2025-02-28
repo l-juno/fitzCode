@@ -3,6 +3,8 @@ package kr.co.fitzcode.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 @AllArgsConstructor
 public enum DeliveryStatus {
@@ -15,11 +17,9 @@ public enum DeliveryStatus {
     private final String description;
 
     public static DeliveryStatus fromCode(int code) {
-        for (DeliveryStatus status : values()) {
-            if (status.getCode() == code) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("유효하지 않은 운송장 코드: " + code);
+        return Arrays.stream(DeliveryStatus.values())
+                .filter(status -> status.getCode() == code)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 배송 상태 코드: " + code));
     }
 }

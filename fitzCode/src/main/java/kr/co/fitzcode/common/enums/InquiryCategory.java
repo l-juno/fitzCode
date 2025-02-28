@@ -3,6 +3,8 @@ package kr.co.fitzcode.common.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 @AllArgsConstructor
 public enum InquiryCategory {
@@ -16,11 +18,9 @@ public enum InquiryCategory {
     private final String description;
 
     public static InquiryCategory fromCode(int code) {
-        for (InquiryCategory category : values()) {
-            if (category.getCode() == code) {
-                return category;
-            }
-        }
-        throw new IllegalArgumentException("유효하지 않은 문의 카테고리 코드: " + code);
+        return Arrays.stream(InquiryCategory.values())
+                .filter(category -> category.getCode() == code)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 문의 카테고리 코드: " + code));
     }
 }
