@@ -1,0 +1,58 @@
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    justify-content: center;
+}
+
+.product-single {
+    background: #fff;
+    border-radius: 8px;
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+    overflow: hidden;
+    text-align: left;
+    transition: transform 0.2s;
+    font-family: 'Heveltica Neue', 'Helvetica', 'FV', 'SpoqaHanSans', Noto Sans KR, sans-serif;
+}
+
+.product-single a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.product-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.product-details {
+    padding: 15px;
+    font-size: 16px;
+    text-decoration: none;
+    line-height: 1.3;
+    letter-spacing: 0.005em;
+}
+
+.brand {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.product-name {
+    font-weight: 300;
+    font-size: 16px;
+}
+
+.price {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
