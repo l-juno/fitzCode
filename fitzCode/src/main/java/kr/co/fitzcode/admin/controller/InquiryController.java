@@ -2,8 +2,6 @@ package kr.co.fitzcode.admin.controller;
 
 import kr.co.fitzcode.admin.dto.InquiryDTO;
 import kr.co.fitzcode.admin.service.InquiryService;
-import kr.co.fitzcode.common.enums.InquiryCategory;
-import kr.co.fitzcode.common.enums.InquiryStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

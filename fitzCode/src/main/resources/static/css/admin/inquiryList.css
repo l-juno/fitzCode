@@ -118,9 +118,13 @@ th {
     }
 
     .pagination {
-        flex-wrap: wrap;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        text-align: center;
+        min-height: 40px;
     }
-
     .pagination a, .pagination span {
         margin: 5px;
     }
@@ -131,5 +135,4 @@ th {
         font-size: 14px;
         width: 150px !important;
     }
-
 }

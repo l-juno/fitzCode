@@ -1,0 +1,107 @@
+/* 전체 페이지 레이아웃 */
+.wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* 사이드바 설정 */
+.adminSidebarWrap {
+    width: 250px;
+    flex-shrink: 0;
+}
+
+.sidebar {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/* 회원 목록 컨텐츠 */
+.member-list-container {
+    flex-grow: 1;
+    padding: 20px;
+    max-width: 1000px;
+    margin: 88px auto 0 auto;
+    height: 822px;
+    overflow-y: auto;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    padding-left: 50px;
+}
+
+.member-list table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.member-list th, .member-list td {
+    padding: 10px;
+    border: 1px solid #e1e1e1;
+    text-align: left;
+}
+
+.member-list th {
+    background-color: #f9f9f9;
+    font-weight: bold;
+    color: #333;
+}
+
+.member-list tr {
+    cursor: pointer;
+}
+
+.member-list tr:hover {
+    background-color: #f1f1f1;
+}
+
+.member-list .actions {
+    white-space: nowrap;
+}
+
+.member-list form {
+    display: inline-block;
+    margin: 0;
+}
+
+.member-list button {
+    padding: 5px 10px;
+    text-decoration: none;
+    color: white;
+    background-color: #34495e;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.member-list button:hover {
+    opacity: 0.8;
+}
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination a:hover {
+    color: #59758c;
+}
+
+.pagination a.active {
+    font-weight: bold;
+    background-color: rgba(237, 237, 237, 0.89);
+}
+
+.pagination .prev, .pagination .next {
+    font-size: 18px;
+}

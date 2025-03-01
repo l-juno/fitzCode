@@ -6,115 +6,8 @@
 
   <!-- 사이드바 CSS -->
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}">
+  <link rel="stylesheet" th:href="@{/css/admin/members.css}">
 
-  <style>
-    /* 전체 페이지 레이아웃 */
-    .wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* 사이드바 설정 */
-    .adminSidebarWrap {
-      width: 250px;
-      flex-shrink: 0;
-    }
-
-    .sidebar {
-      position: fixed;
-      width: 250px;
-      height: 100%;
-      top: 0;
-      left: 0;
-    }
-
-    /* 회원 목록 컨텐츠 */
-    .member-list-container {
-      flex-grow: 1;
-      padding: 20px;
-      max-width: 800px;
-      margin: 100px auto 0 auto;
-      height: 822px;
-      overflow-y: auto;
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-    }
-
-    .member-list table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    .member-list th, .member-list td {
-      padding: 10px;
-      border: 1px solid #e1e1e1;
-      text-align: left;
-    }
-
-    .member-list th {
-      background-color: #f9f9f9;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .member-list tr {
-      cursor: pointer;
-    }
-
-    .member-list tr:hover {
-      background-color: #f1f1f1;
-    }
-
-    .member-list .actions {
-      white-space: nowrap;
-    }
-
-    .member-list form {
-      display: inline-block;
-      margin: 0;
-    }
-
-    .member-list button {
-      padding: 5px 10px;
-      text-decoration: none;
-      color: white;
-      background-color: #34495e;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .member-list button:hover {
-      opacity: 0.8;
-    }
-
-    .pagination {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .pagination a {
-      display: inline-block;
-      padding: 8px 12px;
-      margin: 0 5px;
-      text-decoration: none;
-      color: #333;
-      border: 1px solid #e1e1e1;
-      border-radius: 4px;
-      background-color: #ffffff;
-    }
-
-    .pagination a:hover {
-      background-color: #f9f9f9;
-    }
-
-    .pagination a.active {
-      background-color: #59758c;
-      color: white;
-      border-color: #59758c;
-    }
-  </style>
 </head>
 <body>
 
@@ -155,9 +48,16 @@
     </div>
 
     <div class="pagination">
+      <!-- 이전 버튼 -->
+      <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=${currentPage - 1})}" class="prev">&lt;</a>
+
+      <!-- 페이지 번호 -->
       <span th:each="i : ${#numbers.sequence(1, (totalCount / pageSize) + 1)}">
         <a th:href="@{/admin/members(page=${i})}" th:text="${i}" th:class="${currentPage == i} ? 'active' : ''" class="page-btn"></a>
       </span>
+
+      <!-- 다음 버튼 -->
+      <a th:if="${currentPage < (totalCount / pageSize) + 1}" th:href="@{/admin/members(page=${currentPage + 1})}" class="next">&gt;</a>
     </div>
   </div>
 </div>
@@ -167,7 +67,6 @@
     const rows = document.querySelectorAll('.member-row');
     rows.forEach(row => {
       row.addEventListener('click', function(e) {
-        // "관리" 열(마지막 열) 또는 그 안의 버튼을 클릭한 경우 무시
         if (e.target.closest('.actions') || e.target.tagName === 'BUTTON' || e.target.tagName === 'FORM') {
           return;
         }
