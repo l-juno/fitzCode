@@ -4,15 +4,13 @@
   <meta charset="UTF-8">
   <title>회원 목록</title>
 
-  <!-- 사이드바 CSS -->
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}">
   <link rel="stylesheet" th:href="@{/css/admin/members.css}">
-
 </head>
 <body>
 
 <div class="wrapper">
-  <!-- 사이드바 추가 -->
+  <!-- 사이드바 -->
   <div class="adminSidebarWrap">
     <div class="sidebar" th:replace="~{fragments/managerSidebar :: sidebar}"></div>
   </div>
@@ -20,6 +18,26 @@
   <!-- 회원 목록 컨텐츠 -->
   <div class="member-list-container">
     <h2>회원 목록</h2>
+
+    <!-- 필터링 기능 -->
+    <div class="filters">
+      <select id="sortFilter">
+        <option value="recent" th:selected="${sortOrder == 'recent'}">최근 가입순</option>
+        <option value="oldest" th:selected="${sortOrder == 'oldest'}">가입 오래된 순</option>
+        <option value="role" th:selected="${sortOrder == 'role'}">회원등급순</option>
+      </select>
+
+      <select id="roleFilter">
+        <option value="">역할분류</option>
+        <option value="1" th:selected="${role == 1}">사용자</option>
+        <option value="2" th:selected="${role == 2}">관리자</option>
+        <option value="3" th:selected="${role == 3}">물류담당자</option>
+        <option value="4" th:selected="${role == 4}">문의담당자</option>
+      </select>
+
+      <button onclick="filterMembers()">필터</button>
+    </div>
+
     <div class="member-list">
       <table>
         <thead>
@@ -49,29 +67,53 @@
 
     <div class="pagination">
       <!-- 이전 버튼 -->
-      <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=${currentPage - 1})}" class="prev">&lt;</a>
+      <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=${currentPage - 1}, sortOrder=${sortOrder}, role=${role})}" class="prev"><</a>
 
       <!-- 페이지 번호 -->
       <span th:each="i : ${#numbers.sequence(1, (totalCount / pageSize) + 1)}">
-        <a th:href="@{/admin/members(page=${i})}" th:text="${i}" th:class="${currentPage == i} ? 'active' : ''" class="page-btn"></a>
+        <a th:href="@{/admin/members(page=${i}, sortOrder=${sortOrder}, role=${role})}" th:text="${i}" th:class="${currentPage == i} ? 'active' : ''" class="page-btn"></a>
       </span>
 
       <!-- 다음 버튼 -->
-      <a th:if="${currentPage < (totalCount / pageSize) + 1}" th:href="@{/admin/members(page=${currentPage + 1})}" class="next">&gt;</a>
+      <a th:if="${currentPage < (totalCount / pageSize) + 1}" th:href="@{/admin/members(page=${currentPage + 1}, sortOrder=${sortOrder}, role=${role})}" class="next">></a>
     </div>
   </div>
 </div>
 
 <script th:inline="javascript">
+  // 필터링된 회원 목록 조회하는 함수
+  function filterMembers() {
+    var sortOrder = document.getElementById("sortFilter").value; // 정렬 기준 값 가져오고
+    var role = document.getElementById("roleFilter").value; // 역할 필터 값 가져옴
+    var url = '/admin/members?'; // URL 설정
+
+    // 정렬 기준이 존재하면 URL에 쿼리 파라미터 추가
+    if (sortOrder) {
+      url += 'sortOrder=' + sortOrder + '&';
+    }
+
+    // 역할이 존재하면 URL에 쿼리 파라미터 추가
+    if (role) {
+      url += 'role=' + role;
+    }
+
+    // 해당 페이지 이동
+    window.location.href = url;
+  }
+
+  // 페이지가 로드되면 이벤트 리스너 추가
   document.addEventListener('DOMContentLoaded', function() {
-    const rows = document.querySelectorAll('.member-row');
+    const rows = document.querySelectorAll('.member-row'); // 모든 회원 행 선택
     rows.forEach(row => {
+      // 각 회원 행에 클릭 이벤트 추가
       row.addEventListener('click', function(e) {
+        // 만약 클릭된 요소가 'actions' 클래스나 'button', 'form'인 경우 클릭을 무시
         if (e.target.closest('.actions') || e.target.tagName === 'BUTTON' || e.target.tagName === 'FORM') {
           return;
         }
+        // 클릭한 행의 data-id 값을 가져와 해당 회원 상세 페이지로 이동
         const userId = this.getAttribute('data-id');
-        window.location.href = '/admin/members/' + userId;
+        window.location.href = '/admin/members/' + userId; // 회원 상세 페이지로 이동
       });
     });
   });

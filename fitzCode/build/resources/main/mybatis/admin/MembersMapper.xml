@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.fitzcode.admin.mapper.MembersMapper">
 
     <!-- 전체 회원 조회 (최근 가입순, 페이징) -->
     <select id="getAllMembers" resultType="MemberDTO">
-        SELECT u.user_id, u.user_name, u.email, u.created_at
+        SELECT u.user_id, u.user_name, u.email, u.created_at, u.role_id, t.tier_level
         FROM USER u
+        LEFT JOIN USER_TIER t ON u.user_id = t.user_id
         ORDER BY u.created_at DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
@@ -20,8 +18,7 @@
 
     <!-- 회원 상세 조회 -->
     <select id="getMemberDetail" resultType="MemberDetailDTO">
-        SELECT
-        u.*, t.tier_level, t.total_spent, t.tier_updated_at
+        SELECT u.*, t.tier_level, t.total_spent, t.tier_updated_at
         FROM USER u
         LEFT JOIN USER_TIER t ON u.user_id = t.user_id
         WHERE u.user_id = #{userId}
@@ -37,5 +34,44 @@
         UPDATE USER_TIER SET tier_level = #{tierLevel}, tier_updated_at = NOW()
         WHERE user_id = #{userId}
     </update>
+
+    <!-- 필터링된 회원 목록 조회 -->
+    <select id="getFilteredMemberList" resultType="MemberDTO">
+        SELECT u.user_id, u.user_name, u.email, u.created_at, u.role_id, t.tier_level
+        FROM USER u
+        LEFT JOIN USER_TIER t ON u.user_id = t.user_id
+        <where>
+            <if test="roleId != null">
+                AND u.role_id = #{roleId}
+            </if>
+        </where>
+        <choose>
+            <when test="sortOrder == 'recent'">
+                ORDER BY u.created_at DESC
+            </when>
+            <when test="sortOrder == 'oldest'">
+                ORDER BY u.created_at ASC
+            </when>
+            <when test="sortOrder == 'role'">
+                ORDER BY t.tier_level DESC, u.created_at DESC
+            </when>
+            <otherwise>
+                ORDER BY u.created_at DESC
+            </otherwise>
+        </choose>
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 필터링된 회원 수 조회 -->
+    <select id="getTotalFilteredMemberCount" resultType="int">
+        SELECT COUNT(*)
+        FROM USER u
+        LEFT JOIN USER_TIER t ON u.user_id = t.user_id
+        <where>
+            <if test="roleId != null">
+                AND u.role_id = #{roleId}
+            </if>
+        </where>
+    </select>
 
 </mapper>
