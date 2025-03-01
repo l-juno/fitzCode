@@ -16,17 +16,17 @@ public class MembersServiceImpl implements MembersService {
     private final MembersMapper membersMapper;
 
     // 전체 회원 목록 조회 (페이지네이션)
-    @Override
-    public Map<String, Object> getAllMembers(int page, int size) {
-        int totalCount = membersMapper.getTotalMemberCount();
-        int offset = (page - 1) * size;
-        List<MemberDTO> members = membersMapper.getAllMembers(size, offset);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("members", members);
-        response.put("totalCount", totalCount);
-        return response;
-    }
+//    @Override
+//    public Map<String, Object> getAllMembers(int page, int size) {
+//        int totalCount = membersMapper.getTotalMemberCount();
+//        int offset = (page - 1) * size;
+//        List<MemberDTO> members = membersMapper.getAllMembers(size, offset);
+//
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("members", members);
+//        response.put("totalCount", totalCount);
+//        return response;
+//    }
 
     // 회원 상세 정보 조회
     @Override

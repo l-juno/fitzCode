@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>회원 목록</title>
-
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}">
   <link rel="stylesheet" th:href="@{/css/admin/members.css}">
 </head>
@@ -37,6 +36,7 @@
 
       <button onclick="filterMembers()">검색</button>
     </div>
+    <br>
 
     <div class="member-list">
       <table>
@@ -65,53 +65,63 @@
       </table>
     </div>
 
+    <!-- 페이지네이션 -->
     <div class="pagination">
-      <!-- 이전 버튼 -->
-      <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=${currentPage - 1}, sortOrder=${sortOrder}, role=${role})}" class="prev"><</a>
+      <span th:with="totalPages=${totalCount > 0 ? ((totalCount + pageSize - 1) / pageSize) : 1}">
+        <!-- 이전 버튼 -->
+        <a th:if="${currentPage > 1}" th:href="@{/admin/members(page=${currentPage - 1}, sortOrder=${sortOrder}, role=${role})}" class="prev">&lt;</a>
 
-      <!-- 페이지 번호 -->
-      <span th:each="i : ${#numbers.sequence(1, (totalCount / pageSize) + 1)}">
-        <a th:href="@{/admin/members(page=${i}, sortOrder=${sortOrder}, role=${role})}" th:text="${i}" th:class="${currentPage == i} ? 'active' : ''" class="page-btn"></a>
+        <!-- 페이지 번호 -->
+        <span th:each="i : ${#numbers.sequence(1, totalPages)}">
+          <a th:href="@{/admin/members(page=${i}, sortOrder=${sortOrder}, role=${role})}"
+             th:text="${i}"
+             th:class="${currentPage == i} ? 'active' : ''"
+             class="page-btn"></a>
+        </span>
+
+        <!-- 다음 버튼 -->
+        <a th:if="${currentPage < totalPages}" th:href="@{/admin/members(page=${currentPage + 1}, sortOrder=${sortOrder}, role=${role})}" class="next">&gt;</a>
       </span>
-
-      <!-- 다음 버튼 -->
-      <a th:if="${currentPage < (totalCount / pageSize) + 1}" th:href="@{/admin/members(page=${currentPage + 1}, sortOrder=${sortOrder}, role=${role})}" class="next">></a>
     </div>
   </div>
 </div>
 
 <script th:inline="javascript">
-  // 필터링된 회원 목록 조회하는 함수
+  // 필터링된 회원 목록을 조회하는 함수
   function filterMembers() {
-    var sortOrder = document.getElementById("sortFilter").value; // 정렬 기준 값 가져오고
-    var role = document.getElementById("roleFilter").value; // 역할 필터 값 가져옴
-    var url = '/admin/members?'; // URL 설정
+    // 정렬 기준
+    var sortOrder = document.getElementById("sortFilter").value;
+    // 역할 필터 값
+    var role = document.getElementById("roleFilter").value;
+    // 기본 URL 설정
+    var url = '/admin/members?';
 
-    // 정렬 기준이 존재하면 URL에 쿼리 파라미터 추가
+    // 정렬 기준이 있다면 URL에 쿼리 파라미터 추가
     if (sortOrder) {
       url += 'sortOrder=' + sortOrder + '&';
     }
-
-    // 역할이 존재하면 URL에 쿼리 파라미터 추가
+    // 역할이 선택되었으면 URL에 역할 쿼리 파라미터 추가
     if (role) {
       url += 'role=' + role;
     }
-
-    // 해당 페이지 이동
+    // URL로 이동하여 페이지를 새로고침 (필터링된 결과 반영)
     window.location.href = url;
   }
 
-  // 페이지가 로드되면 이벤트 리스너 추가
+  // 이벤트가 발생하면 실행
   document.addEventListener('DOMContentLoaded', function() {
-    const rows = document.querySelectorAll('.member-row'); // 모든 회원 행 선택
+    // 모든 회원 행을 선택
+    const rows = document.querySelectorAll('.member-row');
+
+    // 각 회원 행에 클릭 이벤트 추가
     rows.forEach(row => {
-      // 각 회원 행에 클릭 이벤트 추가
       row.addEventListener('click', function(e) {
-        // 만약 클릭된 요소가 'actions' 클래스나 'button', 'form'인 경우 클릭을 무시
+        // 클릭한 요소가 'actions' 클래스나 'BUTTON', 'FORM'인 경우 클릭을 무시하고 이동하지 않음
         if (e.target.closest('.actions') || e.target.tagName === 'BUTTON' || e.target.tagName === 'FORM') {
           return;
         }
-        // 클릭한 행의 data-id 값을 가져와 해당 회원 상세 페이지로 이동
+
+        // 클릭한 행의 data-id 값을 가져와서 해당 회원의 상세 페이지로 이동
         const userId = this.getAttribute('data-id');
         window.location.href = '/admin/members/' + userId; // 회원 상세 페이지로 이동
       });

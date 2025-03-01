@@ -8,7 +8,7 @@ import java.util.Map;
 public interface MembersService {
 
     // 모든 회원 목록 조회 (페이지네이션 포함)
-    Map<String, Object> getAllMembers(int page, int size);
+//    Map<String, Object> getAllMembers(int page, int size);
 
     // 회원의 상세 정보 조회
     MemberDetailDTO getMemberDetail(int userId);
