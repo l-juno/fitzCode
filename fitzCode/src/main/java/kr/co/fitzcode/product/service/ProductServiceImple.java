@@ -18,7 +18,7 @@ public class ProductServiceImple implements ProductService {
     @Override
     public List<ProductDTO> getProductsByPage(int pageNum) {
         HashMap<String, Object> params = new HashMap<>();
-        params.put("offset", pageNum * PRODUCT_PER_PAGE);
+        params.put("offset", (pageNum-1) * PRODUCT_PER_PAGE);
         params.put("limit", PRODUCT_PER_PAGE);
         return productMapper.getProductsByPage(params);
     }
@@ -57,5 +57,11 @@ public class ProductServiceImple implements ProductService {
     @Override
     public void deleteProductById(int productId) {
         productMapper.deleteProductById(productId);
+    }
+
+    @Override
+    public int getNumberOfPages() {
+        int products = productMapper.getNumberOfProducts();
+        return (products/PRODUCT_PER_PAGE);
     }
 }

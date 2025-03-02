@@ -14,4 +14,6 @@ public interface ProductService {
     void updateProduct(ProductDTO productDTO);
     void updateProductById(int productId);
     void deleteProductById(int productId);
+
+    int getNumberOfPages();
 }

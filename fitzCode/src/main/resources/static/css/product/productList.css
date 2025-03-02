@@ -56,3 +56,54 @@
 }
 
 
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pageBox {
+    margin: 0 5px;
+}
+
+
+.pageNum {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f5f5f5;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Hover effect */
+.pageNum:hover {
+    background-color: #737373;
+    color: white;
+}
+
+/* Active page style */
+.pageBox.active .pageNum {
+    background-color: #737373;
+    color: white;
+}
+
+/* Disabled page style (if needed) */
+.pageBox.disabled .pageNum {
+    color: #ccc;
+    pointer-events: none;
+}
+
+
+
+
+

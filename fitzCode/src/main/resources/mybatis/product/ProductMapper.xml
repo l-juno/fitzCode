@@ -74,4 +74,9 @@
     </delete>
 
 
+    <select id="getNumberOfProducts" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT;
+    </select>
+
+
 </mapper>

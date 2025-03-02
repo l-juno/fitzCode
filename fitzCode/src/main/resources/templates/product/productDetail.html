@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Product Page</title>
+    <th:block th:replace="~{fragments/header :: header-head}"></th:block>
+    <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/product/productDetail.css}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+    
+    
+    <!-- Sticky Bar 폼임 -->
+    <div class="sticky-container" id="stickyBar">
+        <div class="product_area">
+            <!-- 상품 이미지 -->
+            <div class="thumbnail">
+                <img src="https://img.soldout.co.kr/item_thumb/2024/08/17/d780c612-69ce-4d2a-b0b5-45fddfd9a5f6.png/soldout/resize/1000/optimize" alt="Product Name">
+            </div>
+            <!-- 상품 텍스트 정보 -->
+            <div class="product_list_info_summary">
+                <p class="product_title">name</p>
+                <p class="product_subtitle">description</p>
+                <p class="product_model">number</p>
+            </div>
+        </div>
+        <!-- 버튼 영역 -->
+        <div class="btn_area">
+            <a href="#" class="btn btn_wish2">관심등록</a>
+            <button class="btn_action buy_button">
+                <strong>구매</strong>
+                <div class="price">like</div>
+            </button>
+        </div>
+    </div>
+    
+    
+    <div class="product-detail-container">
+        <!-- 왼쪽: 상품 이미지 -->
+        <div class="product-image-section">
+            <div class="product-image">
+                <img src="https://img.soldout.co.kr/item_thumb/2024/08/17/d780c612-69ce-4d2a-b0b5-45fddfd9a5f6.png/soldout/resize/1000/optimize" alt="Product Name">
+                <img src="https://img.soldout.co.kr/item_thumb/2024/08/17/d780c612-69ce-4d2a-b0b5-45fddfd9a5f6.png/soldout/resize/1000/optimize" alt="Product Name">
+                <img src="https://img.soldout.co.kr/item_thumb/2024/08/17/d780c612-69ce-4d2a-b0b5-45fddfd9a5f6.png/soldout/resize/1000/optimize" alt="Product Name">
+            </div>
+            <button class="next-btn">></button>
+            <button class="prev-btn"><</button>
+        </div>
+        
+        
+        
+        <!-- 가운데 구분선 -->
+        <div class="divider"></div>
+        
+        <!-- 오른쪽: 상품 정보 -->
+        <div class="product-info-section">
+            
+            <!-- 상품명 및 상세설명 -->
+            <div class="product-name">Product Name</div>
+            <div class="product-description">This is a brief description of the product.</div>
+            
+            <!-- 사이즈 버튼 -->
+            <div class="size-selector">
+                <button class="size-dropdown" id="size-dropdown">
+                    <span>모든 사이즈</span>
+                    <svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M7 10l5 5 5-5H7z" fill="currentColor" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 상품 세부 정보 -->
+            <dl class="product-details">
+                <div class="detail">
+                    <div class="text">모델번호</div>
+                    <span>12345</span>
+                </div>
+                <div class="detail">
+                    <div class="text">출시일</div>
+                    <span>2025-03-01</span>
+                </div>
+                <div class="detail">
+                    <div class="text">발매가</div>
+                    <span>250,000원</span>
+                </div>
+            </dl>
+            
+            <!-- 구매/판매 버튼 -->
+            <div class="button-group">
+                <a href="/views/product/buy.html" class="buy-button">
+                    <div class="buy-text">구매</div>
+                    <div class="buy-info">
+                        <span class="price">250,000원</span>
+                        <span class="subtext">즉시 구매가</span>
+                    </div>
+                </a>
+            </div>
+            
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <p>hello</p>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+
+<!--<script>-->
+<!--        window.addEventListener('scroll', function() {-->
+<!--        var imageSection = document.querySelector('.product-image-section');-->
+<!--        var footer = document.querySelector('footer'); // Assuming you have a footer tag-->
+
+<!--        // Get the positions of the image and footer-->
+<!--        var imageBottom = imageSection.getBoundingClientRect().bottom;-->
+<!--        var footerTop = footer.getBoundingClientRect().top;-->
+
+<!--        // If the image has reached the footer, stop it from scrolling-->
+<!--        if (imageBottom >= footerTop) {-->
+<!--        imageSection.classList.add('fixed');-->
+<!--    } else {-->
+<!--        imageSection.classList.remove('fixed');-->
+<!--    }-->
+<!--    });-->
+<!--</script>-->
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const stickyBar = document.getElementById("stickyBar");
+
+        window.addEventListener("scroll", () => {
+            const scrollY = window.scrollY || window.pageYOffset;
+
+            // 스크롤이 100px 이상 내려가면 Sticky Bar 표시
+            if (scrollY > 400) {
+                stickyBar.style.display = "flex";
+            } else {
+                stickyBar.style.display = "none";
+            }
+        });
+    });
+
+
+    const nextBtn = document.querySelector('.next-btn');
+    const prevBtn = document.querySelector('.prev-btn');
+    const productImage = document.querySelector('.product-image');
+    let index = 0; // To track the current image
+
+    const totalImages = document.querySelectorAll('.product-image img').length;
+    const imageWidth = document.querySelector('.product-image img').offsetWidth; // Get the width of one image
+
+    // Function to update the translateX property based on the index
+    const updateImagePosition = () => {
+        productImage.style.transform = `translateX(-${index * imageWidth}px)`;
+    };
+
+    nextBtn.addEventListener('click', () => {
+        // Increment index, and loop around if necessary
+        index = (index + 1) % totalImages;
+        updateImagePosition();
+    });
+
+    prevBtn.addEventListener('click', () => {
+        // Decrement index, and loop around if necessary
+        index = (index - 1 + totalImages) % totalImages;
+        updateImagePosition();
+    });
+
+
+
+
+</script>
+
+</html>

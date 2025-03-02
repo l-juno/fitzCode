@@ -22,4 +22,5 @@ public interface ProductMapper {
 
     void deleteProductById(int productId);
 
+    int getNumberOfProducts();
 }
