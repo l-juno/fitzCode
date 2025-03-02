@@ -1,10 +1,8 @@
-/* 전체 페이지 레이아웃 */
 .wrapper {
     display: flex;
     min-height: 100vh;
 }
 
-/* 사이드바 설정 */
 .adminSidebarWrap {
     width: 250px;
     flex-shrink: 0;

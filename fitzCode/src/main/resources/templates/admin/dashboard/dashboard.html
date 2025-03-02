@@ -19,19 +19,17 @@
             box-sizing: border-box;
         }
 
-        /* 차트 좌우 정렬 */
-        .charts-row {
+        .charts-row-1, .charts-row-2 {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
             width: 100%;
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 0 auto 20px;
             gap: min(5vw, 50px);
         }
 
         .chart-box {
-            width: 50%;
+            width: 49%;
             max-width: 600px;
             height: auto;
             display: flex;
@@ -43,24 +41,40 @@
             max-width: 100%;
             height: 390px !important;
         }
+
+        a {
+            text-decoration: none !important;
+            color: inherit;
+        }
+
+        h3 a {
+            text-decoration: none !important;
+            font-weight: bold !important;
+            color: black !important;
+        }
     </style>
 </head>
 <body>
 <div class="dashboard-container">
-    <!-- 사이드바 포함 -->
+    <!-- 사이드바 -->
     <div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
 
     <!-- 콘텐츠 영역 -->
     <div class="content-container">
-        <div class="charts-row">
-            <!-- 주간 신규 가입자 차트 -->
+        <!-- 첫줄 -> 주간 신규 가입자 및 등급별 회원 비율 -->
+        <div class="charts-row-1">
             <div class="chart-box">
                 <div th:replace="~{fragments/weeklyNewUsers :: weeklyNewUsersChart}"></div>
             </div>
-
-            <!-- 등급별 회원 비율 차트 -->
             <div class="chart-box">
                 <div th:replace="~{fragments/memberTierPieChart :: memberTierPieChart}"></div>
+            </div>
+        </div>
+
+        <!-- 둘째 줄 -> 1대1 문의 상태 -->
+        <div class="charts-row-2">
+            <div class="chart-box">
+                <div th:replace="~{fragments/inquiryDoughnut :: inquiryDoughnut(inquiryStatusCounts=${inquiryStatusCounts})}"></div>
             </div>
         </div>
     </div>
