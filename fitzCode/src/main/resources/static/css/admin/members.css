@@ -23,9 +23,7 @@
     flex-grow: 1;
     padding: 20px;
     max-width: 1000px;
-    margin: 30px auto 0 auto;
-    height: 822px;
-    overflow-y: auto;
+    margin: 30px auto 100px auto;
     font-family: Arial, sans-serif;
     line-height: 1.6;
     padding-left: 50px;

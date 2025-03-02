@@ -55,12 +55,15 @@ public class MembersServiceImpl implements MembersService {
         membersMapper.updateUserTier(userId, tierLevel);
     }
 
-    // 필터링된 회원 목록을 페이지네이션과 함께 조회
+    // 필터링된 회원 목록을 페이지네이션과 함께 조회 + 검색기능
     @Override
-    public Map<String, Object> getFilteredMembers(int page, int size, Integer roleId, String sortOrder) {
-        int totalCount = membersMapper.getTotalFilteredMemberCount(roleId);
+    public Map<String, Object> getFilteredMembers(int page, int size, Integer roleId, String sortOrder, String keyword) {
+        int totalCount = membersMapper.getTotalFilteredMemberCount(roleId, keyword); // 검색어 추가
         int offset = (page - 1) * size;
-        List<MemberDTO> members = membersMapper.getFilteredMemberList(size, offset, roleId, sortOrder);
+        List<MemberDTO> members = membersMapper.getFilteredMemberList(size, offset, roleId, sortOrder, keyword); // 검색어 추가
+
+        System.out.println("Total Count: " + totalCount); // 디버깅
+        System.out.println("Members Size: " + members.size()); // 디버깅
 
         Map<String, Object> response = new HashMap<>();
         response.put("members", members);

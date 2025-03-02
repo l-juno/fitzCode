@@ -23,14 +23,15 @@ public interface MembersMapper {
     // 특정 회원의 등급 업데이트
     void updateUserTier(@Param("userId") int userId, @Param("tierLevel") int tierLevel);
 
-    // 필터링된 회원 수 계산
-    int getTotalFilteredMemberCount(@Param("roleId") Integer roleId);
+    // 필터링된 회원 수 계산 + 검색기능
+    int getTotalFilteredMemberCount(@Param("roleId") Integer roleId, @Param("keyword") String keyword);
 
-    // 필터링된 회원 목록을 페이징하여 조회
+    // 필터링된 회원 목록을 페이징하여 조회 + 검색기능
     List<MemberDTO> getFilteredMemberList(@Param("limit") int limit,
                                           @Param("offset") int offset,
                                           @Param("roleId") Integer roleId,
-                                          @Param("sortOrder") String sortOrder);
+                                          @Param("sortOrder") String sortOrder,
+                                          @Param("keyword") String keyword);
 
     // 사용자의 기본 주소 조회
     AddressDTO getDefaultAddress(@Param("userId") int userId);

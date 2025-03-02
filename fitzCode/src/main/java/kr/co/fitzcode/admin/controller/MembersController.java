@@ -27,8 +27,9 @@ public class MembersController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(required = false) Integer role,
             @RequestParam(defaultValue = "recent") String sortOrder,
+            @RequestParam(required = false) String keyword,
             Model model) {
-        Map<String, Object> data = membersService.getFilteredMembers(page, size, role, sortOrder);
+        Map<String, Object> data = membersService.getFilteredMembers(page, size, role, sortOrder, keyword);
 
         model.addAttribute("members", data.get("members"));
         model.addAttribute("totalCount", data.get("totalCount"));
@@ -36,6 +37,7 @@ public class MembersController {
         model.addAttribute("pageSize", data.get("pageSize"));
         model.addAttribute("role", role);
         model.addAttribute("sortOrder", sortOrder);
+        model.addAttribute("keyword", keyword);
 
         return "admin/member/members";
     }

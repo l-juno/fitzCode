@@ -66,14 +66,20 @@
         WHERE user_id = #{userId}
     </update>
 
-    <!-- 필터링된 회원 목록을 정렬 기준에 따라 페이징하여 조회 -->
+    <!-- 필터링된 회원 목록을 정렬 기준에 따라 페이징하여 조회 + 검색기능 -->
     <select id="getFilteredMemberList" resultType="MemberDTO">
-        SELECT u.user_id, u.user_name, u.email, u.created_at, u.role_id, t.tier_level
+        SELECT u.user_id, u.user_name, u.email, u.created_at, u.role_id,
+        COALESCE(t.tier_level, 1) AS tier_level
         FROM USER u
         LEFT JOIN USER_TIER t ON u.user_id = t.user_id
         <where>
             <if test="roleId != null">
                 AND u.role_id = #{roleId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (u.user_name LIKE CONCAT('%', #{keyword}, '%')
+                OR u.email LIKE CONCAT('%', #{keyword}, '%')
+                OR u.nickname LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
         <choose>
@@ -84,7 +90,7 @@
                 ORDER BY u.created_at ASC
             </when>
             <when test="sortOrder == 'role'">
-                ORDER BY t.tier_level DESC, u.created_at DESC
+                ORDER BY COALESCE(t.tier_level, 1) DESC, u.created_at DESC
             </when>
             <otherwise>
                 ORDER BY u.created_at DESC
@@ -93,14 +99,18 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <!-- 필터링된 회원 수 계산 -->
+    <!-- 필터링된 회원 수 계산 + 검색기능 -->
     <select id="getTotalFilteredMemberCount" resultType="int">
         SELECT COUNT(*)
         FROM USER u
-        LEFT JOIN USER_TIER t ON u.user_id = t.user_id
         <where>
             <if test="roleId != null">
                 AND u.role_id = #{roleId}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (u.user_name LIKE CONCAT('%', #{keyword}, '%')
+                OR u.email LIKE CONCAT('%', #{keyword}, '%')
+                OR u.nickname LIKE CONCAT('%', #{keyword}, '%'))
             </if>
         </where>
     </select>

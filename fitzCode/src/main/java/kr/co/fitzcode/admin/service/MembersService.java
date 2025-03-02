@@ -15,6 +15,6 @@ public interface MembersService {
     // 특정 회원의 등급 업데이트
     void updateUserTier(int userId, int tierLevel);
 
-    // 필터링된 회원 목록을 페이지네이션과 함께 조회
-    Map<String, Object> getFilteredMembers(int page, int size, Integer roleId, String sortOrder);
+    // 필터링된 회원 목록을 페이지네이션과 함께 조회 + 검색기능
+    Map<String, Object> getFilteredMembers(int page, int size, Integer roleId, String sortOrder, String keyword);
 }
