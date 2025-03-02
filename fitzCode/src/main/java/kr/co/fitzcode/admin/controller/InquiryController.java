@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -42,6 +43,21 @@ public class InquiryController {
         InquiryDTO inquiry = inquiryService.getInquiryDetail(id);
         model.addAttribute("inquiry", inquiry);
         return "admin/inquiry/inquiryDetail";
+    }
+
+    // 문의 등록 폼 페이지
+    @GetMapping("/new")
+    public String showInquiryForm(Model model) {
+        model.addAttribute("inquiry", new InquiryDTO());
+        return "admin/inquiry/inquiryForm";
+    }
+
+    // 문의 등록 처리
+    @PostMapping
+    public String saveInquiry(@ModelAttribute InquiryDTO inquiryDTO,
+                              @RequestParam("images") List<MultipartFile> images) {
+        inquiryService.saveInquiry(inquiryDTO, images);
+        return "redirect:/admin/inquiries";
     }
 
     // 특정 문의의 상태를 업데이트

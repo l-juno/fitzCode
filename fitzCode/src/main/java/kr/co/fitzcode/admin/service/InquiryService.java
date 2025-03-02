@@ -1,6 +1,8 @@
 package kr.co.fitzcode.admin.service;
 
 import kr.co.fitzcode.admin.dto.InquiryDTO;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 public interface InquiryService {
@@ -27,4 +29,7 @@ public interface InquiryService {
 
     // 문의에 대한 답변 추가
     void updateInquiryReply(int inquiryId, String reply);
+
+    // 문의 등록 (이미지 포함)
+    void saveInquiry(InquiryDTO inquiryDTO, List<MultipartFile> images);
 }
