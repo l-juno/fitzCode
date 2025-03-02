@@ -3,7 +3,6 @@ package kr.co.fitzcode.admin.controller;
 import kr.co.fitzcode.admin.dto.MemberDetailDTO;
 import kr.co.fitzcode.admin.dto.OrderDTO;
 import kr.co.fitzcode.admin.service.MembersService;
-import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.common.enums.UserTier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
