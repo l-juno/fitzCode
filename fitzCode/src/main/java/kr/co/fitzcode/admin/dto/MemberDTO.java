@@ -19,7 +19,7 @@ public class MemberDTO {
     private List<Integer> categoryId;   // 카테고리
 
     // UserRole ->  enum으로 변환
-    public UserRole getUserRole() {
-        return UserRole.fromCode(this.roleId);
-    }
+//    public UserRole getUserRole() {
+//        return UserRole.fromCode(this.roleId);
+//    }
 }

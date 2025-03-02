@@ -3,100 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>회원 상세 정보</title>
-
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}">
+  <link rel="stylesheet" th:href="@{/css/admin/memberDetail.css}">
 
-  <style>
-    /* 전체 페이지 레이아웃 */
-    .wrapper {
-      display: flex;
-      min-height: 100vh;
-    }
-
-    /* 사이드바 설정 */
-    .adminSidebarWrap {
-      width: 250px;
-      flex-shrink: 0;
-    }
-
-    .sidebar {
-      position: fixed;
-      width: 250px;
-      height: 100%;
-      top: 0;
-      left: 0;
-    }
-
-    /* 회원 상세 정보 컨텐츠 */
-    .member-container {
-      flex-grow: 1;
-      padding: 20px;
-      max-width: 800px;
-      margin: 100px auto 0 auto;
-      height: 822px;
-      overflow-y: auto;
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-    }
-
-    .member-details table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    .member-details th, .member-details td {
-      padding: 10px;
-      border: 1px solid #e1e1e1;
-      text-align: left;
-    }
-
-    .member-details th {
-      width: 20%;
-      background-color: #f9f9f9;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .member-details td {
-      width: 80%;
-    }
-
-    .tier-form {
-      margin-top: 20px;
-    }
-
-    .tier-form select {
-      padding: 8px;
-      border: 1px solid #e1e1e1;
-      border-radius: 4px;
-      margin-right: 10px;
-    }
-
-    .tier-form button {
-      padding: 8px 15px;
-      text-decoration: none;
-      color: white;
-      background-color: #59758c;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .tier-form button:hover {
-      opacity: 0.8;
-    }
-  </style>
 </head>
 <body>
 
 <div class="wrapper">
-  <!-- 사이드바 추가 -->
   <div class="adminSidebarWrap">
     <div class="sidebar" th:replace="~{fragments/managerSidebar :: sidebar}"></div>
   </div>
 
-  <!-- 회원 상세 정보 컨텐츠 -->
   <div class="member-container">
     <h2>회원 상세 정보</h2>
     <div class="member-details">
@@ -110,10 +27,21 @@
         <tr><th>가입일</th><td th:text="${#temporals.format(member.createdAt, 'yyyy-MM-dd HH:mm')}"></td></tr>
         <tr><th>등급</th><td th:text="${tierName}"></td></tr>
         <tr><th>할인율</th><td th:text="|${discountRate}%|"></td></tr>
+        <tr th:if="${member.defaultAddress != null}">
+          <th>기본 주소</th>
+          <td th:text="${member.defaultAddress.addressLine1 + (member.defaultAddress.addressLine2 != null ? ', ' + member.defaultAddress.addressLine2 : '') + ' (' + member.defaultAddress.postalCode + ')'}"></td>
+        </tr>
+        <tr th:if="${member.defaultAccount != null}">
+          <th>기본 계좌</th>
+          <td th:text="${member.defaultAccount.bankName + ' ' + member.defaultAccount.accountNumber + ' (' + member.defaultAccount.accountHolder + ')'}"></td>
+        </tr>
+        <tr>
+          <th>총 구매 금액</th>
+          <td th:text="${#numbers.formatInteger(member.totalSpent, 3, 'COMMA')} + '원'"></td>
+        </tr>
       </table>
     </div>
 
-    <h3>등급 변경</h3>
     <div class="tier-form">
       <form th:action="@{/admin/members/{id}/tier(id=${member.userId})}" method="post">
         <select name="tierLevel">
@@ -124,9 +52,30 @@
         </select>
         <button type="submit">변경</button>
       </form>
+      <a href="/admin/members">목록</a>
+    </div>
+
+    <div class="order-history">
+      <h3 th:onclick="'toggleOrderHistory(' + ${member.userId} + ')'">주문 내역 보기 ></h3>
+      <table class="order-history-table" id="orderHistoryTable">
+        <thead>
+        <tr>
+          <th>주문 번호</th>
+          <th>주문 날짜</th>
+          <th>주문 상태</th>
+        </tr>
+        </thead>
+        <tbody id="orderList">
+
+        <!-- 비동기 주문 내역 -->
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
+
+<!-- memberDetail.js -->
+<script th:src="@{/js/admin/memberDetail.js}"></script>
 
 </body>
 </html>

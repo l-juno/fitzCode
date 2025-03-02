@@ -2,6 +2,7 @@ package kr.co.fitzcode.admin.service;
 
 import kr.co.fitzcode.admin.dto.MemberDTO;
 import kr.co.fitzcode.admin.dto.MemberDetailDTO;
+import kr.co.fitzcode.admin.dto.OrderDTO;
 import kr.co.fitzcode.admin.mapper.MembersMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,43 +16,51 @@ import java.util.Map;
 public class MembersServiceImpl implements MembersService {
     private final MembersMapper membersMapper;
 
-    // 전체 회원 목록 조회 (페이지네이션)
-//    @Override
-//    public Map<String, Object> getAllMembers(int page, int size) {
-//        int totalCount = membersMapper.getTotalMemberCount();
-//        int offset = (page - 1) * size;
-//        List<MemberDTO> members = membersMapper.getAllMembers(size, offset);
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("members", members);
-//        response.put("totalCount", totalCount);
-//        return response;
-//    }
-
-    // 회원 상세 정보 조회
+    // 특정 회원의 상세 정보 조회
     @Override
     public MemberDetailDTO getMemberDetail(int userId) {
-        return membersMapper.getMemberDetail(userId);
+        MemberDetailDTO member = membersMapper.getMemberDetail(userId);
+        if (member != null) {
+            // 기본 주소 설정
+            member.setDefaultAddress(membersMapper.getDefaultAddress(userId));
+            // 기본 계좌 설정
+            member.setDefaultAccount(membersMapper.getDefaultAccount(userId));
+            // 주문 내역 설정
+            List<OrderDTO> orders = membersMapper.getOrdersByUser(userId);
+            member.setOrders(orders != null ? orders : List.of());
+            // 총 구매 금액이 0이면 계산
+            if (member.getTotalSpent() == 0) {
+                int totalSpent = calculateTotalSpent(userId);
+                member.setTotalSpent(totalSpent);
+            }
+        }
+        return member;
     }
 
-    // 회원 삭제
+    // 사용자의 총 구매 금액 계산
+    private int calculateTotalSpent(int userId) {
+        Integer total = membersMapper.getTotalSpent(userId);
+        return total != null ? total : 0;
+    }
+
+    // 특정 회원 삭제
     @Override
     public void deleteMember(int userId) {
         membersMapper.deleteMember(userId);
     }
 
-    // 회원 등급 업데이트
+    // 특정 회원의 등급 업데이트
     @Override
     public void updateUserTier(int userId, int tierLevel) {
         membersMapper.updateUserTier(userId, tierLevel);
     }
 
-    // 필터링된 회원 목록 조회 (역할 필터 및 정렬)
+    // 필터링된 회원 목록을 페이지네이션과 함께 조회
     @Override
     public Map<String, Object> getFilteredMembers(int page, int size, Integer roleId, String sortOrder) {
-        int totalCount = membersMapper.getTotalFilteredMemberCount(roleId); // 필터링된 회원 총 수 조회
-        int offset = (page - 1) * size; // 페이지네이션 offset 계산
-        List<MemberDTO> members = membersMapper.getFilteredMemberList(size, offset, roleId, sortOrder); // 필터링된 회원 목록 조회
+        int totalCount = membersMapper.getTotalFilteredMemberCount(roleId);
+        int offset = (page - 1) * size;
+        List<MemberDTO> members = membersMapper.getFilteredMemberList(size, offset, roleId, sortOrder);
 
         Map<String, Object> response = new HashMap<>();
         response.put("members", members);

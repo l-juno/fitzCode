@@ -152,19 +152,7 @@
         </where>
     </select>
 
-    <!-- 문의 등록 -->
-    <insert id="insertInquiry" parameterType="InquiryDTO" useGeneratedKeys="true" keyProperty="inquiryId">
-        INSERT INTO INQUIRY (user_id, order_id, subject, content, category, status, product_id, created_at)
-        VALUES (#{userId}, #{orderId}, #{subject}, #{content}, #{categoryCode}, 1, #{productId}, NOW())
-    </insert>
-
-    <!-- 이미지 삽입 -->
-    <insert id="insertInquiryImage" parameterType="map">
-        INSERT INTO INQUIRY_IMAGE (inquiry_id, image_url, image_order)
-        VALUES (#{inquiryId}, #{imageUrl}, #{imageOrder})
-    </insert>
-
-    <!-- 문의에 첨부된 이미지 개수 조회 -->
+    <!-- 문의에 첨부된 이미지 개수 -->
     <select id="countImagesByInquiryId" resultType="int">
         SELECT COUNT(*)
         FROM INQUIRY_IMAGE

@@ -13,7 +13,7 @@ public interface InquiryMapper {
     int getUnansweredInquiryCount();
 
     // 전체 문의 목록을 조회 (페이징 처리)
-    List<InquiryDTO> getInquiryList(@Param("limit") int limit, @Param("offset") int offset);
+//    List<InquiryDTO> getInquiryList(@Param("limit") int limit, @Param("offset") int offset);
 
     // 특정 문의의 상세 정보를 조회
     InquiryDTO getInquiryDetail(@Param("inquiryId") int inquiryId);
@@ -28,20 +28,6 @@ public interface InquiryMapper {
     void updateInquiryReplyAndStatus(@Param("inquiryId") int inquiryId,
                                      @Param("reply") String reply,
                                      @Param("status") int status);
-
-    // 문의 등록
-    void insertInquiry(InquiryDTO inquiryDTO);
-
-    // 이미지 삽입
-    void insertInquiryImage(@Param("inquiryId") int inquiryId,
-                            @Param("imageUrl") String imageUrl,
-                            @Param("imageOrder") int imageOrder);
-
-    // 문의에 첨부된 이미지 개수 조회
-    int countImagesByInquiryId(@Param("inquiryId") int inquiryId);
-
-    // 전체 문의 수를 조회 (페이지네이션 용)
-    int getTotalInquiryCount();
 
     // 필터링된 문의의 총 개수를 조회 (카테고리와 상태 코드 기준)
     int getTotalFilteredInquiryCount(@Param("categoryIds") List<Integer> categoryIds,

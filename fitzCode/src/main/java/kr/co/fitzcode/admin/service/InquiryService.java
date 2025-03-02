@@ -30,6 +30,4 @@ public interface InquiryService {
     // 문의에 대한 답변 추가
     void updateInquiryReply(int inquiryId, String reply);
 
-    // 문의 등록 (이미지 포함)
-    void saveInquiry(InquiryDTO inquiryDTO, List<MultipartFile> images);
 }

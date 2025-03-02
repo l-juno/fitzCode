@@ -45,36 +45,21 @@ public class InquiryController {
         return "admin/inquiry/inquiryDetail";
     }
 
-    // 문의 등록 폼 페이지
-    @GetMapping("/new")
-    public String showInquiryForm(Model model) {
-        model.addAttribute("inquiry", new InquiryDTO());
-        return "admin/inquiry/inquiryForm";
-    }
-
-    // 문의 등록 처리
-    @PostMapping
-    public String saveInquiry(@ModelAttribute InquiryDTO inquiryDTO,
-                              @RequestParam("images") List<MultipartFile> images) {
-        inquiryService.saveInquiry(inquiryDTO, images);
-        return "redirect:/admin/inquiries";
-    }
-
-    // 특정 문의의 상태를 업데이트
+    // 문의 상태 업데이트
     @PostMapping("/{id}/status")
     public String updateInquiryStatus(@PathVariable int id, @RequestParam int status) {
         inquiryService.updateInquiryStatus(id, status);
         return "redirect:/admin/inquiries/" + id;
     }
 
-    // 특정 문의의 카테고리를 업데이트
+    // 문의 카테고리 업데이트
     @PostMapping("/{id}/category")
     public String updateInquiryCategory(@PathVariable int id, @RequestParam int category) {
         inquiryService.updateInquiryCategory(id, category);
         return "redirect:/admin/inquiries/" + id;
     }
 
-    // 특정 문의에 답변을 추가
+    // 문의에 답변
     @PostMapping("/{id}/reply")
     public String updateInquiryReply(@PathVariable int id, @RequestParam String reply) {
         inquiryService.updateInquiryReply(id, reply);
