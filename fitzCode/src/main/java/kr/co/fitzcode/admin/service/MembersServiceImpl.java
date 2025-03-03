@@ -62,9 +62,6 @@ public class MembersServiceImpl implements MembersService {
         int offset = (page - 1) * size;
         List<MemberDTO> members = membersMapper.getFilteredMemberList(size, offset, roleId, sortOrder, keyword); // 검색어 추가
 
-        System.out.println("Total Count: " + totalCount); // 디버깅
-        System.out.println("Members Size: " + members.size()); // 디버깅
-
         Map<String, Object> response = new HashMap<>();
         response.put("members", members);
         response.put("totalCount", totalCount);

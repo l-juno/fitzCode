@@ -7,7 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin/dashboard")
@@ -18,13 +23,31 @@ public class DashboardController {
 
     @GetMapping
     public String showAdminDashboard(Model model) {
-        // 1대1 문의 상태별 개수 데이터 추가
+        // 1대1 문의 상태별 개수 데이터
         Map<String, Integer> inquiryStatusCounts = dashboardService.getInquiryStatusCounts();
         model.addAttribute("inquiryStatusCounts", inquiryStatusCounts);
 
-        // 다른 대시보드 데이터 추가 (주간 신규 가입자, 등급별 회원 비율 등)
+        // 주간 신규 가입자 수 데이터
+        Map<LocalDate, Integer> weeklyNewUsers = dashboardService.getWeeklyNewUsers();
 
+        // LocalDate를 "M/d" 형식으로 변환
+        List<String> dateLabels = weeklyNewUsers.keySet().stream()
+                .map(date -> date.format(DateTimeFormatter.ofPattern("M/d")))
+                .collect(Collectors.toList());
 
-        return "admin/dashboard/dashboard"; // dashboard.html 템플릿 반환
+        List<Integer> newUserCounts = new ArrayList<>(weeklyNewUsers.values());
+
+        model.addAttribute("weeklyNewUserDates", dateLabels);
+        model.addAttribute("weeklyNewUserCounts", newUserCounts);
+        model.addAttribute("todayOrdersCount", dashboardService.getTodayOrdersCount());
+        model.addAttribute("todayTotalSales", dashboardService.getTodayTotalSales());
+        model.addAttribute("cancelReturnsCount", dashboardService.getCancelReturnsCount());
+        model.addAttribute("currentVisitors", dashboardService.getCurrentVisitors());
+
+        // 등급별 회원 수 데이터 추가
+        Map<Integer, Integer> memberTierCounts = dashboardService.getMemberTierCounts();
+        model.addAttribute("memberTierCounts", memberTierCounts);
+
+        return "admin/dashboard/dashboard";
     }
 }

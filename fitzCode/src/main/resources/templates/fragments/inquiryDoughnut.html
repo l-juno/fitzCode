@@ -8,7 +8,7 @@
 </head>
 <body>
 <div th:fragment="inquiryDoughnut(inquiryStatusCounts)" th:if="${not #maps.isEmpty(inquiryStatusCounts)}">
-  <h3><a th:href="@{/admin/inquiries}" class="chart-title">1대1 문의 상태 > </a></h3>
+  <h3><a th:href="@{/admin/inquiries}" class="chart-title">1대1 문의 현황 > </a></h3>
   <canvas id="inquiryDoughnutChart"></canvas>
 
   <script th:inline="javascript">
@@ -20,7 +20,7 @@
       }
     };
 
-    // 서버에서 전달받은 문의 상태 개수 데이터
+    // 문의 상태 개수 데이터
     const inquiryStatusCounts = /*[[${inquiryStatusCounts}]]*/ {};
 
     // 상태 코드를 한글로 변환

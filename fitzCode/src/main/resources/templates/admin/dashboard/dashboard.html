@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>관리자 대시보드</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
     <style>
         .dashboard-container {
             display: flex;
@@ -14,14 +13,14 @@
 
         .content-container {
             flex: 1;
-            margin-left: 100px;
+            margin-left: 50px;
             padding: 20px;
             box-sizing: border-box;
         }
 
         .charts-row-1, .charts-row-2 {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             width: 100%;
             max-width: 1200px;
             margin: 0 auto 20px;
@@ -37,6 +36,11 @@
             align-items: center;
         }
 
+        .chart-box.weekly-users-chart {
+            width: 390px !important;
+            max-width: 390px !important;
+        }
+
         canvas {
             max-width: 100%;
             height: 390px !important;
@@ -47,12 +51,106 @@
             color: inherit;
         }
 
-        h3 a {
-            text-decoration: none !important;
-            font-weight: bold !important;
-            color: black !important;
+        .kpi-container {
+            padding: 20px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto 20px;
+        }
+
+        .kpi-card {
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .kpi-content {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .kpi-icon {
+            font-size: 2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .pencil-icon { background-color: #007bff; color: white; }
+        .graph-icon { background-color: #28a745; color: white; }
+        .speech-icon { background-color: #ffc107; color: white; }
+        .user-icon { background-color: #17a2b8; color: white; }
+
+        .kpi-text {
+            flex: 1;
+            text-align: right;
+        }
+
+        .kpi-text h3 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .kpi-text span {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 250px !important;
+                margin: 20px 0 20px 20px;
+            }
+            .sidebar-logo {
+                width: 160px !important;
+                padding: 15px 0 15px 25px !important;
+            }
+            .content-container {
+                margin-left: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px !important;
+                margin: 10px;
+            }
+
+            .sidebar-logo {
+                width: 140px !important;
+                padding: 10px 0 10px 20px !important;
+            }
+
+            .content-container {
+                margin-left: 20px;
+            }
         }
     </style>
+    <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
 </head>
 <body>
 <div class="dashboard-container">
@@ -61,20 +159,27 @@
 
     <!-- 콘텐츠 영역 -->
     <div class="content-container">
-        <!-- 첫줄 -> 주간 신규 가입자 및 등급별 회원 비율 -->
+        <!-- KPI -->
+        <div th:replace="~{fragments/kpis :: kpiCards}"></div>
+
+        <!-- 첫줄 -> 1대1 문의 상태 및 등급별 회원 비율 -->
         <div class="charts-row-1">
             <div class="chart-box">
-                <div th:replace="~{fragments/weeklyNewUsers :: weeklyNewUsersChart}"></div>
+                <div th:replace="~{fragments/inquiryDoughnut :: inquiryDoughnut(inquiryStatusCounts=${inquiryStatusCounts})}"></div>
             </div>
             <div class="chart-box">
                 <div th:replace="~{fragments/memberTierPieChart :: memberTierPieChart}"></div>
             </div>
         </div>
 
-        <!-- 둘째 줄 -> 1대1 문의 상태 -->
+        <!-- 둘째 줄 -> 주간 신규 가입자 수 -->
         <div class="charts-row-2">
+            <div class="chart-box weekly-users-chart">
+                <div th:replace="~{fragments/weeklyNewUsers :: weeklyNewUsersChart}"></div>
+            </div>
             <div class="chart-box">
-                <div th:replace="~{fragments/inquiryDoughnut :: inquiryDoughnut(inquiryStatusCounts=${inquiryStatusCounts})}"></div>
+                <h3>1주일간 방문자 현황</h3>
+                <!--                <div th:replace="~{fragments/weeklyNewUsers :: weeklyNewUsersChart}"></div>-->
             </div>
         </div>
     </div>
