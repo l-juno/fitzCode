@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="kr.co.fitzcode.order.control.OrderControllerTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2025-03-01T11:39:03" hostname="Rittoui-MacBookPro.local" time="0.064">
+  <properties/>
+  <testcase name="사용자 세션 주기" classname="kr.co.fitzcode.order.control.OrderControllerTest" time="0.064"/>
+  <system-out><![CDATA[20:38:59.230 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [kr.co.fitzcode.order.control.OrderControllerTest]: OrderControllerTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+20:38:59.479 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration kr.co.fitzcode.FitzCodeApplication for test class kr.co.fitzcode.order.control.OrderControllerTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.3)
+
+2025-03-01 20:39:00 ?[34mINFO ?[0;39m k.c.f.o.control.OrderControllerTest - Starting OrderControllerTest using Java 17.0.12 with PID 3272 (started by ritto in /Users/ritto/git/fitzCode/fitzCode)
+2025-03-01 20:39:00 ?[39mDEBUG?[0;39m k.c.f.o.control.OrderControllerTest - Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-03-01 20:39:00 ?[34mINFO ?[0;39m k.c.f.o.control.OrderControllerTest - No active profile set, falling back to 1 default profile: "default"
+2025-03-01 20:39:03 ?[34mINFO ?[0;39m o.s.b.a.w.s.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2025-03-01 20:39:03 ?[34mINFO ?[0;39m o.s.b.t.m.w.SpringBootMockServletContext - Initializing Spring TestDispatcherServlet ''
+2025-03-01 20:39:03 ?[34mINFO ?[0;39m o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2025-03-01 20:39:03 ?[34mINFO ?[0;39m o.s.t.w.s.TestDispatcherServlet - Completed initialization in 2 ms
+2025-03-01 20:39:03 ?[34mINFO ?[0;39m k.c.f.o.control.OrderControllerTest - Started OrderControllerTest in 4.166 seconds (process running for 6.021)
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
