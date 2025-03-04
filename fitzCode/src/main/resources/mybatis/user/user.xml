@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.user.mapper.UserMapper">
+    <select id="getUserOne" resultType="UserDto">
+        select user_name, nickname, email, password, phone_number, birth_date, kakao_id, naver_id, profile_image, created_at, updated_at
+        from USER
+        where user_id = #{userId}
+    </select>
+</mapper>

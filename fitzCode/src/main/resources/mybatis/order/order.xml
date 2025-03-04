@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.order.mapper.OrderMapper">
+
+    <!-- 합배송에 대한 주문 내역 -->
+    <select id="getOderListByUserId" parameterType="int" resultType="hashmap">
+        SELECT o.order_id, o.order_status, o.created_at, d.tracking_number
+        FROM DELIVERY d JOIN ORDERS o
+        ON d.order_id = o.order_id
+        WHERE o.user_id = #{userId};
+    </select>
+<!-- <select id="getOderListByUserId" parameterType="string" resultType="hashmap">-->
+<!--        SELECT p.product_name, p.price, p.image_url, o.order_status, o.created_at-->
+<!--        FROM PRODUCT p JOIN ORDERS o-->
+<!--        ON p.product_id = o.product_id-->
+<!--        WHERE o.user_id = #{userId};-->
+<!--    </select>-->
+</mapper>
