@@ -10,6 +10,9 @@ public interface DashboardService {
     // 주간 신규 가입자 수 관련 (날짜 정보 포함)
     Map<LocalDate, Integer> getWeeklyNewUsers();
 
+    // 주간 방문자 수 관련 (날짜 정보 포함)
+    Map<LocalDate, Integer> getWeeklyVisitors();
+
     // 월별 총 매출 관련 (날짜 정보 포함)
     Map<LocalDate, Double> getMonthlyTotalSales();
 

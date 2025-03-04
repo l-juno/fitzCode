@@ -1,5 +1,6 @@
 package kr.co.fitzcode.admin.service;
 
+import kr.co.fitzcode.admin.dto.VisitorDTO;
 import kr.co.fitzcode.admin.mapper.DashboardMapper;
 import kr.co.fitzcode.common.enums.InquiryStatus;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +58,30 @@ public class DashboardServiceImpl implements DashboardService {
         }
         log.debug("신규 가입자 수: {}", weeklyNewUsers);
         return weeklyNewUsers;
+    }
+
+    // 1주일간 방문자 수
+    @Override
+    public Map<LocalDate, Integer> getWeeklyVisitors() { // 반환 타입 변경
+        List<VisitorDTO> counts = dashboardMapper.getWeeklyVisitorsWithDates();
+        Map<LocalDate, Integer> weeklyVisitors = new TreeMap<>();
+        log.debug("주간 방문자 수 원본 데이터: {}", counts);
+
+        LocalDate today = LocalDate.now();
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = today.minusDays(i);
+            weeklyVisitors.put(date, 0);
+        }
+
+        if (counts != null && !counts.isEmpty()) {
+            for (VisitorDTO dto : counts) {
+                weeklyVisitors.compute(dto.getVisitDate(), (key, oldValue) ->
+                        (oldValue == null ? 0 : oldValue) + (dto.getCount() != null ? dto.getCount() : 0));
+            }
+        }
+
+        log.debug("주간 방문자 수: {}", weeklyVisitors);
+        return weeklyVisitors;
     }
 
     // 월별 총 매출
