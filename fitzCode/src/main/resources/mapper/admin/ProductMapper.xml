@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.admin.mapper.ProductMapper">
+
+    <!-- 상품 등록 -->
+    <insert id="insertProduct" parameterType="kr.co.fitzcode.admin.dto.ProductDTO">
+        INSERT INTO PRODUCT (product_name, description, brand, price, stock, category_id, image_url, status, created_at)
+        VALUES (#{productName}, #{description}, #{brand}, #{price}, #{stock}, #{categoryId}, #{imageUrl}, #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}, NOW());
+    </insert>
+
+    <!-- 전체 상품 조회 -->
+    <select id="getAllProducts" resultType="kr.co.fitzcode.admin.dto.ProductDTO">
+        SELECT * FROM PRODUCT
+    </select>
+
+    <!-- 특정 상품 조회 -->
+    <select id="getProductById" parameterType="Long" resultType="kr.co.fitzcode.admin.dto.ProductDTO">
+        SELECT * FROM PRODUCT WHERE product_id = #{productId}
+    </select>
+
+    <!-- 상품 수정 -->
+    <update id="updateProduct" parameterType="kr.co.fitzcode.admin.dto.ProductDTO">
+        UPDATE PRODUCT
+        SET product_name = #{productName}, description = #{description}, brand = #{brand},
+            price = #{price}, stock = #{stock}, category_id = #{category_id},
+            image_url = #{imageUrl}, status = #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}
+        WHERE product_id = #{productId}
+    </update>
+
+    <!-- 상품 삭제 -->
+    <delete id="deleteProduct" parameterType="Long">
+        DELETE FROM PRODUCT WHERE product_id = #{productId}
+    </delete>
+
+</mapper>

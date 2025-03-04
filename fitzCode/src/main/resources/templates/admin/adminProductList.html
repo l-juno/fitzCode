@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 목록</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .filters {
+      margin-bottom: 20px;
+    }
+    select, button {
+      padding: 8px 12px;
+      margin-right: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pagination a {
+      padding: 8px 12px;
+      margin: 0 5px;
+      text-decoration: none;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .pagination a.active {
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid #4CAF50;
+    }
+    .pagination a:hover:not(.active) {
+      background-color: #ddd;
+    }
+    .empty-message {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>상품 목록</h2>
+
+  <div class="filters">
+    <select id="categoryFilter" name="categoryId" th:value="${categoryId}">
+      <option value="">카테고리</option>
+      <th:block th:each="category : ${categories}">
+        <option th:value="${category.categoryId}" th:text="${category.name}" th:selected="${categoryId == category.categoryId}"></option>
+      </th:block>
+    </select>
+
+    <select id="statusFilter" name="status" th:value="${status}">
+      <option value="">상태</option>
+      <option value="판매 중" th:selected="${status == '판매 중'}">판매 중</option>
+      <option value="품절" th:selected="${status == '품절'}">품절</option>
+      <option value="비활성" th:selected="${status == '비활성'}">비활성</option>
+    </select>
+
+    <select id="sortBy" name="sortBy" th:value="${sortBy}">
+      <option value="NEWEST" th:selected="${sortBy == 'NEWEST'}">최신 등록 순</option>
+      <option value="LOW_STOCK" th:selected="${sortBy == 'LOW_STOCK'}">적은 재고 순</option>
+      <option value="POPULAR" th:selected="${sortBy == 'POPULAR'}">많이 팔린 순</option>
+    </select>
+
+    <button th:onclick="|filterProducts()|">검색</button>
+    <a th:href="@{/admin/products/edit}" style="display: inline-block; padding: 8px 12px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 4px;">상품 등록/수정</a>
+  </div>
+  <br>
+
+  <table>
+    <thead>
+    <tr>
+      <th>상품 ID</th>
+      <th>상품 이름</th>
+      <th>가격</th>
+      <th>재고</th>
+      <th>상태</th>
+      <th>등록일</th>
+      <th>관리</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="product : ${products}">
+      <td th:text="${product.productId}"></td>
+      <td><a th:href="@{/admin/products/edit?id=${product.productId}}" th:text="${product.productName}"></a></td>
+      <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0)} + '원'"></td>
+      <td th:text="${product.stock}"></td>
+      <td th:text="${product.status.description}"></td>
+      <td th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}"></td>
+      <td>
+        <a th:href="@{/admin/products/edit?id=${product.productId}}" style="display: inline-block; padding: 6px 10px; background-color: #008CBA; color: white; text-decoration: none; border-radius: 4px;">상세/수정</a>
+      </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(products)}">
+      <td colspan="7" class="empty-message">상품이 없습니다.</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <a th:if="${currentPage > 1}" th:href="@{/admin/products/list(page=${currentPage - 1}, size=${size}, productId=${productId}, categoryId=${categoryId}, status=${status}, sortBy=${sortBy})}"><</a>
+    <th:block th:with="startPage=${currentPage > 5 ? currentPage - 5 : 1}, endPage=${startPage + 9 > totalPages ? totalPages : startPage + 9}">
+      <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+         th:href="@{/admin/products/list(page=${i}, size=${size}, productId=${productId}, categoryId=${categoryId}, status=${status}, sortBy=${sortBy})}"
+         th:text="${i}"
+         th:class="${currentPage == i} ? 'active' : ''"></a>
+    </th:block>
+    <a th:if="${currentPage < totalPages}" th:href="@{/admin/products/list(page=${currentPage + 1}, size=${size}, productId=${productId}, categoryId=${categoryId}, status=${status}, sortBy=${sortBy})}">></a>
+  </div>
+</div>
+
+<script>
+  function filterProducts() {
+    var productId = document.getElementById("productId") ? document.getElementById("productId").value : '';
+    var categoryId = document.getElementById("categoryFilter").value;
+    var status = document.getElementById("statusFilter").value;
+    var sortBy = document.getElementById("sortBy").value;
+    var url = '/admin/products/list?';
+
+    if (productId) url += 'productId=' + encodeURIComponent(productId) + '&';
+    if (categoryId) url += 'categoryId=' + encodeURIComponent(categoryId) + '&';
+    if (status) url += 'status=' + encodeURIComponent(status) + '&';
+    if (sortBy) url += 'sortBy=' + encodeURIComponent(sortBy);
+
+    window.location.href = url;
+  }
+</script>
+</body>
+</html>

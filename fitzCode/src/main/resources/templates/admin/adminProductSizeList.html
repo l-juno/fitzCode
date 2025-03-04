@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>사이즈별 재고 관리</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+    .filters {
+      margin-bottom: 20px;
+    }
+    select, button {
+      padding: 8px 12px;
+      margin-right: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      color: #333;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pagination a {
+      padding: 8px 12px;
+      margin: 0 5px;
+      text-decoration: none;
+      color: #333;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .pagination a.active {
+      background-color: #4CAF50;
+      color: white;
+      border: 1px solid #4CAF50;
+    }
+    .pagination a:hover:not(.active) {
+      background-color: #ddd;
+    }
+    .empty-message {
+      text-align: center;
+      color: #666;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>사이즈별 재고 관리</h2>
+
+  <div class="filters">
+    <select id="sizeCodeFilter" name="sizeCode" th:value="${sizeCode}">
+      <option value="">사이즈 선택</option>
+      <option value="1" th:selected="${sizeCode == 1}">220</option>
+      <option value="2" th:selected="${sizeCode == 2}">225</option>
+      <option value="3" th:selected="${sizeCode == 3}">230</option>
+      <option value="10" th:selected="${sizeCode == 10}">S</option>
+      <option value="11" th:selected="${sizeCode == 11}">M</option>
+      <option value="12" th:selected="${sizeCode == 12}">L</option>
+    </select>
+
+    <select id="sortBy" name="sortBy" th:value="${sortBy}">
+      <option value="SIZE_ASC" th:selected="${sortBy == 'SIZE_ASC'}">사이즈 순</option>
+      <option value="LOW_STOCK" th:selected="${sortBy == 'LOW_STOCK'}">재고 적은 순</option>
+    </select>
+
+    <button th:onclick="|filterSizes()|">검색</button>
+  </div>
+  <br>
+
+  <table>
+    <thead>
+    <tr>
+      <th>사이즈 코드</th>
+      <th>재고</th>
+      <th>수정</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="size : ${sizes}">
+      <td th:text="${size.sizeCode == 1 ? '220' :
+                               size.sizeCode == 2 ? '225' :
+                               size.sizeCode == 3 ? '230' :
+                               size.sizeCode == 10 ? 'S' :
+                               size.sizeCode == 11 ? 'M' :
+                               size.sizeCode == 12 ? 'L' : size.sizeCode}"></td>
+      <td th:text="${size.stock}"></td>
+      <td>
+        <form th:action="@{/admin/products/{productId}/inventory/size/{sizeId}(productId=${size.productId}, sizeId=${size.productSizeId})}" th:method="post">
+          <input type="number" th:name="stock" class="form-control" style="width: 100px;" required>
+          <button type="submit" style="padding: 6px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">재고 수정</button>
+        </form>
+      </td>
+    </tr>
+    <tr th:if="${#lists.isEmpty(sizes)}">
+      <td colspan="3" class="empty-message">사이즈별 재고가 없습니다.</td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <a th:if="${currentPage > 1}" th:href="@{/admin/products/{productId}/sizes(productId=${productId}, sizeCode=${sizeCode}, sortBy=${sortBy}, page=${currentPage - 1}, size=${size})}"><</a>
+    <th:block th:with="startPage=${currentPage > 5 ? currentPage - 5 : 1}, endPage=${startPage + 9 > totalPages ? totalPages : startPage + 9}">
+      <a th:each="i : ${#numbers.sequence(startPage, endPage)}"
+         th:href="@{/admin/products/{productId}/sizes(productId=${productId}, sizeCode=${sizeCode}, sortBy=${sortBy}, page=${i}, size=${size})}"
+         th:text="${i}"
+         th:class="${currentPage == i} ? 'active' : ''"></a>
+    </th:block>
+    <a th:if="${currentPage < totalPages}" th:href="@{/admin/products/{productId}/sizes(productId=${productId}, sizeCode=${sizeCode}, sortBy=${sortBy}, page=${currentPage + 1}, size=${size})}">></a>
+  </div>
+</div>
+
+<script>
+  function filterSizes() {
+    var productId = ${productId};
+    var sizeCode = document.getElementById("sizeCodeFilter").value;
+    var sortBy = document.getElementById("sortBy").value;
+    var url = '/admin/products/' + productId + '/sizes?';
+
+    if (sizeCode) url += 'sizeCode=' + encodeURIComponent(sizeCode) + '&';
+    if (sortBy) url += 'sortBy=' + encodeURIComponent(sortBy);
+
+    window.location.href = url;
+  }
+</script>
+</body>
+</html>
