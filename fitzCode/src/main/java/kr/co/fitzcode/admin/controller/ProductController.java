@@ -22,7 +22,7 @@ public class ProductController {
     public String listProducts(Model model) {
         List<ProductDTO> productList = productService.getAllProducts();
         model.addAttribute("products", productList);
-        return "admin/productList"; // Thymeleaf 페이지 연결
+        return "admin/productList";
     }
 
     // 상품 등록 폼

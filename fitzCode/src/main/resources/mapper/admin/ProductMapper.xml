@@ -4,23 +4,23 @@
 <mapper namespace="kr.co.fitzcode.admin.mapper.ProductMapper">
 
     <!-- 상품 등록 -->
-    <insert id="insertProduct" parameterType="kr.co.fitzcode.admin.dto.ProductDTO">
+    <insert id="insertProduct" parameterType="ProductDTO">
         INSERT INTO PRODUCT (product_name, description, brand, price, stock, category_id, image_url, status, created_at)
         VALUES (#{productName}, #{description}, #{brand}, #{price}, #{stock}, #{categoryId}, #{imageUrl}, #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}, NOW());
     </insert>
 
     <!-- 전체 상품 조회 -->
-    <select id="getAllProducts" resultType="kr.co.fitzcode.admin.dto.ProductDTO">
+    <select id="getAllProducts" resultType="ProductDTO">
         SELECT * FROM PRODUCT
     </select>
 
     <!-- 특정 상품 조회 -->
-    <select id="getProductById" parameterType="Long" resultType="kr.co.fitzcode.admin.dto.ProductDTO">
+    <select id="getProductById" parameterType="Long" resultType="ProductDTO">
         SELECT * FROM PRODUCT WHERE product_id = #{productId}
     </select>
 
     <!-- 상품 수정 -->
-    <update id="updateProduct" parameterType="kr.co.fitzcode.admin.dto.ProductDTO">
+    <update id="updateProduct" parameterType="ProductDTO">
         UPDATE PRODUCT
         SET product_name = #{productName}, description = #{description}, brand = #{brand},
             price = #{price}, stock = #{stock}, category_id = #{category_id},
