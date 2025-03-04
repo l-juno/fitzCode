@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입</title>
+    <link rel="stylesheet" th:href="@{/css/joinForm.css}"/>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* 위쪽부터 배치 */
+        min-height: 100vh;
+        margin: 0;
+        padding: 100px 20px; /* 위쪽 여백을 더 늘림 */
+        box-sizing: border-box;
+        overflow-y: auto;
+    }
+
+    .wrapper {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        /*margin-top: 20px;*/
+    }
+
+    .signup-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 10px;
+        /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+        width: 100%;
+        max-width: 550px;
+        text-align: center;
+        box-sizing: border-box; /* padding, border를 포함한 너비 계산 */
+    }
+    h2 {
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+        text-align: left;
+
+    }
+
+
+    label {
+        font-size: 14px;
+        /*font-weight: bold;*/
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    select{
+        width: 20%;
+        padding: 7px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"] {
+        width: 50%;
+        padding: 7px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    input:focus {
+        border-color: #a6c1ee;
+        outline: none;
+    }
+
+    span {
+        color: red;
+        font-size: 12px;
+        display: block;
+        margin-top: 5px;
+    }
+
+    .phonespan{
+        color: black;
+        font-size: 12px;
+        display: block;
+    }
+    .terms-container {
+        width: 100%;  /* 부모 요소인 signup-container의 너비에 맞춰줍니다. */
+        max-width: 500px;  /* signup-container와 동일한 최대 너비 */
+        margin: 20px auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #ffffff;
+        text-align: left;
+        box-sizing: border-box; /* padding, border를 포함한 너비 계산 */
+    }
+
+    .terms-box {
+        margin-top: 15px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 5px;
+    }
+
+    .terms-box p {
+        font-size: 14px;
+        line-height: 1.6;
+        margin: 5px 0;
+    }
+
+    .terms-box label {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .terms-box input {
+        margin-right: 5px;
+    }
+    .agree-all {
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .signup-btn {
+        width: 100%;
+        padding: 10px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #ccc;
+        color: #fff;
+        font-size: 16px;
+        cursor: not-allowed;
+    }
+    .signup-btn.active {
+        background-color: #496b9a;
+        cursor: pointer;
+    }
+
+    /* 기본 체크박스 스타일 */
+    input[type="checkbox"] {
+        appearance: none;  /* 기본 체크박스 스타일을 없애기 */
+        width: 20px;       /* 체크박스 크기 */
+        height: 20px;      /* 체크박스 크기 */
+        border: 2px solid #ddd; /* 테두리 색 */
+        border-radius: 5px; /* 모서리 둥글게 */
+        position: relative;
+        cursor: pointer;
+        background-color: #fff; /* 기본 배경 색 */
+    }
+
+    /* 체크 상태일 때의 스타일 */
+    input[type="checkbox"]:checked {
+        background-color: #a8c6e2; /* 체크시 배경 색 노란색 */
+        border-color: #a8c6e2; /* 테두리 색 노란색 */
+    }
+
+    input[type="checkbox"]:checked::after {
+        content: ''; /* 체크 표시 */
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 10px;
+        height: 10px;
+        background-color: #000000; /* 체크 표시 색 */
+        border-radius: 50%; /* 원형으로 만들기 */
+    }
+
+    .phone-inputs {
+        display: flex;
+        align-items: center;
+    }
+    .phone-inputs select, .phone-inputs input {
+        margin-right: 5px;
+    }
+    .phone-inputs span {
+        margin: 0 5px;
+    }
+
+     .birthdate-inputs {
+         display: flex;
+         align-items: center;
+     }
+    .birthdate-inputs select {
+        margin-right: 5px;
+    }
+    .birthdate-inputs span {
+        margin: 0 5px;
+    }
+
+</style>
+<body>
+<div class="wrapper">
+    <div th:replace="~{fragments/header}"></div>
+
+    <br>
+    <div class="signup-container">
+        <h2>회원가입</h2>
+        <form action="joinForm" method="post" id="signupForm" onsubmit="return validateForm()" th:object="${dto}">
+            <div class="form-group">
+                <label for="email">이메일 (ID)</label>
+                <input type="email" id="email" name="email" th:field="*{email}" required>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
+                <div th:if="${emailCheckError}" style="color: red; font-size: 12px;" th:text="${emailCheckError}"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" required> &nbsp; (최소 8자 이상 최대 16자)
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></span>
+            </div>
+            <div class="form-group">
+                <label for="password_confirm">비밀번호 확인</label>
+                <input type="password" id="password_confirm" name="password_confirm" required>
+                <span id="passwordError"></span>
+            </div>
+            <div class="form-group">
+                <label for="userName">이름</label>
+                <input type="text" id="userName" name="userName" required>
+            </div>
+            <div class="form-group">
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" name="nickname" required>
+                <div th:if="${nickNameCheckError}" style="color: red; font-size: 12px;" th:text="${nickNameCheckError}"></div>
+            </div>
+<!--            <div class="form-group">-->
+<!--                <label for="phoneNumber">전화번호</label>-->
+<!--                <input type="text" id="phoneNumber" name="phoneNumber" required>-->
+<!--                <div th:if="${phoneNumberCheckError}" style="color: red; font-size: 12px;" th:text="${phoneNumberCheckError}"></div>-->
+<!--            </div>-->
+
+             <div class="form-group">
+            <label for="phoneNumber">휴대전화</label>
+            <div class="phone-inputs">
+                <select id="phoneNumber" name="phoneNumber" required>
+                    <option value="010">010</option>
+                    <option value="011">011</option>
+                    <option value="016">016</option>
+                    <option value="017">017</option>
+                    <option value="018">018</option>
+                    <option value="019">019</option>
+                </select>
+                <span class="phonespan">-</span>
+                <input type="text" id="phoneNumber1" name="phoneNumber" required style="width: 25%">
+                <span class="phonespan">-</span>
+                <input type="text" id="phoneNumber2" name="phoneNumber" required style="width: 25%">
+            </div>
+        </div>
+
+            <div class="form-group">
+                <label for="birthDate">생년월일</label>
+                <div class="birthdate-inputs" id="birthDate">
+                    <select id="year" name="year" required>
+                        <option value="">년</option>
+                        <!-- 1990부터 2006년까지 -->
+                        <option value="1990">1990</option>
+                        <option value="1991">1991</option>
+                        <option value="1992">1992</option>
+                        <option value="1993">1993</option>
+                        <option value="1994">1994</option>
+                        <option value="1995">1995</option>
+                        <option value="1996">1996</option>
+                        <option value="1997">1997</option>
+                        <option value="1998">1998</option>
+                        <option value="1999">1999</option>
+                        <option value="2000">2000</option>
+                        <option value="2001">2001</option>
+                        <option value="2002">2002</option>
+                        <option value="2003">2003</option>
+                        <option value="2004">2004</option>
+                        <option value="2005">2005</option>
+                        <option value="2006">2006</option>
+                    </select>
+                    &nbsp;
+                    <select id="month" name="month" required>
+                        <option value="">월</option>
+                        <!-- 1부터 12까지 -->
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                    </select>
+                    &nbsp;
+                    <select id="day" name="day" required>
+                        <option value="">일</option>
+                        <!-- 1부터 31까지 -->
+                        <option value="01">01</option>
+                        <option value="02">02</option>
+                        <option value="03">03</option>
+                        <option value="04">04</option>
+                        <option value="05">05</option>
+                        <option value="06">06</option>
+                        <option value="07">07</option>
+                        <option value="08">08</option>
+                        <option value="09">09</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                        <option value="26">26</option>
+                        <option value="27">27</option>
+                        <option value="28">28</option>
+                        <option value="29">29</option>
+                        <option value="30">30</option>
+                        <option value="31">31</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+            <!-- 약관 동의 섹션 -->
+            <div class="terms-container">
+                <label class="agree-all">
+                    <input type="checkbox" id="agree-all">
+                    이용약관 및 개인정보수집 및 이용, 쇼핑정보 수신(선택)에 모두 동의합니다.
+                </label>
+
+                <div class="terms-box">
+                    <p><strong>[필수] 이용약관 동의</strong></p>
+                    <p>본 약관은 쇼핑몰 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정합니다.</p>
+                    <p>회사는 약관을 변경할 수 있으며, 변경 시 사전 고지 후 시행됩니다.</p>
+                    <label>
+                        <input type="checkbox" class="agree-check" data-required="true">
+                        이용약관에 동의하십니까?
+                    </label>
+                </div>
+
+                <div class="terms-box">
+                    <p><strong>[필수] 개인정보 수집 및 이용 동의</strong></p>
+                    <p>회사는 회원의 원활한 서비스 이용을 위해 최소한의 개인정보를 수집하며, 목적 달성 후 파기합니다.</p>
+                    <p>수집 항목: 성명, 이메일, 전화번호, 주소 등</p>
+                    <label>
+                        <input type="checkbox" class="agree-check" data-required="true">
+                        개인정보 수집 및 이용에 동의하십니까?
+                    </label>
+                </div>
+
+                <div class="terms-box">
+                    <p><strong>[선택] 쇼핑정보 수신 동의</strong></p>
+                    <p>할인쿠폰, 이벤트, 신상품 소식 등 다양한 혜택 정보를 SMS 또는 이메일로 받아보실 수 있습니다.</p>
+                    <p>단, 주문/거래 정보 및 주요 정책 관련 내용은 수신 동의 여부와 관계없이 발송됩니다.</p>
+                    <label>
+                        <input type="checkbox" class="agree-check">
+                        쇼핑정보 수신에 동의하십니까?
+                    </label>
+                </div>
+            </div>
+            <button type="submit" id="signup-btn" class="signup-btn" disabled>회원가입</button>
+        </form>
+
+    </div>
+    <br>
+
+    <div th:replace="~{fragments/footer}"></div>
+</div>
+
+<script>
+    function validateForm() {
+        var password = document.getElementById('password').value;
+        var passwordConfirm = document.getElementById('password_confirm').value;
+        var passwordError = document.getElementById('passwordError');
+
+        if (password !== passwordConfirm) {
+            passwordError.textContent = '비밀번호와 비밀번호 확인이 일치하지 않습니다.';
+            return false;
+        } else {
+            passwordError.textContent = '';
+        }
+        return true;
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const agreeAll = document.getElementById("agree-all");
+        const agreeChecks = document.querySelectorAll(".agree-check[data-required='true']");
+        const signupBtn = document.getElementById("signup-btn");
+
+        // 전체 동의 체크 시 모든 항목 체크
+        agreeAll.addEventListener("change", function () {
+            document.querySelectorAll(".agree-check").forEach(checkbox => {
+                checkbox.checked = agreeAll.checked;
+            });
+            toggleSignupButton();
+        });
+
+        // 개별 체크박스 변경 시 전체 동의 체크박스 상태 변경
+        document.querySelectorAll(".agree-check").forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                agreeAll.checked = [...document.querySelectorAll(".agree-check")].every(cb => cb.checked);
+                toggleSignupButton();
+            });
+        });
+
+        // 필수 항목 체크 여부에 따라 회원가입 버튼 활성화
+        function toggleSignupButton() {
+            const allChecked = [...agreeChecks].every(cb => cb.checked);
+            if (allChecked) {
+                signupBtn.classList.add("active");
+                signupBtn.removeAttribute("disabled");
+            } else {
+                signupBtn.classList.remove("active");
+                signupBtn.setAttribute("disabled", "true");
+            }
+        }
+    });
+
+</script>
+
+
+</body>
+</html>

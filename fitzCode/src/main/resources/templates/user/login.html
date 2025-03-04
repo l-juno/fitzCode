@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>fitzCode</title>
+    <style>
+        /* 기본 스타일 */
+        .bodycontainer {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0 10px; /* 기존 padding-top 제거 */
+            margin-top: 120px; /* 헤더 높이만큼 여백 추가 */
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+        }
+
+        .line {
+            position: relative;
+            height: 1px;
+            background-color: #ddd;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .line::before {
+            content: "간편 로그인";
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: white;
+            padding: 0 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 20px;
+            background-color: #496b9a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #2e4763;
+        }
+
+        .links1 {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .links2 {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .links1 a {
+            font-size: 14px;
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .links2 a {
+            font-size: 14px;
+            color: #496b9a;
+            text-decoration: none;
+        }
+
+        .links1 a:hover {
+            text-decoration: underline;
+        }
+
+        .links2 a:hover {
+            text-decoration: underline;
+        }
+
+        .social-login {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+
+        .social-login button:hover {
+            background-color: #f1c40f;
+        }
+
+        .kakao-icon {
+            width: 100%;
+            height: 60px;
+        }
+
+        .kakao-icon:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="bodycontainer">
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+<!-- 로그인 폼 -->
+<div class="container">
+    <h2>로그인</h2>
+    <form action="/login" method="post">
+        <!-- 이메일 입력 -->
+        <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요">
+        </div>
+
+        <!-- 비밀번호 입력 -->
+        <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required placeholder="비밀번호를 입력하세요">
+<!--            <i class="eye-icon" id="eye-icon" onclick="togglePasswordVisibility()">👀</i>-->
+        </div>
+
+        <!-- 로그인 버튼 -->
+        <button type="submit" class="btn">로그인</button>
+
+        <!-- 이메일, 비밀번호 찾기 링크 -->
+        <div class="links1">
+            <a href="#">이메일 찾기</a> |
+            <a href="/pwEmail">비밀번호 찾기</a>
+        </div>
+
+        <!-- 회원가입 링크 -->
+        <div class="links2">
+            <p>아직 계정이 없으신가요? <a href="/joinForm">회원가입하러가기</a></p>
+        </div>
+
+        <br>
+        <div class="line"></div>
+        <!-- 간편 로그인 바 -->
+
+        <div class="social-login">
+            <img class="kakao-icon" src="/img/kakao_login_kr.png" alt="Kakao Logo">
+        </div>
+    </form>
+</div>
+</div>
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+<script>
+    // function togglePasswordVisibility() {
+    //     var passwordField = document.getElementById("password");
+    //     var eyeIcon = document.getElementById("eye-icon");
+    //
+    //     // 비밀번호 입력 필드의 type을 toggle하여 입력값을 보이거나 숨김
+    //     var currentType = passwordField.getAttribute("type");
+    //
+    //     if (currentType === "password") {
+    //         passwordField.setAttribute("type", "text");  // 비밀번호를 보여줌
+    //         eyeIcon.textContent = "🙈";  // 아이콘을 '숨기기'로 변경
+    //     } else {
+    //         passwordField.setAttribute("type", "password");  // 비밀번호를 숨김
+    //         eyeIcon.textContent = "👀";  // 아이콘을 '보기'로 변경
+    //     }
+    // }
+</script>
+
+</body>
+</html>
