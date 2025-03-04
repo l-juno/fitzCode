@@ -41,6 +41,9 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
     @Autowired
     public VisitorLoggingFilter(DashboardMapper dashboardMapper) {
         this.dashboardMapper = dashboardMapper;
+        if (dashboardMapper == null) {
+            // log.error("DashboardMapper 주입 안됨");
+        }
     }
 
     @Override
@@ -49,8 +52,9 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
         try {
             String pageUrl = request.getRequestURI();
 
-            // 정적 리소스 제외
-            if (isStaticResource(pageUrl)) {
+            // 정적 리소스 및 /admin으로 시작하지 않는 요청 제외
+            if (isExcludedResource(pageUrl)) {
+                // log.debug("제외된 리소스 요청 무시함 - 페이지 URL: {}", pageUrl);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -62,7 +66,7 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
             if (visitorId == null) {
                 visitorId = UUID.randomUUID().toString();
                 setVisitorIdCookie(response, visitorId);
-//                log.debug("새로운 visitorId 생성 및 쿠키에 설정: {}", visitorId);
+                // log.debug("새로운 visitorId 생성 및 쿠키에 설정: {}", visitorId);
             }
 
             // 방문자 데이터 로깅
@@ -76,36 +80,42 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
             // 검색엔진 또는 외부 링크 여부 확인
             String processedReferrerUrl = processReferrerUrl(referrerUrl);
 
-            // 중복 체크: 30분 이내 동일 visitorId와 pageUrl로 요청이 있었는지 확인
-            VisitorDTO recentLog = dashboardMapper.findRecentVisitLog(visitorId, pageUrl);
+            // 중복 체크: 30분 이내 동일 visitorId로 요청이 있었는지 확인 (pageUrl 제거)
+            VisitorDTO recentLog = dashboardMapper.findRecentVisitLogByVisitorId(visitorId);
             if (recentLog == null || (System.currentTimeMillis() - recentLog.getVisitTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) > DUPLICATE_CHECK_INTERVAL) {
-//                log.debug("요청 처리 중 - 페이지 URL: {}, visitorId: {}, 방문 시간: {}, 유입 경로: {}",
-//                        pageUrl, visitorId, visitTime, processedReferrerUrl);
+                // log.debug("요청 처리 중 - 페이지 URL: {}, visitorId: {}, 방문 시간: {}, 유입 경로: {}",
+                //         pageUrl, visitorId, visitTime, processedReferrerUrl);
 
                 if (dashboardMapper != null) {
                     dashboardMapper.insertVisitLog(userId, visitorId, visitTime, pageUrl, processedReferrerUrl, userAgent, deviceType, ipAddress);
-//                    log.debug("방문자 로그 삽입: userId={}, visitorId={}, 페이지 URL={}, 유입 경로={}",
-//                            userId, visitorId, pageUrl, processedReferrerUrl);
+                    // log.debug("방문자 로그 삽입: userId={}, visitorId={}, 페이지 URL={}, 유입 경로={}",
+                    //         userId, visitorId, pageUrl, processedReferrerUrl);
                 } else {
-//                    log.error("DashboardMapper가 null입니다, 방문자 로그를 삽입할 수 없습니다");
+                    // log.error("DashboardMapper가 null, 방문자 로그 삽입안됨");
                 }
             } else {
-//                log.debug("중복 방문자 로그 건너뜀 - visitorId={}, 페이지 URL={} (30분 이내), 유입 경로: {}",
-//                        visitorId, pageUrl, processedReferrerUrl);
+                // log.debug("중복 방문자 로그 건너뜀 - visitorId={}, 페이지 URL={} (30분 이내), 유입 경로: {}",
+                //         visitorId, pageUrl, processedReferrerUrl);
             }
 
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-//            log.error("VisitorLoggingFilter에서 오류 발생: ", e);
+            // log.error("VisitorLoggingFilter에서 오류 발생: ", e);
             throw e;
         }
     }
 
-    private boolean isStaticResource(String path) {
-        return path.startsWith("/css/") ||
+    private boolean isExcludedResource(String path) {
+        // 정적 리소스 제외
+        if (path.startsWith("/css/") ||
                 path.startsWith("/img/") ||
                 path.startsWith("/js/") ||
-                path.equals("/favicon.ico");
+                path.equals("/favicon.ico")) {
+            return true;
+        }
+
+        // /admin으로 시작하지 않는 요청 제외
+        return !path.startsWith("/admin/");
     }
 
     private String getVisitorIdFromCookie(HttpServletRequest request) {
@@ -139,12 +149,12 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
             }
         }
 
-        // 로컬호스트인 경우 null
+        // 로컬호스트인 경우
         if (referrerUrl.startsWith("http://localhost:8080") || referrerUrl.startsWith("https://localhost:8080")) {
-            return null;
+            return null; // 로컬 참조는 유입 경로로 기록하지 않음
         }
 
-        // 외부 링크로 간주함
+        // 외부 링크로 간주
         return "EXTERNAL_LINK:" + referrerUrl;
     }
 }

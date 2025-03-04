@@ -24,5 +24,5 @@ public interface DashboardMapper {
                         String referrerUrl, String userAgent, int deviceType, String ipAddress);
 
     // 최근 방문 로그 조회 (중복 체크용)
-    VisitorDTO findRecentVisitLog(String visitorId, String pageUrl);
+    VisitorDTO findRecentVisitLogByVisitorId(String visitorId);
 }

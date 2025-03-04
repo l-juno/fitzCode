@@ -19,36 +19,56 @@
         }
 
         .charts-row-1, .charts-row-2 {
-            display: flex;
-            justify-content: center;
             width: 100%;
-            max-width: 1200px;
             margin: 0 auto 20px;
-            gap: min(5vw, 50px);
         }
 
+        .charts-row-1 {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            padding: 0;
+            gap: 0;
+        }
+
+        .charts-row-2 {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            padding: 0;
+            gap: 0;
+        }
+
+        /* 차트 크기 조정 */
         .chart-box {
-            width: 49%;
-            max-width: 600px;
+            width: 50%;
+            max-width: none;
             height: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
+            box-sizing: border-box;
         }
 
-        .chart-box.weekly-users-chart {
-            width: 390px !important;
-            max-width: 390px !important;
+        .chart-box h3 {
+            text-align: center;
+            width: 100%;
         }
 
-        .chart-box.weekly-visitors-chart {
-            width: 390px !important;
-            max-width: 390px !important;
+        /* 두 번째 줄 차트 */
+        .chart-box.weekly-users-chart, .chart-box.weekly-visitors-chart {
+            width: 50%;
+            max-width: none;
+            height: 429px !important;
+            padding-top: 20px;
+            margin-bottom: 50px;
         }
 
+        /* Chart.js 캔버스 크기 */
         canvas {
-            max-width: 100%;
-            height: 390px !important;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 389px;
         }
 
         a {
@@ -112,11 +132,54 @@
             .kpi-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            .charts-row-1, .charts-row-2 {
+                max-width: 980px;
+                justify-content: space-between;
+                gap: 0;
+            }
+            .chart-box {
+                width: 50%;
+                max-width: none;
+            }
+            .chart-box h3 {
+                text-align: center;
+                width: 100%;
+            }
+            .chart-box.weekly-users-chart, .chart-box.weekly-visitors-chart {
+                width: 50%;
+                max-width: none;
+                height: 429px !important;
+                margin-bottom: 50px;
+            }
         }
 
         @media (max-width: 768px) {
             .kpi-grid {
                 grid-template-columns: 1fr;
+            }
+            .charts-row-1, .charts-row-2 {
+                max-width: 100%;
+                flex-direction: column;
+                gap: 20px;
+                padding: 0;
+            }
+            .chart-box {
+                width: 100% !important;
+                max-width: none;
+                height: auto !important;
+            }
+            .chart-box h3 {
+                text-align: center;
+                width: 100%;
+            }
+            .chart-box.weekly-users-chart, .chart-box.weekly-visitors-chart {
+                width: 100% !important;
+                max-width: none;
+                height: 429px !important;
+                margin-bottom: 50px;
+            }
+            .content-container {
+                margin-left: 20px;
             }
         }
 
@@ -144,7 +207,6 @@
                 width: 140px !important;
                 padding: 10px 0 10px 20px !important;
             }
-
             .content-container {
                 margin-left: 20px;
             }
@@ -178,7 +240,7 @@
                 <div th:replace="~{fragments/weeklyNewUsers :: weeklyNewUsersChart}"></div>
             </div>
             <div class="chart-box weekly-visitors-chart">
-                <div th:replace="~{fragments/weeklyVisitorsChart :: weeklyVisitorsChart}"></div> <!-- weeklyVisitorData 제거 -->
+                <div th:replace="~{fragments/weeklyVisitorsChart :: weeklyVisitorsChart}"></div>
             </div>
         </div>
     </div>

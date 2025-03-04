@@ -77,9 +77,9 @@
     </insert>
 
     <!-- 최근 방문 로그 조회 (중복 체크용) -->
-    <select id="findRecentVisitLog" resultType="kr.co.fitzcode.admin.dto.VisitorDTO">
+    <select id="findRecentVisitLogByVisitorId" resultType="kr.co.fitzcode.admin.dto.VisitorDTO">
         SELECT * FROM VISIT_LOG
-        WHERE visitor_id = #{visitorId} AND page_url = #{pageUrl}
+        WHERE visitor_id = #{visitorId}
         ORDER BY visit_time DESC LIMIT 1
     </select>
 
