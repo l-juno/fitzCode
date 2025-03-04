@@ -20,7 +20,7 @@
         stock,
         category_id AS categoryId,
         image_url AS imageUrl,
-        status,
+        status AS status,
         created_at AS createdAt
         FROM PRODUCT
     </select>
@@ -36,7 +36,7 @@
         stock,
         category_id AS categoryId,
         image_url AS imageUrl,
-        status,
+        status AS status,
         created_at AS createdAt
         FROM PRODUCT
         WHERE product_id = #{productId}

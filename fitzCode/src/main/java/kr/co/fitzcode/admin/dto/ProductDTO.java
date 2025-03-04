@@ -27,12 +27,4 @@ public class ProductDTO {
     private Timestamp createdAt;
     private List<ProductSizeDTO> productSizes; // 사이즈별 재고
 
-    // String과 Enum 간 변환 지원
-    public void setStatusString(String statusString) {
-        this.status = ProductStatus.fromDescription(statusString);
-    }
-
-    public String getStatusString() {
-        return this.status != null ? this.status.getDescription() : null;
-    }
 }

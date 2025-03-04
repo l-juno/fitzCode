@@ -1,33 +1,32 @@
 package kr.co.fitzcode.common.enums;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
 
-@Getter
-@RequiredArgsConstructor
 public enum ProductStatus {
-    ACTIVE(1, "판매 중"),
-    SOLD_OUT(2, "품절"),
-    INACTIVE(3, "비활성");
+    ACTIVE(1, "활성"),
+    INACTIVE(2, "비활성"),
+    DISCONTINUED(3, "단종");
 
     private final int code;
-    private final String description;
+    private final String description; // 설명 추가
 
-    public static ProductStatus fromCode(int code) {
-        for (ProductStatus status : ProductStatus.values()) {
-            if (status.getCode() == code) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("잘못된 상태 코드입니다: " + code);
+    ProductStatus(int code, String description) {
+        this.code = code;
+        this.description = description;
     }
 
-    public static ProductStatus fromDescription(String description) {
-        for (ProductStatus status : ProductStatus.values()) {
-            if (status.getDescription().equals(description)) {
-                return status;
-            }
-        }
-        throw new IllegalArgumentException("잘못된 상태 설명 : " + description);
+    public int getCode() {
+        return code;
+    }
+
+    public String getDescription() { // Thymeleaf에서 호출
+        return description;
+    }
+
+    public static ProductStatus fromCode(int code) {
+        return Arrays.stream(ProductStatus.values())
+                .filter(status -> status.code == code)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("잘못된 상태 code: " + code));
     }
 }
