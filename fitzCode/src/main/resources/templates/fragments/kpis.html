@@ -20,7 +20,7 @@
             <div class="kpi-content">
                 <img src="/img/sales_icon.png" alt="매출" class="kpi-icon">
                 <div class="kpi-text">
-                    <h3 th:text="${#numbers.formatInteger(todayTotalSales != null ? todayTotalSales : 0, 3, 'COMMA')}+원"></h3>
+                    <h3 th:text="${todayTotalSales != null and todayTotalSales != 0 ? #numbers.formatInteger(todayTotalSales, 3, 'COMMA') + '원' : '0원'}"></h3>
                     <span>오늘 매출</span>
                 </div>
             </div>
