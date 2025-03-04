@@ -78,5 +78,18 @@
         SELECT COUNT(*) FROM PRODUCT;
     </select>
 
+    <select id="getProductsByFilter" resultType="kr.co.fitzcode.product.dto.ProductDTO" parameterType="java.util.Map">
+        SELECT * FROM PRODUCT p CATEGORY c
+        JOIN ON
+        
+        <where>
+            <foreach collection="filters" item="entry" separator="AND">
+                ${entry.key} = #{entry.value}
+            </foreach>
+        </where>
+    </select>
+
+
+
 
 </mapper>

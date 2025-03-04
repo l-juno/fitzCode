@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +64,10 @@ public class ProductServiceImple implements ProductService {
     public int getNumberOfPages() {
         int products = productMapper.getNumberOfProducts();
         return (products/PRODUCT_PER_PAGE);
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByFilter(Map<String, String> filters) {
+        return productMapper.getProductsByFilter(filters);
     }
 }

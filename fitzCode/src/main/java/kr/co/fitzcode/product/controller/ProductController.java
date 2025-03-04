@@ -24,32 +24,41 @@ public class ProductController {
 
     @GetMapping(value = { "/list", "/list/{pageNum}"})
     public String list(@PathVariable(required = false) Integer pageNum, Model model) {
-        int currentPage = pageNum == null ? 1 : pageNum;
-        int firstPage = 1;
-        int lastPage = productService.getNumberOfPages();
-        Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
-        logger.info("Last page number: {}", lastPage);
-        if (currentPage <= 3) {
-            lastPage = 5;
-        } else if (currentPage + 2 >= lastPage) {
-            firstPage = lastPage - 4;
-        } else {
-            firstPage = currentPage - 2;
-            lastPage = currentPage + 2;
-        }
-        model.addAttribute("firstPage", firstPage);
-        model.addAttribute("lastPage", lastPage);
-        model.addAttribute("currentPage", currentPage);
-        List<ProductDTO> list = productService.getProductsByPage(currentPage);
-        model.addAttribute("productList", list);
+//        // paging
+//        int currentPage = pageNum == null ? 1 : pageNum;
+//        int firstPage = 1;
+//        int lastPage = productService.getNumberOfPages();
+//        Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
+//        logger.info("Last page number: {}", lastPage);
+//        if (currentPage <= 3) {
+//            lastPage = 5;
+//        } else if (currentPage + 2 >= lastPage) {
+//            firstPage = lastPage - 4;
+//        } else {
+//            firstPage = currentPage - 2;
+//            lastPage = currentPage + 2;
+//        }
+//        model.addAttribute("firstPage", firstPage);
+//        model.addAttribute("lastPage", lastPage);
+//        model.addAttribute("currentPage", currentPage);
+//
+//        // getting list
+//        List<ProductDTO> list = productService.getProductsByPage(currentPage);
+//        model.addAttribute("productList", list);
         return "product/productList";
     }
 
 
     @GetMapping("/detail/{productId}")
-    public String detail(@PathVariable Long productId, Model model) {
-        model.addAttribute("productId", productId);
+    public String detail(@PathVariable int productId, Model model) {
+        ProductDTO product = productService.getProductById(productId);
+        model.addAttribute("product", product);
         return "product/productDetail";
+    }
+
+    @GetMapping("/filter")
+    public String filter(Model model) {
+        return "product/filter";
     }
 
 

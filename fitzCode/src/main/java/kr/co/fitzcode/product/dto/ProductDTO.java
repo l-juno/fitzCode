@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,4 +22,10 @@ public class ProductDTO {
     private int categoryId;
     private String imageUrl;
     private LocalDateTime createdAt;
+
+    public String getFormattedPrice() {
+        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(price);
+    }
+
 }

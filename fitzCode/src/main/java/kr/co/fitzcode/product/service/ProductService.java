@@ -4,6 +4,7 @@ package kr.co.fitzcode.product.service;
 import kr.co.fitzcode.product.dto.ProductDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
     List<ProductDTO> getProductsByPage(int pageNum);
@@ -16,4 +17,6 @@ public interface ProductService {
     void deleteProductById(int productId);
 
     int getNumberOfPages();
+
+    List<ProductDTO> getProductsByFilter(Map<String, String> filters);
 }

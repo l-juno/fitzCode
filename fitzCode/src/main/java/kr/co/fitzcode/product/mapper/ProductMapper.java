@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
@@ -23,4 +24,7 @@ public interface ProductMapper {
     void deleteProductById(int productId);
 
     int getNumberOfProducts();
+
+    List<ProductDTO> getProductsByFilter(Map<String, String> filters);
+
 }

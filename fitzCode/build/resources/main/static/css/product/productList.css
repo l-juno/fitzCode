@@ -103,6 +103,17 @@
     pointer-events: none;
 }
 
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure full width */
+    padding: 10px 0; /* Add some spacing */
+}
+.searchBox {
+    margin-top: 100px;
+}
+
 
 
 

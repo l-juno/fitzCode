@@ -1,0 +1,112 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.filter-button {
+    margin-top: 100px;
+    padding: 10px 20px;
+    background-color: #0b0b0b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+.filter-sidebar {
+    margin-top: 100px;
+    position: fixed;
+    top: 0;
+    left: -400px;
+    width: 300px;
+    height: 100%;
+    background: #f8f8f8;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+    padding: 20px;
+    transition: left 0.3s ease-in-out;
+}
+.filter-sidebar.active {
+    left: 0;
+}
+.close-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    float: right;
+}
+
+
+#categories-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    max-width: 400px;
+}
+
+.categories {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.categories > span {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+}
+
+.subcategories {
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.category-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.category-item input[type="checkbox"] {
+    cursor: pointer;
+}
+
+.category-item label {
+    cursor: pointer;
+    font-size: 14px;
+}
+
+
+.apply-button {
+    background-color: #0b0b0b; /* Blue color */
+    color: #fff; /* White text */
+    margin: 10px;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.apply-button:hover {
+    background-color: #737373; /* Darker blue on hover */
+}
+
+.apply-button:active {
+    transform: scale(0.95); /* Slight press effect */
+}
+
+.apply-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
