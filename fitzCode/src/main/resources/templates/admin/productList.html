@@ -3,35 +3,229 @@
 <head>
   <meta charset="UTF-8">
   <title>상품 목록</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    /* 기본 설정 */
+    body {
+      margin: 0; /* body의 기본 여백 제거 */
+      padding: 0;
+    }
+
+    /* 사이드바와 콘텐츠 레이아웃 */
+    .container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* content-wrapper */
+    .content-wrapper {
+      width: calc(100% - 360px); /* 사이드바 너비(360px) 반영 */
+      max-width: 1000px;
+      padding: 10px 20px; /* 상단 여백 최소화, 좌우 여백 유지 */
+      margin-left: 360px; /* 사이드바 너비와 일치 */
+    }
+
+    .preview-img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+    }
+
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .pagination a {
+      padding: 5px 10px;
+      margin: 0 5px;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .pagination a.active {
+      font-weight: bold;
+      color: #496b9a;
+    }
+
+    .pagination a.disabled {
+      color: #ccc;
+      pointer-events: none;
+    }
+
+    .search-container {
+      margin-top: 10px; /* 상단 여백 최소화 */
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-productList {
+      text-decoration: none;
+      color: black;
+    }
+
+    /* 테이블 스타일 (가운데 정렬) */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-  <h3>상품목록</h3>
+<!-- 사이드바 -->
+<div class="sidebar" th:replace="~{fragments/managerSidebar}"></div>
 
-  <a th:href="@{/admin/adminProducts/new}">상품추가</a>
-  <table border="1">
+<!-- 가운데 정렬할 컨텐츠 -->
+<div class="content-wrapper">
+  <h3><a class="title-productList" href="/admin/products">상품 목록</a></h3>
+
+  <!-- 검색 및 필터 -->
+  <div class="search-container">
+    <label for="sortOrder">정렬:</label>
+    <select id="sortOrder" name="sortOrder">
+      <option value="desc" th:selected="${sort == 'desc'}">최신순</option>
+      <option value="asc" th:selected="${sort == 'asc'}">오래된순</option>
+    </select>
+
+    <label for="parentCategory">카테고리:</label>
+    <select id="parentCategory" name="parentCategory">
+      <option value="">전체</option>
+      <option th:each="category : ${parentCategories}"
+              th:value="${category.categoryId}"
+              th:text="${category.name}"
+              th:selected="${category.categoryId == parentCategoryId}">
+      </option>
+    </select>
+
+    <select id="childCategory" name="childCategory" disabled>
+      <option value="">전체</option>
+    </select>
+
+    <label for="searchKeyword">검색:</label>
+    <input type="text" id="searchKeyword" name="searchKeyword" th:value="${keyword}" placeholder="상품명 입력">
+    <button id="searchBtn">검색</button>
+  </div>
+
+  <!-- 상품 목록 테이블 -->
+  <table>
     <thead>
-      <tr>
-        <th>상품 ID</th>
-        <th>상품명</th>
-        <th>브랜드</th>
-        <th>가격</th>
-        <th>재고</th>
-        <th>상태</th>
-        <th>상세보기</th>
-      </tr>
+    <tr>
+      <th>-</th>
+      <th>이미지</th>
+      <th>상품명</th>
+      <th>브랜드</th>
+      <th>가격</th>
+      <th>재고</th>
+      <th>상태</th>
+      <th>상세보기</th>
+    </tr>
     </thead>
-      <tr th:each="product : ${products}">
-        <td th:text="${product.productId}"></td>
-        <td th:text="${product.productName}"></td>
-        <td th:text="${product.brand}"></td>
-        <td th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')} + ' 원'"></td>
-        <td th:text="${product.stock}"></td>
-        <td th:text="${product.status.description}"></td>
-        <td>
-          <a href="@{/admin/products{id}{id=${product.productId}}}">보기</a>
-        </td>
-      </tr>
-  
+    <tbody>
+    <tr th:each="product : ${products}">
+      <td th:text="${product.productId}"></td>
+      <td>
+        <img th:src="${product.imageUrl}" class="preview-img" alt="상품 이미지"
+             th:unless="${product.imageUrl == null}" />
+        <span th:if="${product.imageUrl == null}">이미지 없음</span>
+      </td>
+      <td th:text="${product.productName}"></td>
+      <td th:text="${product.brand}"></td>
+      <td th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}"></td>
+      <td th:text="${product.stock}"></td>
+      <td th:text="${product.status.description}"></td>
+      <td>
+        <a th:href="@{/admin/products/{id}(id=${product.productId})}">보기</a>
+      </td>
+    </tr>
+    </tbody>
   </table>
+
+  <!-- 페이지네이션 -->
+  <div class="pagination">
+    <a th:href="@{/admin/products(page=${currentPage - 1}, parentCategoryId=${parentCategoryId}, childCategoryId=${childCategoryId}, sort=${sort}, keyword=${keyword})}"
+       th:classappend="${currentPage == 1 ? 'disabled' : ''}" th:text="'<'"></a>
+
+    <th:block th:each="i : ${#numbers.sequence(startPage, endPage)}">
+      <a th:href="@{/admin/products(page=${i}, parentCategoryId=${parentCategoryId}, childCategoryId=${childCategoryId}, sort=${sort}, keyword=${keyword})}"
+         th:text="${i}"
+         th:classappend="${i == currentPage ? 'active' : ''}"></a>
+    </th:block>
+
+    <a th:href="@{/admin/products(page=${endPage + 1}, parentCategoryId=${parentCategoryId}, childCategoryId=${childCategoryId}, sort=${sort}, keyword=${keyword})}"
+       th:classappend="${currentPage >= totalPages ? 'disabled' : ''}" th:text="'>'"></a>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // 상위 카테고리 변경 시 하위 카테고리 로드
+    $("#parentCategory").change(function() {
+      let parentId = $(this).val();
+      $("#childCategory").empty().append(`<option value="">전체</option>`).prop("disabled", true);
+
+      if (parentId) {
+        $.ajax({
+          url: `/admin/products/categories/child?parentId=${parentId}`,
+          method: "GET",
+          success: function(categories) {
+            if (categories.length > 0) {
+              $("#childCategory").prop("disabled", false);
+              categories.forEach(function(category) {
+                $("#childCategory").append(
+                        `<option value="${category.categoryId}">${category.name}</option>`
+                );
+              });
+            }
+          },
+          error: function() {
+            alert("하위 카테고리를 불러오는 데 실패했습니다.");
+          }
+        });
+      }
+    });
+
+    // 검색 버튼 클릭 시
+    $("#searchBtn").click(function() {
+      let parentCategoryId = $("#parentCategory").val();
+      let childCategoryId = $("#childCategory").val();
+      let sort = $("#sortOrder").val();
+      let keyword = $("#searchKeyword").val();
+
+      let url = "/admin/products";
+      let params = [];
+
+      if (childCategoryId && childCategoryId !== "") {
+        params.push("childCategoryId=" + childCategoryId);
+      } else if (parentCategoryId && parentCategoryId !== "") {
+        params.push("parentCategoryId=" + parentCategoryId);
+      }
+      if (sort) {
+        params.push("sort=" + sort);
+      }
+      if (keyword && keyword.trim() !== "") {
+        params.push("keyword=" + encodeURIComponent(keyword.trim()));
+      }
+
+      if (params.length > 0) {
+        url += "?" + params.join("&");
+      }
+
+      window.location.href = url;
+    });
+
+    // 정렬 변경 시 자동 검색
+    $("#sortOrder").change(function() {
+      $("#searchBtn").click();
+    });
+  });
+</script>
 </body>
 </html>
