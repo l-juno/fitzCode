@@ -81,3 +81,7 @@
 .sidebar-section-dashboard {
     margin-bottom: 15px;
 }
+.submenu a.active {
+    font-weight: bold;
+    color: #496b9a;
+}
