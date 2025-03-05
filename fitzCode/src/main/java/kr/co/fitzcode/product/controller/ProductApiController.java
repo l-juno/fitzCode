@@ -2,17 +2,19 @@ package kr.co.fitzcode.product.controller;
 
 import kr.co.fitzcode.product.dto.CategoryDTO;
 import kr.co.fitzcode.product.dto.ProductDTO;
-import kr.co.fitzcode.product.mapper.ProductMapper;
+import kr.co.fitzcode.product.dto.ProductResponseDTO;
 import kr.co.fitzcode.product.service.CategoryService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -36,14 +38,39 @@ public class ProductApiController {
     }
 
     @PostMapping("/getProductsByFilter")
-    public ResponseEntity<List<ProductDTO>> getProductsByFilter(@RequestParam Map<String, String> filters, Model model) {
-//        // Process filters
-//        log.info("filters >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> {}", filters);
+    public ResponseEntity<ProductResponseDTO> getProductsByFilter(@RequestParam MultiValueMap<String, String> filters, Model model) {
 
+        // Extract the category codes into a list
+        List<String> codes = filters.keySet().stream()
+                .filter(key -> !key.equals("page") && !key.equals("searchText"))
+                .collect(Collectors.toList());
 
-        // {LOAFERS=on, BOOTS=on, OTHER=on}
-        List<ProductDTO> filteredProducts1 = productService.getProductsByFilter(filters);
-        return null;
+        log.info("codes type: {}", codes.getClass().getName());
+
+        // Extract the search text (single value)
+        String searchText = filters.getFirst("searchText");
+        String currentPageString = filters.getFirst("page");
+        int currentPage = Integer.parseInt(currentPageString);
+        log.info("searchText: {}, currentPageString: {}, int page: {}", searchText, currentPageString,currentPage);
+        log.info("codes: {}", codes);
+
+        List<ProductDTO> filteredProducts;
+        int totalLength;
+        if ((codes == null || codes.isEmpty()) && (searchText == null || searchText.isEmpty())) {
+            filteredProducts = productService.getProductsByPage(currentPage);
+            totalLength = productService.getCountOfAllProducts();
+
+        } else {
+            filteredProducts = productService.getProductsByFilterAndPage(codes, searchText, currentPage);
+            totalLength = productService.getProductsCountByFilter(codes, searchText);
+        }
+        ProductResponseDTO productResponseDTO = ProductResponseDTO.builder()
+                .list(filteredProducts)
+                .totalLength(totalLength)
+                .currentPage(currentPage)
+                .build();
+
+        return ResponseEntity.ok().body(productResponseDTO);
     }
 
 

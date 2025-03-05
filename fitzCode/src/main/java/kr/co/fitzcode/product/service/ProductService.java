@@ -18,5 +18,7 @@ public interface ProductService {
 
     int getNumberOfPages();
 
-    List<ProductDTO> getProductsByFilter(Map<String, String> filters);
+    List<ProductDTO> getProductsByFilterAndPage(List<String> filters, String searchText, int currentPage);
+    int getProductsCountByFilter(List<String> filters, String searchText);
+    int getCountOfAllProducts();
 }

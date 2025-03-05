@@ -2,6 +2,7 @@ package kr.co.fitzcode.product.mapper;
 
 import kr.co.fitzcode.product.dto.ProductDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
-    List<ProductDTO> getProductsByPage(HashMap<String, Object> params);
+    List<ProductDTO> getProductsByPage(int offset);
 
     List<ProductDTO> getAllProducts();
 
@@ -25,6 +26,13 @@ public interface ProductMapper {
 
     int getNumberOfProducts();
 
-    List<ProductDTO> getProductsByFilter(Map<String, String> filters);
 
+    List<ProductDTO> getProductsByFilter(@Param("codes") List<String> categoryCodes,
+                                         @Param("searchText") String searchText,
+                                         @Param("offset") int offset);
+
+    int getProductsCountByFilter(@Param("codes") List<String> categoryCodes,
+                                 @Param("searchText") String searchText);
+
+    int getCountOfAllProducts();
 }

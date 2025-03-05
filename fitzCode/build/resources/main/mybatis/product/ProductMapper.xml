@@ -2,11 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.co.fitzcode.product.mapper.ProductMapper">
-    <select id="getProductsByPage" parameterType="java.util.HashMap" resultType="kr.co.fitzcode.product.dto.ProductDTO">
+    <select id="getProductsByPage" parameterType="int" resultType="kr.co.fitzcode.product.dto.ProductDTO">
         SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at
         FROM PRODUCT
         ORDER BY product_id
-        LIMIT #{limit} OFFSET #{offset}
+        LIMIT 20 OFFSET #{offset}
     </select>
 
     <select id="getAllProducts" resultType="kr.co.fitzcode.product.dto.ProductDTO">
@@ -74,20 +74,64 @@
     </delete>
 
 
-    <select id="getNumberOfProducts" resultType="int">
+    <select id="getCountOfAllProducts" resultType="int">
         SELECT COUNT(*) FROM PRODUCT;
     </select>
 
-    <select id="getProductsByFilter" resultType="kr.co.fitzcode.product.dto.ProductDTO" parameterType="java.util.Map">
-        SELECT * FROM PRODUCT p CATEGORY c
-        JOIN ON
-        
+
+
+    <select id="getProductsByFilter" resultType="kr.co.fitzcode.product.dto.ProductDTO">
+        SELECT p.*
+        FROM PRODUCT p
+        JOIN CATEGORY c ON p.category_id = c.category_id
         <where>
-            <foreach collection="filters" item="entry" separator="AND">
-                ${entry.key} = #{entry.value}
-            </foreach>
+            <if test="codes != null and codes.size() > 0">
+                AND c.CODE IN
+                <foreach item="code" collection="codes" open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+            <if test="searchText != null and searchText != ''">
+                AND (
+                p.brand LIKE CONCAT('%', #{searchText}, '%')
+                OR p.description LIKE CONCAT('%', #{searchText}, '%')
+                OR p.product_name LIKE CONCAT('%', #{searchText}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY p.product_id
+        LIMIT 20 OFFSET #{offset}
+    </select>
+
+
+
+
+    <select id="getProductsCountByFilter" resultType="int">
+        SELECT COUNT(*)
+        FROM PRODUCT p
+        JOIN CATEGORY c ON p.category_id = c.category_id
+        <where>
+            <if test="codes != null and codes.size() > 0">
+                c.CODE IN
+                <foreach item="code" collection="codes" open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+
+            <if test="searchText != null and searchText != ''">
+                <if test="codes != null and codes.size() > 0">
+                    AND
+                </if>
+                (
+                p.brand LIKE CONCAT('%', #{searchText}, '%')
+                OR p.description LIKE CONCAT('%', #{searchText}, '%')
+                OR p.product_name LIKE CONCAT('%', #{searchText}, '%')
+                )
+            </if>
         </where>
     </select>
+
+
 
 
 

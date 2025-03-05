@@ -3,6 +3,7 @@ package kr.co.fitzcode.product.service;
 import kr.co.fitzcode.product.dto.ProductDTO;
 import kr.co.fitzcode.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -11,17 +12,17 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductServiceImple implements ProductService {
 
     private final ProductMapper productMapper;
     private final int PRODUCT_PER_PAGE = 20;
 
     @Override
-    public List<ProductDTO> getProductsByPage(int pageNum) {
-        HashMap<String, Object> params = new HashMap<>();
-        params.put("offset", (pageNum-1) * PRODUCT_PER_PAGE);
-        params.put("limit", PRODUCT_PER_PAGE);
-        return productMapper.getProductsByPage(params);
+    public List<ProductDTO> getProductsByPage(int currentPage) {
+
+        int offset = (currentPage - 1) * PRODUCT_PER_PAGE;
+        return productMapper.getProductsByPage(offset);
     }
 
     @Override
@@ -66,8 +67,36 @@ public class ProductServiceImple implements ProductService {
         return (products/PRODUCT_PER_PAGE);
     }
 
+
+
     @Override
-    public List<ProductDTO> getProductsByFilter(Map<String, String> filters) {
-        return productMapper.getProductsByFilter(filters);
+    public int getProductsCountByFilter(List<String> filters, String searchText) {
+        return productMapper.getProductsCountByFilter(filters, searchText);
+    }
+
+    @Override
+    public int getCountOfAllProducts() {
+        return productMapper.getCountOfAllProducts();
+    }
+
+    @Override
+    public List<ProductDTO> getProductsByFilterAndPage(List<String> filters, String searchText, int currentPage) {
+
+        int offset = (currentPage - 1) * PRODUCT_PER_PAGE;
+
+        log.info("filters: {}, searchtext: {}, int page: {}", filters, searchText, currentPage);
+
+        if ((filters == null || filters.isEmpty()) && (searchText == null || searchText.isEmpty())) {
+            log.info("getProductsByFilterAndPage: filters or searchText is empty........ getting all products");
+            return productMapper.getProductsByPage(offset);
+        } else {
+            log.info("getProductsByFilterAndPage: ....... getting some products");
+            log.info("filters... should not be null: {}, searchtext: {}", filters, searchText);
+            log.info("filters type: {}", filters.getClass().getName());
+
+            return productMapper.getProductsByFilter(filters, searchText, offset);
+        }
+
+
     }
 }
