@@ -4,86 +4,14 @@
   <meta charset="UTF-8">
   <title>상품 목록</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <style>
-    /* 사이드바와 콘텐츠 레이아웃 */
-    .container {
-      display: flex;
-      height: auto;
-    }
-
-    /* content-wrapper */
-    .content-wrapper {
-      margin: 50px 0 50px 110px;
-      width: calc(100% - 250px);
-      max-width: 1000px;
-      padding: 0 20px;
-    }
-
-    .preview-img {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-    }
-
-    .pagination {
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .pagination a {
-      padding: 5px 10px;
-      margin: 0 5px;
-      text-decoration: none;
-      color: #333;
-    }
-
-    .pagination a.active {
-      font-weight: bold;
-      color: #496b9a;
-    }
-
-    .pagination a.disabled {
-      color: #ccc;
-      pointer-events: none;
-    }
-
-    .search-container {
-      margin-top: 0;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .title-productList {
-      text-decoration: none;
-      color: black;
-    }
-
-    /* 테이블 스타일 */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-    a {
-      text-decoration: none;
-      color: black;
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/admin/productList.css}" />
 </head>
 <body>
 
 <div class="container">
-  <!-- 사이드바 추가 -->
-  <div th:replace="fragments/managerSidebar"></div>
+  <!-- 사이드바-->
+  <div th:replace="~{fragments/managerSidebar}"></div>
 
-  <!-- 가운데 정렬할 컨텐츠 -->
   <div class="content-wrapper">
     <h2><a class="title-productList" href="/admin/products">상품관리</a></h2>
 

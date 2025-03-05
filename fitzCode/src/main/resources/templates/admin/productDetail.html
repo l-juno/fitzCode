@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세 정보</title>
+</head>
+<body>
+
+<h1>상품 상세 정보</h1>
+
+<!-- 상품명 -->
+<h2 th:text="${productDetail.productName}">상품명</h2>
+
+<!-- 브랜드 -->
+<p>
+    브랜드:
+    <span th:text="${productDetail.brand}">브랜드명</span>
+</p>
+
+<!-- 가격 및 할인된 가격 -->
+<p>
+    가격:
+    <span th:text="${productDetail.price}">0</span> 원
+</p>
+<p>
+    할인된 가격:
+    <span th:text="${productDetail.discountedPrice}">0</span> 원
+</p>
+
+<!-- 할인율 표시 -->
+<p th:if="${productDetail.discountRate} > 0">
+    할인율:
+    <span th:text="${productDetail.discountRate}">0</span> %
+</p>
+
+<!-- 재고, 카테고리, 상태 -->
+<p>
+    재고:
+    <span th:text="${productDetail.stock}">0</span> 개
+</p>
+<p>
+    카테고리:
+    <span th:text="${productDetail.categoryName}">카테고리</span>
+</p>
+<p>
+    상태:
+    <span th:text="${productDetail.statusDesc}">판매중</span>
+</p>
+
+<!-- 상품 설명 -->
+<p>
+    설명:
+    <span th:text="${productDetail.description}">상품 설명</span>
+</p>
+
+<!-- 대표 이미지 -->
+<div>
+    <h3>대표 이미지</h3>
+    <img th:src="${productDetail.imageUrl}" alt="대표 이미지" style="max-width: 300px;"/>
+</div>
+
+<hr/>
+
+<!-- 추가 이미지 -->
+<div>
+    <h3>추가 이미지</h3>
+    <div th:if="${#lists.isEmpty(productDetail.images)}">
+        <p>추가 이미지가 없습니다.</p>
+    </div>
+    <div th:each="img : ${productDetail.images}">
+        <img th:src="${img.imageUrl}" alt="상품 이미지" style="max-width: 200px; margin: 5px;"/>
+    </div>
+</div>
+
+<hr/>
+
+<!-- 사이즈 정보 -->
+<div>
+    <h2>사이즈 정보</h2>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>사이즈</th>
+            <th>재고</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="size : ${productDetail.sizes}">
+            <td th:text="${size.sizeDescription}">사이즈</td>
+            <td th:text="${size.stock}">재고</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(productDetail.sizes)}">
+            <td colspan="2">등록된 사이즈가 없습니다.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<hr/>
+
+<!-- 상품 정보 수정 (재고 수정 가능) -->
+<div>
+    <h2>상품 정보 수정</h2>
+
+    <form th:action="@{|/admin/products/${productDetail.productId}/update|}"
+          th:object="${productDetail}"
+          method="post">
+
+        <!-- 할인 가격 수정 -->
+        <label>할인 가격:</label>
+        <input type="number" th:field="*{discountedPrice}" th:value="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}" />
+
+        <h3>사이즈 재고 수정</h3>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>사이즈</th>
+                <th>재고</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="size, i : *{sizes}">
+                <input type="hidden" th:field="*{sizes[__${i.index}__].productSizeId}" />
+                <td>
+                    <span th:text="${size.sizeDescription}">사이즈</span>
+                </td>
+                <td>
+                    <input type="number" th:field="*{sizes[__${i.index}__].stock}"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button type="submit">저장</button>
+    </form>
+</div>
+
+</body>
+</html>

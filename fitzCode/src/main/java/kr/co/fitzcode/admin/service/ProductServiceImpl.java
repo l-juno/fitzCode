@@ -43,26 +43,6 @@ public class ProductServiceImpl implements ProductService {
         return productMapper.getProductsByParentCategory(parentCategoryId, offset, pageSize, sort, keyword);
     }
 
-    // 특정 상품 상세 조회
-    @Override
-    public ProductDTO getProductById(Long productId) {
-        return productMapper.getProductById(productId);
-    }
-
-    // 상품 수정
-    @Override
-    @Transactional
-    public void updateProduct(ProductDTO productDTO) {
-        productMapper.updateProduct(productDTO);
-    }
-
-    // 상품 삭제
-    @Override
-    @Transactional
-    public void deleteProduct(Long productId) {
-        productMapper.deleteProduct(productId);
-    }
-
     // 전체 상품 개수 조회 (검색 적용)
     @Override
     public int countAllProducts(String keyword) {

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.fitzcode.admin.mapper.ProductDetailMapper">
+
+    <!-- 상품 기본 정보 조회 -->
+    <select id="findProductDetailById"
+            resultType="kr.co.fitzcode.admin.dto.ProductDetailDTO"
+            parameterType="long">
+        SELECT
+        p.product_id        AS productId,
+        p.product_name      AS productName,
+        p.description       AS description,
+        p.brand             AS brand,
+        p.price             AS price,
+        p.stock             AS stock,
+        p.status            AS status,
+        p.discounted_price  AS discountedPrice,
+        c.category_id       AS categoryId,
+        c.name              AS categoryName,
+        p.image_url         AS imageUrl
+        FROM PRODUCT p
+        LEFT JOIN CATEGORY c ON p.category_id = c.category_id
+        WHERE p.product_id = #{productId}
+    </select>
+
+    <!-- 상품 이미지 목록 조회 -->
+    <select id="findProductImagesById"
+            resultType="kr.co.fitzcode.admin.dto.ProductImageDTO"
+            parameterType="long">
+        SELECT
+        image_id    AS imageId,
+        product_id  AS productId,
+        image_url   AS imageUrl,
+        image_order AS imageOrder
+        FROM PRODUCT_IMAGE
+        WHERE product_id = #{productId}
+        ORDER BY image_order ASC
+    </select>
+
+    <!-- 특정 상품의 사이즈 목록 조회 -->
+    <select id="findSizesByProductId"
+            resultType="kr.co.fitzcode.admin.dto.ProductSizeDTO"
+            parameterType="long">
+        SELECT
+        product_size_id AS productSizeId,
+        product_id      AS productId,
+        size_code       AS sizeCode,
+        stock           AS stock
+        FROM PRODUCT_SIZE
+        WHERE product_id = #{productId}
+        ORDER BY size_code ASC
+    </select>
+
+    <!-- 사이즈 재고 수정 -->
+    <update id="updateProductSizeStock"
+            parameterType="kr.co.fitzcode.admin.dto.ProductSizeDTO">
+        UPDATE PRODUCT_SIZE
+        SET stock = #{stock}
+        WHERE product_size_id = #{productSizeId}
+    </update>
+
+    <!-- 할인 가격 수정 -->
+    <update id="updateDiscountedPrice">
+        UPDATE PRODUCT
+        SET discounted_price = #{discountedPrice}
+        WHERE product_id = #{productId}
+    </update>
+
+</mapper>
