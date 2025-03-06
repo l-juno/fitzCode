@@ -69,4 +69,10 @@
         WHERE product_id = #{productId}
     </update>
 
+    <!-- 새로운 사이즈 데이터 인서트 -->
+    <insert id="insertProductSize" parameterType="kr.co.fitzcode.admin.dto.ProductSizeDTO" useGeneratedKeys="true" keyProperty="productSizeId">
+        INSERT INTO PRODUCT_SIZE (product_id, size_code, stock)
+        VALUES (#{productId}, #{sizeCode}, #{stock})
+    </insert>
+
 </mapper>

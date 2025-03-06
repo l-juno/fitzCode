@@ -25,4 +25,7 @@ public interface ProductDetailMapper {
 
     // 할인 가격 수정
     int updateDiscountedPrice(@Param("productId") Long productId, @Param("discountedPrice") Integer discountedPrice);
+
+    // 새로운 사이즈 데이터 인서트
+    int insertProductSize(ProductSizeDTO productSizeDTO);
 }

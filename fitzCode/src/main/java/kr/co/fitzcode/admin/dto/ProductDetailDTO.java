@@ -26,13 +26,12 @@ public class ProductDetailDTO {
 
     private List<ProductSizeDTO> sizes = new ArrayList<>();
     private List<ProductImageDTO> images = new ArrayList<>();
-
+    private List<ProductSizeDTO> allSizes = new ArrayList<>();
 
     public String getStatusDesc() {
         return ProductStatus.fromCode(this.status).getDescription();
     }
 
-    // 할인율 계산
     public Integer getDiscountRate() {
         if (discountedPrice == null || discountedPrice <= 0) {
             return 0;

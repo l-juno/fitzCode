@@ -23,7 +23,16 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             return null;
         }
 
-        product.setImages(productDetailMapper.findProductImagesById(productId));
+        List<ProductImageDTO> images = productDetailMapper.findProductImagesById(productId);
+        System.out.println("Images retrieved: " + (images != null ? images.size() : "null"));
+        if (images != null) {
+            for (ProductImageDTO img : images) {
+                if (img.getImageUrl() == null || img.getImageUrl().isEmpty()) {
+                    img.setImageUrl("/images/fallback.jpg");
+                }
+            }
+        }
+        product.setImages(images != null ? images : new ArrayList<>());
 
         List<ProductSizeDTO> sizes = productDetailMapper.findSizesByProductId(productId);
         if (sizes != null) {
@@ -38,7 +47,6 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public void updateDiscountedPrice(Long productId, Integer discountedPrice) {
-        // 할인 가격이 0일 경우에도 업데이트 d
         if (discountedPrice == null) {
             discountedPrice = 0;
         }
@@ -47,7 +55,6 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     @Override
     public List<ProductSizeDTO> getSizesByProductId(Long productId) {
-        // 상품 사이즈 목록 조회
         return productDetailMapper.findSizesByProductId(productId);
     }
 
@@ -55,8 +62,15 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     public void updateSizes(Long productId, List<ProductSizeDTO> sizes) {
         if (sizes != null) {
             for (ProductSizeDTO dto : sizes) {
-                // productSizeId null -> 업데이트 x
-                if (dto.getProductSizeId() != null) {
+                dto.setProductId(productId);
+                System.out.println("Processing size: productSizeId=" + dto.getProductSizeId() + ", sizeCode=" + dto.getSizeCode() + ", stock=" + dto.getStock()); // 디버깅 로그
+                if (dto.getSizeCode() == null) {
+                    System.err.println("sizeCode is null for productId=" + productId + ", dto=" + dto);
+                    throw new IllegalArgumentException("sizeCode cannot be null");
+                }
+                if (dto.getProductSizeId() == null) {
+                    productDetailMapper.insertProductSize(dto);
+                } else {
                     productDetailMapper.updateProductSizeStock(dto);
                 }
             }

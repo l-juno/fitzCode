@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>상품 상세 정보</title>
+    <style>
+        .loading { color: #888; }
+    </style>
+    <script>
+        function onImageError(imgElement, url) {
+            console.error("Failed to load image from URL: " + url);
+            imgElement.src = '/images/fallback.jpg';
+        }
+    </script>
 </head>
 <body>
 
@@ -24,11 +33,11 @@
 </p>
 <p>
     할인된 가격:
-    <span th:text="${productDetail.discountedPrice}">0</span> 원
+    <span th:text="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}">0</span> 원
 </p>
 
 <!-- 할인율 표시 -->
-<p th:if="${productDetail.discountRate} > 0">
+<p th:if="${productDetail.discountRate > 0}">
     할인율:
     <span th:text="${productDetail.discountRate}">0</span> %
 </p>
@@ -56,7 +65,7 @@
 <!-- 대표 이미지 -->
 <div>
     <h3>대표 이미지</h3>
-    <img th:src="${productDetail.imageUrl}" alt="대표 이미지" style="max-width: 300px;"/>
+    <img th:src="${productDetail.imageUrl}" alt="대표 이미지" style="max-width: 300px;" th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
 </div>
 
 <hr/>
@@ -68,7 +77,7 @@
         <p>추가 이미지가 없습니다.</p>
     </div>
     <div th:each="img : ${productDetail.images}">
-        <img th:src="${img.imageUrl}" alt="상품 이미지" style="max-width: 200px; margin: 5px;"/>
+        <img th:src="${img.imageUrl}" alt="상품 이미지" style="max-width: 200px; margin: 5px;" th:onerror="onImageError(this, '${img.imageUrl}')"/>
     </div>
 </div>
 
@@ -85,12 +94,9 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="size : ${productDetail.sizes}">
+        <tr th:each="size : ${productDetail.allSizes}">
             <td th:text="${size.sizeDescription}">사이즈</td>
-            <td th:text="${size.stock}">재고</td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(productDetail.sizes)}">
-            <td colspan="2">등록된 사이즈가 없습니다.</td>
+            <td th:text="${size.stock != null ? size.stock : 0}">재고</td>
         </tr>
         </tbody>
     </table>
@@ -108,7 +114,7 @@
 
         <!-- 할인 가격 수정 -->
         <label>할인 가격:</label>
-        <input type="number" th:field="*{discountedPrice}" th:value="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}" />
+        <input type="number" th:field="*{discountedPrice}" th:value="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}" min="0"/>
 
         <h3>사이즈 재고 수정</h3>
         <table border="1">
@@ -119,13 +125,14 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="size, i : *{sizes}">
-                <input type="hidden" th:field="*{sizes[__${i.index}__].productSizeId}" />
+            <tr th:each="size, i : ${productDetail.allSizes}">
+                <input type="hidden" th:field="*{sizes[__${i.index}__].productSizeId}" th:value="${size.productSizeId != null ? size.productSizeId : ''}"/>
+                <input type="hidden" th:field="*{sizes[__${i.index}__].sizeCode}" th:value="${size.sizeCode != null ? size.sizeCode : 0}"/>
                 <td>
                     <span th:text="${size.sizeDescription}">사이즈</span>
                 </td>
                 <td>
-                    <input type="number" th:field="*{sizes[__${i.index}__].stock}"/>
+                    <input type="number" th:field="*{sizes[__${i.index}__].stock}" th:value="${size.stock != null ? size.stock : 0}" min="0"/>
                 </td>
             </tr>
             </tbody>
