@@ -21,6 +21,7 @@
         category_id AS categoryId,
         image_url AS imageUrl,
         status AS status,
+        discounted_price AS discountedPrice,
         created_at AS createdAt
         FROM PRODUCT
         <where>
@@ -48,6 +49,7 @@
         category_id AS categoryId,
         image_url AS imageUrl,
         status AS status,
+        discounted_price AS discountedPrice, <!-- 추가 -->
         created_at AS createdAt
         FROM PRODUCT
         <where>
@@ -76,6 +78,7 @@
         p.category_id AS categoryId,
         p.image_url AS imageUrl,
         p.status AS status,
+        p.discounted_price AS discountedPrice,
         p.created_at AS createdAt
         FROM PRODUCT p
         JOIN CATEGORY c ON p.category_id = c.category_id
@@ -105,6 +108,7 @@
         category_id AS categoryId,
         image_url AS imageUrl,
         status AS status,
+        discounted_price AS discountedPrice,
         created_at AS createdAt
         FROM PRODUCT
         WHERE product_id = #{productId}

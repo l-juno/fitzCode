@@ -7,9 +7,8 @@
   <link rel="stylesheet" th:href="@{/css/admin/productList.css}" />
 </head>
 <body>
-
 <div class="container">
-  <!-- 사이드바-->
+  <!-- 사이드바 -->
   <div th:replace="~{fragments/managerSidebar}"></div>
 
   <div class="content-wrapper">
@@ -50,6 +49,7 @@
         <th>상품명</th>
         <th>브랜드</th>
         <th>가격</th>
+        <th>할인가</th>
         <th>재고</th>
         <th>상태</th>
       </tr>
@@ -66,7 +66,12 @@
           <a th:href="@{/admin/products/{id}(id=${product.productId})}" th:text="${product.productName}" class="product-link"></a>
         </td>
         <td th:text="${product.brand}"></td>
-        <td th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}"></td>
+        <td th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}" class="price-original"></td>
+        <td>
+                    <span th:if="${product.discountedPrice != null and product.discountedPrice != product.price}"
+                          th:text="${#numbers.formatInteger(product.discountedPrice, 3, 'COMMA')}"
+                          class="price-discounted"></span>
+        </td>
         <td th:text="${product.stock}"></td>
         <td th:text="${product.status.description}"></td>
       </tr>

@@ -26,5 +26,6 @@ public class ProductDTO {
     private ProductStatus status; // Enum으로 상태 관리
     private Timestamp createdAt;
     private List<ProductSizeDTO> productSizes; // 사이즈별 재고
+    private Integer discountedPrice; // 할인가
 
 }
