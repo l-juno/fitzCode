@@ -18,4 +18,7 @@ public interface ProductDetailService {
 
     // 상품 사이즈 목록을 업데이트
     void updateSizes(Long productId, List<ProductSizeDTO> sizes);
+
+    // 카테고리별 모든 사이즈 목록을 가져옴
+    List<ProductSizeDTO> getAllSizes(boolean isShoeCategory, boolean isClothingCategory, List<ProductSizeDTO> existingSizes);
 }
