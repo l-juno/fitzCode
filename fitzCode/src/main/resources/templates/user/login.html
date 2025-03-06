@@ -118,17 +118,30 @@
             text-align: center;
         }
 
-
-        .social-login button:hover {
-            background-color: #f1c40f;
-        }
-
         .kakao-icon {
-            width: 100%;
-            height: 60px;
+            width: 12%;
+            height: 12%;
         }
 
         .kakao-icon:hover{
+            cursor: pointer;
+        }
+
+        .naver-icon {
+            width: 12%;
+            height: 12%;
+        }
+
+        .naver-icon:hover{
+            cursor: pointer;
+        }
+
+        .google-icon {
+            width: 12%;
+            height: 12%;
+        }
+
+        .google-icon:hover{
             cursor: pointer;
         }
     </style>
@@ -165,7 +178,7 @@
 
         <!-- 회원가입 링크 -->
         <div class="links2">
-            <p>아직 계정이 없으신가요? <a href="/joinForm">회원가입하러가기</a></p>
+            <p>아직 계정이 없으신가요? <a th:href="@{/joinForm}">회원가입하러가기</a></p>
         </div>
 
         <br>
@@ -173,7 +186,11 @@
         <!-- 간편 로그인 바 -->
 
         <div class="social-login">
-            <img class="kakao-icon" src="/img/kakao_login_kr.png" alt="Kakao Logo">
+            <img class="kakao-icon" src="/img/kakao_icon.png" alt="Kakao Logo">
+            &nbsp;
+            <img class="google-icon" src="/img/google_icon.png" alt="Google Logo">
+            &nbsp;
+            <img class="naver-icon" src="/img/naver_icon.png" alt="Naver Logo">
         </div>
     </form>
 </div>

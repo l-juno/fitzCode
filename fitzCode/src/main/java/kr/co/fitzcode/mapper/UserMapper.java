@@ -1,14 +1,15 @@
 package kr.co.fitzcode.mapper;
 
-import kr.co.fitzcode.dto.UserDto;
+import kr.co.fitzcode.dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 @Mapper
 public interface UserMapper {
-    void insertUser(UserDto dto);
-    int emailDuplicate(String email);
-    int nickNameDuplicate(String nickname);
-    int phoneNumberDuplicate(String phonenumber);
+    void insertUser(UserDTO dto);
+    int emailDuplicate(@Param("email") String email);
+    int nickNameDuplicate(@Param("nickName") String nickName);
+    int phoneNumberDuplicate(@Param("phoneNumber") String phoneNumber);
 }

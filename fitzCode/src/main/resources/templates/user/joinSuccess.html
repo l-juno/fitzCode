@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>joinSuccess</title>
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<h3>회원가입이 정상적으로 완료되었습니다</h3>
+<a th:href="@{/login}">로그인 하러가기</a>
+
+
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+</body>
+</html>

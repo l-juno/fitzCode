@@ -1,11 +1,11 @@
 package kr.co.fitzcode.service;
 
 
-import kr.co.fitzcode.dto.UserDto;
+import kr.co.fitzcode.dto.UserDTO;
 
 public interface UserService {
-    void insertUser(UserDto dto);
+    void insertUser(UserDTO dto);
     boolean emailDuplicate(String email);
-    boolean nickNameDuplicate(String nickname);
-    boolean phoneNumberDuplicate(String phonenumber);
+    boolean nickNameDuplicate(String nickName);
+    boolean phoneNumberDuplicate(String phoneNumber);
 }

@@ -2,82 +2,100 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>회원가입 인증 코드</title>
+    <title>joinEmail</title>
     <style>
-        .bodycontainer {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 70vh;
-            margin-top: 10%;
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
         }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 50px;
+        }
+
         .container {
+            width: 100%;
             max-width: 600px;
+            margin: 0 auto;
             padding: 20px;
             background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container p {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .container form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .container label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .container input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             width: 100%;
         }
-        .header-line {
-            border-top: 5px solid #496b9a;
-            margin-bottom: 20px;
-        }
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #496b9a;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .title {
-            font-size: 28px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .content {
+
+        .container button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             font-size: 16px;
-            color: #666;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            text-align: left;
+            width: 100%;
         }
-        .code-box {
-            text-align: center;
-            margin: 50px auto;
-            padding: 15px;
-            background-color: #f0f0f0;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: block;
-            width: 250px;
-            height: 30px;
-            line-height: 30px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
+
+        .container button:hover {
+            background-color: #496b9a;
         }
+
+        .container .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+
     </style>
 </head>
 <body>
+
 <!-- header -->
 <div th:replace="~{fragments/header}"></div>
-<div class="bodycontainer">
-
 
 <div class="container">
-    <div class="header-line"></div>
-    <div class="logo">fitzCode</div>
-    <h1 class="title">회원가입 메일 인증</h1>
-    <div class="content">
-        안녕하세요<br>
-        fitzCode를 이용해 주셔서 진심으로 감사드립니다.<br>
-        아래 '인증 코드'를 회원가입 페이지에 입력하여 회원가입을 완료해 주세요.<br>
-        감사합니다.
-    </div>
-    <div class="code-box" th:text="${authNum}">인증코드</div>
+    <h2>이메일 인증</h2>
+    <p>인증 코드가 <b th:text="${email}"></b>로 전송되었습니다.</p>
+
+    <form action="/joinOk" method="post">
+        <label for="code">인증 코드 입력:</label>
+        <input type="text" id="code" name="code" required>
+        <div th:if="${authCodeError}" class="error-message" th:text="${authCodeError}"></div>
+        <button type="submit">확인</button>
+    </form>
 </div>
-</div>
+
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
+
 </body>
 </html>

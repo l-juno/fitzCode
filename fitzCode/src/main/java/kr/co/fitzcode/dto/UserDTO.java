@@ -14,13 +14,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class UserDTO {
         private long userId;
 
         @NotNull(message = "사용자 이름은 필수입니다.")
         private String userName;
 
-        private String nickname;
+        private String nickName;
 
         @NotNull(message = "이메일은 필수입니다.")
         @Email(message = "유효한 이메일 주소를 입력해주세요.")
