@@ -6,6 +6,8 @@ import kr.co.fitzcode.admin.dto.ProductSizeDTO;
 import kr.co.fitzcode.admin.mapper.ProductDetailMapper;
 import kr.co.fitzcode.common.enums.ProductSize;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductDetailServiceImpl implements ProductDetailService {
 
+    private static final Logger log = LoggerFactory.getLogger(ProductDetailServiceImpl.class);
     private final ProductDetailMapper productDetailMapper;
 
     @Override
@@ -25,7 +28,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         }
 
         List<ProductImageDTO> images = productDetailMapper.findProductImagesById(productId);
-        System.out.println("Images retrieved: " + (images != null ? images.size() : "null"));
+        log.info("이미지 조회됨: {}", images != null ? images.size() : "없음");
         if (images != null) {
             for (ProductImageDTO img : images) {
                 if (img.getImageUrl() == null || img.getImageUrl().isEmpty()) {
@@ -50,7 +53,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
         List<ProductSizeDTO> allSizes = getAllSizes(isShoeCategory, isClothingCategory, product.getSizes());
         product.setAllSizes(allSizes);
-        product.setSizes(new ArrayList<>(allSizes)); // sizes를 allSizes로 초기화
+        product.setSizes(new ArrayList<>(allSizes)); // sizes를 allSizes로 초기화해줌
 
         return product;
     }
@@ -111,7 +114,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                 allSizes.add(dto);
             }
         }
-        System.out.println("isShoeCategory: " + isShoeCategory + ", isClothingCategory: " + isClothingCategory + ", allSizes size: " + allSizes.size());
+        log.info("신발 카테고리 : {}, 의류 카테고리 : {}, 전체 사이즈 개수: {}", isShoeCategory, isClothingCategory, allSizes.size());
         return allSizes;
     }
 
@@ -133,10 +136,11 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         if (sizes != null) {
             for (ProductSizeDTO dto : sizes) {
                 dto.setProductId(productId);
-                System.out.println("Processing size: productSizeId=" + dto.getProductSizeId() + ", sizeCode=" + dto.getSizeCode() + ", stock=" + dto.getStock());
+                log.info("사이즈 : 상품 사이즈 ID={}, 사이즈 코드={}, 재고={}",
+                        dto.getProductSizeId(), dto.getSizeCode(), dto.getStock());
                 if (dto.getSizeCode() == null) {
-                    System.err.println("sizeCode is null for productId=" + productId + ", dto=" + dto);
-                    throw new IllegalArgumentException("sizeCode cannot be null");
+                    log.error("사이즈 코드가 null 상품 ID={}, DTO={}", productId, dto);
+                    throw new IllegalArgumentException("사이즈코드는 null이면 안됨");
                 }
                 if (dto.getProductSizeId() == null) {
                     productDetailMapper.insertProductSize(dto);
@@ -145,5 +149,14 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                 }
             }
         }
+    }
+
+    @Override
+    public void updateStatus(Long productId, Integer status) {
+        log.info("상품 ID={}의 상태를 {}로 업데이트", productId, status);
+        if (status == null || (status != 1 && status != 2 && status != 3)) {
+            throw new IllegalArgumentException("유효하지 않은 상태 값: " + status);
+        }
+        productDetailMapper.updateProductStatus(productId, status);
     }
 }

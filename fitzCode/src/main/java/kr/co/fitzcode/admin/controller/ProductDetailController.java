@@ -7,7 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/admin/products")
@@ -45,5 +45,17 @@ public class ProductDetailController {
             productDetailService.updateSizes(productId, productDetail.getSizes());
         }
         return "redirect:/admin/products/" + productId;
+    }
+
+    // 상품 상태 업데이트
+    @PostMapping("/{productId}/update-status")
+    @ResponseBody
+    public String updateStatus(@PathVariable Long productId, @RequestBody Map<String, Integer> request) {
+        Integer newStatus = request.get("status");
+        if (newStatus == null || (newStatus != 1 && newStatus != 2 && newStatus != 3)) {
+            return "잘못된 상태 값입니다.";
+        }
+        productDetailService.updateStatus(productId, newStatus);
+        return "success";
     }
 }

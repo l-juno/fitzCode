@@ -75,4 +75,11 @@
         VALUES (#{productId}, #{sizeCode}, #{stock})
     </insert>
 
+    <!-- 상품 상태 수정 -->
+    <update id="updateProductStatus">
+        UPDATE PRODUCT
+        SET status = #{status}
+        WHERE product_id = #{productId}
+    </update>
+
 </mapper>

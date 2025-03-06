@@ -28,4 +28,7 @@ public interface ProductDetailMapper {
 
     // 새로운 사이즈 데이터 인서트
     int insertProductSize(ProductSizeDTO productSizeDTO);
+
+    // 상품 상태 업데이트
+    void updateProductStatus(@Param("productId") Long productId, @Param("status") Integer status);
 }
