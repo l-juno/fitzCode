@@ -339,3 +339,58 @@
 .price {
     font-size: 12px;
 }
+
+.dropdown-menu {
+    display: none;
+}
+
+.choose-size {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 200px; /* Adjust width as needed */
+    font-family: Arial, sans-serif;
+}
+
+.choose-size label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+#size-options {
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    appearance: none; /* Removes default browser styles */
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none; /* Firefox */
+}
+
+/* Add a dropdown arrow using background image */
+#size-options {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5H7z" fill="%23333"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 30px; /* Space for arrow */
+}
+
+/* Hover and Focus Effects */
+#size-options:hover,
+#size-options:focus {
+    border-color: #666;
+    outline: none;
+}
+
+/* Style the dropdown options */
+#size-options option {
+    font-size: 16px;
+}
+
+
+
+

@@ -1,6 +1,8 @@
 package kr.co.fitzcode.product.mapper;
 
 import kr.co.fitzcode.product.dto.ProductDTO;
+import kr.co.fitzcode.product.dto.ProductImageDTO;
+import kr.co.fitzcode.product.dto.ProductSizeDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -35,4 +37,9 @@ public interface ProductMapper {
                                  @Param("searchText") String searchText);
 
     int getCountOfAllProducts();
+
+    List<ProductImageDTO> getProductImagesByProductId(int productId);
+
+    List<ProductSizeDTO> getAllSizeOfProduct(int productId);
+
 }

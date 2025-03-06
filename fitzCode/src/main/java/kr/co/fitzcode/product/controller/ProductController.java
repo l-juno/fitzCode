@@ -3,6 +3,7 @@ package kr.co.fitzcode.product.controller;
 import ch.qos.logback.classic.Logger;
 import groovy.util.logging.Slf4j;
 import kr.co.fitzcode.product.dto.ProductDTO;
+import kr.co.fitzcode.product.dto.ProductImageDTO;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.XSlf4j;
@@ -53,6 +54,11 @@ public class ProductController {
     public String detail(@PathVariable int productId, Model model) {
         ProductDTO product = productService.getProductById(productId);
         model.addAttribute("product", product);
+
+
+        List<ProductImageDTO> productImageList = productService.getProductImagesByProductId(productId);
+        model.addAttribute("productImageList", productImageList);
+
         return "product/productDetail";
     }
 

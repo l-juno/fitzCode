@@ -82,7 +82,7 @@
     </select>
 
 
-
+    <!-- get the products from the filter that is applied -->
     <select id="getProductsByFilter" resultType="kr.co.fitzcode.product.dto.ProductDTO">
         SELECT p.*
         FROM PRODUCT p
@@ -107,8 +107,7 @@
     </select>
 
 
-
-
+    <!-- get the number of products from the filter that is applied -->
     <select id="getProductsCountByFilter" resultType="int">
         SELECT COUNT(*)
         FROM PRODUCT p
@@ -134,7 +133,21 @@
         </where>
     </select>
 
+    <!-- get images of the product from product image table -->
+    <select id="getProductImagesByProductId" resultType="kr.co.fitzcode.product.dto.ProductImageDTO" parameterType="int">
+        select * from PRODUCT_IMAGE
+        WHERE product_id = #{product_Id}
+        ORDER BY image_order ASC
+    </select>
 
+
+
+    <!-- get sizes of the product from product size table -->
+    <select id="getAllSizeOfProduct" resultType="kr.co.fitzcode.product.dto.ProductSizeDTO" parameterType="int">
+        select * from PRODUCT_SIZE
+        WHERE product_id = #{productId}
+        ORDER BY size_code asc
+    </select>
 
 
 

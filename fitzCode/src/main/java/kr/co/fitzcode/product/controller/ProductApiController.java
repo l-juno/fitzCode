@@ -3,6 +3,7 @@ package kr.co.fitzcode.product.controller;
 import kr.co.fitzcode.product.dto.CategoryDTO;
 import kr.co.fitzcode.product.dto.ProductDTO;
 import kr.co.fitzcode.product.dto.ProductResponseDTO;
+import kr.co.fitzcode.product.dto.ProductSizeDTO;
 import kr.co.fitzcode.product.service.CategoryService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -73,6 +74,14 @@ public class ProductApiController {
         return ResponseEntity.ok().body(productResponseDTO);
     }
 
+
+    @PostMapping("/getProductSizes")
+    public ResponseEntity<List<ProductSizeDTO>> getProductSizes(@RequestParam int productId) {
+        List<ProductSizeDTO> listSize = productService.getAllSizeOfProduct(productId);
+        // convert size code to enum, then send converted as json
+
+        return ResponseEntity.ok().body(listSize);
+    }
 
 
 }

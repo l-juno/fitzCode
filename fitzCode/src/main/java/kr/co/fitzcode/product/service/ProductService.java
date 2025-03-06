@@ -2,6 +2,8 @@ package kr.co.fitzcode.product.service;
 
 
 import kr.co.fitzcode.product.dto.ProductDTO;
+import kr.co.fitzcode.product.dto.ProductImageDTO;
+import kr.co.fitzcode.product.dto.ProductSizeDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -21,4 +23,8 @@ public interface ProductService {
     List<ProductDTO> getProductsByFilterAndPage(List<String> filters, String searchText, int currentPage);
     int getProductsCountByFilter(List<String> filters, String searchText);
     int getCountOfAllProducts();
+
+    List<ProductImageDTO> getProductImagesByProductId(int productId);
+
+    List<ProductSizeDTO> getAllSizeOfProduct(int productId);
 }

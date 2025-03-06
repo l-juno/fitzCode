@@ -1,6 +1,8 @@
 package kr.co.fitzcode.product.service;
 
 import kr.co.fitzcode.product.dto.ProductDTO;
+import kr.co.fitzcode.product.dto.ProductImageDTO;
+import kr.co.fitzcode.product.dto.ProductSizeDTO;
 import kr.co.fitzcode.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +79,16 @@ public class ProductServiceImple implements ProductService {
     @Override
     public int getCountOfAllProducts() {
         return productMapper.getCountOfAllProducts();
+    }
+
+    @Override
+    public List<ProductImageDTO> getProductImagesByProductId(int productId) {
+        return productMapper.getProductImagesByProductId(productId);
+    }
+
+    @Override
+    public List<ProductSizeDTO> getAllSizeOfProduct(int productId) {
+        return productMapper.getAllSizeOfProduct(productId);
     }
 
     @Override
