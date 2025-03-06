@@ -18,6 +18,7 @@ public class ProductDTO {
     private String description;
     private String brand;
     private int price;
+    private int discountedPrice;
     private int stock;
     private int categoryId;
     private String imageUrl;
@@ -26,6 +27,20 @@ public class ProductDTO {
     public String getFormattedPrice() {
         DecimalFormat df = new DecimalFormat("#,###");
         return df.format(price);
+    }
+
+    public String getFormattedDiscountedPrice() {
+        DecimalFormat df = new DecimalFormat("#,###");
+        return df.format(discountedPrice);
+    }
+
+    public String getFormattedDiscountPercentage() {
+        if (price != 0) {
+            double discountPercentage = ((double)(price - discountedPrice) / price) * 100;
+            DecimalFormat df = new DecimalFormat("#");
+            return df.format(discountPercentage);
+        }
+        return "0";
     }
 
 }

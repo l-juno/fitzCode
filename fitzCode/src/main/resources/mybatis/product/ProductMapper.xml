@@ -3,38 +3,38 @@
 
 <mapper namespace="kr.co.fitzcode.product.mapper.ProductMapper">
     <select id="getProductsByPage" parameterType="int" resultType="kr.co.fitzcode.product.dto.ProductDTO">
-        SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at
+        SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at, discounted_price
         FROM PRODUCT
         ORDER BY product_id
         LIMIT 20 OFFSET #{offset}
     </select>
 
     <select id="getAllProducts" resultType="kr.co.fitzcode.product.dto.ProductDTO">
-        SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at
+        SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at, discounted_price
         FROM PRODUCT
     </select>
 
     <select id="getProductById" resultType="kr.co.fitzcode.product.dto.ProductDTO" parameterType="int">
-        SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at
+        SELECT product_id, product_name, description, brand, price, stock, category_id, image_url, created_at, discounted_price
         FROM PRODUCT
         WHERE product_id = #{productId}
     </select>
 
     <insert id="insertProduct" parameterType="kr.co.fitzcode.product.dto.ProductDTO">
         INSERT INTO PRODUCT
-        (product_name, description, brand, price, stock, category_id, image_url, created_at)
+        (product_name, description, brand, price, stock, category_id, image_url, created_at, discounted_price)
         VALUES
-        (#{productName}, #{description}, #{brand}, #{price}, #{stock}, #{categoryId}, #{imageUrl}, NOW())
+        (#{productName}, #{description}, #{brand}, #{price}, #{stock}, #{categoryId}, #{imageUrl}, NOW(), #{price})
     </insert>
 
     <insert id="insertManyProducts" parameterType="java.util.List">
         INSERT INTO PRODUCT
-        (product_name, description, brand, price, stock, category_id, image_url, created_at)
+        (product_name, description, brand, price, stock, category_id, image_url, created_at, discounted_price)
         VALUES
         <foreach collection="list" item="product" separator=",">
             (#{product.productName}, #{product.description}, #{product.brand},
             #{product.price}, #{product.stock}, #{product.categoryId},
-            #{product.imageUrl}, NOW())
+            #{product.imageUrl}, NOW(), #{price})
         </foreach>
     </insert>
 
@@ -62,6 +62,9 @@
             </if>
             <if test="image_url != null">
                 image_url = #{imageUrl},
+            </if>
+            <if test="discounted_price != null">
+                discounted_price = #{discounted_price},
             </if>
         </set>
         WHERE product_id = #{productId};

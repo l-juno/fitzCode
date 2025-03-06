@@ -108,13 +108,29 @@
     justify-content: space-between;
     align-items: center;
     width: 100%; /* Ensure full width */
-    padding: 10px 0; /* Add some spacing */
 }
 .searchBox {
     margin-top: 100px;
 }
 
+.original-price {
+    color: red;
+    text-decoration: line-through;
+    margin: 0px;
+    font-size: smaller;
+}
 
+.percent {
+    color: red;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+.price {
+    margin: 0px;
+
+}
 
 
 

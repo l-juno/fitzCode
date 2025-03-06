@@ -116,7 +116,6 @@
             data: formData,
             dataType: "json",
             success: function (data) {
-                console.log("Received data:", data);
 
                 if (data && data.list) {
                     console.log(`Appending ${data.list.length} products.`);
@@ -137,7 +136,6 @@
 
     function renderProducts(products, pageNum) {
         let productContainer = $("#product-grid");
-        console.log("rendering products")
         if (pageNum === 1) {
             console.log("pagenum is 1")
             productContainer.empty();
@@ -153,7 +151,18 @@
                     <div class="product-details">
                         <h6 class="brand">${product.brand}</h6>
                         <h5 class="product-name">${product.productName}</h5>
-                        <p class="price">${product.formattedPrice}원</p>
+                        `;
+            if(product.price != product.discountedPrice) {
+                productHTML += `
+                    <div class="row">
+                        <p class="percent">${product.formattedDiscountPercentage}%</p>
+                        <p class="original-price">${product.formattedPrice}원</p>
+                    </div>
+                `;
+            }
+            
+            productHTML += `
+                        <p class="price">${product.formattedDiscountedPrice}원</p>
                     </div>
                 </a>
             </div>
