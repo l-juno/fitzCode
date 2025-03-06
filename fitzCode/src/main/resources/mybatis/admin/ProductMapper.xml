@@ -49,7 +49,7 @@
         category_id AS categoryId,
         image_url AS imageUrl,
         status AS status,
-        discounted_price AS discountedPrice, <!-- 추가 -->
+        discounted_price AS discountedPrice,
         created_at AS createdAt
         FROM PRODUCT
         <where>

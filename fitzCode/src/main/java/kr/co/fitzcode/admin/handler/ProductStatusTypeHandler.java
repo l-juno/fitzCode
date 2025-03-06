@@ -10,7 +10,7 @@ public class ProductStatusTypeHandler extends BaseTypeHandler<ProductStatus> {
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, ProductStatus parameter, JdbcType jdbcType) throws SQLException {
-        ps.setInt(i, parameter.getCode()); // Enum → Integer 변환
+        ps.setInt(i, parameter.getCode());
     }
 
     @Override
