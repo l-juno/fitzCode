@@ -36,15 +36,6 @@ public interface ProductMapper {
             @Param("sort") String sort,
             @Param("keyword") String keyword);
 
-    // 특정 상품 조회
-    ProductDTO getProductById(@Param("productId") Long productId);
-
-    // 상품 수정
-    void updateProduct(ProductDTO productDTO);
-
-    // 상품 삭제
-    void deleteProduct(@Param("productId") Long productId);
-
     // 전체 상품 개수 조회 (검색 적용)
     int countAllProducts(@Param("keyword") String keyword);
 

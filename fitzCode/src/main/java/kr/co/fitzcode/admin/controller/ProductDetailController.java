@@ -58,4 +58,5 @@ public class ProductDetailController {
         productDetailService.updateStatus(productId, newStatus);
         return "success";
     }
+
 }

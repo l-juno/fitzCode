@@ -96,44 +96,6 @@
         LIMIT #{pageSize} OFFSET #{offset}
     </select>
 
-    <!-- 특정 상품 조회 -->
-    <select id="getProductById" parameterType="Long" resultType="ProductDTO">
-        SELECT
-        product_id AS productId,
-        product_name AS productName,
-        description,
-        brand,
-        price,
-        stock,
-        category_id AS categoryId,
-        image_url AS imageUrl,
-        status AS status,
-        discounted_price AS discountedPrice,
-        created_at AS createdAt
-        FROM PRODUCT
-        WHERE product_id = #{productId}
-    </select>
-
-    <!-- 상품 수정 -->
-    <update id="updateProduct" parameterType="ProductDTO">
-        UPDATE PRODUCT
-        SET
-        product_name = #{productName},
-        description = #{description},
-        brand = #{brand},
-        price = #{price},
-        stock = #{stock},
-        category_id = #{categoryId},
-        image_url = #{imageUrl},
-        status = #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}
-        WHERE product_id = #{productId}
-    </update>
-
-    <!-- 상품 삭제 -->
-    <delete id="deleteProduct" parameterType="Long">
-        DELETE FROM PRODUCT WHERE product_id = #{productId}
-    </delete>
-
     <!-- 전체 상품 개수 조회 + 검색 -->
     <select id="countAllProducts" resultType="int">
         SELECT COUNT(*) FROM PRODUCT

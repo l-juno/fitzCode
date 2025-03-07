@@ -76,37 +76,6 @@ public class ProductController {
         return "redirect:/admin/products";
     }
 
-//    // 상품 상세 조회
-//    @GetMapping("/{id}")
-//    public String getProductDetails(@PathVariable("id") Long productId, Model model) {
-//        ProductDTO product = productService.getProductById(productId);
-//        model.addAttribute("product", product);
-//        return "admin/productDetail";
-//    }
-//
-//    // 상품 수정 폼
-//    @GetMapping("/edit/{id}")
-//    public String showEditProductForm(@PathVariable("id") Long productId, Model model) {
-//        ProductDTO product = productService.getProductById(productId);
-//        model.addAttribute("product", product);
-//        return "admin/productForm";
-//    }
-//
-//    // 상품 수정
-//    @PostMapping("/edit/{id}")
-//    public String updateProduct(@PathVariable("id") Long productId, @ModelAttribute ProductDTO productDTO) {
-//        productDTO.setProductId(productId);
-//        productService.updateProduct(productDTO);
-//        return "redirect:/admin/products";
-//    }
-//
-//    // 상품 삭제
-//    @PostMapping("/delete/{id}")
-//    public String deleteProduct(@PathVariable("id") Long productId) {
-//        productService.deleteProduct(productId);
-//        return "redirect:/admin/products";
-//    }
-
     // 상위 카테고리 조회
     @GetMapping("/categories/parent")
     @ResponseBody

@@ -1,0 +1,224 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    line-height: 1.6;
+    padding: 20px;
+    color: #333;
+    margin-bottom: 50px;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.header-buttons {
+    display: flex;
+    gap: 10px;
+}
+h1 {
+    color: #2c3e50;
+    border-bottom: 2px solid #496b9a;
+    padding-bottom: 10px;
+}
+h2 {
+    color: #34495e;
+    margin: 20px 0 10px;
+    font-size: 1.5em;
+}
+h3 {
+    color: #496b9a;
+    margin: 15px 0 10px;
+    font-size: 1.2em;
+}
+p {
+    margin: 10px 0;
+    padding: 8px;
+}
+.image-section {
+    margin: 20px 0;
+}
+.image-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px 0;
+    align-items: flex-start;
+}
+.image-item {
+    text-align: center;
+}
+.image-item span {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #34495e;
+}
+.image-container img {
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+.image-actions {
+    margin-top: 10px;
+    text-align: right;
+}
+.action-btn {
+    background-color: #496b9a;
+    text-decoration: none;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+.action-btn:hover {
+    background-color: #3a567d;
+}
+.status-btn {
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+.status-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+.status-btn.active {
+    background-color: #2ecc71;
+    color: white;
+}
+.status-btn.sold-out {
+    background-color: #e74c3c;
+    color: white;
+}
+.status-btn.disabled {
+    background-color: #95a5a6;
+    color: white;
+}
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 230px;
+    margin-left: 481px;
+}
+.delete-btn:hover {
+    background-color: #c0392b;
+}
+.edit-section {
+    display: flex;
+    gap: 20px;
+}
+.left-column {
+    flex: 1;
+    max-width: 50%;
+}
+.right-column {
+    flex: 1;
+    max-width: 50%;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+th, td {
+    padding: 4px;
+    text-align: left;
+    border: 1px solid #eee;
+    font-size: 0.8em;
+}
+th {
+    background-color: #496b9a;
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+form {
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+input[type="number"] {
+    padding: 4px;
+    width: 100%;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+button[type="submit"] {
+    background-color: #496b9a;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+button[type="submit"]:hover {
+    background-color: #3a567d;
+}
+.size-form {
+    position: relative;
+}
+.size-form .submit-btn {
+    position: absolute;
+    bottom: -40px;
+    right: 0;
+}
+.discount-form {
+    position: relative;
+    margin-top: 3px;
+}
+.discount-form .submit-btn {
+    position: absolute;
+    bottom: -40px;
+    right: 0;
+}
+.order-btn {
+    background-color: #496b9a;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+.order-btn:hover {
+    background-color: #3a567d;
+}
+hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 20px 0;
+}
+.status-section {
+    margin-top: 20px;
+    margin-left: 9px;
+}
