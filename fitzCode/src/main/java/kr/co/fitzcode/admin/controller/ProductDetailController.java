@@ -73,7 +73,7 @@ public class ProductDetailController {
 
     // 리뷰 관리 페이지
     @GetMapping("/review/{productId}")
-    public String getReviewPage(@PathVariable Long productId, Model model) {
+    public String getReviewPage(@PathVariable("productId") Long productId, Model model) {
         model.addAttribute("reviews", productDetailService.getReviewsByProductId(productId));
         model.addAttribute("productId", productId);
         return "admin/reviewManagement";
