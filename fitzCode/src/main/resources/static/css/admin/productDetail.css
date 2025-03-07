@@ -1,3 +1,4 @@
+/* 기존 스타일 유지 */
 * {
     margin: 0;
     padding: 0;
@@ -115,20 +116,6 @@ p {
     background-color: #95a5a6;
     color: white;
 }
-.delete-btn {
-    background-color: #e74c3c;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 230px;
-    margin-left: 481px;
-}
-.delete-btn:hover {
-    background-color: #c0392b;
-}
 .edit-section {
     display: flex;
     gap: 20px;
@@ -221,4 +208,27 @@ hr {
 .status-section {
     margin-top: 20px;
     margin-left: 9px;
+}
+.status-delete-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.delete-btn {
+    background-color: #e74c3c!important;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+.delete-btn:hover {
+    background-color: #c0392b!important;
+}
+.delete-form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
 }

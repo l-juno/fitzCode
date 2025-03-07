@@ -1,8 +1,6 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.ProductDetailDTO;
-import kr.co.fitzcode.admin.dto.ProductImageDTO;
-import kr.co.fitzcode.admin.dto.ProductSizeDTO;
+import kr.co.fitzcode.admin.dto.*;
 import kr.co.fitzcode.admin.mapper.ProductDetailMapper;
 import kr.co.fitzcode.common.enums.ProductSize;
 import lombok.RequiredArgsConstructor;
@@ -158,5 +156,68 @@ public class ProductDetailServiceImpl implements ProductDetailService {
             throw new IllegalArgumentException("유효하지 않은 상태 값: " + status);
         }
         productDetailMapper.updateProductStatus(productId, status);
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("삭제하려는 상품이 존재하지 않습니다. ID: " + productId);
+        }
+        productDetailMapper.deleteProduct(productId);
+        log.info("상품 ID={}가 삭제됨", productId);
+    }
+
+    @Override
+    public List<ReviewDTO> getReviewsByProductId(Long productId) {
+        List<ReviewDTO> reviews = productDetailMapper.findReviewsByProductId(productId);
+        for (ReviewDTO review : reviews) {
+            List<String> imageUrls = productDetailMapper.findReviewImagesByReviewId(review.getReviewId());
+            review.setImageUrls(imageUrls != null ? imageUrls : new ArrayList<>());
+        }
+        return reviews;
+    }
+
+    @Override
+    public void deleteReview(Long reviewId) {
+        ReviewDTO review = productDetailMapper.findReviewById(reviewId);
+        if (review == null) {
+            throw new IllegalArgumentException("삭제하려는 리뷰가 존재하지 않습니다. ID: " + reviewId);
+        }
+        productDetailMapper.deleteReview(reviewId);
+        log.info("리뷰 ID={}가 삭제됨", reviewId);
+    }
+
+    @Override
+    public List<QnaDTO> getQnasByProductId(Long productId) {
+        return productDetailMapper.findQnasByProductId(productId);
+    }
+
+    @Override
+    public void addQnaAnswer(Long qnaId, String answer) {
+        if (qnaId == null || answer == null || answer.trim().isEmpty()) {
+            throw new IllegalArgumentException("Q&A ID 또는 답변이 유효하지 않습니다.");
+        }
+        productDetailMapper.updateQnaAnswer(qnaId, answer);
+        log.info("Q&A ID={}에 답변 추가됨: {}", qnaId, answer);
+    }
+
+    @Override
+    public void updateQnaAnswer(Long qnaId, String answer) {
+        if (qnaId == null || answer == null || answer.trim().isEmpty()) {
+            throw new IllegalArgumentException("Q&A ID 또는 수정할 답변이 유효하지 않습니다.");
+        }
+        productDetailMapper.updateQnaAnswer(qnaId, answer);
+        log.info("Q&A ID={}의 답변 수정됨: {}", qnaId, answer);
+    }
+
+    @Override
+    public void deleteQna(Long qnaId) {
+        QnaDTO qna = productDetailMapper.findQnaById(qnaId);
+        if (qna == null) {
+            throw new IllegalArgumentException("삭제하려는 Q&A가 존재하지 않습니다. ID: " + qnaId);
+        }
+        productDetailMapper.deleteQna(qnaId);
+        log.info("Q&A ID={}가 삭제됨", qnaId);
     }
 }

@@ -33,60 +33,39 @@
                     }
                 });
             });
-
-            $('#deleteBtn').click(function() {
-                const productId = $('#productId').val();
-                if (confirm('정말 삭제하시겠습니까?')) {
-                    $.ajax({
-                        url: '/admin/products/' + productId + '/delete',
-                        type: 'POST',
-                        success: function(response) {
-                            if (response === "success") {
-                                alert('상품이 성공적으로 삭제되었습니다.');
-                                window.location.href = '/admin/products/';
-                            } else {
-                                alert('삭제 실패: ' + response);
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            alert('삭제에 실패했습니다: ' + error);
-                        }
-                    });
-                }
-            });
-
-            function updateStatusButtons() {
-                const currentStatus = $('#currentStatus').val();
-                $('.status-btn').removeClass('active sold-out disabled');
-                switch (currentStatus) {
-                    case '1':
-                        $('#statusActive').addClass('active');
-                        break;
-                    case '2':
-                        $('#statusSoldOut').addClass('sold-out');
-                        break;
-                    case '3':
-                        $('#statusDisabled').addClass('disabled');
-                        break;
-                }
-            }
-
-            function updateStatusText(status) {
-                let statusText = '';
-                switch (status) {
-                    case '1':
-                        statusText = '판매 중';
-                        break;
-                    case '2':
-                        statusText = '품절';
-                        break;
-                    case '3':
-                        statusText = '비활성화';
-                        break;
-                }
-                $('#statusText').text(statusText);
-            }
         });
+
+        function updateStatusButtons() {
+            const currentStatus = $('#currentStatus').val();
+            $('.status-btn').removeClass('active sold-out disabled');
+            switch (currentStatus) {
+                case '1':
+                    $('#statusActive').addClass('active');
+                    break;
+                case '2':
+                    $('#statusSoldOut').addClass('sold-out');
+                    break;
+                case '3':
+                    $('#statusDisabled').addClass('disabled');
+                    break;
+            }
+        }
+
+        function updateStatusText(status) {
+            let statusText = '';
+            switch (status) {
+                case '1':
+                    statusText = '판매 중';
+                    break;
+                case '2':
+                    statusText = '품절';
+                    break;
+                case '3':
+                    statusText = '비활성화';
+                    break;
+            }
+            $('#statusText').text(statusText);
+        }
     </script>
 </head>
 <body>
@@ -168,14 +147,15 @@
 
                 <div class="status-section">
                     <h3>상품 상태 변경</h3>
-                    <div>
+                    <div class="status-delete-container">
                         <button id="statusActive" class="status-btn" data-status="1">판매 중</button>
                         <button id="statusSoldOut" class="status-btn" data-status="2">품절</button>
                         <button id="statusDisabled" class="status-btn" data-status="3">비활성화</button>
+                        <form th:action="@{|/admin/products/${productDetail.productId}/delete|}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');" class="delete-form">
+                            <button type="submit" class="delete-btn">상품삭제</button>
+                        </form>
                     </div>
                 </div>
-
-                <button id="deleteBtn" class="delete-btn">상품삭제</button>
             </div>
         </div>
     </div>

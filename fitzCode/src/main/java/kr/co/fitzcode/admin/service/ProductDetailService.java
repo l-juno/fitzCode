@@ -2,6 +2,8 @@ package kr.co.fitzcode.admin.service;
 
 import kr.co.fitzcode.admin.dto.ProductDetailDTO;
 import kr.co.fitzcode.admin.dto.ProductSizeDTO;
+import kr.co.fitzcode.admin.dto.QnaDTO;
+import kr.co.fitzcode.admin.dto.ReviewDTO;
 
 import java.util.List;
 
@@ -24,4 +26,25 @@ public interface ProductDetailService {
 
     // 상품 상태를 업데이트
     void updateStatus(Long productId, Integer status);
+
+    // 상품 삭제
+    void deleteProduct(Long productId);
+
+    // 특정 상품의 리뷰 목록 조회
+    List<ReviewDTO> getReviewsByProductId(Long productId);
+
+    // 리뷰 삭제
+    void deleteReview(Long reviewId);
+
+    // 특정 상품의 Q&A 목록 조회
+    List<QnaDTO> getQnasByProductId(Long productId);
+
+    // Q&A 답변 추가
+    void addQnaAnswer(Long qnaId, String answer);
+
+    // Q&A 답변 수정
+    void updateQnaAnswer(Long qnaId, String answer);
+
+    // Q&A 삭제
+    void deleteQna(Long qnaId);
 }

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>리뷰 관리</title>
+  <link rel="stylesheet" th:href="@{/css/admin/productDetail.css}" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('.delete-review-btn').click(function() {
+        const reviewId = $(this).data('review-id');
+        if (confirm('정말 이 리뷰를 삭제하시겠습니까?')) {
+          $.ajax({
+            url: '/admin/products/review/delete/' + reviewId,
+            type: 'POST',
+            success: function(response) {
+              if (response === "success") {
+                alert('리뷰가 삭제되었습니다.');
+                location.reload();
+              } else {
+                alert(response);
+              }
+            },
+            error: function(xhr, status, error) {
+              alert('리뷰 삭제 실패: ' + error);
+            }
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+<div class="container">
+  <h1>리뷰 관리</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>리뷰 ID</th>
+      <th>사용자</th>
+      <th>평점</th>
+      <th>내용</th>
+      <th>이미지</th>
+      <th>작업</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="review : ${reviews}">
+      <td th:text="${review.reviewId}">ID</td>
+      <td th:text="${review.userName}">사용자</td>
+      <td th:text="${review.rating}">평점</td>
+      <td th:text="${review.content}">내용</td>
+      <td>
+        <div th:each="img : ${review.imageUrls}">
+          <img th:src="${img}" style="max-height: 50px;" />
+        </div>
+      </td>
+      <td>
+        <button class="delete-review-btn" th:data-review-id="${review.reviewId}">삭제</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <a th:href="@{|/admin/products/${productId}|}" class="order-btn">뒤로가기</a>
+</div>
+</body>
+</html>

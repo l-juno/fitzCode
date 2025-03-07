@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Q&A 관리</title>
+  <link rel="stylesheet" th:href="@{/css/admin/productDetail.css}" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Q&A 답변 추가
+      $('.qna-answer-form').submit(function(e) {
+        e.preventDefault();
+        const formData = {
+          qnaId: $(this).find('[name="qnaId"]').val(),
+          answer: $(this).find('[name="answer"]').val()
+        };
+        $.ajax({
+          url: this.action,
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(formData),
+          success: function(response) {
+            if (response === "success") {
+              alert('답변이 저장되었습니다.');
+              location.reload();
+            } else {
+              alert(response);
+            }
+          },
+          error: function(xhr, status, error) {
+            alert('답변 저장 실패: ' + error);
+          }
+        });
+      });
+
+      // Q&A 답변 수정
+      $('.qna-update-form').submit(function(e) {
+        e.preventDefault();
+        const formData = {
+          qnaId: $(this).find('[name="qnaId"]').val(),
+          answer: $(this).find('[name="answer"]').val()
+        };
+        $.ajax({
+          url: this.action,
+          type: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(formData),
+          success: function(response) {
+            if (response === "success") {
+              alert('답변이 수정되었습니다.');
+              location.reload();
+            } else {
+              alert(response);
+            }
+          },
+          error: function(xhr, status, error) {
+            alert('답변 수정 실패: ' + error);
+          }
+        });
+      });
+
+      // Q&A 삭제
+      $('.delete-qna-btn').click(function() {
+        const qnaId = $(this).data('qna-id');
+        if (confirm('정말 이 Q&A를 삭제하시겠습니까?')) {
+          $.ajax({
+            url: '/admin/products/qna/delete/' + qnaId,
+            type: 'POST',
+            success: function(response) {
+              if (response === "success") {
+                alert('Q&A가 삭제되었습니다.');
+                location.reload();
+              } else {
+                alert(response);
+              }
+            },
+            error: function(xhr, status, error) {
+              alert('Q&A 삭제 실패: ' + error);
+            }
+          });
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+<div class="container">
+  <h1>Q&A 관리</h1>
+  <table>
+    <thead>
+    <tr>
+      <th>Q&A ID</th>
+      <th>사용자</th>
+      <th>질문</th>
+      <th>답변</th>
+      <th>상태</th>
+      <th>작업</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="qna : ${qnas}">
+      <td th:text="${qna.qnaId}">ID</td>
+      <td th:text="${qna.userName}">사용자</td>
+      <td th:text="${qna.question}">질문</td>
+      <td>
+        <span th:text="${qna.answer ?: '답변 없음'}"></span>
+        <form th:action="@{|/admin/products/qna/${productId}/answer|}" method="post" class="qna-answer-form" th:if="${qna.answer == null}">
+          <input type="hidden" name="qnaId" th:value="${qna.qnaId}">
+          <textarea name="answer" placeholder="답변을 입력하세요"></textarea>
+          <button type="submit">답변 저장</button>
+        </form>
+        <form th:action="@{|/admin/products/qna/${productId}/update-answer|}" method="post" class="qna-update-form" th:if="${qna.answer != null}">
+          <input type="hidden" name="qnaId" th:value="${qna.qnaId}">
+          <textarea name="answer" th:text="${qna.answer}"></textarea>
+          <button type="submit">답변 수정</button>
+        </form>
+      </td>
+      <td th:text="${qna.status == 1 ? '답변 대기' : '답변 완료'}">상태</td>
+      <td>
+        <button class="delete-qna-btn" th:data-qna-id="${qna.qnaId}">삭제</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <a th:href="@{|/admin/products/${productId}|}" class="order-btn">뒤로가기</a>
+</div>
+</body>
+</html>
