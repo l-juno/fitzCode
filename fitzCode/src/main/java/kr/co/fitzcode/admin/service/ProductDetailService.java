@@ -30,14 +30,20 @@ public interface ProductDetailService {
     // 상품 삭제
     void deleteProduct(Long productId);
 
-    // 특정 상품의 리뷰 목록 조회
-    List<ReviewDTO> getReviewsByProductId(Long productId);
+    // 특정 상품의 리뷰 목록 조회 (페이징 추가)
+    List<ReviewDTO> getReviewsByProductId(Long productId, int offset, int pageSize);
+
+    // 리뷰 개수 조회
+    int getReviewCountByProductId(Long productId);
 
     // 리뷰 삭제
     void deleteReview(Long reviewId);
 
-    // 특정 상품의 Q&A 목록 조회
-    List<QnaDTO> getQnasByProductId(Long productId);
+    // 특정 상품의 Q&A 목록 조회 (페이징 및 필터링 추가)
+    List<QnaDTO> getQnasByProductId(Long productId, String filter, int offset, int pageSize);
+
+    // Q&A 개수 조회 (필터링 추가)
+    int getQnaCountByProductId(Long productId, String filter);
 
     // Q&A 답변 추가
     void addQnaAnswer(Long qnaId, String answer);

@@ -9,7 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +21,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     private final ProductDetailMapper productDetailMapper;
 
     @Override
+    // 상품 상세 정보 조회
     public ProductDetailDTO getProductDetail(Long productId) {
         ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
         if (product == null) {
@@ -74,6 +77,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    // 모든 가능한 사이즈 목록을 카테고리별로 반환
     public List<ProductSizeDTO> getAllSizes(boolean isShoeCategory, boolean isClothingCategory, List<ProductSizeDTO> existingSizes) {
         List<ProductSizeDTO> allSizes = new ArrayList<>();
         for (ProductSize size : ProductSize.values()) {
@@ -117,6 +121,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    // 상품 할인 가격을 업데이트
     public void updateDiscountedPrice(Long productId, Integer discountedPrice) {
         if (discountedPrice == null) {
             discountedPrice = 0;
@@ -125,11 +130,13 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    // 상품 사이즈 목록을 조회
     public List<ProductSizeDTO> getSizesByProductId(Long productId) {
         return productDetailMapper.findSizesByProductId(productId);
     }
 
     @Override
+    // 상품 사이즈 정보 업데이트
     public void updateSizes(Long productId, List<ProductSizeDTO> sizes) {
         if (sizes != null) {
             for (ProductSizeDTO dto : sizes) {
@@ -150,6 +157,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    // 상품 상태 업데이트
     public void updateStatus(Long productId, Integer status) {
         log.info("상품 ID={}의 상태를 {}로 업데이트", productId, status);
         if (status == null || (status != 1 && status != 2 && status != 3)) {
@@ -159,6 +167,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    // 상품 삭제
     public void deleteProduct(Long productId) {
         ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
         if (product == null) {
@@ -169,8 +178,13 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public List<ReviewDTO> getReviewsByProductId(Long productId) {
-        List<ReviewDTO> reviews = productDetailMapper.findReviewsByProductId(productId);
+    // 상품 리뷰 목록 페이징해서 조회
+    public List<ReviewDTO> getReviewsByProductId(Long productId, int offset, int pageSize) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("productId", productId);
+        params.put("offset", offset);
+        params.put("limit", pageSize);
+        List<ReviewDTO> reviews = productDetailMapper.findReviewsByProductId(params);
         for (ReviewDTO review : reviews) {
             List<String> imageUrls = productDetailMapper.findReviewImagesByReviewId(review.getReviewId());
             review.setImageUrls(imageUrls != null ? imageUrls : new ArrayList<>());
@@ -179,6 +193,13 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
+    // 상품 리뷰 개수 조회
+    public int getReviewCountByProductId(Long productId) {
+        return productDetailMapper.countReviewsByProductId(productId);
+    }
+
+    @Override
+    // 리뷰 삭제
     public void deleteReview(Long reviewId) {
         ReviewDTO review = productDetailMapper.findReviewById(reviewId);
         if (review == null) {
@@ -189,11 +210,44 @@ public class ProductDetailServiceImpl implements ProductDetailService {
     }
 
     @Override
-    public List<QnaDTO> getQnasByProductId(Long productId) {
-        return productDetailMapper.findQnasByProductId(productId);
+    // 상품 Q&A 목록 필터링 / 페이징하여 조회
+    public List<QnaDTO> getQnasByProductId(Long productId, String filter, int offset, int pageSize) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("productId", productId);
+        params.put("offset", offset);
+        params.put("limit", pageSize);
+
+        List<QnaDTO> qnas;
+        if ("waiting".equals(filter)) {
+            params.put("status", 1);
+            qnas = productDetailMapper.findQnasByProductIdAndStatus(params);
+        } else if ("completed".equals(filter)) {
+            params.put("status", 2);
+            qnas = productDetailMapper.findQnasByProductIdAndStatus(params);
+        } else {
+            qnas = productDetailMapper.findQnasByProductId(params);
+        }
+        log.info("getQnasByProductId: productId={}, filter={}, size={}", productId, filter, qnas.size());
+        return qnas;
+    }
+
+    // 상품의 Q&A 개수를 필터링하여 조회
+    @Override
+    public int getQnaCountByProductId(Long productId, String filter) {
+        int count;
+        if ("waiting".equals(filter)) {
+            count = productDetailMapper.countQnasByProductIdAndStatus(productId, 1);
+        } else if ("completed".equals(filter)) {
+            count = productDetailMapper.countQnasByProductIdAndStatus(productId, 2);
+        } else {
+            count = productDetailMapper.countQnasByProductId(productId);
+        }
+        log.info("getQnaCountByProductId: productId={}, filter={}, count={}", productId, filter, count);
+        return count;
     }
 
     @Override
+    // Q&A 답변 추가
     public void addQnaAnswer(Long qnaId, String answer) {
         if (qnaId == null || answer == null || answer.trim().isEmpty()) {
             throw new IllegalArgumentException("Q&A ID 또는 답변이 유효하지 않습니다.");
@@ -202,6 +256,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         log.info("Q&A ID={}에 답변 추가됨: {}", qnaId, answer);
     }
 
+    // Q&A 답변 수정
     @Override
     public void updateQnaAnswer(Long qnaId, String answer) {
         if (qnaId == null || answer == null || answer.trim().isEmpty()) {
@@ -211,6 +266,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         log.info("Q&A ID={}의 답변 수정됨: {}", qnaId, answer);
     }
 
+    // Q&A 삭제
     @Override
     public void deleteQna(Long qnaId) {
         QnaDTO qna = productDetailMapper.findQnaById(qnaId);

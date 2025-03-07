@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ProductDetailMapper {
@@ -33,8 +34,11 @@ public interface ProductDetailMapper {
     // 상품 삭제
     void deleteProduct(@Param("productId") Long productId);
 
-    // 리뷰 목록 조회
-    List<ReviewDTO> findReviewsByProductId(@Param("productId") Long productId);
+    // 리뷰 목록 조회 (페이징 추가)
+    List<ReviewDTO> findReviewsByProductId(Map<String, Object> params);
+
+    // 리뷰 개수 조회
+    int countReviewsByProductId(@Param("productId") Long productId);
 
     // 리뷰 단일 조회 (삭제 확인용)
     ReviewDTO findReviewById(@Param("reviewId") Long reviewId);
@@ -45,8 +49,17 @@ public interface ProductDetailMapper {
     // 리뷰 삭제
     void deleteReview(@Param("reviewId") Long reviewId);
 
-    // Q&A 목록 조회
-    List<QnaDTO> findQnasByProductId(@Param("productId") Long productId);
+    // Q&A 목록 조회 (페이징 및 필터링 추가)
+    List<QnaDTO> findQnasByProductId(Map<String, Object> params);
+
+    // Q&A 목록 조회 (상태별, 페이징 추가)
+    List<QnaDTO> findQnasByProductIdAndStatus(Map<String, Object> params);
+
+    // Q&A 개수 조회
+    int countQnasByProductId(@Param("productId") Long productId);
+
+    // Q&A 개수 조회 (상태별)
+    int countQnasByProductIdAndStatus(@Param("productId") Long productId, @Param("status") int status);
 
     // Q&A 단일 조회 (삭제 확인용)
     QnaDTO findQnaById(@Param("qnaId") Long qnaId);

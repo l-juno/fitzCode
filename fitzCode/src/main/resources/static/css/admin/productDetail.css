@@ -232,3 +232,18 @@ hr {
     margin: 0;
     padding: 0;
 }
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+    display: block;
+}
+.pagination a {
+    padding: 8px 12px;
+    margin: 0 5px;
+    text-decoration: none;
+    color: #3498db;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    display: inline-block;
+}

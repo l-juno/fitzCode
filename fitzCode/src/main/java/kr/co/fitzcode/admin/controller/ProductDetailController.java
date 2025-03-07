@@ -2,14 +2,15 @@ package kr.co.fitzcode.admin.controller;
 
 import kr.co.fitzcode.admin.dto.ProductDetailDTO;
 import kr.co.fitzcode.admin.dto.QnaDTO;
+import kr.co.fitzcode.admin.dto.ReviewDTO;
 import kr.co.fitzcode.admin.service.ProductDetailService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -36,8 +37,7 @@ public class ProductDetailController {
     @PostMapping("/{productId}/update")
     public String updateProduct(
             @PathVariable Long productId,
-            @ModelAttribute("productDetail") ProductDetailDTO productDetail
-    ) {
+            @ModelAttribute("productDetail") ProductDetailDTO productDetail) {
         if (productDetail.getDiscountedPrice() != null) {
             productDetailService.updateDiscountedPrice(productId, productDetail.getDiscountedPrice());
         }
@@ -73,9 +73,21 @@ public class ProductDetailController {
 
     // 리뷰 관리 페이지
     @GetMapping("/review/{productId}")
-    public String getReviewPage(@PathVariable("productId") Long productId, Model model) {
-        model.addAttribute("reviews", productDetailService.getReviewsByProductId(productId));
+    public String getReviewPage(
+            @PathVariable("productId") Long productId,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            Model model) {
+        int pageSize = 7;
+        int offset = (page - 1) * pageSize;
+
+        List<ReviewDTO> reviews = productDetailService.getReviewsByProductId(productId, offset, pageSize);
+        int totalReviews = productDetailService.getReviewCountByProductId(productId);
+        int totalPages = (int) Math.ceil((double) totalReviews / pageSize);
+
+        model.addAttribute("reviews", reviews);
         model.addAttribute("productId", productId);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         return "admin/reviewManagement";
     }
 
@@ -93,9 +105,28 @@ public class ProductDetailController {
 
     // Q&A 관리 페이지
     @GetMapping("/qna/{productId}")
-    public String getQnaPage(@PathVariable Long productId, Model model) {
-        model.addAttribute("qnas", productDetailService.getQnasByProductId(productId));
+    public String getQnaPage(
+            @PathVariable Long productId,
+            @RequestParam(value = "filter", defaultValue = "all") String filter,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            Model model) {
+        int pageSize = 7;
+        int offset = (page - 1) * pageSize;
+
+        List<QnaDTO> qnas = productDetailService.getQnasByProductId(productId, filter, offset, pageSize);
+        int totalQnas = productDetailService.getQnaCountByProductId(productId, filter);
+        int totalPages = (int) Math.ceil((double) totalQnas / pageSize);
+
+        System.out.println("Qnas size: " + qnas.size());
+        System.out.println("Total Qnas: " + totalQnas);
+        System.out.println("Current Page: " + page);
+        System.out.println("Total Pages: " + totalPages);
+
+        model.addAttribute("qnas", qnas);
         model.addAttribute("productId", productId);
+        model.addAttribute("filter", filter);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
         return "admin/qnaManagement";
     }
 

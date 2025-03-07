@@ -28,7 +28,7 @@ $(document).ready(function() {
         window.location.href = url;
     });
 
-    // 상위 카테고리 변경 시 하위 카테고리 로드
+    // 상위 카테고리 변경 시 하위 카테고리 로딩
     $("#parentCategory").change(function() {
         let parentId = $(this).val();
         $("#childCategory").empty().append(`<option value="">전체</option>`).prop("disabled", true);
@@ -54,7 +54,7 @@ $(document).ready(function() {
         }
     });
 
-    // 검색 버튼 클릭 시 선택된 조건으로 페이지 새로고침
+    // 검색 버튼 클릭 페이지 새로고침
     $("#searchBtn").click(function() {
         let sort = $("#sortOrder").val();
         let parentCategoryId = $("#parentCategory").val();
