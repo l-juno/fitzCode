@@ -3,10 +3,25 @@
 <mapper namespace="kr.co.fitzcode.admin.mapper.ProductMapper">
 
     <!-- 상품 등록 -->
-    <insert id="insertProduct" parameterType="ProductDTO">
-        INSERT INTO PRODUCT (product_name, description, brand, price, stock, category_id, image_url, status, created_at)
+    <insert id="insertProduct"
+            parameterType="ProductDTO"
+            useGeneratedKeys="true"
+            keyProperty="productId">
+        INSERT INTO PRODUCT (product_name, description, brand, price, stock, category_id, image_url, status, created_at, discounted_price)
         VALUES (#{productName}, #{description}, #{brand}, #{price}, #{stock}, #{categoryId}, #{imageUrl},
-        #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}, NOW())
+        #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}, NOW(), #{discountedPrice})
+    </insert>
+
+    <!-- 추가 이미지 등록 -->
+    <insert id="insertProductImage">
+        INSERT INTO PRODUCT_IMAGE (product_id, image_url, image_order)
+        VALUES (#{productId}, #{imageUrl}, #{imageOrder})
+    </insert>
+
+    <!-- 사이즈별 재고 등록 -->
+    <insert id="insertProductSize">
+        INSERT INTO PRODUCT_SIZE (product_id, size_code, stock)
+        VALUES (#{productId}, #{sizeCode}, #{stock})
     </insert>
 
     <!-- 전체 상품 조회 (페이지네이션, 정렬, 검색) -->

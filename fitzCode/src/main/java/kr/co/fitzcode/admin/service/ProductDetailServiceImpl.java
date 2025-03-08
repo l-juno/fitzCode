@@ -3,6 +3,7 @@ package kr.co.fitzcode.admin.service;
 import kr.co.fitzcode.admin.dto.*;
 import kr.co.fitzcode.admin.mapper.ProductDetailMapper;
 import kr.co.fitzcode.common.enums.ProductSize;
+import kr.co.fitzcode.common.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -284,7 +285,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         // 1. 대표 이미지 처리
         if (mainImage != null && !mainImage.isEmpty()) {
             String oldMainImageUrl = product.getImageUrl();
-            String newMainImageUrl = s3Service.uploadFile(mainImage, "product-images");
+            String newMainImageUrl = s3Service.uploadFile(mainImage, "product-images/main");
             productDetailMapper.updateProductMainImage(productId, newMainImageUrl);
             if (oldMainImageUrl != null && !oldMainImageUrl.equals("/img/fallback.jpeg")) {
                 try {
@@ -312,7 +313,6 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                         }
                         if (img.getImageUrl() != null && !img.getImageUrl().equals("/img/fallback.jpeg")) {
                             try {
-//                                log.info("S3 이미지 삭제 시도: URL={}", img.getImageUrl());
                                 s3Service.deleteFile(img.getImageUrl());
 //                                log.info("S3 이미지 삭제 성공: URL={}", img.getImageUrl());
                             } catch (Exception e) {
@@ -347,7 +347,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                     .filter(file -> file != null && !file.isEmpty() && file.getSize() > 0)
                     .collect(Collectors.toList());
             if (!validFiles.isEmpty()) {
-                List<String> newImageUrls = s3Service.uploadFiles(validFiles, "product-images");
+                List<String> newImageUrls = s3Service.uploadFiles(validFiles, "product-images/additional");
                 for (int i = 0; i < newImageUrls.size(); i++) {
                     ProductImageDTO newImage = new ProductImageDTO();
                     newImage.setProductId(productId);

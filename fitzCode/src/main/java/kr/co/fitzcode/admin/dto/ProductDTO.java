@@ -27,5 +27,4 @@ public class ProductDTO {
     private Timestamp createdAt;
     private List<ProductSizeDTO> productSizes; // 사이즈별 재고
     private Integer discountedPrice; // 할인가
-
 }

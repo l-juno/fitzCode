@@ -1,4 +1,4 @@
-package kr.co.fitzcode.admin.service;
+package kr.co.fitzcode.common.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,8 +58,4 @@ public class S3Service {
                 .build());
     }
 
-    // 기존 여러 개의 파일 삭제
-    public void deleteFiles(List<String> fileUrls) {
-        fileUrls.forEach(this::deleteFile);
-    }
 }

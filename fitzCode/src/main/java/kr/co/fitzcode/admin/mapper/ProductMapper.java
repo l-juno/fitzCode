@@ -13,6 +13,18 @@ public interface ProductMapper {
     // 상품 등록
     void insertProduct(ProductDTO productDTO);
 
+    // 추가 이미지 등록
+    void insertProductImage(
+            @Param("productId") Long productId,
+            @Param("imageUrl") String imageUrl,
+            @Param("imageOrder") Integer imageOrder);
+
+    // 사이즈별 재고 등록
+    void insertProductSize(
+            @Param("productId") Long productId,
+            @Param("sizeCode") Integer sizeCode,
+            @Param("stock") Integer stock);
+
     // 전체 상품 조회 (페이지네이션, 정렬, 검색 적용)
     List<ProductDTO> getAllProducts(
             @Param("offset") int offset,
