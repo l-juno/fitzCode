@@ -4,6 +4,7 @@ import kr.co.fitzcode.admin.dto.ProductDetailDTO;
 import kr.co.fitzcode.admin.dto.ProductSizeDTO;
 import kr.co.fitzcode.admin.dto.QnaDTO;
 import kr.co.fitzcode.admin.dto.ReviewDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -53,4 +54,7 @@ public interface ProductDetailService {
 
     // Q&A 삭제
     void deleteQna(Long qnaId);
+
+    // 이미지 수정 (S3 업로드 및 DB 업데이트)
+    void updateProductImages(Long productId, MultipartFile mainImage, List<MultipartFile> additionalImages);
 }

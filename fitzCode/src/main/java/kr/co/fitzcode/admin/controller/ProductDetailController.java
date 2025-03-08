@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +61,7 @@ public class ProductDetailController {
         return "success";
     }
 
+    // 상품 삭제
     @PostMapping("/{productId}/delete")
     public String deleteProduct(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
         try {
@@ -164,5 +167,23 @@ public class ProductDetailController {
         } catch (Exception e) {
             return "Q&A 삭제 실패: " + e.getMessage();
         }
+    }
+
+    // 이미지 수정 처리 (모달에서 쓸거임 AJAX)
+    @PostMapping("/{productId}/update-images")
+    @ResponseBody
+    public Map<String, Object> updateProductImages(
+            @PathVariable Long productId,
+            @RequestParam(value = "mainImage", required = false) MultipartFile mainImage,
+            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            productDetailService.updateProductImages(productId, mainImage, additionalImages);
+            response.put("status", "success");
+        } catch (Exception e) {
+            response.put("status", "error");
+            response.put("message", e.getMessage());
+        }
+        return response;
     }
 }

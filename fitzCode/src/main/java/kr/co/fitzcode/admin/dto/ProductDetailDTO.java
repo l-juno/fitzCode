@@ -1,7 +1,5 @@
 package kr.co.fitzcode.admin.dto;
 
-import kr.co.fitzcode.admin.dto.ProductImageDTO;
-import kr.co.fitzcode.admin.dto.ProductSizeDTO;
 import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.Getter;
 import lombok.Setter;

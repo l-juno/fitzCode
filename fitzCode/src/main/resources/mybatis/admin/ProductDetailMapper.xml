@@ -214,4 +214,23 @@
         WHERE qna_id = #{qnaId}
     </delete>
 
+    <!-- 대표 이미지 URL 업데이트 -->
+    <update id="updateProductMainImage">
+        UPDATE PRODUCT
+        SET image_url = #{imageUrl}
+        WHERE product_id = #{productId}
+    </update>
+
+    <!-- 특정 상품의 추가 이미지 삭제 -->
+    <delete id="deleteProductImages" parameterType="long">
+        DELETE FROM PRODUCT_IMAGE
+        WHERE product_id = #{productId}
+    </delete>
+
+    <!-- 새로운 추가 이미지 삽입 -->
+    <insert id="insertProductImage" parameterType="kr.co.fitzcode.admin.dto.ProductImageDTO" useGeneratedKeys="true" keyProperty="productImageId">
+        INSERT INTO PRODUCT_IMAGE (product_id, image_url, image_order)
+        VALUES (#{productId}, #{imageUrl}, #{imageOrder})
+    </insert>
+
 </mapper>

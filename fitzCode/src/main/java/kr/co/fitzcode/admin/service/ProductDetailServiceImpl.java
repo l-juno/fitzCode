@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,9 +20,10 @@ public class ProductDetailServiceImpl implements ProductDetailService {
 
     private static final Logger log = LoggerFactory.getLogger(ProductDetailServiceImpl.class);
     private final ProductDetailMapper productDetailMapper;
+    private final S3Service s3Service;
 
-    @Override
     // 상품 상세 정보 조회
+    @Override
     public ProductDetailDTO getProductDetail(Long productId) {
         ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
         if (product == null) {
@@ -47,14 +49,13 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         }
         product.setSizes(sizes != null ? sizes : new ArrayList<>());
 
-        // 카테고리별 사이즈 필터링
         Integer categoryId = product.getCategoryId();
         boolean isShoeCategory = isShoeCategory(categoryId);
         boolean isClothingCategory = isClothingCategory(categoryId);
 
         List<ProductSizeDTO> allSizes = getAllSizes(isShoeCategory, isClothingCategory, product.getSizes());
         product.setAllSizes(allSizes);
-        product.setSizes(new ArrayList<>(allSizes)); // sizes를 allSizes로 초기화해줌
+        product.setSizes(new ArrayList<>(allSizes));
 
         return product;
     }
@@ -95,11 +96,11 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                         }
                     }
                 }
-                if (dto.getStock() == null) dto.setStock(0); // 데이터 없으면 0
+                if (dto.getStock() == null) dto.setStock(0);  // 데이터 없으면 0
                 allSizes.add(dto);
-            }
+
             // 의류 카테고리: 의류 사이즈(10~15)만 포함
-            else if (isClothingCategory && size.getCode() >= 10) {
+            } else if (isClothingCategory && size.getCode() >= 10) {
                 ProductSizeDTO dto = new ProductSizeDTO();
                 dto.setSizeCode(size.getCode());
                 // 기존 사이즈 데이터가 있으면 재고 반영
@@ -112,7 +113,7 @@ public class ProductDetailServiceImpl implements ProductDetailService {
                         }
                     }
                 }
-                if (dto.getStock() == null) dto.setStock(0); // 데이터 없으면 0
+                if (dto.getStock() == null) dto.setStock(0);  // 데이터 없으면 0
                 allSizes.add(dto);
             }
         }
@@ -120,8 +121,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         return allSizes;
     }
 
-    @Override
     // 상품 할인 가격을 업데이트
+    @Override
     public void updateDiscountedPrice(Long productId, Integer discountedPrice) {
         if (discountedPrice == null) {
             discountedPrice = 0;
@@ -129,20 +130,19 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         productDetailMapper.updateDiscountedPrice(productId, discountedPrice);
     }
 
-    @Override
     // 상품 사이즈 목록을 조회
+    @Override
     public List<ProductSizeDTO> getSizesByProductId(Long productId) {
         return productDetailMapper.findSizesByProductId(productId);
     }
 
-    @Override
     // 상품 사이즈 정보 업데이트
+    @Override
     public void updateSizes(Long productId, List<ProductSizeDTO> sizes) {
         if (sizes != null) {
             for (ProductSizeDTO dto : sizes) {
                 dto.setProductId(productId);
-                log.info("사이즈 : 상품 사이즈 ID={}, 사이즈 코드={}, 재고={}",
-                        dto.getProductSizeId(), dto.getSizeCode(), dto.getStock());
+                log.info("사이즈 : 상품 사이즈 ID={}, 사이즈 코드={}, 재고={}", dto.getProductSizeId(), dto.getSizeCode(), dto.getStock());
                 if (dto.getSizeCode() == null) {
                     log.error("사이즈 코드가 null 상품 ID={}, DTO={}", productId, dto);
                     throw new IllegalArgumentException("사이즈코드는 null이면 안됨");
@@ -156,8 +156,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         }
     }
 
-    @Override
     // 상품 상태 업데이트
+    @Override
     public void updateStatus(Long productId, Integer status) {
         log.info("상품 ID={}의 상태를 {}로 업데이트", productId, status);
         if (status == null || (status != 1 && status != 2 && status != 3)) {
@@ -166,8 +166,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         productDetailMapper.updateProductStatus(productId, status);
     }
 
-    @Override
     // 상품 삭제
+    @Override
     public void deleteProduct(Long productId) {
         ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
         if (product == null) {
@@ -177,8 +177,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         log.info("상품 ID={}가 삭제됨", productId);
     }
 
-    @Override
     // 상품 리뷰 목록 페이징해서 조회
+    @Override
     public List<ReviewDTO> getReviewsByProductId(Long productId, int offset, int pageSize) {
         Map<String, Object> params = new HashMap<>();
         params.put("productId", productId);
@@ -192,14 +192,14 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         return reviews;
     }
 
-    @Override
     // 상품 리뷰 개수 조회
+    @Override
     public int getReviewCountByProductId(Long productId) {
         return productDetailMapper.countReviewsByProductId(productId);
     }
 
-    @Override
     // 리뷰 삭제
+    @Override
     public void deleteReview(Long reviewId) {
         ReviewDTO review = productDetailMapper.findReviewById(reviewId);
         if (review == null) {
@@ -209,8 +209,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         log.info("리뷰 ID={}가 삭제됨", reviewId);
     }
 
-    @Override
     // 상품 Q&A 목록 필터링 / 페이징하여 조회
+    @Override
     public List<QnaDTO> getQnasByProductId(Long productId, String filter, int offset, int pageSize) {
         Map<String, Object> params = new HashMap<>();
         params.put("productId", productId);
@@ -246,8 +246,8 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         return count;
     }
 
-    @Override
     // Q&A 답변 추가
+    @Override
     public void addQnaAnswer(Long qnaId, String answer) {
         if (qnaId == null || answer == null || answer.trim().isEmpty()) {
             throw new IllegalArgumentException("Q&A ID 또는 답변이 유효하지 않습니다.");
@@ -256,7 +256,6 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         log.info("Q&A ID={}에 답변 추가됨: {}", qnaId, answer);
     }
 
-    // Q&A 답변 수정
     @Override
     public void updateQnaAnswer(Long qnaId, String answer) {
         if (qnaId == null || answer == null || answer.trim().isEmpty()) {
@@ -266,7 +265,6 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         log.info("Q&A ID={}의 답변 수정됨: {}", qnaId, answer);
     }
 
-    // Q&A 삭제
     @Override
     public void deleteQna(Long qnaId) {
         QnaDTO qna = productDetailMapper.findQnaById(qnaId);
@@ -275,5 +273,50 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         }
         productDetailMapper.deleteQna(qnaId);
         log.info("Q&A ID={}가 삭제됨", qnaId);
+    }
+
+    @Override
+    public void updateProductImages(Long productId, MultipartFile mainImage, List<MultipartFile> additionalImages) {
+        ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("상품이 존재하지 않습니다. ID: " + productId);
+        }
+
+        // 대표 이미지 처리
+        if (mainImage != null && !mainImage.isEmpty()) {
+            String oldMainImageUrl = product.getImageUrl();
+            String newMainImageUrl = s3Service.uploadFile(mainImage, "product-images");
+            productDetailMapper.updateProductMainImage(productId, newMainImageUrl);
+            if (oldMainImageUrl != null && !oldMainImageUrl.equals("/images/fallback.jpg")) {
+                s3Service.deleteFile(oldMainImageUrl);
+            }
+            log.info("대표 이미지 수정: 상품 ID={}, 이전 URL={}, 새 URL={}", productId, oldMainImageUrl, newMainImageUrl);
+        }
+
+        // 추가 이미지 처리
+        List<ProductImageDTO> existingImages = productDetailMapper.findProductImagesById(productId);
+        if (additionalImages != null && !additionalImages.isEmpty()) {
+            // 기존 추가 이미지 삭제
+            if (existingImages != null && !existingImages.isEmpty()) {
+                for (ProductImageDTO img : existingImages) {
+                    if (!img.getImageUrl().equals("/images/fallback.jpg")) {
+                        s3Service.deleteFile(img.getImageUrl());
+                    }
+                }
+                productDetailMapper.deleteProductImages(productId);
+                log.info("기존 추가 이미지 삭제: 상품 ID={}, 삭제된 이미지 수={}", productId, existingImages.size());
+            }
+
+            // 새로운 추가 이미지 업로드
+            List<String> newImageUrls = s3Service.uploadFiles(additionalImages, "product-images");
+            for (int i = 0; i < newImageUrls.size(); i++) {
+                ProductImageDTO newImage = new ProductImageDTO();
+                newImage.setProductId(productId);
+                newImage.setImageUrl(newImageUrls.get(i));
+                newImage.setImageOrder(i + 1);
+                productDetailMapper.insertProductImage(newImage);
+            }
+            log.info("새로운 추가 이미지 업로드: 상품 ID={}, 업로드된 이미지 수={}", productId, newImageUrls.size());
+        }
     }
 }

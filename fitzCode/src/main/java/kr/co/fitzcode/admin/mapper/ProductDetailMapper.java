@@ -69,4 +69,13 @@ public interface ProductDetailMapper {
 
     // Q&A 삭제
     void deleteQna(@Param("qnaId") Long qnaId);
+
+    // 대표 이미지 URL 업데이트
+    void updateProductMainImage(@Param("productId") Long productId, @Param("imageUrl") String imageUrl);
+
+    // 특정 상품의 추가 이미지 삭제
+    void deleteProductImages(@Param("productId") Long productId);
+
+    // 새로운 추가 이미지 삽입
+    void insertProductImage(ProductImageDTO productImageDTO);
 }
