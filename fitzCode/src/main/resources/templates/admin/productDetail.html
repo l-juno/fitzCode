@@ -4,140 +4,8 @@
     <meta charset="UTF-8">
     <title>상품 상세 정보</title>
     <link rel="stylesheet" th:href="@{/css/admin/productDetail.css}" />
-    <style>
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            updateStatusButtons();
-
-            // 상태 변경 버튼 클릭 이벤트
-            $('.status-btn').click(function() {
-                const productId = $('#productId').val();
-                const newStatus = $(this).data('status');
-                $.ajax({
-                    url: '/admin/products/' + productId + '/update-status',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ status: newStatus }),
-                    success: function(response) {
-                        if (response === "success") {
-                            alert('상태가 성공적으로 변경되었습니다.');
-                            $('#currentStatus').val(newStatus);
-                            updateStatusButtons();
-                            updateStatusText(newStatus);
-                            window.location.reload();
-                        } else {
-                            alert('상태 변경 실패: ' + response);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('상태 변경에 실패했습니다: ' + error);
-                    }
-                });
-            });
-
-            // 모달 열기
-            $('#editImageBtn').click(function() {
-                $('#imageEditModal').show();
-            });
-
-            // 모달 닫기
-            $('.close').click(function() {
-                $('#imageEditModal').hide();
-            });
-
-            // 이미지 업로드
-            $('#uploadBtn').click(function() {
-                var formData = new FormData($('#imageUploadForm')[0]);
-                $.ajax({
-                    url: '/admin/products/' + $('#productId').val() + '/update-images',
-                    type: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        if (response.status === 'success') {
-                            alert('이미지가 성공적으로 수정되었습니다.');
-                            $('#imageEditModal').hide();
-                            window.location.reload();
-                        } else {
-                            alert('이미지 수정 실패: ' + response.message);
-                        }
-                    },
-                    error: function(xhr, status, error) {
-                        alert('이미지 수정에 실패했습니다: ' + error);
-                    }
-                });
-            });
-        });
-
-        function updateStatusButtons() {
-            const currentStatus = $('#currentStatus').val();
-            $('.status-btn').removeClass('active sold-out disabled');
-            switch (currentStatus) {
-                case '1':
-                    $('#statusActive').addClass('active');
-                    break;
-                case '2':
-                    $('#statusSoldOut').addClass('sold-out');
-                    break;
-                case '3':
-                    $('#statusDisabled').addClass('disabled');
-                    break;
-            }
-        }
-
-        function updateStatusText(status) {
-            let statusText = '';
-            switch (status) {
-                case '1':
-                    statusText = '판매 중';
-                    break;
-                case '2':
-                    statusText = '품절';
-                    break;
-                case '3':
-                    statusText = '비활성화';
-                    break;
-            }
-            $('#statusText').text(statusText);
-        }
-
-        // 이미지 오류 처리
-        function onImageError(img, fallbackUrl) {
-            img.src = '/img/fallback.jpeg';
-        }
-    </script>
+    <script th:src="@{/js/admin/productDetail.js}"></script>
 </head>
 <body>
 <div class="container">
@@ -170,7 +38,12 @@
         <div class="image-container">
             <div class="image-item">
                 <span>대표 이미지</span>
-                <img th:src="${productDetail.imageUrl}" alt="대표 이미지" th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
+                <th:block th:if="${productDetail.imageUrl != null}">
+                    <img th:src="${productDetail.imageUrl}" alt="대표 이미지" th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
+                </th:block>
+                <th:block th:if="${productDetail.imageUrl == null}">
+                    <p>대표 이미지 없음</p>
+                </th:block>
             </div>
             <div class="image-item" th:each="img : ${productDetail.images}" th:if="${not #lists.isEmpty(productDetail.images)}">
                 <span>추가 이미지</span>
@@ -219,11 +92,11 @@
                 <div class="status-section">
                     <h3>상품 상태 변경</h3>
                     <div class="status-delete-container">
-                        <button id="statusActive" class="status-btn" data-status="1">판매 중</button>
-                        <button id="statusSoldOut" class="status-btn" data-status="2">품절</button>
-                        <button id="statusDisabled" class="status-btn" data-status="3">비활성화</button>
+                        <button id="statusActive" class="status-active-btn" data-status="1">판매 중</button>
+                        <button id="statusSoldOut" class="status-soldout-btn" data-status="2">품절</button>
+                        <button id="statusDisabled" class="status-disabled-btn" data-status="3">비활성화</button>
                         <form th:action="@{|/admin/products/${productDetail.productId}/delete|}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');" class="delete-form">
-                            <button type="submit" class="delete-btn">상품삭제</button>
+                            <button type="submit" class="product-delete-btn">삭제</button>
                         </form>
                     </div>
                 </div>
@@ -238,21 +111,64 @@
         <span class="close">×</span>
         <h2>이미지 수정</h2>
         <form id="imageUploadForm" enctype="multipart/form-data">
-            <div>
+            <div class="main-image-section">
                 <label>대표 이미지</label>
-                <input type="file" name="mainImage" accept="image/*"/>
-                <img th:src="${productDetail.imageUrl}" alt="현재 대표 이미지" width="100"/>
-            </div>
-            <div>
-                <label>추가 이미지</label>
-                <input type="file" name="additionalImages" accept="image/*" multiple/>
-                <div th:each="img : ${productDetail.images}">
-                    <img th:src="${img.imageUrl}" alt="현재 추가 이미지" width="100"/>
+                <div class="image-item">
+                    <th:block th:if="${productDetail.imageUrl != null}">
+                        <img th:src="${productDetail.imageUrl}" alt="현재 대표 이미지" th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
+                    </th:block>
+                    <th:block th:if="${productDetail.imageUrl == null}">
+                        <p>대표 이미지 없음</p>
+                    </th:block>
                 </div>
+                <input type="file" name="mainImage" accept="image/*"/>
+                <div class="preview-container"></div>
             </div>
+
+            <div class="additional-images-section">
+                <label>추가 이미지</label>
+                <div id="additionalImagesList">
+                    <div class="image-item" th:each="img : ${productDetail.images}" th:id="'deleteImage-' + ${img.productImageId}">
+                        <button type="button" class="image-delete-btn" th:data-image-id="${img.productImageId}">X</button>
+                        <img th:src="${img.imageUrl}" alt="현재 추가 이미지" th:onerror="onImageError(this, '${img.imageUrl}')"/>
+                    </div>
+                </div>
+                <div id="deleteImagesContainer" style="display: none;"></div>
+                <div id="additionalImagesContainer">
+                    <div class="additional-image-input">
+                        <input type="file" name="additionalImages" accept="image/*"/>
+                        <button type="button" class="remove-image-btn">제거</button>
+                        <div class="preview-container"></div>
+                    </div>
+                </div>
+                <button type="button" id="addImageBtn">이미지 추가</button>
+            </div>
+
             <button type="button" id="uploadBtn">저장</button>
         </form>
     </div>
 </div>
+
+<!-- 삭제 확인 모달 -->
+<div id="imagePopupModal" class="modal">
+    <div class="modal-content">
+        <img id="popupImage" src="" alt="확대 이미지"/>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div id="confirmDeleteModal" class="modal">
+    <div class="modal-content">
+        <span class="close">×</span>
+        <h3>이미지 삭제</h3>
+        <p>이 이미지를 삭제하시겠습니까?</p>
+        <input type="hidden" id="confirmImageId"/>
+        <div class="modal-actions">
+            <button id="confirmDeleteBtn">확인</button>
+            <button id="cancelDeleteBtn">취소</button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

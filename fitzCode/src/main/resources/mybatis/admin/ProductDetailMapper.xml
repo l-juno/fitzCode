@@ -31,7 +31,7 @@
             resultType="kr.co.fitzcode.admin.dto.ProductImageDTO"
             parameterType="long">
         SELECT
-        image_id    AS imageId,
+        image_id    AS productImageId,
         product_id  AS productId,
         image_url   AS imageUrl,
         image_order AS imageOrder
@@ -233,4 +233,16 @@
         VALUES (#{productId}, #{imageUrl}, #{imageOrder})
     </insert>
 
+    <!-- 특정 이미지 ID에 해당하는 이미지를 삭제 -->
+    <delete id="deleteProductImagesById" parameterType="long">
+    DELETE FROM PRODUCT_IMAGE
+    WHERE image_id = #{productImageId}
+    </delete>
+
+    <!-- 이미지 삭제 후 image_order 재정의 -->
+    <update id="updateProductImageOrder">
+        UPDATE PRODUCT_IMAGE
+        SET image_order = #{imageOrder}
+        WHERE image_id = #{productImageId}
+    </update>
 </mapper>

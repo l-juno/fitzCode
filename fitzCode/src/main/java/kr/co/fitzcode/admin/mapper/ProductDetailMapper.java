@@ -78,4 +78,10 @@ public interface ProductDetailMapper {
 
     // 새로운 추가 이미지 삽입
     void insertProductImage(ProductImageDTO productImageDTO);
+
+    // 특정 이미지 ID에 해당하는 이미지를 삭제
+    int deleteProductImagesById(@Param("productImageId") Long productImageId);
+
+    // 이미지 삭제 후 image_order 재정의
+    void updateProductImageOrder(Long productImageId, Integer imageOrder);
 }

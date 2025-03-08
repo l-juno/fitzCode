@@ -5,16 +5,17 @@ import kr.co.fitzcode.admin.dto.QnaDTO;
 import kr.co.fitzcode.admin.dto.ReviewDTO;
 import kr.co.fitzcode.admin.service.ProductDetailService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
@@ -120,11 +121,6 @@ public class ProductDetailController {
         int totalQnas = productDetailService.getQnaCountByProductId(productId, filter);
         int totalPages = (int) Math.ceil((double) totalQnas / pageSize);
 
-        System.out.println("Qnas size: " + qnas.size());
-        System.out.println("Total Qnas: " + totalQnas);
-        System.out.println("Current Page: " + page);
-        System.out.println("Total Pages: " + totalPages);
-
         model.addAttribute("qnas", qnas);
         model.addAttribute("productId", productId);
         model.addAttribute("filter", filter);
@@ -169,21 +165,22 @@ public class ProductDetailController {
         }
     }
 
-    // 이미지 수정 처리 (모달에서 쓸거임 AJAX)
+    // 이미지 수정 처리
     @PostMapping("/{productId}/update-images")
-    @ResponseBody
-    public Map<String, Object> updateProductImages(
+    public String updateProductImages(
             @PathVariable Long productId,
             @RequestParam(value = "mainImage", required = false) MultipartFile mainImage,
-            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages) {
-        Map<String, Object> response = new HashMap<>();
+            @RequestParam(value = "additionalImages", required = false) List<MultipartFile> additionalImages,
+            @RequestParam(value = "deleteImageIds", required = false) List<Long> deleteImageIds,
+            RedirectAttributes redirectAttributes) {
         try {
-            productDetailService.updateProductImages(productId, mainImage, additionalImages);
-            response.put("status", "success");
+            System.out.println("Received deleteImageIds: " + deleteImageIds); // 디버깅 로그
+            productDetailService.updateProductImages(productId, mainImage, additionalImages, deleteImageIds);
+            redirectAttributes.addFlashAttribute("message", "이미지가 성공적으로 수정되었습니다.");
         } catch (Exception e) {
-            response.put("status", "error");
-            response.put("message", e.getMessage());
+//            log.error("이미지 수정 실패: productId={}, error={}", productId, e.getMessage(), e); // 상세 로그
+            redirectAttributes.addFlashAttribute("error", "이미지 수정 실패: " + e.getMessage());
         }
-        return response;
+        return "redirect:/admin/products/" + productId;
     }
 }

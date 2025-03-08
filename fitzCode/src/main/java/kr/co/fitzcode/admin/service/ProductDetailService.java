@@ -56,5 +56,5 @@ public interface ProductDetailService {
     void deleteQna(Long qnaId);
 
     // 이미지 수정 (S3 업로드 및 DB 업데이트)
-    void updateProductImages(Long productId, MultipartFile mainImage, List<MultipartFile> additionalImages);
+    void updateProductImages(Long productId, MultipartFile mainImage, List<MultipartFile> additionalImages, List<Long> deleteImageIds);
 }

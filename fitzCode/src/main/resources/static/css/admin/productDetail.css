@@ -1,4 +1,3 @@
-/* 기존 스타일 유지 */
 * {
     margin: 0;
     padding: 0;
@@ -246,4 +245,228 @@ hr {
     border-radius: 5px;
     transition: background-color 0.3s ease;
     display: inline-block;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+.modal-content {
+    background-color: #fff;
+    margin: 5% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+    position: relative;
+    border: none;
+    box-shadow: none;
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+.image-container {
+    margin-bottom: 20px;
+}
+.main-image-section, .additional-images-section {
+    margin-bottom: 20px;
+}
+.main-image-section label, .additional-images-section label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.image-item {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.image-item img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    cursor: pointer;
+}
+.image-item .image-delete-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: none;
+    border: none;
+    color: black;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.additional-image-input {
+    margin-bottom: 10px;
+}
+
+#confirmDeleteModal {
+    z-index: 2;
+}
+#confirmDeleteModal .modal-content {
+    width: 300px;
+    text-align: center;
+    border: none;
+    box-shadow: none;
+}
+.modal-actions {
+    margin-top: 20px;
+}
+.modal-actions button {
+    margin: 0 10px;
+    padding: 5px 10px;
+    background-color: #496b9a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.modal-actions button:hover {
+    opacity: 0.9;
+}
+.deleted-item {
+    position: relative;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    color: red;
+    font-weight: bold;
+}
+.status-delete-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.status-active-btn, .status-soldout-btn, .status-disabled-btn {
+    padding: 5px 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 70px;
+    height: 30px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 14px;
+}
+.status-active-btn.active {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+.status-soldout-btn.sold-out {
+    background-color: #FFC107;
+    color: black;
+    border: none;
+}
+.status-disabled-btn.disabled {
+    background-color: #666666;
+    color: white;
+    border: none;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.delete-form .product-delete-btn {
+    width: 49px;
+    height: 30px;
+    background-color: #F44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 30px;
+    font-size: 12px;
+    padding: 0 5px;
+}
+#addImageBtn, #uploadBtn {
+    background-color: #496b9a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+#addImageBtn:hover, #uploadBtn:hover {
+    opacity: 0.9;
+}
+#addImageBtn {
+    padding: 10px 25px;
+}
+#uploadBtn {
+    padding: 10px 25px;
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+}
+form {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+#imageUploadForm {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+#imagePopupModal {
+    display: none;
+    position: fixed;
+    z-index: 3;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+#imagePopupModal .modal-content {
+    background-color: #ffffff;
+    margin: 5% auto;
+    padding: 0;
+    width: 90%;
+    max-width: 800px;
+    text-align: center;
+}
+#imagePopupModal img {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    background-color: #ffffff;
+}
+.preview-container {
+    margin-top: 10px;
+}
+.preview-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.preview-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+.preview-item span {
+    font-size: 14px;
 }
