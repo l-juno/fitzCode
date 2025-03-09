@@ -48,7 +48,7 @@ public class NoticeController {
             return "admin/notice/list";
         } catch (NoticeNotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "/errorPage";
+            return "404-error";
         }
     }
 
@@ -71,7 +71,7 @@ public class NoticeController {
             return "redirect:/admin/notice";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            return "/errorPage";
+            return "404-error";
         }
     }
 
@@ -84,7 +84,7 @@ public class NoticeController {
             return "admin/notice/detail";
         } catch (NoticeNotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "errorPage";
+            return "404-error";
         }
     }
 
@@ -97,7 +97,7 @@ public class NoticeController {
             return "admin/notice/edit";
         } catch (NoticeNotFoundException e) {
             model.addAttribute("error", e.getMessage());
-            return "/errorPage";
+            return "404-error";
         }
     }
 
@@ -114,7 +114,7 @@ public class NoticeController {
             return "redirect:/admin/notice";
         } catch (InvalidNoticeIdException e) {
             model.addAttribute("error", e.getMessage());
-            return "/errorPage";
+            return "404-error";
         }
     }
 
@@ -126,7 +126,7 @@ public class NoticeController {
             return "redirect:/admin/notice";
         } catch (InvalidNoticeIdException e) {
             model.addAttribute("error", e.getMessage());
-            return "/errorPage";
+            return "404-error";
         }
     }
 

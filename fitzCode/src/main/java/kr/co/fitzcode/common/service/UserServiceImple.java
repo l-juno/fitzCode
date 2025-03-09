@@ -15,10 +15,9 @@ public class UserServiceImple implements UserService {
     private final UserMapper userMapper;
     private final UserRoleMapper userRoleMapper;
 
-
     @Override
-    public UserDTO getUserByNickname(String nickname) {
-        return userMapper.getUserByNickname(nickname);
+    public UserDTO getUserByEmail(String email) {
+        return userMapper.getUserByEmail(email);
     }
 
     @Override
@@ -30,6 +29,4 @@ public class UserServiceImple implements UserService {
     public List<UserRole> findRolesInStringByUserId(int userId) {
         return userRoleMapper.findRolesInStringByUserId(userId);
     }
-
-
 }

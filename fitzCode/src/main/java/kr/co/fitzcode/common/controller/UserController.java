@@ -22,21 +22,39 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping("/getUserByNickname")
-    public ResponseEntity<UserDTO> userRoles(Model model) {
-        UserDTO user  = userService.getUserByNickname("admin");
+    @GetMapping("/getUserByEmail")
+    public ResponseEntity<UserDTO> getUserByEmail(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String email = userDetails.getUsername();
+        UserDTO user = userService.getUserByEmail(email);
         return ResponseEntity.ok(user);
     }
 
     @GetMapping("getUserRolesById")
     public ResponseEntity<List<Integer>> userRolesById(Model model) {
-        List<Integer> roles = userService.getUserRolesByUserId(1);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        int userId = userDetails.getUserId();
+        List<Integer> roles = userService.getUserRolesByUserId(userId);
         return ResponseEntity.ok(roles);
     }
 
     @GetMapping("getUserRolesInStringByUserId")
     public ResponseEntity<List<UserRole>> userRolesInStringByUserId(Model model) {
-        List<UserRole> roles = userService.findRolesInStringByUserId(1);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        int userId = userDetails.getUserId();
+        List<UserRole> roles = userService.findRolesInStringByUserId(userId);
         return ResponseEntity.ok(roles);
     }
 
@@ -49,8 +67,4 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
-
-
-
-
 }
