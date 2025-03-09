@@ -84,4 +84,7 @@ public interface ProductDetailMapper {
 
     // 이미지 삭제 후 image_order 재정의
     void updateProductImageOrder(Long productImageId, Integer imageOrder);
+
+    // 상품 재고 삭제
+    void deleteProductSizes(@Param("productId") Long productId);
 }

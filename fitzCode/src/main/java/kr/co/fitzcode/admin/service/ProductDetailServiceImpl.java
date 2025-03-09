@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -161,15 +163,63 @@ public class ProductDetailServiceImpl implements ProductDetailService {
         productDetailMapper.updateProductStatus(productId, status);
     }
 
-    // 상품 ID를 받아 해당 상품을 삭제
+    // 상품 ID를 가져와서 상품 삭제
+    @Transactional
     @Override
     public void deleteProduct(Long productId) {
+        // 삭제할 상품 정보
         ProductDetailDTO product = productDetailMapper.findProductDetailById(productId);
         if (product == null) {
             throw new IllegalArgumentException("삭제하려는 상품이 존재하지 않습니다. ID: " + productId);
         }
-        productDetailMapper.deleteProduct(productId);
-//        log.info("상품 ID={}가 삭제됨", productId);
+
+        // S3에서 이미지 삭제
+        // 대표 이미지 삭제
+        if (product.getImageUrl() != null && !product.getImageUrl().isEmpty() && !product.getImageUrl().equals("/img/fallback.jpeg")) {
+            try {
+                String mainImageKey = extractS3Key(product.getImageUrl());
+                s3Service.deleteFile(mainImageKey);
+                log.info("S3에서 대표 이미지 삭제 성공: URL={}", product.getImageUrl());
+            } catch (Exception e) {
+                log.error("S3 대표 이미지 삭제 실패: URL={}, 에러: {}", product.getImageUrl(), e.getMessage());
+                throw new RuntimeException("S3 대표 이미지 삭제 실패", e);
+            }
+        }
+
+        // 추가 이미지 삭제
+        List<ProductImageDTO> images = productDetailMapper.findProductImagesById(productId);
+        if (images != null && !images.isEmpty()) {
+            for (ProductImageDTO img : images) {
+                if (img.getImageUrl() != null && !img.getImageUrl().isEmpty() && !img.getImageUrl().equals("/img/fallback.jpeg")) {
+                    try {
+                        String imageKey = extractS3Key(img.getImageUrl());
+                        s3Service.deleteFile(imageKey);
+                        log.info("S3에서 추가 이미지 삭제 성공: URL={}", img.getImageUrl());
+                    } catch (Exception e) {
+                        log.error("S3 추가 이미지 삭제 실패: URL={}, 에러: {}", img.getImageUrl(), e.getMessage());
+                        throw new RuntimeException("S3 추가 이미지 삭제 실패", e);
+                    }
+                }
+            }
+        }
+
+        // DB 데이터 삭제
+        productDetailMapper.deleteProductImages(productId); // 추가 이미지 삭제
+        productDetailMapper.deleteProductSizes(productId);  // 사이즈 재고 삭제
+        productDetailMapper.deleteProduct(productId);       // 상품 삭제
+        log.info("상품 ID={} 및 연관 데이터 삭제 완료", productId);
+    }
+
+    // S3 URL에서 키 추출 메서드 추가
+    private String extractS3Key(String imageUrl) {
+        try {
+            URI uri = new URI(imageUrl);
+            String path = uri.getPath();
+            return path.startsWith("/") ? path.substring(1) : path; // 선행 슬래시 제거
+        } catch (URISyntaxException e) {
+            log.error("유효하지 않은 S3 URL: {}", imageUrl, e);
+            return imageUrl; // 기본값으로 URL 반환 (환경에 따라 조정 필요)
+        }
     }
 
     // 상품 ID와 페이징 정보를 받아 해당 상품의 리뷰 목록을 조회

@@ -165,4 +165,9 @@
         WHERE parent_id = #{parentId}
     </select>
 
+    <!-- 카테고리 검증 -->
+    <select id="countCategoryById" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM CATEGORY WHERE category_id = #{categoryId}
+    </select>
+
 </mapper>

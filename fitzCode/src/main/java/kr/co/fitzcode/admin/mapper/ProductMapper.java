@@ -66,4 +66,7 @@ public interface ProductMapper {
 
     // 특정 상위 카테고리의 하위 카테고리 목록 조회
     List<ProductCategoryDTO> getChildCategories(@Param("parentId") Long parentId);
+
+    // 카테고리 검증
+    int countCategoryById(Long categoryId);
 }

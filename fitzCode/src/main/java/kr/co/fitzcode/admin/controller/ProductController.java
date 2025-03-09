@@ -79,6 +79,7 @@ public class ProductController {
         return "admin/productForm";
     }
 
+    // 상품 등록
     @PostMapping("/add")
     public String addProduct(
             @ModelAttribute("product") @Valid ProductDTO productDTO,

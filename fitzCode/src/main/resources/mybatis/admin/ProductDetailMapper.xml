@@ -245,4 +245,10 @@
         SET image_order = #{imageOrder}
         WHERE image_id = #{productImageId}
     </update>
+
+    <!-- 사이즈 재고 삭제 -->
+    <delete id="deleteProductSizes" parameterType="long">
+        DELETE FROM PRODUCT_SIZE
+        WHERE product_id = #{productId}
+    </delete>
 </mapper>

@@ -152,10 +152,19 @@ public class ProductServiceImpl implements ProductService {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
 
+                // 모든 필수 필드가 비어 있으면 빈 행으로 간주하고 무시
+                String productName = getCellValue(row.getCell(0));
+                double price = getNumericCellValue(row.getCell(3));
+                String mainImageUrl = getCellValue(row.getCell(6));
+                String statusStr = getCellValue(row.getCell(7));
+
+                if (productName.isEmpty() && price <= 0 && mainImageUrl.isEmpty() && statusStr.isEmpty()) {
+                    continue; // 빈 행 무시
+                }
+
                 ProductDTO product = new ProductDTO();
 
                 // 상품명 (필수)
-                String productName = getCellValue(row.getCell(0));
                 if (productName.isEmpty()) throw new IllegalArgumentException("상품명 누락 (행 " + (i + 1) + ")");
                 product.setProductName(productName);
 
@@ -166,7 +175,6 @@ public class ProductServiceImpl implements ProductService {
                 product.setBrand(getCellValue(row.getCell(2)));
 
                 // 가격 (필수)
-                double price = getNumericCellValue(row.getCell(3));
                 if (price <= 0) throw new IllegalArgumentException("유효하지 않은 가격 (행 " + (i + 1) + ")");
                 product.setPrice((int) price);
 
@@ -181,13 +189,11 @@ public class ProductServiceImpl implements ProductService {
                     product.setCategoryId(categoryId);
                 }
 
-                // 메인 이미지 (필수) -> URL
-                String mainImageUrl = getCellValue(row.getCell(6));
+                // 메인 이미지 (필수) - URL로 직접 입력
                 if (mainImageUrl.isEmpty()) throw new IllegalArgumentException("메인 이미지 URL 누락 (행 " + (i + 1) + ")");
                 product.setImageUrl(mainImageUrl);
 
-                // Status (필수) -> 숫자 / 문자열
-                String statusStr = getCellValue(row.getCell(7));
+                // Status (필수) - 숫자 또는 문자열 처리
                 if (statusStr.isEmpty()) throw new IllegalArgumentException("상태 누락 (행 " + (i + 1) + ")");
                 ProductStatus status;
                 if (statusStr.matches("\\d+")) {
@@ -205,7 +211,7 @@ public class ProductServiceImpl implements ProductService {
 
                 // 추가 이미지 (선택) - URL로 직접 입력
                 List<String> additionalImages = new ArrayList<>();
-                int sizeStartIndex = 8;
+                int sizeStartIndex = 8; // I열 (추가 이미지 URL 1 시작)
                 while (sizeStartIndex < row.getLastCellNum() && row.getCell(sizeStartIndex) != null && !isNumericCell(row.getCell(sizeStartIndex))) {
                     String additionalImageUrl = getCellValue(row.getCell(sizeStartIndex));
                     if (!additionalImageUrl.isEmpty()) {
@@ -215,17 +221,19 @@ public class ProductServiceImpl implements ProductService {
                 }
                 product.setAdditionalImages(additionalImages);
 
-                // 사이즈별 재고 (선택)
+                // 사이즈별 재고 (선택) - M열(13)부터 고정 시작
                 List<ProductSizeDTO> sizes = new ArrayList<>();
-                for (int j = sizeStartIndex; j < row.getLastCellNum() - 1; j += 2) {
-                    int sizeCode = (int) getNumericCellValue(row.getCell(j));
-                    int stock = (int) getNumericCellValue(row.getCell(j + 1));
+                int sizeStartColumn = 12; // M열 (13)에서 고정 시작 (0-based index)
+                while (sizeStartColumn < row.getLastCellNum() - 1 && row.getCell(sizeStartColumn) != null) {
+                    int sizeCode = (int) getNumericCellValue(row.getCell(sizeStartColumn));
+                    int stock = (int) getNumericCellValue(row.getCell(sizeStartColumn + 1));
                     if (sizeCode > 0 && stock >= 0) {
                         ProductSizeDTO size = new ProductSizeDTO();
                         size.setSizeCode(sizeCode);
                         size.setStock(stock);
                         sizes.add(size);
                     }
+                    sizeStartColumn += 2;
                 }
                 product.setProductSizes(sizes);
 
@@ -251,10 +259,7 @@ public class ProductServiceImpl implements ProductService {
 
     // 카테고리 유효성
     private boolean isValidCategory(Long categoryId) {
-        return productMapper.getChildCategories(categoryId - 1).stream()
-                .anyMatch(cat -> cat.getCategoryId().equals(categoryId)) ||
-                productMapper.getParentCategories().stream()
-                        .anyMatch(cat -> cat.getCategoryId().equals(categoryId));
+        return productMapper    .countCategoryById(categoryId) > 0;
     }
 
     // 셀 값 가져오기 (문자열)
