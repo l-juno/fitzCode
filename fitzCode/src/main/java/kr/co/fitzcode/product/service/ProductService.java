@@ -27,4 +27,6 @@ public interface ProductService {
     List<ProductImageDTO> getProductImagesByProductId(int productId);
 
     List<ProductSizeDTO> getAllSizeOfProduct(int productId);
+
+    int getProductSizeIdByProductSizeAndCode(int productId, int sizeCode);
 }

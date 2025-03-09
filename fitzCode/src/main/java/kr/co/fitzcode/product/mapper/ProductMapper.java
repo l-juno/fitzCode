@@ -42,4 +42,6 @@ public interface ProductMapper {
 
     List<ProductSizeDTO> getAllSizeOfProduct(int productId);
 
+    int getProductSizeIdByProductSizeAndCode(@Param("productId") int productId, @Param("sizeCode") int sizeCode);
+
 }

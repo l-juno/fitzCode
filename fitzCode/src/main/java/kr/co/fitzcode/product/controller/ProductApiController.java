@@ -1,9 +1,6 @@
 package kr.co.fitzcode.product.controller;
 
-import kr.co.fitzcode.product.dto.CategoryDTO;
-import kr.co.fitzcode.product.dto.ProductDTO;
-import kr.co.fitzcode.product.dto.ProductResponseDTO;
-import kr.co.fitzcode.product.dto.ProductSizeDTO;
+import kr.co.fitzcode.product.dto.*;
 import kr.co.fitzcode.product.service.CategoryService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -78,9 +75,25 @@ public class ProductApiController {
     @PostMapping("/getProductSizes")
     public ResponseEntity<List<ProductSizeDTO>> getProductSizes(@RequestParam int productId) {
         List<ProductSizeDTO> listSize = productService.getAllSizeOfProduct(productId);
-        // convert size code to enum, then send converted as json
-
         return ResponseEntity.ok().body(listSize);
+    }
+
+
+    @PostMapping("addToCart")
+    public ResponseEntity<ProductResponseDTO> addToCart(@RequestParam int productId, @RequestParam int sizeCode) {
+        //
+        int productSizeId = productService.getProductSizeIdByProductSizeAndCode(productId, sizeCode);
+//        log.info("productId>>>>>>>>>>>>>>>>>>>>: {}", productId);
+//        log.info("sizeCode>>>>>>>>>>>>>>>>>>>>: {}", sizeCode);
+//        log.info("productSizeId>>>>>>>>>>>>>>>>>>>>>: {}", productSizeId);
+
+
+        // create CartDTO and add to cart getting user's id from the session
+        CartDTO cartDTO = CartDTO.builder()
+                .productSizeId(productSizeId)
+                .productId(productId)
+                .build();
+        return null;
     }
 
 

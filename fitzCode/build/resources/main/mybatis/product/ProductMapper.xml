@@ -149,6 +149,11 @@
         ORDER BY size_code asc
     </select>
 
+    <!-- get sizes of the product from product size table -->
+    <select id="getProductSizeIdByProductSizeAndCode" resultType="int">
+        select product_size_id from PRODUCT_SIZE where product_id = #{productId} and size_code = #{sizeCode};
+    </select>
+
 
 
 

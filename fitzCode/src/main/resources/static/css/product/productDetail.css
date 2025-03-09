@@ -113,9 +113,32 @@
 .product-price {
     font-size: 24px;
     font-weight: bold;
+    color: #151515;
+    margin-bottom: 20px;
+}
+
+.product-salePercent {
+    font-size: 24px;
+    font-weight: bold;
     color: #dd0000;
     margin-bottom: 20px;
 }
+
+.product-originalPrice {
+    font-size: 20px;
+    font-weight: normal;
+    text-decoration: line-through;
+    color: #dd0000;
+    margin-bottom: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure full width */
+}
+
 
 /* Size Selector */
 .size-selector {
@@ -178,12 +201,13 @@
 }
 
 .buy-button:hover, .sell-button:hover {
-    background-color: #737373;
+    background-color: #ffffff;
+    color: black;
+    border: 2px solid black;
 }
 
 .buy-info, .sell-info {
     font-size: 12px;
-    color: #fff;
 }
 
 .buy-text, .sell-text {
@@ -389,6 +413,25 @@
 /* Style the dropdown options */
 #size-options option {
     font-size: 16px;
+}
+
+
+.cart-button {
+    background-color: #151515;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+    display: block;
+    border: 2px solid transparent;
+}
+
+.cart-button:hover {
+    background-color: #ffffff;
+    color: #151515;
+    border-color: black;
 }
 
 

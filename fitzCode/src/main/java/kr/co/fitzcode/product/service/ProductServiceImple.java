@@ -92,6 +92,11 @@ public class ProductServiceImple implements ProductService {
     }
 
     @Override
+    public int getProductSizeIdByProductSizeAndCode(int productId, int sizeCode) {
+        return productMapper.getProductSizeIdByProductSizeAndCode(productId, sizeCode);
+    }
+
+    @Override
     public List<ProductDTO> getProductsByFilterAndPage(List<String> filters, String searchText, int currentPage) {
 
         int offset = (currentPage - 1) * PRODUCT_PER_PAGE;

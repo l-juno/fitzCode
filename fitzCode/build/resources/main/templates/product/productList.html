@@ -24,6 +24,11 @@
     </div>
     
     
+    <p>Current user: <span th:text="${#authentication.name}"></span></p>
+    <p>Current user roles: <span th:text="${#authentication.authorities}"></span></p>
+    
+    
+    
     <div class="product-grid" id="product-grid">
 <!--        <th:block th:each="product : ${productList}">-->
 <!--            <div class="product-single">-->
