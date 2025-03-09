@@ -15,6 +15,10 @@ public class NoticeDTO {
     private int userId;
     private String title;
     private String content;
+    private String imageUrl;
+    private String attachmentUrl;
+    private String attachmentName;
+    private Long attachmentSize;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
