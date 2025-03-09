@@ -47,7 +47,6 @@ public class SecurityConfig {
 
                                     // 형윤 (ADMIN)
 
-
                             )
                             .permitAll()
 
