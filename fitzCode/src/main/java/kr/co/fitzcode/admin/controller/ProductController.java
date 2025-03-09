@@ -1,5 +1,6 @@
 package kr.co.fitzcode.admin.controller;
 
+import jakarta.validation.Valid;
 import kr.co.fitzcode.admin.dto.ProductCategoryDTO;
 import kr.co.fitzcode.admin.dto.ProductDTO;
 import kr.co.fitzcode.admin.service.ProductService;
@@ -78,21 +79,35 @@ public class ProductController {
         return "admin/productForm";
     }
 
-    // 상품 등록
     @PostMapping("/add")
     public String addProduct(
-            @ModelAttribute ProductDTO productDTO,
+            @ModelAttribute("product") @Valid ProductDTO productDTO,
             BindingResult result,
-            @RequestParam("mainImageFile") MultipartFile mainImageFile,
-            @RequestParam("additionalImageFiles") List<MultipartFile> additionalImageFiles) {
+            @RequestParam(value = "mainImageFile", required = false) MultipartFile mainImageFile,
+            @RequestParam(value = "additionalImageFiles", required = false) List<MultipartFile> additionalImageFiles,
+            Model model) {
+        // 메인 이미지는 필수임
+        if (mainImageFile == null || mainImageFile.isEmpty()) {
+            result.rejectValue("imageUrl", "required", "메인 이미지는 필수입니다");
+        }
+
         if (result.hasErrors()) {
+            model.addAttribute("product", productDTO);
+            model.addAttribute("parentCategories", productService.getParentCategories());
             return "admin/productForm";
         }
 
-        productService.addProduct(productDTO, mainImageFile, additionalImageFiles);
-        return "redirect:/admin/products";
+        try {
+            productService.addProduct(productDTO, mainImageFile, additionalImageFiles);
+            return "redirect:/admin/products";
+        } catch (Exception e) {
+            e.printStackTrace();
+            model.addAttribute("product", productDTO);
+            model.addAttribute("parentCategories", productService.getParentCategories());
+            model.addAttribute("error", "상품 등록 실패: " + e.getMessage());
+            return "admin/productForm";
+        }
     }
-
     // 상위 카테고리 조회
     @GetMapping("/categories/parent")
     @ResponseBody
@@ -134,5 +149,31 @@ public class ProductController {
                     .collect(Collectors.toList());
         }
         return List.of();
+    }
+
+    // 엑셀 업로드
+    @PostMapping("/addExcel")
+    public String addExcel(
+            @RequestParam("excelFile") MultipartFile excelFile,
+            Model model) {
+        if (excelFile.isEmpty()) {
+            model.addAttribute("message", "엑셀 파일을 선택해주세요");
+            model.addAttribute("product", new ProductDTO());
+            model.addAttribute("parentCategories", productService.getParentCategories());
+            return "admin/productForm";
+        }
+
+        try {
+            productService.uploadExcel(excelFile, null);
+            model.addAttribute("message", "엑셀 업로드 성공");
+        } catch (Exception e) {
+            model.addAttribute("message", "엑셀 업로드 실패: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("product", new ProductDTO());
+            model.addAttribute("parentCategories", productService.getParentCategories());
+            return "admin/productForm";
+        }
+
+        return "redirect:/admin/products";
     }
 }

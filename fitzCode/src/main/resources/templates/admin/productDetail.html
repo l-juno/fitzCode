@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>상품 상세 정보</title>
-    <link rel="stylesheet" th:href="@{/css/admin/productDetail.css}" />
+    <link rel="stylesheet" th:href="@{/css/admin/productDetail.css}"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script th:src="@{/js/admin/productDetail.js}"></script>
 </head>
@@ -26,7 +26,8 @@
 
     <p>브랜드: <span th:text="${productDetail.brand}">브랜드명</span></p>
     <p>가격: <span th:text="${productDetail.price}">0</span> 원</p>
-    <p>할인된 가격: <span th:text="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}">0</span> 원</p>
+    <p>할인된 가격: <span th:text="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}">0</span> 원
+    </p>
     <p th:if="${productDetail.discountRate > 0}">할인율: <span th:text="${productDetail.discountRate}">0</span> %</p>
     <p>재고: <span th:text="${productDetail.stock}">0</span> 개</p>
     <p>카테고리: <span th:text="${productDetail.categoryName}">카테고리</span></p>
@@ -39,70 +40,88 @@
             <div class="image-item">
                 <span>대표 이미지</span>
                 <th:block th:if="${productDetail.imageUrl != null}">
-                    <img th:src="${productDetail.imageUrl}" alt="대표 이미지" th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
+                    <img th:src="${productDetail.imageUrl}" alt="대표 이미지"
+                         th:onerror="this.style.display='none'; this.nextSibling.style.display='block';"/>
+                    <p style="display: none;">이미지가 없습니다</p>
                 </th:block>
-                <th:block th:if="${productDetail.imageUrl == null}">
-                    <p>대표 이미지 없음</p>
+                <th:block th:unless="${productDetail.imageUrl != null}">
+                    <p>이미지가 없습니다</p>
                 </th:block>
             </div>
-            <div class="image-item" th:each="img : ${productDetail.images}" th:if="${not #lists.isEmpty(productDetail.images)}">
+            <div class="image-item" th:each="img : ${productDetail.images}"
+                 th:if="${not #lists.isEmpty(productDetail.images)}">
                 <span>추가 이미지</span>
-                <img th:src="${img.imageUrl}" alt="상품 이미지" th:onerror="onImageError(this, '${img.imageUrl}')"/>
+                <img th:src="${img.imageUrl}" alt="상품 이미지"
+                     th:onerror="this.style.display='none'; this.nextSibling.style.display='block';"/>
+                <p style="display: none;">이미지가 없습니다</p>
             </div>
-            <div class="image-item" th:if="${#lists.isEmpty(productDetail.images)}">
+            <div class="image-item" th:unless="${not #lists.isEmpty(productDetail.images)}">
                 <span>추가 이미지</span>
-                <p>추가 이미지 없음</p>
+                <p>이미지가 없습니다</p>
             </div>
         </div>
         <div class="image-actions">
             <button id="editImageBtn" class="action-btn">이미지 수정</button>
         </div>
     </div>
+</div>
 
-    <hr/>
+<hr/>
 
-    <div>
-        <h2>상품 정보 수정</h2>
-        <div class="edit-section">
-            <div class="left-column">
-                <form th:action="@{|/admin/products/${productDetail.productId}/update|}" th:object="${productDetail}" method="post" class="size-form">
-                    <h3>사이즈 재고 수정</h3>
-                    <table>
-                        <thead><tr><th>사이즈</th><th>재고</th></tr></thead>
-                        <tbody>
-                        <tr th:each="size, i : ${productDetail.allSizes}">
-                            <input type="hidden" th:field="*{sizes[__${i.index}__].productSizeId}" th:value="${size.productSizeId != null ? size.productSizeId : ''}"/>
-                            <input type="hidden" th:field="*{sizes[__${i.index}__].sizeCode}" th:value="${size.sizeCode != null ? size.sizeCode : 0}"/>
-                            <td><span th:text="${size.sizeDescription}">사이즈</span></td>
-                            <td><input type="number" th:field="*{sizes[__${i.index}__].stock}" th:value="${size.stock != null ? size.stock : 0}" min="0"/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <button type="submit" class="submit-btn">저장</button>
-                </form>
-            </div>
-            <div class="right-column">
-                <form th:action="@{|/admin/products/${productDetail.productId}/update|}" th:object="${productDetail}" method="post" class="discount-form">
-                    <h3>할인 가격 관리</h3>
-                    <label>할인 가격:</label>
-                    <input type="number" th:field="*{discountedPrice}" th:value="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}" min="0"/>
-                    <button type="submit" class="submit-btn">저장</button>
-                </form>
+<div>
+    <h2>상품 정보 수정</h2>
+    <div class="edit-section">
+        <div class="left-column">
+            <form th:action="@{|/admin/products/${productDetail.productId}/update|}" th:object="${productDetail}"
+                  method="post" class="size-form">
+                <h3>사이즈 재고 수정</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>사이즈</th>
+                        <th>재고</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="size, i : ${productDetail.allSizes}">
+                        <input type="hidden" th:field="*{sizes[__${i.index}__].productSizeId}"
+                               th:value="${size.productSizeId != null ? size.productSizeId : ''}"/>
+                        <input type="hidden" th:field="*{sizes[__${i.index}__].sizeCode}"
+                               th:value="${size.sizeCode != null ? size.sizeCode : 0}"/>
+                        <td><span th:text="${size.sizeDescription}">사이즈</span></td>
+                        <td><input type="number" th:field="*{sizes[__${i.index}__].stock}"
+                                   th:value="${size.stock != null ? size.stock : 0}" min="0"/></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button type="submit" class="submit-btn">저장</button>
+            </form>
+        </div>
+        <div class="right-column">
+            <form th:action="@{|/admin/products/${productDetail.productId}/update|}" th:object="${productDetail}"
+                  method="post" class="discount-form">
+                <h3>할인 가격 관리</h3>
+                <label>할인 가격:</label>
+                <input type="number" th:field="*{discountedPrice}"
+                       th:value="${productDetail.discountedPrice != null ? productDetail.discountedPrice : 0}" min="0"/>
+                <button type="submit" class="submit-btn">저장</button>
+            </form>
 
-                <div class="status-section">
-                    <h3>상품 상태 변경</h3>
-                    <div class="status-delete-container">
-                        <button id="statusActive" class="status-active-btn" data-status="1">판매 중</button>
-                        <button id="statusSoldOut" class="status-soldout-btn" data-status="2">품절</button>
-                        <button id="statusDisabled" class="status-disabled-btn" data-status="3">비활성화</button>
-                        <form th:action="@{|/admin/products/${productDetail.productId}/delete|}" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');" class="delete-form">
-                            <button type="submit" class="product-delete-btn">삭제</button>
-                        </form>
-                    </div>
+            <div class="status-section">
+                <h3>상품 상태 변경</h3>
+                <div class="status-delete-container">
+                    <button id="statusActive" class="status-active-btn" data-status="1">판매 중</button>
+                    <button id="statusSoldOut" class="status-soldout-btn" data-status="2">품절</button>
+                    <button id="statusDisabled" class="status-disabled-btn" data-status="3">비활성화</button>
+                    <form th:action="@{|/admin/products/${productDetail.productId}/delete|}" method="post"
+                          onsubmit="return confirm('정말 삭제하시겠습니까?');" class="delete-form">
+                        <button type="submit" class="product-delete-btn">삭제</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <!-- 이미지 수정 모달 -->
@@ -115,7 +134,8 @@
                 <label>대표 이미지</label>
                 <div class="image-item">
                     <th:block th:if="${productDetail.imageUrl != null}">
-                        <img th:src="${productDetail.imageUrl}" alt="현재 대표 이미지" th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
+                        <img th:src="${productDetail.imageUrl}" alt="현재 대표 이미지"
+                             th:onerror="onImageError(this, '${productDetail.imageUrl}')"/>
                     </th:block>
                     <th:block th:if="${productDetail.imageUrl == null}">
                         <p>대표 이미지 없음</p>
@@ -128,9 +148,12 @@
             <div class="additional-images-section">
                 <label>추가 이미지</label>
                 <div id="additionalImagesList">
-                    <div class="image-item" th:each="img : ${productDetail.images}" th:id="'deleteImage-' + ${img.productImageId}">
-                        <button type="button" class="image-delete-btn" th:data-image-id="${img.productImageId}">X</button>
-                        <img th:src="${img.imageUrl}" alt="현재 추가 이미지" th:onerror="onImageError(this, '${img.imageUrl}')"/>
+                    <div class="image-item" th:each="img : ${productDetail.images}"
+                         th:id="'deleteImage-' + ${img.productImageId}">
+                        <button type="button" class="image-delete-btn" th:data-image-id="${img.productImageId}">X
+                        </button>
+                        <img th:src="${img.imageUrl}" alt="현재 추가 이미지"
+                             th:onerror="onImageError(this, '${img.imageUrl}')"/>
                     </div>
                 </div>
                 <div id="deleteImagesContainer" style="display: none;"></div>

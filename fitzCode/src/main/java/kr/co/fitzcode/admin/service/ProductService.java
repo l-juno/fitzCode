@@ -38,4 +38,7 @@ public interface ProductService {
 
     // 상위 카테고리 -> 사이즈 조회
     List<Map<String, Object>> getSizesByParentCategory(Long parentId);
+
+    // 엑셀 업로드
+    void uploadExcel(MultipartFile excelFile, List<MultipartFile> imageFiles) throws Exception;
 }

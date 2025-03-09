@@ -23,7 +23,7 @@ public class S3Service {
     @Value("${aws.s3.bucket}")
     private String bucketName;
 
-    // S3 업로드 메서드 (여러 파일 지원)
+    // S3 업로드 (1개만)
     public String uploadFile(MultipartFile file, String folder) {
         String key = folder + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
 

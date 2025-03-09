@@ -15,7 +15,7 @@
         <div class="underline"></div>
       </div>
       <div class="header-buttons">
-        <button type="button" class="header-btn" onclick="location.href='/admin/products/addExcel'">엑셀 업로드</button>
+        <button type="button" class="header-btn" id="excelUploadBtn">엑셀 업로드</button>
         <button type="button" class="header-btn" onclick="history.back()">뒤로가기</button>
       </div>
     </div>
@@ -23,7 +23,9 @@
       <div class="form-group">
         <label for="productName">상품명</label>
         <input type="text" id="productName" th:field="*{productName}" required />
+        <span th:errors="*{productName}" class="error"></span>
       </div>
+      <div th:if="${error}" class="error" th:text="${error}"></div>
       <div class="form-group">
         <label for="description">설명</label>
         <textarea id="description" th:field="*{description}" rows="5"></textarea>
@@ -94,7 +96,7 @@
           <div class="status-label">상태</div>
           <input type="hidden" id="status" th:field="*{status}" />
           <div class="status-btn-container">
-            <div class="status-btn" data-value="ON_SALE">판매중</div>
+            <div class="status-btn" data-value="ACTIVE">판매중</div>
             <div class="status-btn" data-value="SOLD_OUT">품절</div>
             <div class="status-btn" data-value="INACTIVE">비활성화</div>
           </div>
@@ -102,6 +104,22 @@
       </div>
       <button type="submit" class="submit-btn">등록</button>
     </form>
+
+    <!-- 엑셀 업로드 모달 -->
+    <div class="modal" id="excelModal">
+      <div class="modal-content">
+        <span class="close-btn">×</span>
+        <h3>엑셀 업로드</h3>
+        <form th:action="@{/admin/products/addExcel}" method="post" enctype="multipart/form-data" id="excelUploadForm">
+          <div class="form-group">
+            <label for="excelFile">엑셀 파일</label>
+            <input type="file" id="excelFile" name="excelFile" accept=".xlsx" required />
+          </div>
+          <button type="submit" class="submit-btn">업로드</button>
+          <span class="message" th:text="${message}"></span>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 <script th:src="@{/js/admin/productForm.js}"></script>

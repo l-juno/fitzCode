@@ -190,11 +190,3 @@ function updateStatusText(status) {
     }
     $('#statusText').text(statusText);
 }
-
-function onImageError(img, fallbackUrl) {
-    img.style.display = 'none';
-    const parent = img.parentElement;
-    const placeholder = document.createElement('p');
-    placeholder.textContent = '이미지를 로드할 수 없습니다.';
-    parent.appendChild(placeholder);
-}

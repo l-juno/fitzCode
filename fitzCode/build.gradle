@@ -46,6 +46,8 @@ dependencies {
     implementation 'software.amazon.awssdk:s3:2.20.89'
     implementation 'software.amazon.awssdk:auth:2.20.89'
     implementation 'software.amazon.awssdk:regions:2.20.89'
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
 }
 
 tasks.named('test') {

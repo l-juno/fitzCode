@@ -5,16 +5,17 @@ import kr.co.fitzcode.admin.dto.ProductDTO;
 import kr.co.fitzcode.admin.dto.ProductSizeDTO;
 import kr.co.fitzcode.admin.mapper.ProductMapper;
 import kr.co.fitzcode.common.enums.ProductSize;
+import kr.co.fitzcode.common.enums.ProductStatus;
 import kr.co.fitzcode.common.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,19 +31,19 @@ public class ProductServiceImpl implements ProductService {
     public void addProduct(ProductDTO productDTO, MultipartFile mainImageFile, List<MultipartFile> additionalImageFiles) {
         // 메인 이미지 업로드
         if (mainImageFile != null && !mainImageFile.isEmpty()) {
-            String mainImageUrl = s3Service.uploadFile(mainImageFile, "products-images/main");
+            String mainImageUrl = s3Service.uploadFile(mainImageFile, "product-images/main");
             productDTO.setImageUrl(mainImageUrl);
         }
 
         // 추가 이미지 업로드
         if (additionalImageFiles != null && !additionalImageFiles.isEmpty()) {
-            List<String> additionalImageUrls = s3Service.uploadFiles(additionalImageFiles, "products-images/additional");
+            List<String> additionalImageUrls = s3Service.uploadFiles(additionalImageFiles, "product-images/additional");
             productDTO.setAdditionalImages(additionalImageUrls);
         }
 
-        // 상품 기본 정보 삽입
+        // 상품 기본 정보 인서트
         productMapper.insertProduct(productDTO);
-        Long productId = productDTO.getProductId(); // 삽입 후 생성된 ID 가져오기
+        Long productId = productDTO.getProductId(); // 인서트 후 생성된 ID 가져오기
 
         // 추가 이미지 삽입
         if (productDTO.getAdditionalImages() != null && !productDTO.getAdditionalImages().isEmpty()) {
@@ -136,5 +137,148 @@ public class ProductServiceImpl implements ProductService {
                     .collect(Collectors.toList());
         }
         return List.of();
+    }
+
+    // 엑셀 업로드
+    @Override
+    @Transactional
+    public void uploadExcel(MultipartFile excelFile, List<MultipartFile> imageFiles) throws Exception {
+        List<ProductDTO> products = new ArrayList<>();
+
+        try (InputStream is = excelFile.getInputStream();
+             Workbook workbook = new XSSFWorkbook(is)) {
+            Sheet sheet = workbook.getSheetAt(0);
+            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null) continue;
+
+                ProductDTO product = new ProductDTO();
+
+                // 상품명 (필수)
+                String productName = getCellValue(row.getCell(0));
+                if (productName.isEmpty()) throw new IllegalArgumentException("상품명 누락 (행 " + (i + 1) + ")");
+                product.setProductName(productName);
+
+                // 설명 (선택)
+                product.setDescription(getCellValue(row.getCell(1)));
+
+                // 브랜드 (선택)
+                product.setBrand(getCellValue(row.getCell(2)));
+
+                // 가격 (필수)
+                double price = getNumericCellValue(row.getCell(3));
+                if (price <= 0) throw new IllegalArgumentException("유효하지 않은 가격 (행 " + (i + 1) + ")");
+                product.setPrice((int) price);
+
+                // 할인가 (선택)
+                double discountedPrice = getNumericCellValue(row.getCell(4));
+                product.setDiscountedPrice(discountedPrice > 0 ? (int) discountedPrice : null);
+
+                // 카테고리 ID (선택)
+                long categoryId = (long) getNumericCellValue(row.getCell(5));
+                if (categoryId > 0) {
+                    if (!isValidCategory(categoryId)) throw new IllegalArgumentException("유효하지 않은 카테고리 ID: " + categoryId + " (행 " + (i + 1) + ")");
+                    product.setCategoryId(categoryId);
+                }
+
+                // 메인 이미지 (필수) -> URL
+                String mainImageUrl = getCellValue(row.getCell(6));
+                if (mainImageUrl.isEmpty()) throw new IllegalArgumentException("메인 이미지 URL 누락 (행 " + (i + 1) + ")");
+                product.setImageUrl(mainImageUrl);
+
+                // Status (필수) -> 숫자 / 문자열
+                String statusStr = getCellValue(row.getCell(7));
+                if (statusStr.isEmpty()) throw new IllegalArgumentException("상태 누락 (행 " + (i + 1) + ")");
+                ProductStatus status;
+                if (statusStr.matches("\\d+")) {
+                    int statusCode = Integer.parseInt(statusStr);
+                    status = ProductStatus.fromCode(statusCode);
+                    if (status == null) throw new IllegalArgumentException("유효하지 않은 상태 코드: " + statusStr + " (행 " + (i + 1) + ")");
+                } else {
+                    try {
+                        status = ProductStatus.valueOf(statusStr.toUpperCase());
+                    } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException("유효하지 않은 상태: " + statusStr + " (행 " + (i + 1) + ")");
+                    }
+                }
+                product.setStatus(status);
+
+                // 추가 이미지 (선택) - URL로 직접 입력
+                List<String> additionalImages = new ArrayList<>();
+                int sizeStartIndex = 8;
+                while (sizeStartIndex < row.getLastCellNum() && row.getCell(sizeStartIndex) != null && !isNumericCell(row.getCell(sizeStartIndex))) {
+                    String additionalImageUrl = getCellValue(row.getCell(sizeStartIndex));
+                    if (!additionalImageUrl.isEmpty()) {
+                        additionalImages.add(additionalImageUrl);
+                    }
+                    sizeStartIndex++;
+                }
+                product.setAdditionalImages(additionalImages);
+
+                // 사이즈별 재고 (선택)
+                List<ProductSizeDTO> sizes = new ArrayList<>();
+                for (int j = sizeStartIndex; j < row.getLastCellNum() - 1; j += 2) {
+                    int sizeCode = (int) getNumericCellValue(row.getCell(j));
+                    int stock = (int) getNumericCellValue(row.getCell(j + 1));
+                    if (sizeCode > 0 && stock >= 0) {
+                        ProductSizeDTO size = new ProductSizeDTO();
+                        size.setSizeCode(sizeCode);
+                        size.setStock(stock);
+                        sizes.add(size);
+                    }
+                }
+                product.setProductSizes(sizes);
+
+                products.add(product);
+            }
+
+            // DB 저장
+            for (ProductDTO product : products) {
+                productMapper.insertProduct(product);
+                Long productId = product.getProductId();
+                if (product.getAdditionalImages() != null && !product.getAdditionalImages().isEmpty()) {
+                    int imageOrder = 1;
+                    for (String imageUrl : product.getAdditionalImages()) {
+                        productMapper.insertProductImage(productId, imageUrl, imageOrder++);
+                    }
+                }
+                for (ProductSizeDTO size : product.getProductSizes()) {
+                    productMapper.insertProductSize(productId, size.getSizeCode(), size.getStock());
+                }
+            }
+        }
+    }
+
+    // 카테고리 유효성
+    private boolean isValidCategory(Long categoryId) {
+        return productMapper.getChildCategories(categoryId - 1).stream()
+                .anyMatch(cat -> cat.getCategoryId().equals(categoryId)) ||
+                productMapper.getParentCategories().stream()
+                        .anyMatch(cat -> cat.getCategoryId().equals(categoryId));
+    }
+
+    // 셀 값 가져오기 (문자열)
+    private String getCellValue(Cell cell) {
+        if (cell == null) return "";
+
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> String.valueOf((int) cell.getNumericCellValue());
+            default -> "";
+        };
+    }
+
+    // 셀 값 가져오기 (숫자)
+    private double getNumericCellValue(Cell cell) {
+        if (cell == null) return 0;
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return cell.getNumericCellValue();
+        }
+        return 0;
+    }
+
+    // 셀이 숫자인지
+    private boolean isNumericCell(Cell cell) {
+        return cell != null && cell.getCellType() == CellType.NUMERIC;
     }
 }
