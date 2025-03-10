@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.admin.mapper.ProductMapper">
+
+    <!-- 상품 등록 -->
+    <insert id="insertProduct"
+            parameterType="ProductDTO"
+            useGeneratedKeys="true"
+            keyProperty="productId">
+        INSERT INTO PRODUCT (product_name, description, brand, price, stock, category_id, image_url, status, created_at, discounted_price)
+        VALUES (#{productName}, #{description}, #{brand}, #{price}, #{stock}, #{categoryId}, #{imageUrl},
+        #{status, typeHandler=kr.co.fitzcode.admin.handler.ProductStatusTypeHandler}, NOW(), #{discountedPrice})
+    </insert>
+
+    <!-- 추가 이미지 등록 -->
+    <insert id="insertProductImage">
+        INSERT INTO PRODUCT_IMAGE (product_id, image_url, image_order)
+        VALUES (#{productId}, #{imageUrl}, #{imageOrder})
+    </insert>
+
+    <!-- 사이즈별 재고 등록 -->
+    <insert id="insertProductSize">
+        INSERT INTO PRODUCT_SIZE (product_id, size_code, stock)
+        VALUES (#{productId}, #{sizeCode}, #{stock})
+    </insert>
+
+    <!-- 전체 상품 조회 (페이지네이션, 정렬, 검색) -->
+    <select id="getAllProducts" resultType="ProductDTO">
+        SELECT
+        product_id AS productId,
+        product_name AS productName,
+        description,
+        brand,
+        price,
+        stock,
+        category_id AS categoryId,
+        image_url AS imageUrl,
+        status AS status,
+        discounted_price AS discountedPrice,
+        created_at AS createdAt
+        FROM PRODUCT
+        <where>
+            <if test="keyword != null and keyword != ''">
+                product_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY product_id
+        <choose>
+            <when test="sort == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 카테고리별 상품 조회 (페이지네이션, 정렬, 검색) -->
+    <select id="getProductsByCategory" resultType="ProductDTO">
+        SELECT
+        product_id AS productId,
+        product_name AS productName,
+        description,
+        brand,
+        price,
+        stock,
+        category_id AS categoryId,
+        image_url AS imageUrl,
+        status AS status,
+        discounted_price AS discountedPrice,
+        created_at AS createdAt
+        FROM PRODUCT
+        <where>
+            category_id = #{categoryId}
+            <if test="keyword != null and keyword != ''">
+                AND product_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY product_id
+        <choose>
+            <when test="sort == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 상위 카테고리의 모든 하위 카테고리 상품 조회 (페이지네이션, 정렬, 검색) -->
+    <select id="getProductsByParentCategory" resultType="ProductDTO">
+        SELECT
+        p.product_id AS productId,
+        p.product_name AS productName,
+        p.description,
+        p.brand,
+        p.price,
+        p.stock,
+        p.category_id AS categoryId,
+        p.image_url AS imageUrl,
+        p.status AS status,
+        p.discounted_price AS discountedPrice,
+        p.created_at AS createdAt
+        FROM PRODUCT p
+        JOIN CATEGORY c ON p.category_id = c.category_id
+        <where>
+            c.parent_id = #{parentCategoryId}
+            <if test="keyword != null and keyword != ''">
+                AND p.product_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY p.product_id
+        <choose>
+            <when test="sort == 'asc'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 전체 상품 개수 조회 + 검색 -->
+    <select id="countAllProducts" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT
+        <where>
+            <if test="keyword != null and keyword != ''">
+                product_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 특정 카테고리 상품 개수 조회 + 검색 -->
+    <select id="countProductsByCategory" resultType="int">
+        SELECT COUNT(*) FROM PRODUCT
+        <where>
+            category_id = #{categoryId}
+            <if test="keyword != null and keyword != ''">
+                AND product_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 상위 카테고리 상품 개수 조회 + 검색-->
+    <select id="countProductsByParentCategory" resultType="int">
+        SELECT COUNT(*)
+        FROM PRODUCT p
+        JOIN CATEGORY c ON p.category_id = c.category_id
+        <where>
+            c.parent_id = #{parentCategoryId}
+            <if test="keyword != null and keyword != ''">
+                AND p.product_name LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+    <!-- 상위 카테고리 목록 조회 -->
+    <select id="getParentCategories" resultType="ProductCategoryDTO">
+        SELECT
+        category_id AS categoryId,
+        parent_id AS parentId,
+        code,
+        name,
+        depth
+        FROM CATEGORY
+        WHERE parent_id IS NULL
+        ORDER BY name ASC
+    </select>
+
+    <!-- 상위 카테고리의 하위 카테고리 목록 조회 -->
+    <select id="getChildCategories" resultType="ProductCategoryDTO">
+        SELECT category_id AS categoryId, name
+        FROM CATEGORY
+        WHERE parent_id = #{parentId}
+    </select>
+
+    <!-- 카테고리 검증 -->
+    <select id="countCategoryById" parameterType="long" resultType="int">
+        SELECT COUNT(*) FROM CATEGORY WHERE category_id = #{categoryId}
+    </select>
+
+</mapper>

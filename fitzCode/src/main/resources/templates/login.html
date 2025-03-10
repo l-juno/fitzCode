@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>로그인</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}" th:unless="${#strings.isEmpty('/css/styles.css')}" />
+</head>
+<body>
+<h1>로그인</h1>
+<div th:if="${param.error}" style="color: red;">
+  <p>로그인 실패: 이메일 또는 비밀번호를 확인하세요.</p>
+</div>
+<form th:action="@{/loginValidate}" method="post" onsubmit="return validateForm()">
+  <div>
+    <label for="email">이메일:</label>
+    <input type="text" id="email" name="email" placeholder="이메일을 입력하세요" required>
+  </div>
+  <div>
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+  </div>
+  <button type="submit">로그인</button>
+</form>
+<p>계정이 없으신가요? <a th:href="@{/signup}">회원가입</a></p>
+
+<script>
+  function validateForm() {
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    if (!email || !password) {
+      alert("이메일과 비밀번호를 모두 입력해주세요.");
+      return false;
+    }
+    return true;
+  }
+</script>
+</body>
+</html>

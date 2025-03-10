@@ -11,8 +11,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(Exception e, Model model) {
-        model.addAttribute("error", "예상치 못한 오류가 발생했습니다.");
-        log.error("예상치 못한 오류 발생: {}", e.getMessage(), e);
-        return "errorPage";
+        model.addAttribute("error", "error");
+        log.error("error msg: {}", e.getMessage(), e);
+        return "404-error";
     }
 }

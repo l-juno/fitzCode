@@ -1,3 +1,4 @@
+
 package kr.co.fitzcode.common.enums;
 
 import lombok.AllArgsConstructor;

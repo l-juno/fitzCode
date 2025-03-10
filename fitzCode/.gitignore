@@ -269,13 +269,14 @@ $RECYCLE.BIN/
 *.bin
 *.lock
 
+# 빌드 디렉토리 무시
+build/
+.idea
+
 # Windows shortcuts
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/intellij,eclipse,macos,windows,java
-
-# Gradle files
-build/
 
 # IntelliJ IDEA files
 .idea/
