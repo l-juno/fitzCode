@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.springframework.org/schema/security">
 <head>
     <th:block th:replace="~{fragments/header :: header-head}"></th:block>
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
@@ -25,7 +26,11 @@
     
     
     <p>Current user: <span th:text="${#authentication.name}"></span></p>
-    <p>Current user roles: <span th:text="${#authentication.authorities}"></span></p>
+    <p>User roles: <span th:text="${#authentication.authorities}"></span></p>
+    <p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.userId}"></span></p>
+    
+    
+    
     
     
     

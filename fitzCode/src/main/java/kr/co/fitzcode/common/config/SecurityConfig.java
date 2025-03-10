@@ -48,7 +48,7 @@ public class SecurityConfig {
 
                             // only those with role user can approach this url (where user needs to login to approach)
                             // 유저가 접근할수있는 url, 로그인이 필요한 url
-                            .requestMatchers("/cart/**").hasRole("USER")
+                            .requestMatchers("/api/cart/**").hasRole("USER")
 
                             // all other requests need authentication
                             // 나머지... authentication 필요
@@ -82,6 +82,7 @@ public class SecurityConfig {
 
 
         http.csrf(auth ->auth.disable());
+
 
         return http.build();
     }

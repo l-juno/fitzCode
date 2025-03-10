@@ -79,22 +79,7 @@ public class ProductApiController {
     }
 
 
-    @PostMapping("addToCart")
-    public ResponseEntity<ProductResponseDTO> addToCart(@RequestParam int productId, @RequestParam int sizeCode) {
-        //
-        int productSizeId = productService.getProductSizeIdByProductSizeAndCode(productId, sizeCode);
-//        log.info("productId>>>>>>>>>>>>>>>>>>>>: {}", productId);
-//        log.info("sizeCode>>>>>>>>>>>>>>>>>>>>: {}", sizeCode);
-//        log.info("productSizeId>>>>>>>>>>>>>>>>>>>>>: {}", productSizeId);
 
-
-        // create CartDTO and add to cart getting user's id from the session
-        CartDTO cartDTO = CartDTO.builder()
-                .productSizeId(productSizeId)
-                .productId(productId)
-                .build();
-        return null;
-    }
 
 
 }

@@ -5,6 +5,8 @@ import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.common.mapper.UserMapper;
 import kr.co.fitzcode.common.mapper.UserRoleMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +31,16 @@ public class UserServiceImple implements UserService {
     @Override
     public List<UserRole> findRolesInStringByUserId(int userId) {
         return userRoleMapper.findRolesInStringByUserId(userId);
+    }
+
+    @Override
+    public Integer getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            return userDetails.getUserId();
+        }
+        return null;
     }
 
 
