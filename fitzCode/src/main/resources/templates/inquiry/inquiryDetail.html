@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>fitzCode</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<style>
+    .inquiryContainer {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        font-size: 13.3px;
+    }
+
+    .inquiryContainer hr {
+        border: 2px black solid;
+
+    }
+
+    .finalButtons a {
+        color: gray;
+    }
+
+    .inquiryContent {
+        width: 500px;
+
+    }
+
+    .inquiryData1 {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 0px 5px 15px 0px;
+        justify-content: space-between;
+        margin: 23px 0px 15px;
+        border-bottom: 1px gray solid;
+    }
+
+    .data {
+        color: darkgray;
+        margin-left: 10px;
+    }
+
+    #content{
+        width: 98%;
+        border: 1px gray solid;
+        height: 110px;
+        border-radius: 10px;
+        margin: 10px 0px;
+        padding: 10px;
+    }
+
+    #subject{
+        font-size: 15px;
+        border: 1px lightgray solid;
+        display: inline-block;
+        width: 98%;
+        padding: 10px;
+        border-radius: 10px;
+        margin: 10px 0px;
+    }
+</style>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<!-- 메인 콘텐츠 -->
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="inquiryContainer">
+    <div class="inquiryContent">
+        <h2>문의 상세보기</h2>
+        <hr>
+        <div class="inquiryData1">
+            <span> 문의 유형 <span class="data" th:text="${inquiryDetail['category']}"/></span>
+            <span> 문의 상태 <span class="data" th:text="${inquiryDetail['status']}"/> </span>
+            <span> 등록 날짜 <span class="data"
+                               th:text="${#dates.format(inquiryDetail['createdAt'], 'yyyy / MM / dd')}"/></span>
+        </div>
+        <div class="inquiryData1">
+            <span>작성자 <span class="data" th:text="${inquiryDetail['userName']}"/></span>
+            <span>연락처 <span class="data" th:text="${inquiryDetail['phoneNumber']}"/></span>
+        </div>
+        제목 <span th:text="${inquiryDetail['subject']}" id="subject"></span>
+        <br>
+        문의 내용
+        <div th:text="${inquiryDetail['content']}" id="content"></div>
+        <div class="imageContainer" th:if="${not empty inquiryDetail['productName']}">
+            <table>
+                <tr>
+                    <td rowspan="4" style="height: 120px; width: 120px;">
+                        <img src="${inquiryDetail['productImageUrl']}" alt="${inquiryDetail['productName']}">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;" th:text="${inquiryDetail['productBrand']}"/>
+                </tr>
+                <tr>
+                    <td th:text="${inquiryDetail['productName']}"/>
+                </tr>
+                <tr>
+                    <td style="color: lightgray;" th:text="${inquiryDetail['productName']}"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="finalButtons">
+            <a th:href="@{inquiryList}">목록으로</a>
+            <a th:href="@{modify}">수정</a>
+            <a th:href="@{delete}">삭제</a>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+</body>
+</html>

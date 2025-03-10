@@ -2,6 +2,7 @@ package kr.co.fitzcode.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 
@@ -23,4 +24,5 @@ public enum InquiryCategory {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 문의 카테고리 코드: " + code));
     }
+
 }

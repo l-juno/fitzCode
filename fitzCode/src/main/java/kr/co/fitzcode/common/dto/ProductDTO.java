@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @Getter
@@ -47,5 +48,13 @@ public class ProductDTO {
             return df.format(discountPercentage);
         }
         return "0";
+    }
+
+    public String getFormattedCreatedAt() {
+        if (createdAt != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(createdAt);
+        }
+        return "";
     }
 }

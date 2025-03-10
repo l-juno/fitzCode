@@ -19,6 +19,6 @@ public class CartServiceImple implements CartService {
 
     @Override
     public List<CartDTO> getCartProductsByUserId(int userId) {
-        return List.of();
+        return cartMapper.getCartProductsByUserId(userId);
     }
 }
