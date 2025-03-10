@@ -31,7 +31,12 @@
         <nav class="header-utils">
             <a href="/notice">공지사항</a>
             <a href="#" id="search-btn">검색</a>
-            <a href="/login">로그인</a>
+            <a th:if="${session.dto == null}" href="/login">로그인</a>
+            <a th:if="${session.dto != null}" href="/logout">
+                <span th:text="${session.dto.getUserName()} + ' 님'" style="font-weight: bold;"></span>
+                &nbsp;로그아웃
+            </a>
+
             <a href="/cart">CART</a>
             <a href="/notification">알림</a>
         </nav>
