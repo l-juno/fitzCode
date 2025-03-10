@@ -81,4 +81,14 @@ public class UserServiceImpl implements UserService {
                 })
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public UserDTO findByUsername(String username) {
+        return userMapper.findByUsername(username);
+    }
+
+    @Override
+    public void updateUser(UserDTO user) {
+        userMapper.updateUser(user);
+    }
 }
