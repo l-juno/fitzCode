@@ -9,7 +9,7 @@ import java.util.List;
 public interface InquiryService {
     UserDTO getUserOne(int userId);
 
-    void registInquiry(InquiryDTO inquiryDTO);
+//    void registInquiry(InquiryDTO inquiryDTO);
 
     List<HashMap<String, Object>> getUserAndOrderList(int userId);
 

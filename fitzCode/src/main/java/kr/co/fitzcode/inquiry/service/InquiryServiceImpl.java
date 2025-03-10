@@ -25,24 +25,24 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     // 문의 내용 등록
-    @Override
-    public void registInquiry(InquiryDTO inquiryDTO) {
-        log.info(inquiryDTO.toString());
-        int category = inquiryDTO.getCategoryCode();
-        // 공통 문의 내용
-        InquiryDTO dto = InquiryDTO.builder()
-                .userId(inquiryDTO.getUserId())
-                .orderId(inquiryDTO.getOrderId())
-                .subject(inquiryDTO.getSubject())
-                .content(inquiryDTO.getContent())
-                .categoryCode(category)
-                .statusCode(1)
-                .productId(inquiryDTO.getProductId())
-                .build();
-        inquiryMapper1.saveInquiry(dto);
-        log.info(">>>>>>>>>>>>>>> inquiry_id 확인 {}", dto.getInquiryId());
-//        saveImages(dto.getInquiryId(), inquiryDTO.getImageUrls()); // 이미지 dto 에 담기
-    }
+//    @Override
+//    public void registInquiry(InquiryDTO inquiryDTO) {
+//        log.info(inquiryDTO.toString());
+//        int category = inquiryDTO.getCategoryCode();
+//        // 공통 문의 내용
+//        InquiryDTO dto = InquiryDTO.builder()
+//                .userId(inquiryDTO.getUserId())
+//                .orderId(inquiryDTO.getOrderId())
+//                .subject(inquiryDTO.getSubject())
+//                .content(inquiryDTO.getContent())
+//                .categoryCode(category)
+//                .statusCode(1)
+//                .productId(inquiryDTO.getProductId())
+//                .build();
+//        inquiryMapper1.saveInquiry(dto);
+//        log.info(">>>>>>>>>>>>>>> inquiry_id 확인 {}", dto.getInquiryId());
+////        saveImages(dto.getInquiryId(), inquiryDTO.getImageUrls()); // 이미지 dto 에 담기
+//    }
 
     // 개인별 문의 내역 불러오기
     @Override
