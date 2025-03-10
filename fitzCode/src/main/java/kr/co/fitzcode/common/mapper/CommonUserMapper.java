@@ -4,7 +4,7 @@ import kr.co.fitzcode.common.dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface UserMapper {
+public interface CommonUserMapper {
 
     UserDTO getUserByEmail(String email);
 }

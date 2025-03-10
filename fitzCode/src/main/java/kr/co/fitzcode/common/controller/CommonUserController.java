@@ -19,7 +19,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class UserController {
+public class CommonUserController {
     private final UserService userService;
 
     @GetMapping("/getUserByEmail")

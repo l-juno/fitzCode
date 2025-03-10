@@ -2,7 +2,7 @@ package kr.co.fitzcode.common.service;
 
 import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.common.enums.UserRole;
-import kr.co.fitzcode.common.mapper.UserMapper;
+import kr.co.fitzcode.common.mapper.CommonUserMapper;
 import kr.co.fitzcode.common.mapper.UserRoleMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImple implements UserService {
-    private final UserMapper userMapper;
+    private final CommonUserMapper userMapper;
     private final UserRoleMapper userRoleMapper;
 
     @Override
