@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.inquiry.mapper.InquiryMapper">
+
+    <!-- 사용자 정보 불러오기 -->
+    <select id="getUserOne" parameterType="int" resultType="UserDTO">
+        SELECT user_id, user_name, phone_number
+        FROM USER
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 이미지 저장 -->
+    <insert id="saveImages" parameterType="InquiryImageDTO">
+        INSERT INTO INQUIRY_IMAGE
+        (inquiry_id, image_url, image_order)
+        VALUES (#{imageDTO.inquiryId}, #{imageDTO.imageUrl}, #{imageDTO.imageOrder})
+    </insert>
+
+    <!-- 문의 내용 저장 -->
+    <insert id="saveInquiry" useGeneratedKeys="true" keyProperty="inquiryId" parameterType="InquiryDTO">
+        INSERT INTO INQUIRY
+        (user_id, order_id, subject, content, category, status, product_id)
+        VALUES (#{inquiryDTO.userId}, #{inquiryDTO.orderId}, #{inquiryDTO.subject}, #{inquiryDTO.content},
+        #{inquiryDTO.category}, #{inquiryDTO.status}, #{inquiryDTO.productId})
+    </insert>
+
+    <!-- 개인별 문의내역 불러오기 -->
+    <select id="getInquiryList" parameterType="int" resultType="InquiryDTO">
+        SELECT inquiry_id, subject, category, status, created_at
+        FROM INQUIRY
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 문의 상세보기를 위한 productId, oderId, category 가져오기 -->
+    <select id="getDataForDetail" parameterType="int" resultType="hashmap">
+        SELECT i.category, i.product_id, i.order_id, im.image_id
+        FROM INQUIRY i
+        LEFT JOIN INQUIRY_IMAGE im ON (i.inquiry_id = im.inquiry_id)
+        WHERE i.inquiry_id = #{inquiryId}
+    </select>
+
+    <!-- 문의 상세보기 : 제목, 내용, 작성자, 번호, 문의 상태, 문의 유형, 답변, 생성날짜 -->
+    <!-- 한 상품에 대한 문의(2) : product Id => product image_, product name -->
+    <!-- 일반문의(1) : 이미지 리스트, product Id -->
+    <!-- 상품에 대한 환불 및 반품 문의(3, 5) : 이미지 리스트, orderId, <<사용자가 주문한 사이즈>> 사용자가 올린 이미지-->
+    <!-- 결제 문의(4) : orderId -->
+    <select id="getInquiryDetail" parameterType="hashmap" resultType="hashmap">
+        SELECT i.subject, i.content, i.category, i.status, i.reply, i.created_at, u.user_name, u.phone_number
+        <trim prefix="," suffixOverrides=",">
+            <if test="inquiryMap.productId != null and inquiryMap.productId != ''">
+                p.image_url AS productImageUrl, p.product_name, p.brand, p.description
+            </if>
+            <if test="inquiryMap.orderId != null and inquiryMap.orderId != ''">
+                od.order_id, od.price
+            </if>
+            <if test="inquiryMap.imageIds != null and inquiryMap.imageIds.size() > 0">
+                im.image_url AS inquiryImageUrl
+            </if>
+        </trim>
+        FROM USER u
+        JOIN INQUIRY i ON (u.user_id = i.user_id)
+        <if test="inquiryMap.productId != null and inquiryMap.productId != ''">
+            JOIN PRODUCT p ON (i.product_id = p.product_id)
+        </if>
+        <if test="inquiryMap.orderId != null and inquiryMap.orderId != ''">
+            JOIN ORDERS o ON (i.order_id = o.order_id)
+            JOIN ORDER_DETAIL od ON (o.order_id = od.order_id)
+            JOIN PRODUCT p ON (od.product_id = p.product_id)
+        </if>
+        <if test="inquiryMap.imageIds != null and inquiryMap.imageIds.size() > 0">
+            JOIN INQUIRY_IMAGE im ON (i.inquiry_id = im.inquiry_id)
+        </if>
+        WHERE i.inquiry_id = #{inquiryMap.inquiryId}
+        <if test="inquiryMap.imageIds != null and inquiryMap.imageIds.size() > 0">
+            AND im.image_id IN
+            <foreach collection="inquiryMap.imageIds" item="imageId" open="(" separator="," close=")">
+                #{imageId}
+            </foreach>
+        </if>
+    </select>
+
+    <!-- 상품 검색 -->
+    <select id="searchProduct" parameterType="String" resultType="hashmap">
+        SELECT product_id, product_name, description, brand, image_url
+        FROM PRODUCT
+        WHERE 1 = 1
+        <if test="userInput != null and userInput != ''">
+            AND REPLACE(product_name,' ','') LIKE CONCAT('%', REPLACE(#{userInput},' ',''), '%')
+        </if>
+    </select>
+
+    <!-- 선택된 상품 -->
+    <select id="selectedProduct" parameterType="int" resultType="hashmap">
+        SELECT p.product_id, p.product_name, p.description, p.brand, p.image_url, od.order_id
+        FROM PRODUCT p
+        LEFT JOIN ORDER_DETAIL od on (od.product_id = p.product_id)
+        WHERE p.product_id = #{productId}
+    </select>
+
+    <!-- 주문 내역 : 사용자 이름, 번호, 주문내역의 상품정보 불러오기 -->
+    <select id="getUserAndOrderList" parameterType="int" resultType="hashmap">
+        SELECT p.product_id, p.brand, p.description, p.product_name, p.image_url, od.order_id
+        FROM PRODUCT p
+        JOIN ORDER_DETAIL od ON (od.product_id = p.product_id)
+        JOIN ORDERS o ON (od.order_id = o.order_id)
+        JOIN USER u ON (o.user_id = u.user_id)
+        WHERE u.user_id = #{userId}
+    </select>
+</mapper>
