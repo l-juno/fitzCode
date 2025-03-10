@@ -82,8 +82,8 @@
         <h2>문의 상세보기</h2>
         <hr>
         <div class="inquiryData1">
-            <span> 문의 유형 <span class="data" th:text="${inquiryDetail['category']}"/></span>
-            <span> 문의 상태 <span class="data" th:text="${inquiryDetail['status']}"/> </span>
+            <span> 문의 유형 <span class="data" th:text="${inquiryDetail['categoryCode']}"/></span>
+            <span> 문의 상태 <span class="data" th:text="${inquiryDetail['statusCode']}"/> </span>
             <span> 등록 날짜 <span class="data"
                                th:text="${#dates.format(inquiryDetail['createdAt'], 'yyyy / MM / dd')}"/></span>
         </div>
@@ -95,24 +95,24 @@
         <br>
         문의 내용
         <div th:text="${inquiryDetail['content']}" id="content"></div>
-        <div class="imageContainer" th:if="${not empty inquiryDetail['productName']}">
-            <table>
-                <tr>
-                    <td rowspan="4" style="height: 120px; width: 120px;">
-                        <img src="${inquiryDetail['productImageUrl']}" alt="${inquiryDetail['productName']}">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold;" th:text="${inquiryDetail['productBrand']}"/>
-                </tr>
-                <tr>
-                    <td th:text="${inquiryDetail['productName']}"/>
-                </tr>
-                <tr>
-                    <td style="color: lightgray;" th:text="${inquiryDetail['productName']}"></td>
-                </tr>
-            </table>
-        </div>
+<!--        <div class="imageContainer" th:if="${!inquiryDetail['productName']}">-->
+<!--            <table>-->
+<!--                <tr>-->
+<!--                    <td rowspan="4" style="height: 120px; width: 120px;">-->
+<!--                        <img src="${inquiryDetail['productImageUrl']}" alt="${inquiryDetail['productName']}">-->
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td style="font-weight: bold;" th:text="${inquiryDetail['productBrand']}"/>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td th:text="${inquiryDetail['productName']}"/>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td style="color: lightgray;" th:text="${inquiryDetail['productName']}"></td>-->
+<!--                </tr>-->
+<!--            </table>-->
+<!--        </div>-->
         <div class="finalButtons">
             <a th:href="@{inquiryList}">목록으로</a>
             <a th:href="@{modify}">수정</a>
