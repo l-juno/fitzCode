@@ -80,7 +80,7 @@
                 </div>
                 <div class="detail">
                     <div class="text">출시일</div>
-<!--                    <span th:text="${#temporals.format(product.createdAt, 'yyyy-MM-dd')}">2025-03-01</span>-->
+                    <span th:text="${product.formattedCreatedAt}">2025-03-01</span>
                 </div>
                 <div class="detail">
                     <div class="text">발매가</div>
@@ -108,7 +108,6 @@
             <!-- 구매/판매 버튼 -->
             <div class="button-group">
                 <div class="cart-button">
-                    
                     <div class="buy-text">장바구니</div>
                 </div>
             </div>
@@ -135,26 +134,35 @@
 </div>
 
 
-
 <p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.userId}"></span></p>
-
-
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 
+<div th:text="${#authentication.principal}"></div>
 
+<script th:if="${#authentication.principal == 'anonymousUser'}">
+    var isAuthenticated = false;
+</script>
+
+<script th:unless="${#authentication.principal == 'anonymousUser'}">
+    var isAuthenticated = true;
+</script>
 
 <script>
-    // const userId = [[${#authentication.principal != null ? #authentication.principal.userId : -1}]];
+    const cartBtn = document.querySelector('.cart-button');
+
+    cartBtn.addEventListener('click', () => {
+        if (isAuthenticated) {
+            checkForAddToCart();
+        } else {
+            window.location.href = '/login';
+        }
+    });
+    
+    
     const productId = [[${product.productId}]];
-
-    console.log("User ID:", userId);
     console.log("Product ID:", productId);
-
-    if (userId === "null") {
-        console.warn("No user is logged in.");
-    }
 
     function fetchAvailableSizes() {
         console.log("Fetching available sizes...");
@@ -199,14 +207,7 @@
         sizeContainer.appendChild(newSelect);
     }
 
-
-
-    const cartBtn = document.querySelector('.cart-button');
-
-    cartBtn.addEventListener('click', () => {
-        
-        checkForAddToCart();
-    });
+    
 
     function checkForAddToCart() {
         console.log("add to cart pressed");
@@ -244,7 +245,6 @@
             data: { productId: productId, sizeCode: sizeCode },
             success: function (data) {
                 console.log("success", data);
-                // updateSizeOptions(data);
             },
             error: function (xhr, status, error) {
                 if (xhr.status === 401) {

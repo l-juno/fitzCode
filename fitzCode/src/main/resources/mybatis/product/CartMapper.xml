@@ -10,4 +10,9 @@
         VALUE(#{userId}, #{productId}, #{quantity}, NOW(), #{productSizeId})
     </insert>
 
+    <select id="getCartProductsByUserId" parameterType="int">
+        SELECT * FROM CART
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>
