@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import kr.co.fitzcode.dto.EmailMessageDTO;
 import kr.co.fitzcode.dto.EmailPostDTO;
 import kr.co.fitzcode.dto.UserDTO;
+import kr.co.fitzcode.mapper.UserMapper;
 import kr.co.fitzcode.service.EmailService;
 import kr.co.fitzcode.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,6 +28,39 @@ public class UserController {
     @GetMapping("/login")
     public String login() {
         return "user/login";
+    }
+
+    @PostMapping("/login")
+    public String loginOK(HttpSession session,
+                          @RequestParam("email") String email,
+                          @RequestParam("password") String password,
+                          Model model) {
+
+        UserDTO dto = userService.loginUser(email, password);
+
+        if (dto == null) {
+            model.addAttribute("ErrorMessage", "입력한 이메일은 가입 내역이 존재하지 않거나 비밀번호가 틀립니다.");
+            return "user/login";
+        }
+
+        session.setAttribute("dto", dto);
+        System.out.println("이메일 >>>>>" + dto.getEmail());
+        System.out.println("비밀번호 >>>>>" + dto.getPassword());
+        System.out.println("로그인 성공");
+
+
+        System.out.println("이름 >>>>>" + dto.getUserName());
+
+
+
+        return "redirect:/"; // localhost:8080 으로 리다이렉트
+    }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate(); // 세션 무효화
+        return "redirect:/";
     }
 
     // 회원가입 페이지 이동
@@ -45,19 +82,16 @@ public class UserController {
         boolean emailCheck = userService.emailDuplicate(dto.getEmail());
         if (emailCheck) {
             model.addAttribute("emailCheckError", "이미 사용 중인 이메일 입니다.");
-            System.out.println("이미 사용 중인 이메일");
             return "user/joinForm";
         }
-        boolean nickNameCheck = userService.nickNameDuplicate(dto.getNickName());
-        if (nickNameCheck) {
-            model.addAttribute("nickNameCheckError", "이미 사용 중인 닉네임 입니다.");
-            System.out.println("이미 사용 중인 닉네임");
+        boolean nicknameCheck = userService.nicknameDuplicate(dto.getNickname());
+        if (nicknameCheck) {
+            model.addAttribute("nicknameCheckError", "이미 사용 중인 닉네임 입니다.");
             return "user/joinForm";
         }
         boolean phoneNumberCheck = userService.phoneNumberDuplicate(dto.getPhoneNumber());
         if (phoneNumberCheck) {
             model.addAttribute("phoneNumberCheckError", "이미 사용 중인 전화번호 입니다.");
-            System.out.println("이미 사용 중인 전화번호");
             return "user/joinForm";
         }
 
@@ -65,37 +99,35 @@ public class UserController {
                 .to(dto.getEmail())
                 .subject("이메일 인증을 위한 인증 코드 발송") // 메일 제목 부분
                 .build();
+
         String code = emailService.sendEmail(emailMessage, "user/joinEmailView");
 
         session.setAttribute("userDTO", dto);
 
-        System.out.println("전화번호 >>>>>>>>>>>>>" + dto.getPhoneNumber());
-        System.out.println("생년월일 >>>>>>>>>>>>>" + dto.getBirthDate());
-
         session.setAttribute("authCode", code);
         model.addAttribute("code", code);
+
         return "user/joinEmail";
     }
 
-    // 이메일 인증 코드 확인 후 회원가입 완료
-    @PostMapping("/joinOk")
-    public String verifyEmailCode(@RequestParam("authCode") String authCode, HttpSession session, Model model) {
+    @PostMapping("/joinSuccess")
+    public String joinEmailCode(@RequestParam("authCode") String authCode, HttpSession session, Model model) {
 
         String sessionCode = (String) session.getAttribute("authCode");
         UserDTO userDTO = (UserDTO) session.getAttribute("userDTO");
 
-        if (sessionCode == null || !sessionCode.equals(authCode)) {
-            model.addAttribute("authCodeError", "인증 코드가 일치하지 않습니다.");
+        if (sessionCode == null || userDTO == null || !Objects.equals(sessionCode, authCode)) {
+            model.addAttribute("authCodeError", "인증 코드가 일치하지 않거나 세션이 만료되었습니다.");
             return "user/joinEmail";
         }
 
-        // 인증 코드가 일치하면 사용자 정보를 DB에 저장
-        userService.insertUser(userDTO);
+        userService.registerUser(userDTO);
 
         session.removeAttribute("authCode");
-//        session.removeAttribute("userDTO");
+        session.removeAttribute("userDTO");
 
-        // 회원가입 완료 페이지로 이동
+        model.addAttribute("userName", userDTO.getUserName());
+
         return "user/joinSuccess";
     }
 
@@ -103,8 +135,70 @@ public class UserController {
     // 비밀번호 찾기 페이지 이동
     @GetMapping("/pwEmail")
     public String pwFind() {
-        return "pwEmailView";
+        return "user/findpwEmail";
     }
 
+    // 비밀번호 재설정 이메일 발송
+    @PostMapping("pwEmail")
+    public String pwEmail(@RequestParam("email") String email, UserDTO dto, Model model, HttpSession session) {
+
+        boolean checkEmail = userService.emailDuplicate(email);
+
+        if (!checkEmail) {
+            model.addAttribute("errorMessage", "입력한 이메일은 가입 내역이 존재하지 않습니다.");
+            return "user/findpwEmail";
+        }
+
+        EmailMessageDTO emailMessage = EmailMessageDTO.builder()
+                .to(email)
+                .subject("비밀번호 재설정 메일 발송") // 메일 제목 부분
+                .build();
+
+        String code = emailService.sendEmail(emailMessage, "user/findpwEmailView");
+        model.addAttribute("email", email);
+        model.addAttribute("dto", dto);
+
+        session.setAttribute("email", email);
+
+        return "user/findpwEmailSuccess";
+    }
+
+    // 비밀번호 재설정 페이지 이동
+    @GetMapping("/resetPw")
+    public String resetPw(HttpSession session, UserDTO dto, Model model) {
+        String email = (String) session.getAttribute("email");
+
+        if (email == null) {
+            model.addAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
+            return "redirect:/user/findpwEmail";
+        }
+
+        model.addAttribute("email", email);
+        model.addAttribute("dto", dto);
+        System.out.println("email>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + email);
+        return "user/resetPw";
+    }
+
+    // 비밀번호 재설정
+    @PostMapping("/resetPwSuccess")
+    public String resetPw(@ModelAttribute("dto") UserDTO dto, BindingResult bindingResult,
+                          @RequestParam("email") String email,
+                          RedirectAttributes redirectAttributes, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "user/resetPw";
+        }
+
+        if (email == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
+            return "redirect:/user/findpwEmail";
+        }
+
+        dto.setPassword(dto.getPassword());
+        userService.updatePw(dto);
+        model.addAttribute("userName", dto.getUserName());
+
+
+        return "user/resetPwSuccess";
+    }
 
 }

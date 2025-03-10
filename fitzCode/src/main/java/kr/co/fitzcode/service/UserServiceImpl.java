@@ -12,8 +12,9 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public void insertUser(UserDTO dto) {
+    public void registerUser(UserDTO dto) {
         userMapper.insertUser(dto);
+        userMapper.insertUserTier(dto.getNickname());
     }
 
     @Override
@@ -24,8 +25,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean nickNameDuplicate(String nickName) {
-        int count = userMapper.nickNameDuplicate(nickName);
+    public boolean nicknameDuplicate(String nickname) {
+        int count = userMapper.nicknameDuplicate(nickname);
         System.out.println("닉네임 중복 체크 SQL 실행 결과: " + count);
         return count > 0;
     }
@@ -36,5 +37,16 @@ public class UserServiceImpl implements UserService {
         System.out.println("전화번호 중복 체크 SQL 실행 결과: " + count);
         return count > 0;
     }
+
+    @Override
+    public void updatePw(UserDTO dto) {
+        userMapper.updatePw(dto);
+    }
+
+    @Override
+    public UserDTO loginUser(String email, String password) {
+        return userMapper.loginUser(email, password);
+    }
+
 
 }

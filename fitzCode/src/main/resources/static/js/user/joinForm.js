@@ -73,18 +73,18 @@ function checkEmail() {
 
 // 닉네임 중복 체크
 function checkNickname() {
-    let nickName = document.getElementById("nickName").value;
+    let nickname = document.getElementById("nickname").value;
     let messageElement = document.getElementById("nicknameMessage");
 
     // 닉네임 비어 있는지 확인
-    if (nickName.trim() === "") {
+    if (nickname.trim() === "") {
         messageElement.textContent = "닉네임을 입력하세요";
         messageElement.style.color = "red";
         return;
     }
 
     // 닉네임이 비어있지 않으면 중복 체크
-    fetch(`checkNickname?nickName=${nickName}`)
+    fetch(`checkNickname?nickname=${nickname}`)
         .then(response => response.text())
         .then(data => {
             messageElement.textContent = data;

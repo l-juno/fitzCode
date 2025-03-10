@@ -9,7 +9,10 @@ import org.springframework.stereotype.Repository;
 @Mapper
 public interface UserMapper {
     void insertUser(UserDTO dto);
+    void insertUserTier(@Param("nickname") String nickname);
     int emailDuplicate(@Param("email") String email);
-    int nickNameDuplicate(@Param("nickName") String nickName);
+    int nicknameDuplicate(@Param("nickname") String nickname);
     int phoneNumberDuplicate(@Param("phoneNumber") String phoneNumber);
+    void updatePw(UserDTO dto);
+    UserDTO loginUser(String email, String password);
 }

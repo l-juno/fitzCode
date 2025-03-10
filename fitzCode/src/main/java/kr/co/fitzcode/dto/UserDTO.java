@@ -20,7 +20,7 @@ public class UserDTO {
         @NotNull(message = "사용자 이름은 필수입니다.")
         private String userName;
 
-        private String nickName;
+        private String nickname;
 
         @NotNull(message = "이메일은 필수입니다.")
         @Email(message = "유효한 이메일 주소를 입력해주세요.")
@@ -32,6 +32,7 @@ public class UserDTO {
         private String password;
 
         private String phoneNumber;
+        @Size(min = 8, max = 8, message = "생년월일은 8자로 입력해주세요.")
         private String birthDate;
         private String kakaoId;
         private String naverId;

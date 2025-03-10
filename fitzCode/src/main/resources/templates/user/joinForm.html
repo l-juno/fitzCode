@@ -19,8 +19,9 @@
                 <label for="email">이메일 (ID)</label>
                 <input type="email" id="email" name="email" th:field="*{email}" required placeholder="이메일 입력"> &nbsp;&nbsp;
                 <button type="button" onclick="checkEmail()" class="btn-email">중복 확인</button>
-<!--                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>-->
-                <span th:if="${emailCheckError}" style="color: red; font-size: 12px;" th:text="${emailCheckError}" id="emailMessage"></span>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
+                <span id="emailMessage"></span>
+<!--                <span th:if="${emailCheckError}" style="color: red; font-size: 12px;" th:text="${emailCheckError}"></span>-->
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
@@ -37,19 +38,21 @@
                 <input type="text" id="userName" name="userName" required placeholder="이름을 입력해주세요">
             </div>
             <div class="form-group">
-                <label for="nickName">닉네임</label>
-                <input type="text" id="nickName" name="nickName" required> &nbsp;&nbsp;
+                <label for="nickname">닉네임</label>
+                <input type="text" id="nickname" name="nickname" required> &nbsp;&nbsp;
                 <button type="button" onclick="checkNickname()" class="btn-nickname">중복 확인</button>
-                <span th:if="${nickNameCheckError}" style="color: red; font-size: 12px;" th:text="${nickNameCheckError}" id="nicknameMessage"></span>
+                <span id="nicknameMessage"></span>
+<!--                <span th:if="${nickNameCheckError}" style="color: red; font-size: 12px;" th:text="${nickNameCheckError}"></span>-->
             </div>
             <div class="form-group">
                 <label for="phoneNumber">전화번호</label>
                 <input type="text" id="phoneNumber" name="phoneNumber" required placeholder="전화번호 입력 ('-' 제외 11자리 입력)">
-                <div th:if="${phoneNumberCheckError}" style="color: red; font-size: 12px;" th:text="${phoneNumberCheckError}"></div>
+<!--                <span th:if="${phoneNumberCheckError}" style="color: red; font-size: 12px;" th:text="${phoneNumberCheckError}"></span>-->
             </div>
 
             <div class="form-group">
                 <label for="birthDate">생년월일</label>
+                <span th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" style="color: red"></span>
                 <div class="birthdate-inputs" id="birthDate">
                     <input type="text" name="birthDate" required placeholder="생년월일 입력 (8자리)">
                 </div>
@@ -101,5 +104,14 @@
     <div th:replace="~{fragments/footer}"></div>
 </div>
 </body>
+<script th:if="${emailCheckError}">
+    alert("[[${emailCheckError}]]");
+</script>
+<script th:if="${nickNameCheckError}">
+    alert("[[${nickNameCheckError}]]");
+</script>
+<script th:if="${phoneNumberCheckError}">
+    alert("[[${phoneNumberCheckError}]]");
+</script>
 <script th:src="@{/js/user/joinForm.js}"></script>
 </html>

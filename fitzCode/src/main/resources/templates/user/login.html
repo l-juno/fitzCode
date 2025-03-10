@@ -54,17 +54,29 @@
 
         label {
             display: block;
-            font-weight: bold;
+            font-weight: 500;
             margin-bottom: 5px;
+            color: rgba(80, 80, 80, 0.73);
         }
 
         input[type="email"], input[type="password"] {
             width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            padding: 7px;
+            /*border: 1px solid #ddd;*/
+            border: none;
+            /*border-radius: 5px;*/
             font-size: 16px;
             box-sizing: border-box;
+            margin-top: 0.5rem;
+            background-color: #fff;
+            box-shadow: inset 0 -2px 0 0 rgb(228, 228, 228);
+            transition: box-shadow 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #a6c1ee;
+            outline: none;
+            box-shadow: inset 0 -2.5px 0 0 #000;
         }
 
         .btn {
@@ -85,12 +97,12 @@
 
         .links1 {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .links2 {
             text-align: center;
-            margin-top: 15px;
+            margin-top: 25px;
         }
 
         .links1 a {
@@ -154,25 +166,27 @@
 <div class="container">
     <h2>로그인</h2>
     <form action="/login" method="post">
+        <br><br>
         <!-- 이메일 입력 -->
         <div class="form-group">
-            <label for="email">이메일</label>
-            <input type="email" id="email" name="email" required placeholder="이메일을 입력하세요">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <span th:text="${emailErrorMessage}" style="color: red; font-size: 12px;"></span>
         </div>
-
+        <br><br>
         <!-- 비밀번호 입력 -->
         <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" id="password" name="password" required placeholder="비밀번호를 입력하세요">
-<!--            <i class="eye-icon" id="eye-icon" onclick="togglePasswordVisibility()">👀</i>-->
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            <span th:text="${pwErrorMessage}" style="color: red; font-size: 12px;"></span>
         </div>
 
         <!-- 로그인 버튼 -->
         <button type="submit" class="btn">로그인</button>
-
+        <br>
         <!-- 이메일, 비밀번호 찾기 링크 -->
         <div class="links1">
-            <a href="#">이메일 찾기</a> |
+            <a href="/findEmail">이메일 찾기</a> |
             <a href="/pwEmail">비밀번호 찾기</a>
         </div>
 
@@ -186,11 +200,10 @@
         <!-- 간편 로그인 바 -->
 
         <div class="social-login">
-            <img class="kakao-icon" src="/img/kakao_icon.png" alt="Kakao Logo">
-            &nbsp;
-            <img class="google-icon" src="/img/google_icon.png" alt="Google Logo">
-            &nbsp;
-            <img class="naver-icon" src="/img/naver_icon.png" alt="Naver Logo">
+            <a href="/oauth2/authorization/kakao"><img class="kakao-icon" src="/img/kakao_icon.png" alt="Kakao Logo"></a>
+            <a href="/oauth2/authorization/google"><img class="google-icon" src="/img/google_icon.png" alt="Google Logo"></a>
+            &nbsp;<a href="/oauth2/authorization/naver"><img class="naver-icon" src="/img/naver_icon.png" alt="Naver Logo"></a>
+
         </div>
     </form>
 </div>
@@ -198,23 +211,8 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
-<script>
-    // function togglePasswordVisibility() {
-    //     var passwordField = document.getElementById("password");
-    //     var eyeIcon = document.getElementById("eye-icon");
-    //
-    //     // 비밀번호 입력 필드의 type을 toggle하여 입력값을 보이거나 숨김
-    //     var currentType = passwordField.getAttribute("type");
-    //
-    //     if (currentType === "password") {
-    //         passwordField.setAttribute("type", "text");  // 비밀번호를 보여줌
-    //         eyeIcon.textContent = "🙈";  // 아이콘을 '숨기기'로 변경
-    //     } else {
-    //         passwordField.setAttribute("type", "password");  // 비밀번호를 숨김
-    //         eyeIcon.textContent = "👀";  // 아이콘을 '보기'로 변경
-    //     }
-    // }
-</script>
-
 </body>
+<script th:if="${ErrorMessage}">
+    alert("[[${ErrorMessage}]]");
+</script>
 </html>

@@ -24,8 +24,8 @@ public class DuplicateController {
     }
 
     @GetMapping("/checkNickname")
-    public ResponseEntity<String> checkNickname(@RequestParam String nickName) {
-        boolean isDuplicate = userService.nickNameDuplicate(nickName);
+    public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
+        boolean isDuplicate = userService.nicknameDuplicate(nickname);
         if (isDuplicate) {
             return ResponseEntity.ok().body("사용 중인 닉네임입니다.");
         } else {

@@ -2,20 +2,20 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>joinEmail</title>
+    <title>findpwEmail</title>
     <style>
 
         .body-container{
-                font-family: Arial, sans-serif;
-                background: white;
-                display: flex;
-                justify-content: center;
-                align-items: flex-start; /* 위쪽부터 배치 */
-                min-height: 90vh;
-                margin: 0;
-                padding: 70px 20px; /* 위쪽 여백을 더 늘림 */
-                box-sizing: border-box;
-                overflow-y: auto;
+            font-family: Arial, sans-serif;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* 위쪽부터 배치 */
+            min-height: 90vh;
+            margin: 0;
+            padding: 70px 20px; /* 위쪽 여백을 더 늘림 */
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
         h2 {
@@ -27,7 +27,7 @@
         .container {
             width: 100%;
             max-width: 500px;
-            margin-top: 10% ;
+            margin-top: 5% ;
             padding: 20px;
             background-color: #ffffff;
             border-radius: 8px;
@@ -64,14 +64,14 @@
         }
 
         input[type="text"] {
-            width: 50%;
+            width: 70%;
             padding: 7px;
             /*border: 1px solid #ddd;*/
             border: none;
             /*border-radius: 5px;*/
             font-size: 16px;
             box-sizing: border-box;
-            margin-top: 0.5rem;
+            margin-top: 10%;
             background-color: #fff;
             box-shadow: inset 0 -2px 0 0 rgb(228, 228, 228);
             transition: box-shadow 0.3s ease;
@@ -91,8 +91,8 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            width: 30%;
+            font-size: 14px;
+            width: 40%;
         }
 
         .container button:hover {
@@ -105,6 +105,12 @@
             margin-top: 10px;
         }
 
+        .info {
+            margin-top: 10%;
+            font-size: 13px;
+            color: #9a9a9a;
+        }
+
 
     </style>
 </head>
@@ -114,28 +120,36 @@
 <div th:replace="~{fragments/header}"></div>
 
 <div class="body-container">
-<div class="container">
-    <h2>이메일 인증</h2>
-    <p>인증 코드가 전송되었습니다.</p>
+    <div class="container">
+        <h2>비밀번호 찾기</h2>
+        <p>기존에 가입하신 이메일을 입력해주세요 </p>
 
 
-        <form action="/joinSuccess" method="post">
+        <form action="/pwEmail" method="post">
             <!--        <label for="code">인증 코드 입력:</label>-->
             <div class="form-group">
-            <input type="text" id="authCode" name="authCode" required>
-            <div th:if="${authCodeError}" class="error-message" th:text="${authCodeError}"></div>
+                <input type="text" id="email" name="email" required >
+<!--                <div th:if="${authCodeError}" class="error-message" th:text="${authCodeError}"></div>-->
+                <div class="info">
+                    - 회원가입 시 입력했던 이메일 정보를 입력해주세요. <br>
+                    - 회원님의 이메일 주소로 비밀번호 재설정 메일이 발송됩니다. <br>
+                    - 이메일 정보 확인이 불가능한 경우, 고객센터로 연락바랍니다.
+                </div>
             </div>
 
             <div class="form-group">
-            <button type="submit">확인</button>
+                <button type="submit">비밀번호 변경 이메일 받기</button>
             </div>
 
         </form>
 
-</div>
+    </div>
 </div>
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
 </body>
+<script th:if="${errorMessage}">
+    alert("[[${errorMessage}]]");
+</script>
 </html>
