@@ -1,7 +1,7 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.VisitorDTO;
 import kr.co.fitzcode.admin.mapper.DashboardMapper;
+import kr.co.fitzcode.common.dto.VisitorDTO;
 import kr.co.fitzcode.common.enums.InquiryStatus;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

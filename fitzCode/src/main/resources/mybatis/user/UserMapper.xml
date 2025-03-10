@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.fitzcode.user.mapper.UserMapper">
+    <insert id="insertUser" parameterType="UserDTO">
+        INSERT INTO USER (user_name, nickname, email, password, phone_number, birth_date, kakao_id, naver_id, profile_image, role_id)
+        VALUES (#{userName}, #{nickname}, #{email}, #{password}, #{phoneNumber}, #{birthDate}, #{kakaoId}, #{naverId}, #{profileImage}, #{roleId})
+    </insert>
+
+    <insert id="insertUserTier">
+        INSERT INTO USER_TIER (user_id, tier_level, total_spent)
+        SELECT user_id, 1, 0 FROM USER WHERE nickname = #{nickname}
+    </insert>
+
+    <select id="emailDuplicate" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM USER WHERE email = #{email}
+    </select>
+
+    <select id="nicknameDuplicate" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM USER WHERE nickname = #{nickname}
+    </select>
+
+    <select id="phoneNumberDuplicate" parameterType="String" resultType="int">
+        SELECT COUNT(*) FROM USER WHERE phone_number = #{phoneNumber}
+    </select>
+
+    <update id="updatePw" parameterType="UserDTO">
+        UPDATE USER
+        SET password = #{password}
+        WHERE email = #{email}
+    </update>
+
+    <select id="findByEmail" parameterType="String" resultType="UserDTO">
+        SELECT * FROM USER WHERE email = #{email}
+    </select>
+
+    <!-- CommonUserController 에서 사용 -->
+    <select id="getUserByEmail" parameterType="String" resultType="UserDTO">
+        SELECT * FROM USER WHERE email = #{email}
+    </select>
+
+    <select id="getUserRolesByUserId" parameterType="int" resultType="int">
+        SELECT role_id FROM USER WHERE user_id = #{userId}
+    </select>
+
+    <select id="findByUsername" resultType="UserDTO">
+        SELECT * FROM USER
+        WHERE user_name = #{userName}
+    </select>
+
+    <update id="updateUser" parameterType="UserDTO">
+        UPDATE USER
+        SET email = #{email}
+        WHERE naver_id = #{naverId}
+    </update>
+
+</mapper>

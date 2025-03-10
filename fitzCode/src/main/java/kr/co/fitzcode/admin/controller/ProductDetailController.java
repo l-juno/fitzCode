@@ -1,9 +1,10 @@
 package kr.co.fitzcode.admin.controller;
 
-import kr.co.fitzcode.admin.dto.ProductDetailDTO;
-import kr.co.fitzcode.admin.dto.QnaDTO;
-import kr.co.fitzcode.admin.dto.ReviewDTO;
+
 import kr.co.fitzcode.admin.service.ProductDetailService;
+import kr.co.fitzcode.common.dto.ProductDetailDTO;
+import kr.co.fitzcode.common.dto.QnaDTO;
+import kr.co.fitzcode.common.dto.ReviewDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

@@ -18,7 +18,7 @@
     </select>
 
     <!-- 1주일간 방문자 수 조회 -->
-    <select id="getWeeklyVisitorsWithDates" resultType="kr.co.fitzcode.admin.dto.VisitorDTO">
+    <select id="getWeeklyVisitorsWithDates" resultType="VisitorDTO">
         SELECT
         DATE(visit_time) AS visitDate,
         COUNT(*) AS count
@@ -77,7 +77,7 @@
     </insert>
 
     <!-- 최근 방문 로그 조회 (중복 체크용) -->
-    <select id="findRecentVisitLogByVisitorId" resultType="kr.co.fitzcode.admin.dto.VisitorDTO">
+    <select id="findRecentVisitLogByVisitorId" resultType="VisitorDTO">
         SELECT * FROM VISIT_LOG
         WHERE visitor_id = #{visitorId}
         ORDER BY visit_time DESC LIMIT 1

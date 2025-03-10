@@ -1,7 +1,7 @@
 package kr.co.fitzcode.admin.controller;
 
-import kr.co.fitzcode.admin.dto.OrderDetailDTO;
 import kr.co.fitzcode.admin.service.OrderService;
+import kr.co.fitzcode.common.dto.OrderDetailDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
