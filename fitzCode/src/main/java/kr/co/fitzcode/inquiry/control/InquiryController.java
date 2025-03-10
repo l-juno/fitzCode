@@ -34,11 +34,11 @@ public class InquiryController {
 
 
     // 문의 데이터 저장
-//    @PostMapping("/inquiryForm")
-//    public String inquiryForm(@ModelAttribute InquiryDTO inquiryDTO) {
-//        inquiryService.registInquiry(inquiryDTO);
-//        return "redirect:/inquiry/inquiryForm";
-//    }
+   @PostMapping("/inquiryForm")
+   public String inquiryForm(@ModelAttribute InquiryDTO inquiryDTO) {
+       inquiryService.registInquiry(inquiryDTO);
+       return "redirect:/inquiry/inquiryForm";
+   }
 
     // 개인 문의 내역 보기
     @GetMapping("/inquiryList")
