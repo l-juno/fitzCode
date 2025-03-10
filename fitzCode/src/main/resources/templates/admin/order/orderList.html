@@ -15,7 +15,7 @@
     <div class="content-wrapper">
         <h2>주문 목록</h2>
 
-        <!-- 필터 섹션 -->
+        <!-- 필터 -->
         <div class="search-container">
             <form id="filterForm" th:action="@{/admin/orders}" method="get">
                 <div class="filter-group">
@@ -42,7 +42,7 @@
             <a href="javascript:history.back()" class="back-button">뒤로가기</a>
         </div>
 
-        <!-- 주문 목록 테이블 -->
+        <!-- 주문 목록 -->
         <table>
             <thead>
             <tr>
@@ -50,7 +50,6 @@
                 <th>주문 상태</th>
                 <th>상품명</th>
                 <th>주문 날짜</th>
-                <th>작업</th>
             </tr>
             </thead>
             <tbody>
@@ -72,9 +71,6 @@
                     </a>
                 </td>
                 <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
-                <td>
-                    <a th:href="@{/admin/deliveries/{orderId}(orderId=${order.orderId})}" class="product-link">배송 관리</a>
-                </td>
             </tr>
             <tr th:if="${#lists.isEmpty(orders)}">
                 <td colspan="5">-</td>
@@ -82,7 +78,6 @@
             </tbody>
         </table>
 
-        <!-- 페이징 -->
         <div class="pagination" th:if="${totalPages > 1}">
             <!-- 이전 버튼 -->
             <a th:href="@{/admin/orders(page=${currentPage > 1 ? currentPage - 1 : 1}, size=${size}, status=${status}, sortBy=${sortBy})}"
