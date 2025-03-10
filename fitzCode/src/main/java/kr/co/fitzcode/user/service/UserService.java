@@ -15,4 +15,7 @@ public interface UserService {
     UserDTO getUserByEmail(String email);
     List<Integer> getUserRolesByUserId(int userId);
     List<UserRole> findRolesInStringByUserId(int userId);
+    UserDTO findByUsername(String username);
+    void updateUser(UserDTO user);
+
 }

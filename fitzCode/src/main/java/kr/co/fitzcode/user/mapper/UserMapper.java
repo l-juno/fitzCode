@@ -16,8 +16,10 @@ public interface UserMapper {
     void updatePw(UserDTO dto);
 
     UserDTO findByEmail(String email);
-
     // CommonUserController 에서 사용
     UserDTO getUserByEmail(String email);
     List<Integer> getUserRolesByUserId(int userId);
+    UserDTO findByUsername(String username);
+
+    void updateUser(UserDTO user);
 }

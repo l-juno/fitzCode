@@ -41,5 +41,4 @@ public class InquiryDTO {
     public InquiryCategory getCategory() {
         return InquiryCategory.fromCode(categoryCode);
     }
-
 }
