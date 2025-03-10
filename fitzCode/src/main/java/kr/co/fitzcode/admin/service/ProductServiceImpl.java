@@ -1,9 +1,9 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.ProductCategoryDTO;
-import kr.co.fitzcode.admin.dto.ProductDTO;
-import kr.co.fitzcode.admin.dto.ProductSizeDTO;
-import kr.co.fitzcode.admin.mapper.ProductMapper;
+import kr.co.fitzcode.admin.mapper.AdminProductMapper;
+import kr.co.fitzcode.common.dto.ProductCategoryDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
+import kr.co.fitzcode.common.dto.ProductSizeDTO;
 import kr.co.fitzcode.common.enums.ProductSize;
 import kr.co.fitzcode.common.enums.ProductStatus;
 import kr.co.fitzcode.common.service.S3Service;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductMapper productMapper;
+    private final AdminProductMapper productMapper;
     private final S3Service s3Service;
 
     // 상품 추가

@@ -1,4 +1,4 @@
-package kr.co.fitzcode.admin.dto;
+package kr.co.fitzcode.common.dto;
 
 import kr.co.fitzcode.common.enums.ProductSize;
 import lombok.Getter;
@@ -19,5 +19,9 @@ public class ProductSizeDTO {
         } catch (IllegalArgumentException e) {
             return "알 수 없음";
         }
+    }
+
+    public String getSizeName() {
+        return ProductSize.fromCode(this.sizeCode).getDescription();
     }
 }

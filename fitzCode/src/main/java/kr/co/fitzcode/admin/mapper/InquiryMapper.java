@@ -1,6 +1,6 @@
 package kr.co.fitzcode.admin.mapper;
 
-import kr.co.fitzcode.admin.dto.InquiryDTO;
+import kr.co.fitzcode.common.dto.InquiryDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

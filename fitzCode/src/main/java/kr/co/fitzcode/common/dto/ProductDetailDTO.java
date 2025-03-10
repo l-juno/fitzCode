@@ -1,4 +1,4 @@
-package kr.co.fitzcode.admin.dto;
+package kr.co.fitzcode.common.dto;
 
 import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.Getter;

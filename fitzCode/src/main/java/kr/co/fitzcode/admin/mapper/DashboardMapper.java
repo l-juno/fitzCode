@@ -1,6 +1,6 @@
 package kr.co.fitzcode.admin.mapper;
 
-import kr.co.fitzcode.admin.dto.VisitorDTO;
+import kr.co.fitzcode.common.dto.VisitorDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.sql.Timestamp;

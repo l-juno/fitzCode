@@ -1,9 +1,9 @@
 package kr.co.fitzcode.admin.controller;
 
-import kr.co.fitzcode.admin.dto.NoticeDTO;
 import kr.co.fitzcode.admin.service.NoticeService;
 import kr.co.fitzcode.admin.exception.NoticeNotFoundException;
 import kr.co.fitzcode.admin.exception.InvalidNoticeIdException;
+import kr.co.fitzcode.common.dto.NoticeDTO;
 import kr.co.fitzcode.common.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

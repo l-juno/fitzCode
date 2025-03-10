@@ -1,6 +1,6 @@
 package kr.co.fitzcode.product.mapper;
 
-import kr.co.fitzcode.product.dto.CategoryDTO;
+import kr.co.fitzcode.common.dto.CategoryDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

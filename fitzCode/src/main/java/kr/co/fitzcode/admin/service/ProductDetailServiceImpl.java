@@ -1,7 +1,7 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.*;
 import kr.co.fitzcode.admin.mapper.ProductDetailMapper;
+import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.common.enums.ProductSize;
 import kr.co.fitzcode.common.service.S3Service;
 import lombok.RequiredArgsConstructor;

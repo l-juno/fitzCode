@@ -1,11 +1,10 @@
 package kr.co.fitzcode.admin.controller;
 
 import jakarta.validation.Valid;
-import kr.co.fitzcode.admin.dto.ProductCategoryDTO;
-import kr.co.fitzcode.admin.dto.ProductDTO;
 import kr.co.fitzcode.admin.service.ProductService;
+import kr.co.fitzcode.common.dto.ProductCategoryDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
 import kr.co.fitzcode.common.enums.ProductSize;
-import kr.co.fitzcode.common.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/admin/products")
 @RequiredArgsConstructor
-public class ProductController {
+public class AdminProductController {
 
     private final ProductService productService;
     private static final int PAGE_GROUP_SIZE = 5;

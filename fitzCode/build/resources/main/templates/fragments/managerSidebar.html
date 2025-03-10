@@ -7,66 +7,112 @@
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
 </head>
 <body>
-<!-- 사이드바 프래그먼트 -->
+<!-- 사이드바 -->
 <div th:fragment="sidebar" class="adminSidebarWrap">
   <div class="sidebar">
     <div class="sidebar-header">
-      <!-- 로고 이미지 -->
-      <a href="/">
-        <img src="/img/fitzLogo.png" alt="관리자 로고" class="sidebar-logo">
+      <!-- 로고 -->
+      <a th:href="@{/}">
+        <img th:src="@{/img/fitzLogo.png}" alt="관리자 로고" class="sidebar-logo">
       </a>
-      <h2>관리자 대시보드</h2>
     </div>
 
-    <!-- 대시보드 -->
-    <div class="sidebar-section sidebar-section-dashboard">
-      <h3><a href="/admin/dashboard">대시보드</a></h3>
-    </div>
+    <!-- 현재 페이지 URI 가져오기 -->
+    <th:block th:with="currentUri=${currentUri}">
 
-    <!-- 판매 관리 -->
-    <div class="sidebar-section">
-      <h3>판매 관리</h3>
-      <div class="submenu">
-        <a href="/admin/sales">판매 현황</a>
-        <a href="/admin/products/rank">인기 상품 랭킹</a>
-        <a href="/admin/products/analysis">상품별 매출 분석</a>
+      <!-- 대시보드 -->
+      <div class="sidebar-section sidebar-section-dashboard">
+        <h3>
+          <a th:href="@{/admin/dashboard}"
+             th:classappend="${currentUri == '/admin/dashboard'} ? 'active'">
+            관리자 대시보드
+          </a>
+        </h3>
       </div>
-    </div>
 
-    <!-- 회원 관리 -->
-    <div class="sidebar-section">
-      <h3>회원 관리</h3>
-      <div class="submenu">
-        <a href="/admin/members">회원 목록</a>
-        <a href="/admin/members/{id}/tier">등급 조정</a>
-        <a href="/admin/members/{id}/benefits">혜택 관리</a>
+      <!-- 판매 관리 -->
+      <div class="sidebar-section">
+        <h3>판매 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/sales}"
+             th:classappend="${currentUri == '/admin/sales'} ? 'active'">
+            판매 현황
+          </a>
+          <a th:href="@{/admin/products/rank}"
+             th:classappend="${currentUri == '/admin/products/rank'} ? 'active'">
+            반품 및 교환
+          </a>
+          <a th:href="@{/admin/products/analysis}"
+             th:classappend="${currentUri == '/admin/products/analysis'} ? 'active'">
+            환불
+          </a>
+          <a th:href="@{/admin/shipping}"
+             th:classappend="${currentUri == '/admin/shipping'} ? 'active'">
+            배송 관리
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- 공지사항 관리 -->
-    <div class="sidebar-section">
-      <h3>공지사항 관리</h3>
-      <div class="submenu">
-        <a th:href="@{/admin/notice}">공지사항 목록</a>
-        <a th:href="@{/admin/notice/add}">공지사항 작성</a>
+      <!-- 회원 관리 -->
+      <div class="sidebar-section">
+        <h3>회원 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/members}"
+             th:classappend="${currentUri == '/admin/members'} ? 'active'">
+            회원 목록
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- 문의 관리 -->
-    <div class="sidebar-section">
-      <h3>1:1 문의 관리</h3>
-      <div class="submenu">
-        <a href="/admin/inquiries">1:1 문의 목록</a>
+      <!-- 상품 관리 -->
+      <div class="sidebar-section">
+        <h3>상품 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/products}"
+             th:classappend="${currentUri == '/admin/products'} ? 'active'">
+            상품 관리
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- 로그 관리 -->
-    <div class="sidebar-section">
-      <h3>로그 관리</h3>
-      <div class="submenu">
-        <a href="/admin/logs/login">로그인 기록</a>
+      <!-- 공지사항 관리 -->
+      <div class="sidebar-section">
+        <h3>공지사항 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/notice}"
+             th:classappend="${currentUri == '/admin/notice'} ? 'active'">
+            공지사항 목록
+          </a>
+          <a th:href="@{/admin/notice/add}"
+             th:classappend="${currentUri == '/admin/notice/add'} ? 'active'">
+            공지사항 작성
+          </a>
+        </div>
       </div>
-    </div>
+
+      <!-- 문의 관리 -->
+      <div class="sidebar-section">
+        <h3>1:1 문의 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/inquiries}"
+             th:classappend="${currentUri == '/admin/inquiries'} ? 'active'">
+            1:1 문의 목록
+          </a>
+        </div>
+      </div>
+
+      <!-- 로그 관리 -->
+      <div class="sidebar-section">
+        <h3>로그 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/logs/login}"
+             th:classappend="${currentUri == '/admin/logs/login'} ? 'active'">
+            로그인 / 에러
+          </a>
+        </div>
+      </div>
+
+    </th:block>
   </div>
 </div>
 </body>

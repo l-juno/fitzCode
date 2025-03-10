@@ -1,6 +1,6 @@
 package kr.co.fitzcode.product.service;
 
-import kr.co.fitzcode.product.dto.CartDTO;
+import kr.co.fitzcode.common.dto.CartDTO;
 
 import java.util.List;
 

@@ -1,14 +1,15 @@
 package kr.co.fitzcode.admin.mapper;
 
-import kr.co.fitzcode.admin.dto.ProductCategoryDTO;
-import kr.co.fitzcode.admin.dto.ProductDTO;
+
+import kr.co.fitzcode.common.dto.ProductCategoryDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 @Mapper
-public interface ProductMapper {
+public interface AdminProductMapper {
 
     // 상품 등록
     void insertProduct(ProductDTO productDTO);

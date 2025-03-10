@@ -1,13 +1,10 @@
 package kr.co.fitzcode.product.controller;
 
-import ch.qos.logback.classic.Logger;
 import groovy.util.logging.Slf4j;
-import kr.co.fitzcode.product.dto.ProductDTO;
-import kr.co.fitzcode.product.dto.ProductImageDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
+import kr.co.fitzcode.common.dto.ProductImageDTO;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.XSlf4j;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,6 +1,6 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.NoticeDTO;
+import kr.co.fitzcode.common.dto.NoticeDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

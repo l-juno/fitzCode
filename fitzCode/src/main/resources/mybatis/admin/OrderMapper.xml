@@ -6,7 +6,7 @@
 <mapper namespace="kr.co.fitzcode.admin.mapper.OrderMapper">
 
     <!-- OrderDetailDTO에 대한 ResultMap 정의 -->
-    <resultMap id="OrderDetailResultMap" type="kr.co.fitzcode.admin.dto.OrderDetailDTO">
+    <resultMap id="OrderDetailResultMap" type="OrderDetailDTO">
         <id property="orderId" column="order_id" javaType="java.lang.Long"/>
         <result property="orderDate" column="order_date" javaType="java.time.LocalDateTime"/>
         <result property="userName" column="user_name" javaType="java.lang.String"/>

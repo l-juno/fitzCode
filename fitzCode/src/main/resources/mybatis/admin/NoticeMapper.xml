@@ -4,7 +4,7 @@
 <mapper namespace="kr.co.fitzcode.admin.mapper.NoticeMapper">
 
     <!-- 공지사항 목록 조회 -->
-    <select id="selectAllNotices" resultType="kr.co.fitzcode.admin.dto.NoticeDTO">
+    <select id="selectAllNotices" resultType="NoticeDTO">
         SELECT notice_id AS noticeId, user_id AS userId, title, content,
         image_url AS imageUrl, attachment_url AS attachmentUrl, attachment_name AS attachmentName,
         attachment_size AS attachmentSize, created_at AS createdAt, updated_at AS updatedAt
@@ -13,13 +13,13 @@
     </select>
 
     <!-- 공지사항 작성 -->
-    <insert id="insertNotice" parameterType="kr.co.fitzcode.admin.dto.NoticeDTO" useGeneratedKeys="true" keyProperty="noticeId">
+    <insert id="insertNotice" parameterType="NoticeDTO" useGeneratedKeys="true" keyProperty="noticeId">
         INSERT INTO NOTICE (user_id, title, content, image_url, attachment_url, attachment_name, attachment_size)
         VALUES (#{userId}, #{title}, #{content}, #{imageUrl}, #{attachmentUrl}, #{attachmentName}, #{attachmentSize})
     </insert>
 
     <!-- 공지사항 조회 -->
-    <select id="selectNoticeById" resultType="kr.co.fitzcode.admin.dto.NoticeDTO">
+    <select id="selectNoticeById" resultType="NoticeDTO">
         SELECT notice_id AS noticeId, user_id AS userId, title, content,
         image_url AS imageUrl, attachment_url AS attachmentUrl, attachment_name AS attachmentName,
         attachment_size AS attachmentSize, created_at AS createdAt, updated_at AS updatedAt
@@ -28,7 +28,7 @@
     </select>
 
     <!-- 공지사항 수정 -->
-    <update id="updateNotice" parameterType="kr.co.fitzcode.admin.dto.NoticeDTO">
+    <update id="updateNotice" parameterType="NoticeDTO">
         UPDATE NOTICE
         SET title = #{title}, content = #{content}, image_url = #{imageUrl},
         attachment_url = #{attachmentUrl}, attachment_name = #{attachmentName},

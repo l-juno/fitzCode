@@ -25,24 +25,29 @@
     <h3>등급별 회원 비율</h3>
     <canvas id="memberTierChart"></canvas>
 
-    <script>
+    <script th:inline="javascript">
         document.addEventListener("DOMContentLoaded", function() {
-            const data = {
-                labels: ['브론즈', '실버', '골드', '플래티넘'],
+            /*<![CDATA[*/
+            const memberTierCounts = /*[[${memberTierCounts}]]*/ {};
+            const labels = ['브론즈', '실버', '골드', '플래티넘'];
+            const data = labels.map(tier => memberTierCounts[labels.indexOf(tier) + 1] || 0); // tier_level 1~4 매핑
+
+            const chartData = {
+                labels: labels,
                 datasets: [{
                     label: '회원 등급 비율',
-                    data: [20, 40, 25, 15],
+                    data: data,
                     backgroundColor: [
-                        'rgba(205, 127, 50, 0.8)',
-                        'rgba(192, 192, 192, 1)',
-                        'rgba(255, 215, 0, 1)',
-                        'rgba(100, 200, 185, 1)'
+                        'rgba(161,111,86,0.8)',  // 브론즈
+                        'rgb(223,220,220)',      // 실버
+                        'rgb(246,218,112)',      // 골드
+                        'rgb(123,199,205)'       // 플래티넘
                     ],
                     borderColor: [
-                        'rgba(205, 127, 50, 0.8)',
-                        'rgba(192, 192, 192, 1)',
-                        'rgba(255, 215, 0, 1)',
-                        'rgba(100, 200, 185, 1)'
+                        'rgba(161,111,86,0.8)',
+                        'rgba(223,220,220)',
+                        'rgba(246,218,112)',
+                        'rgba(123,199,205)'
                     ],
                     borderWidth: 1
                 }]
@@ -50,7 +55,7 @@
 
             const config = {
                 type: 'pie',
-                data: data,
+                data: chartData,
                 options: {
                     responsive: true,
                     plugins: {
@@ -67,6 +72,7 @@
 
             const ctx = document.getElementById('memberTierChart').getContext('2d');
             new Chart(ctx, config);
+            /*]]>*/
         });
     </script>
 </div>

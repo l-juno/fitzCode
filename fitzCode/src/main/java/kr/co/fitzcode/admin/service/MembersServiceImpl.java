@@ -1,9 +1,9 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.MemberDTO;
-import kr.co.fitzcode.admin.dto.MemberDetailDTO;
-import kr.co.fitzcode.admin.dto.OrderDTO;
 import kr.co.fitzcode.admin.mapper.MembersMapper;
+import kr.co.fitzcode.common.dto.MemberDTO;
+import kr.co.fitzcode.common.dto.MemberDetailDTO;
+import kr.co.fitzcode.common.dto.OrderDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,12 +1,11 @@
 package kr.co.fitzcode.product.service;
 
 
-import kr.co.fitzcode.product.dto.ProductDTO;
-import kr.co.fitzcode.product.dto.ProductImageDTO;
-import kr.co.fitzcode.product.dto.ProductSizeDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
+import kr.co.fitzcode.common.dto.ProductImageDTO;
+import kr.co.fitzcode.common.dto.ProductSizeDTO;
 
 import java.util.List;
-import java.util.Map;
 
 public interface ProductService {
     List<ProductDTO> getProductsByPage(int pageNum);

@@ -1,7 +1,8 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.dto.ProductCategoryDTO;
-import kr.co.fitzcode.admin.dto.ProductDTO;
+
+import kr.co.fitzcode.common.dto.ProductCategoryDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

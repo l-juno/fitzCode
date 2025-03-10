@@ -1,28 +1,34 @@
-package kr.co.fitzcode.product.dto;
+package kr.co.fitzcode.common.dto;
 
+import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 public class ProductDTO {
-    private int productId;
+    private Long productId;
     private String productName;
     private String description;
     private String brand;
-    private int price;
-    private int discountedPrice;
-    private int stock;
-    private int categoryId;
-    private String imageUrl;
-    private LocalDateTime createdAt;
+    private Integer price;
+    private Integer stock; // 총 재고 (PRODUCT_SIZE의 합계로 계산 가능)
+    private Long categoryId;
+    private String imageUrl; // 메인 이미지 URL
+    private List<String> additionalImages; // 추가 이미지
+    private ProductStatus status; // Enum으로 상태 관리
+    private Timestamp createdAt;
+    private List<ProductSizeDTO> productSizes; // 사이즈별 재고
+    private Integer discountedPrice; // 할인가
+
 
     public String getFormattedPrice() {
         DecimalFormat df = new DecimalFormat("#,###");
@@ -42,5 +48,4 @@ public class ProductDTO {
         }
         return "0";
     }
-
 }

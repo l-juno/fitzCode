@@ -1,6 +1,9 @@
 package kr.co.fitzcode.product.controller;
 
-import kr.co.fitzcode.product.dto.*;
+import kr.co.fitzcode.common.dto.CategoryDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
+import kr.co.fitzcode.common.dto.ProductResponseDTO;
+import kr.co.fitzcode.common.dto.ProductSizeDTO;
 import kr.co.fitzcode.product.service.CategoryService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;

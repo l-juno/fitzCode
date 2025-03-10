@@ -1,14 +1,12 @@
 package kr.co.fitzcode.product.mapper;
 
-import kr.co.fitzcode.product.dto.ProductDTO;
-import kr.co.fitzcode.product.dto.ProductImageDTO;
-import kr.co.fitzcode.product.dto.ProductSizeDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
+import kr.co.fitzcode.common.dto.ProductImageDTO;
+import kr.co.fitzcode.common.dto.ProductSizeDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface ProductMapper {
