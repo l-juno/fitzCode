@@ -7,7 +7,6 @@ import kr.co.fitzcode.user.service.EmailService;
 import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +22,6 @@ public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
-    private final PasswordEncoder passwordEncoder;
 
     // 로그인 페이지 이동
     @GetMapping("/login")
@@ -34,35 +32,12 @@ public class UserController {
         return "user/login";
     }
 
-    @PostMapping("/login")
-    public String loginOK(HttpSession session,
-                          @RequestParam("email") String email,
-                          @RequestParam("password") String password,
-                          Model model) {
-
-        UserDTO dto = userService.findByEmail(email);
-        log.info("userDTO: {}", dto);
-
-        if (dto == null || !passwordEncoder.matches(password, dto.getPassword())) {
-            model.addAttribute("ErrorMessage", "입력한 이메일은 가입 내역이 존재하지 않거나 비밀번호가 틀립니다.");
-            return "user/login";
-        }
-
-        session.setAttribute("dto", dto);
-        System.out.println("이메일 >>>>>" + dto.getEmail());
-        System.out.println("비밀번호 >>>>>" + dto.getPassword());
-        System.out.println("로그인 성공");
-        System.out.println("이름 >>>>>" + dto.getUserName());
-
-        return "redirect:/";
-    }
-
-    // 로그아웃
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate(); // 세션 무효화
-        return "redirect:/";
-    }
+    // 로그아웃 (Spring Security가 처리하므로 별도 구현 불필요)
+    // @GetMapping("/logout") -> 제거, Spring Security의 /logout 사용
+    // public String logout(HttpSession session) {
+    //     session.invalidate();
+    //     return "redirect:/";
+    // }
 
     // 회원가입 페이지 이동
     @GetMapping("/joinForm")
@@ -98,13 +73,12 @@ public class UserController {
 
         EmailMessageDTO emailMessage = EmailMessageDTO.builder()
                 .to(dto.getEmail())
-                .subject("이메일 인증을 위한 인증 코드 발송") // 메일 제목 부분
+                .subject("이메일 인증을 위한 인증 코드 발송")
                 .build();
 
         String code = emailService.sendEmail(emailMessage, "user/joinEmailView");
 
         session.setAttribute("userDTO", dto);
-
         session.setAttribute("authCode", code);
         model.addAttribute("code", code);
 
@@ -113,7 +87,6 @@ public class UserController {
 
     @PostMapping("/joinSuccess")
     public String joinEmailCode(@RequestParam("authCode") String authCode, HttpSession session, Model model) {
-
         String sessionCode = (String) session.getAttribute("authCode");
         UserDTO userDTO = (UserDTO) session.getAttribute("userDTO");
 
@@ -132,7 +105,6 @@ public class UserController {
         return "user/joinSuccess";
     }
 
-
     // 비밀번호 찾기 페이지 이동
     @GetMapping("/pwEmail")
     public String pwFind() {
@@ -140,9 +112,8 @@ public class UserController {
     }
 
     // 비밀번호 재설정 이메일 발송
-    @PostMapping("pwEmail")
+    @PostMapping("/pwEmail")
     public String pwEmail(@RequestParam("email") String email, UserDTO dto, Model model, HttpSession session) {
-
         boolean checkEmail = userService.emailDuplicate(email);
 
         if (!checkEmail) {
@@ -152,7 +123,7 @@ public class UserController {
 
         EmailMessageDTO emailMessage = EmailMessageDTO.builder()
                 .to(email)
-                .subject("비밀번호 재설정 메일 발송") // 메일 제목 부분
+                .subject("비밀번호 재설정 메일 발송")
                 .build();
 
         String code = emailService.sendEmail(emailMessage, "user/findpwEmailView");
@@ -171,7 +142,7 @@ public class UserController {
 
         if (email == null) {
             model.addAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
-            return "redirect:/user/findpwEmail";
+            return "redirect:/pwEmail"; // /user 제거 (컨텍스트 경로 통일)
         }
 
         model.addAttribute("email", email);
@@ -191,15 +162,13 @@ public class UserController {
 
         if (email == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
-            return "redirect:/user/findpwEmail";
+            return "redirect:/pwEmail"; // /user 제거
         }
 
         dto.setPassword(dto.getPassword());
         userService.updatePw(dto);
         model.addAttribute("userName", dto.getUserName());
 
-
         return "user/resetPwSuccess";
     }
-
 }

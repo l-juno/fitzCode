@@ -3,7 +3,7 @@ package kr.co.fitzcode.common.controller;
 import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.common.service.CustomUserDetails;
-import kr.co.fitzcode.common.service.UserService;
+import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,7 +34,7 @@ public class CommonUserController {
         return ResponseEntity.ok(user);
     }
 
-    @GetMapping("getUserRolesById")
+    @GetMapping("/getUserRolesById")
     public ResponseEntity<List<Integer>> userRolesById(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
@@ -46,7 +46,7 @@ public class CommonUserController {
         return ResponseEntity.ok(roles);
     }
 
-    @GetMapping("getUserRolesInStringByUserId")
+    @GetMapping("/getUserRolesInStringByUserId")
     public ResponseEntity<List<UserRole>> userRolesInStringByUserId(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {

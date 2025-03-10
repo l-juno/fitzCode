@@ -32,13 +32,16 @@
         WHERE email = #{email}
     </update>
 
-    <select id="loginUser" resultType="UserDTO">
-        SELECT * FROM USER
-        WHERE email = #{email} AND password = #{password}
-    </select>
-
     <select id="findByEmail" parameterType="String" resultType="UserDTO">
         SELECT * FROM USER WHERE email = #{email}
     </select>
 
+    <!-- CommonUserController 에서 사용 -->
+    <select id="getUserByEmail" parameterType="String" resultType="UserDTO">
+        SELECT * FROM USER WHERE email = #{email}
+    </select>
+
+    <select id="getUserRolesByUserId" parameterType="int" resultType="int">
+        SELECT role_id FROM USER WHERE user_id = #{userId}
+    </select>
 </mapper>
