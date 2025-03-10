@@ -25,12 +25,12 @@ public class UserController {
     private final EmailService emailService;
 
     // 로그인 페이지 이동
-    @GetMapping("/login")
+    @GetMapping("/login2")
     public String login() {
         return "user/login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login2")
     public String loginOK(HttpSession session,
                           @RequestParam("email") String email,
                           @RequestParam("password") String password,
