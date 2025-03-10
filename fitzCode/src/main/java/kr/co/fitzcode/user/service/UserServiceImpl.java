@@ -1,18 +1,26 @@
 package kr.co.fitzcode.user.service;
 
 import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void registerUser(UserDTO dto) {
+        // 비밀번호 암호화
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         userMapper.insertUser(dto);
         userMapper.insertUserTier(dto.getNickname());
     }
@@ -40,14 +48,37 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePw(UserDTO dto) {
+        // 비밀번호 암호화
+        dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         userMapper.updatePw(dto);
     }
 
     @Override
-    public UserDTO loginUser(String email, String password) {
-
-        return userMapper.loginUser(email, password);
+    public UserDTO findByEmail(String email) {
+        return userMapper.findByEmail(email);
     }
 
+    @Override
+    public UserDTO getUserByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
 
+    @Override
+    public List<Integer> getUserRolesByUserId(int userId) {
+        return userMapper.getUserRolesByUserId(userId);
+    }
+
+    @Override
+    public List<UserRole> findRolesInStringByUserId(int userId) {
+        List<Integer> roleIds = userMapper.getUserRolesByUserId(userId);
+        return roleIds.stream()
+                .map(roleId -> switch (roleId) {
+                    case 1 -> UserRole.USER;
+                    case 2 -> UserRole.ADMIN;
+                    case 3 -> UserRole.LOGISTICS;
+                    case 4 -> UserRole.INQUIRY;
+                    default -> UserRole.USER;
+                })
+                .collect(Collectors.toList());
+    }
 }

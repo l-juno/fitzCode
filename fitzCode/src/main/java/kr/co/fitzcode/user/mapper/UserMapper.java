@@ -3,9 +3,9 @@ package kr.co.fitzcode.user.mapper;
 import kr.co.fitzcode.common.dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
     void insertUser(UserDTO dto);
@@ -15,5 +15,9 @@ public interface UserMapper {
     int phoneNumberDuplicate(@Param("phoneNumber") String phoneNumber);
     void updatePw(UserDTO dto);
 
-    UserDTO loginUser(@Param("email")String email, @Param("password")String password);
+    UserDTO findByEmail(String email);
+
+    // CommonUserController 에서 사용
+    UserDTO getUserByEmail(String email);
+    List<Integer> getUserRolesByUserId(int userId);
 }
