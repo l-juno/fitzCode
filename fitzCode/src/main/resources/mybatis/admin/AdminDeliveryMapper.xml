@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.fitzcode.admin.mapper.AdminDeliveryMapper">
+
+    <!-- 배송 정보 삽입 -->
+    <insert id="insertDelivery" parameterType="kr.co.fitzcode.common.dto.DeliveryDTO" useGeneratedKeys="true" keyProperty="deliveryId">
+        INSERT INTO DELIVERY (order_id, tracking_number, courier_code, delivery_status, shipped_at, delivered_at)
+        VALUES (#{orderId}, #{trackingNumber}, 1, #{deliveryStatus.code}, #{shippedAt}, #{deliveredAt})
+    </insert>
+
+    <!-- 배송 정보 조회 -->
+    <select id="getDeliveryByOrderId" parameterType="long" resultType="kr.co.fitzcode.common.dto.DeliveryDTO">
+        SELECT delivery_id, order_id, tracking_number, courier_code, delivery_status,
+        shipped_at, delivered_at, created_at
+        FROM DELIVERY
+        WHERE order_id = #{orderId}
+    </select>
+
+    <!-- 배송 상태 업데이트 -->
+    <update id="updateDeliveryStatus" parameterType="map">
+        UPDATE DELIVERY
+        SET delivery_status = #{deliveryStatus.code},
+        updated_at = NOW()
+        WHERE delivery_id = #{deliveryId}
+    </update>
+
+</mapper>
