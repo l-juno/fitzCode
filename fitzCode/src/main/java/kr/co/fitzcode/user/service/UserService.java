@@ -11,7 +11,7 @@ public interface UserService {
     boolean phoneNumberDuplicate(String phoneNumber);
     void updatePw(UserDTO dto);
     UserDTO loginUser(String email, String password);
-
+    UserDTO findByEmail(String email);
 }
 
 

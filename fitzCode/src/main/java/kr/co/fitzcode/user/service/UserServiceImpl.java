@@ -49,5 +49,10 @@ public class UserServiceImpl implements UserService {
         return userMapper.loginUser(email, password);
     }
 
+    @Override
+    public UserDTO findByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
+
 
 }

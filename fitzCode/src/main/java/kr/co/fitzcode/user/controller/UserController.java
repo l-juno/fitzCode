@@ -1,12 +1,13 @@
 package kr.co.fitzcode.user.controller;
 
-import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.EmailMessageDTO;
 import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.user.service.EmailService;
 import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,29 +19,31 @@ import java.util.Objects;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-@lombok.extern.slf4j.Slf4j
 public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     // 로그인 페이지 이동
-    @GetMapping("/login2")
-    public String login() {
+    @GetMapping("/login")
+    public String loginPage(Model model) {
+        if (model.containsAttribute("error")) {
+            model.addAttribute("ErrorMessage", "입력한 이메일 또는 비밀번호가 잘못되었습니다.");
+        }
         return "user/login";
     }
 
-    @PostMapping("/login2")
+    @PostMapping("/login")
     public String loginOK(HttpSession session,
                           @RequestParam("email") String email,
                           @RequestParam("password") String password,
                           Model model) {
 
-        UserDTO dto = userService.loginUser(email, password);
+        UserDTO dto = userService.findByEmail(email);
         log.info("userDTO: {}", dto);
 
-
-        if (dto == null) {
+        if (dto == null || !passwordEncoder.matches(password, dto.getPassword())) {
             model.addAttribute("ErrorMessage", "입력한 이메일은 가입 내역이 존재하지 않거나 비밀번호가 틀립니다.");
             return "user/login";
         }
@@ -49,13 +52,9 @@ public class UserController {
         System.out.println("이메일 >>>>>" + dto.getEmail());
         System.out.println("비밀번호 >>>>>" + dto.getPassword());
         System.out.println("로그인 성공");
-
-
         System.out.println("이름 >>>>>" + dto.getUserName());
 
-
-
-        return "redirect:/"; // localhost:8080 으로 리다이렉트
+        return "redirect:/";
     }
 
     // 로그아웃

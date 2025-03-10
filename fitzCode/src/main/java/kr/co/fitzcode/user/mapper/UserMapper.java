@@ -16,4 +16,5 @@ public interface UserMapper {
     void updatePw(UserDTO dto);
 
     UserDTO loginUser(@Param("email")String email, @Param("password")String password);
+    UserDTO findByEmail(String email);
 }

@@ -37,4 +37,8 @@
         WHERE email = #{email} AND password = #{password}
     </select>
 
+    <select id="findByEmail" parameterType="String" resultType="UserDTO">
+        SELECT * FROM USER WHERE email = #{email}
+    </select>
+
 </mapper>
