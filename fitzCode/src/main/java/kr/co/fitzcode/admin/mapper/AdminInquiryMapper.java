@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface InquiryMapper {
+public interface AdminInquiryMapper {
 
     // 답변이 없는 문의의 개수를 조회
     int getUnansweredInquiryCount();

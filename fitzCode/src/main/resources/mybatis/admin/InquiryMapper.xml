@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kr.co.fitzcode.admin.mapper.InquiryMapper">
+<mapper namespace="kr.co.fitzcode.admin.mapper.AdminInquiryMapper">
 
     <!-- 결과 매핑 -->
     <resultMap id="InquiryResultMap" type="InquiryDTO">
