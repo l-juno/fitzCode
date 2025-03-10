@@ -2,10 +2,9 @@ package kr.co.fitzcode.inquiry.control;
 
 
 import jakarta.servlet.http.HttpSession;
-import kr.co.fitzcode.inquiry.dto.InquiryDTO;
-import kr.co.fitzcode.inquiry.dto.ProductDTO;
+import kr.co.fitzcode.common.dto.InquiryDTO;
+import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.inquiry.service.InquiryService;
-import kr.co.fitzcode.inquiry.dto.UserDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;

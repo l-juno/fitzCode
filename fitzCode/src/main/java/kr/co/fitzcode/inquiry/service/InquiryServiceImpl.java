@@ -1,16 +1,13 @@
 package kr.co.fitzcode.inquiry.service;
 
+import kr.co.fitzcode.common.dto.InquiryDTO;
+import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.common.enums.InquiryCategory;
 import kr.co.fitzcode.common.enums.InquiryStatus;
-import kr.co.fitzcode.inquiry.dto.InquiryDTO;
-import kr.co.fitzcode.inquiry.dto.InquiryImageDTO;
-import kr.co.fitzcode.inquiry.dto.ProductDTO;
-import kr.co.fitzcode.inquiry.dto.UserDTO;
 import kr.co.fitzcode.inquiry.mapper.InquiryMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,45 +17,45 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class InquiryServiceImpl implements InquiryService {
-    private final InquiryMapper inquiryMapper;
+    private final InquiryMapper inquiryMapper1;
 
     @Override
     public UserDTO getUserOne(int userId) {
-        return inquiryMapper.getUserOne(userId) ;
+        return inquiryMapper1.getUserOne(userId) ;
     }
 
     // 문의 내용 등록
     @Override
     public void registInquiry(InquiryDTO inquiryDTO) {
         log.info(inquiryDTO.toString());
-        int category = inquiryDTO.getCategory();
+        int category = inquiryDTO.getCategoryCode();
         // 공통 문의 내용
         InquiryDTO dto = InquiryDTO.builder()
                 .userId(inquiryDTO.getUserId())
                 .orderId(inquiryDTO.getOrderId())
                 .subject(inquiryDTO.getSubject())
                 .content(inquiryDTO.getContent())
-                .category(category)
-                .status(1)
+                .categoryCode(category)
+                .statusCode(1)
                 .productId(inquiryDTO.getProductId())
                 .build();
-        inquiryMapper.saveInquiry(dto);
+        inquiryMapper1.saveInquiry(dto);
         log.info(">>>>>>>>>>>>>>> inquiry_id 확인 {}", dto.getInquiryId());
-        saveImages(dto.getInquiryId(), inquiryDTO.getImages()); // 이미지 dto 에 담기
+//        saveImages(dto.getInquiryId(), inquiryDTO.getImageUrls()); // 이미지 dto 에 담기
     }
 
     // 개인별 문의 내역 불러오기
     @Override
     public List<HashMap<String, Object>> getInquiryList(int userId) {
         List<HashMap<String, Object>> list = new ArrayList<>();
-        List<InquiryDTO> inquiryDTOList = inquiryMapper.getInquiryList(userId);
+        List<InquiryDTO> inquiryDTOList = inquiryMapper1.getInquiryList(userId);
         for (InquiryDTO inquiryDTO : inquiryDTOList) {
             log.info(">>>>>>>>>> inquiryDTO {}", inquiryDTO.toString());
             HashMap<String, Object> map = new HashMap<>();
             map.put("subject", inquiryDTO.getSubject());
             map.put("content", inquiryDTO.getContent());
-            map.put("category", setCategory(inquiryDTO.getCategory()).getDescription()); // enum 으로 변환 후 map 에 담기
-            map.put("status", setStatus(inquiryDTO.getStatus()).getDescription());           // enum 으로 변환 후 map 에 담기
+            map.put("category", setCategory(inquiryDTO.getCategoryCode()).getDescription()); // enum 으로 변환 후 map 에 담기
+            map.put("status", setStatus(inquiryDTO.getStatusCode()).getDescription());           // enum 으로 변환 후 map 에 담기
             map.put("createdAt", inquiryDTO.getCreatedAt());
             map.put("inquiryId", inquiryDTO.getInquiryId());
             list.add(map);
@@ -72,7 +69,7 @@ public class InquiryServiceImpl implements InquiryService {
         // 상세보기 조회를 위한 데이터 가져오기
         HashMap<String, Object> data = getDataForDetail(inquiryId);
         // 상세보기 조회
-        List<HashMap<String, Object>> detail = inquiryMapper.getInquiryDetail(data);
+        List<HashMap<String, Object>> detail = inquiryMapper1.getInquiryDetail(data);
         // 상세보기 controller에 전달할 객체 설정
         HashMap<String, Object> detailList = getInquiryDetailList(detail);
         log.info(">>>>>>>>>> finalDetail {}", detailList.toString());
@@ -82,40 +79,40 @@ public class InquiryServiceImpl implements InquiryService {
     // 상품 찾기
     @Override
     public List<HashMap<String, Object>> searchProduct(String userInputProductName) {
-        log.info(">>>>>>>>> 상품 검색 : {}", inquiryMapper.searchProduct(userInputProductName));
-        return inquiryMapper.searchProduct(userInputProductName);
+        log.info(">>>>>>>>> 상품 검색 : {}", inquiryMapper1.searchProduct(userInputProductName));
+        return inquiryMapper1.searchProduct(userInputProductName);
     }
 
     @Override
     public HashMap<String, Object> selectedProduct(int productId) {
-        log.info(">>>>>>>>> 선택된 상품 : {} ", inquiryMapper.selectedProduct(productId));
-        return inquiryMapper.selectedProduct(productId);
+        log.info(">>>>>>>>> 선택된 상품 : {} ", inquiryMapper1.selectedProduct(productId));
+        return inquiryMapper1.selectedProduct(productId);
     }
 
     // 주문 내역 불러오기
     @Override
     public List<HashMap<String, Object>> getUserAndOrderList(int userId) {
-        return inquiryMapper.getUserAndOrderList(userId);
+        return inquiryMapper1.getUserAndOrderList(userId);
     }
 
-    // 이미지 저장하기
-    public void saveImages(int inquiryId, List<MultipartFile> file) {
-        int index = 0;
-        for (MultipartFile image : file) {
-            if (!image.isEmpty()) { // 파일이 비어있지 않다면
-                log.info(">>>>>>>>>>> : 파일 비어있는지 {} ", image.isEmpty());
-                log.info(">>>>>>>>>>> : 파일 크기 {} ", image.getSize());
-                log.info(">>>>>>>>>>> : 파일 이름 {} ", image.getOriginalFilename());
-                InquiryImageDTO imageDTO = InquiryImageDTO.builder()
-                        .inquiryId(inquiryId)
-                        .imageUrl(image.getOriginalFilename())
-                        .imageOrder(index)
-                        .build();
-                inquiryMapper.saveImages(imageDTO);
-                index++;
-            }
-        }
-    }
+//    // 이미지 저장하기
+//    public void saveImages(int inquiryId, List<String> file) {
+//        int index = 0;
+//        for (String image : file) {
+//            if (!image.isEmpty()) { // 파일이 비어있지 않다면
+//                log.info(">>>>>>>>>>> : 파일 비어있는지 {} ", image.isEmpty());
+//                log.info(">>>>>>>>>>> : 파일 크기 {} ", image.getSize());
+//                log.info(">>>>>>>>>>> : 파일 이름 {} ", image.getOriginalFilename());
+//                InquiryImageDTO imageDTO = InquiryImageDTO.builder()
+//                        .inquiryId(inquiryId)
+//                        .imageUrl(image.getOriginalFilename())
+//                        .imageOrder(index)
+//                        .build();
+//                inquiryMapper.saveImages(imageDTO);
+//                index++;
+//            }
+//        }
+//    }
 
     // 문의 유형 int -> enum 바꾸기
     public InquiryCategory setCategory(int categoryCode) {
@@ -130,7 +127,7 @@ public class InquiryServiceImpl implements InquiryService {
     // 상세보기위한 데이터 가져오기
     public HashMap<String, Object> getDataForDetail(int inquiryId) {
         // 상세보기를 위한 데이터 조회
-        List<HashMap<String, Object>> dataList = inquiryMapper.getDataForDetail(inquiryId);
+        List<HashMap<String, Object>> dataList = inquiryMapper1.getDataForDetail(inquiryId);
 
         // Map 에 담기
         HashMap<String, Object> firstData = dataList.get(0);

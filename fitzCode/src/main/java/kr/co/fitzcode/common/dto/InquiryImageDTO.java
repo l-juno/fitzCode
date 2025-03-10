@@ -1,4 +1,4 @@
-package kr.co.fitzcode.inquiry.dto;
+package kr.co.fitzcode.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,4 @@ public class InquiryImageDTO {
     private String imageUrl;            // 이미지 Url 또는 경로
     private int imageOrder;             // 이미지 순서
     private LocalDateTime createdAt;    // 이미지 생성날짜
-
-
-
 }

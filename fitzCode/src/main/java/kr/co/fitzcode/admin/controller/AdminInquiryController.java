@@ -1,6 +1,6 @@
 package kr.co.fitzcode.admin.controller;
 
-import kr.co.fitzcode.admin.service.InquiryService;
+import kr.co.fitzcode.admin.service.AdminInquiryService;
 import kr.co.fitzcode.common.dto.InquiryDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -12,8 +12,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/admin/inquiries")
 @RequiredArgsConstructor
-public class InquiryController {
-    private final InquiryService inquiryService;
+public class AdminInquiryController {
+    private final AdminInquiryService inquiryService;
 
     // 1:1 문의 목록 조회
     @GetMapping

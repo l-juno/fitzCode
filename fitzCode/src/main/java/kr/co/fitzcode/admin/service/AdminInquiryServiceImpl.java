@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class InquiryServiceImpl implements InquiryService {
+public class AdminInquiryServiceImpl implements AdminInquiryService {
     private final InquiryMapper inquiryMapper;
 
     // 답변되지 않은 문의 개수 조회
