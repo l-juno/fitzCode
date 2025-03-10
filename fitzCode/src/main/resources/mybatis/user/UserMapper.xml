@@ -32,7 +32,7 @@
         WHERE email = #{email}
     </update>
 
-    <select id="loginUser" parameterType="UserDTO" resultType="UserDTO">
+    <select id="loginUser" resultType="UserDTO">
         SELECT * FROM USER
         WHERE email = #{email} AND password = #{password}
     </select>

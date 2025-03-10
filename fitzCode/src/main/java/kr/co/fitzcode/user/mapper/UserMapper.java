@@ -14,5 +14,6 @@ public interface UserMapper {
     int nicknameDuplicate(@Param("nickname") String nickname);
     int phoneNumberDuplicate(@Param("phoneNumber") String phoneNumber);
     void updatePw(UserDTO dto);
-    UserDTO loginUser(String email, String password);
+
+    UserDTO loginUser(@Param("email")String email, @Param("password")String password);
 }

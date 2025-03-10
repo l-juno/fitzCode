@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -89,15 +90,13 @@ public class SecurityConfig {
 
                             // only those with role user can approach this url (where user needs to login to approach)
                             // 유저가 접근할수있는 url, 로그인이 필요한 url
-                            .requestMatchers("/cart/**").hasRole("USER")
+                            .requestMatchers("/api/cart/**").hasRole("USER")
 
                             // all other requests need authentication
                             // 나머지... authentication 필요
                             .anyRequest().authenticated();
                 });
 
-        // Enable form login (default Spring login page)
-        http.formLogin(withDefaults());
 
         // 우리가 만든 로그인
         // login
@@ -110,10 +109,12 @@ public class SecurityConfig {
                     .permitAll();                        // allow all users to access login page
         });
 
-        // 403 처리
-        http.exceptionHandling(exceptionHandling ->
-                exceptionHandling.accessDeniedHandler(accessDeniedHandler())
-        );
+//        // 403 처리
+//        http.exceptionHandling(exceptionHandling ->
+//                exceptionHandling.accessDeniedHandler(accessDeniedHandler())
+//        );
+
+
 
         // logout
         http.logout(logout -> {

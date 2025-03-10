@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class UserDTO {
-    private long userId;
+    private int userId;
 
     @NotNull(message = "사용자 이름은 필수입니다.")
     private String userName;

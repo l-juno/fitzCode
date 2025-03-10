@@ -1,5 +1,6 @@
 package kr.co.fitzcode.user.controller;
 
+import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.EmailMessageDTO;
 import kr.co.fitzcode.common.dto.UserDTO;
@@ -16,6 +17,8 @@ import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
+@lombok.extern.slf4j.Slf4j
 public class UserController {
 
     private final UserService userService;
@@ -34,6 +37,8 @@ public class UserController {
                           Model model) {
 
         UserDTO dto = userService.loginUser(email, password);
+        log.info("userDTO: {}", dto);
+
 
         if (dto == null) {
             model.addAttribute("ErrorMessage", "입력한 이메일은 가입 내역이 존재하지 않거나 비밀번호가 틀립니다.");
