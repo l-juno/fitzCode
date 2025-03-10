@@ -1,7 +1,7 @@
-package kr.co.fitzcode.service;
+package kr.co.fitzcode.user.service;
 
 
-import kr.co.fitzcode.dto.UserDTO;
+import kr.co.fitzcode.common.dto.UserDTO;
 
 public interface UserService {
     void registerUser(UserDTO dto);

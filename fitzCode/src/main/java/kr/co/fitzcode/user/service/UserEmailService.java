@@ -1,4 +1,4 @@
-package kr.co.fitzcode.service;
+package kr.co.fitzcode.user.service;
 
 import org.springframework.stereotype.Service;
 

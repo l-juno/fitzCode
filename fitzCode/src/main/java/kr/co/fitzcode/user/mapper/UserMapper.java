@@ -1,6 +1,6 @@
-package kr.co.fitzcode.mapper;
+package kr.co.fitzcode.user.mapper;
 
-import kr.co.fitzcode.dto.UserDTO;
+import kr.co.fitzcode.common.dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;

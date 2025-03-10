@@ -1,4 +1,4 @@
-package kr.co.fitzcode.controller;
+package kr.co.fitzcode.user.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

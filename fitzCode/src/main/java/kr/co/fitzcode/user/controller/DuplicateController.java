@@ -1,6 +1,6 @@
-package kr.co.fitzcode.controller;
+package kr.co.fitzcode.user.controller;
 
-import kr.co.fitzcode.service.UserService;
+import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

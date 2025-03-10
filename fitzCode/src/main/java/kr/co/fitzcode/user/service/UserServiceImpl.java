@@ -1,7 +1,7 @@
-package kr.co.fitzcode.service;
+package kr.co.fitzcode.user.service;
 
-import kr.co.fitzcode.mapper.UserMapper;
-import kr.co.fitzcode.dto.UserDTO;
+import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

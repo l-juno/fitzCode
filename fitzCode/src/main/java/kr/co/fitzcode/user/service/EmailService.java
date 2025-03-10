@@ -1,8 +1,8 @@
-package kr.co.fitzcode.service;
+package kr.co.fitzcode.user.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import kr.co.fitzcode.dto.EmailMessageDTO;
+import kr.co.fitzcode.common.dto.EmailMessageDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;

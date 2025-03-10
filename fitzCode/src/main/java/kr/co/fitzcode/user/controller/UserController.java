@@ -1,13 +1,10 @@
-package kr.co.fitzcode.controller;
+package kr.co.fitzcode.user.controller;
 
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-import kr.co.fitzcode.dto.EmailMessageDTO;
-import kr.co.fitzcode.dto.EmailPostDTO;
-import kr.co.fitzcode.dto.UserDTO;
-import kr.co.fitzcode.mapper.UserMapper;
-import kr.co.fitzcode.service.EmailService;
-import kr.co.fitzcode.service.UserService;
+import kr.co.fitzcode.common.dto.EmailMessageDTO;
+import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.user.service.EmailService;
+import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
