@@ -1,0 +1,439 @@
+/* General Layout */
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.product-detail-container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    height: auto;  /* Adjust height to content */
+}
+
+/* Product Image Section (Left side) */
+.product-image-section {
+    width: 50%;
+    position: sticky;  /* Sticky positioning */
+    top: 20px; /* Adjust this to the height of the header */
+    height: calc(100vh - 40px);  /* Viewport height minus header/footer */
+    overflow: hidden;
+    z-index: 10; /* Keep the image above the content */
+    display: flex; /* Ensure it’s a flex container */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Product Image Section (for sliding images) */
+.product-image {
+    display: flex;
+    transition: transform 0.3s ease; /* Smooth transition for sliding */
+    width: 100%; /* Ensure it fills the width of the container */
+}
+
+.product-image img {
+    width: 100%;
+    max-width: 100%; /* Ensure the image takes the full container width */
+    object-fit: cover;
+    border-radius: 8px;
+    display: block; /* Ensure no extra space below images */
+}
+
+/* Next and Previous Buttons */
+.next-btn, .prev-btn {
+    position: absolute;
+    top: 50%;
+    background: none;
+    color: black;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: large;
+    z-index: 10;
+}
+
+.next-btn {
+    right: 10px;
+    transform: translateY(-50%);
+}
+
+.prev-btn {
+    left: 10px;
+    transform: translateY(-50%);
+}
+
+/* Product Info Section (Right side) */
+.product-info-section {
+    width: 50%;
+    padding: 20px;
+    height: auto;
+    overflow-y: scroll;
+    box-sizing: border-box;
+    z-index: 1;
+    padding-right: 0; /* Remove any extra padding on the right side */
+}
+
+
+
+
+
+/* Instant Buy Price */
+.instant-buy {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.instant-buy-label {
+    font-size: 14px;
+    color: #888;
+}
+
+.instant-buy-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Product Name and Description */
+.product-name {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.product-description {
+    font-size: 24px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.product-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #151515;
+    margin-bottom: 20px;
+}
+
+.product-salePercent {
+    font-size: 24px;
+    font-weight: bold;
+    color: #dd0000;
+    margin-bottom: 20px;
+}
+
+.product-originalPrice {
+    font-size: 20px;
+    font-weight: normal;
+    text-decoration: line-through;
+    color: #dd0000;
+    margin-bottom: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%; /* Ensure full width */
+}
+
+
+/* Size Selector */
+.size-selector {
+    margin-bottom: 20px;
+}
+
+.size-dropdown {
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 150px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.size-dropdown svg {
+    fill: #888;
+}
+
+/* Product Details */
+.product-details {
+    margin-bottom: 20px;
+}
+
+.detail {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+}
+
+.text {
+    color: #888;
+    font-size: 14px;
+}
+
+.product-details span {
+    font-size: 16px;
+    color: #333;
+}
+
+/* Button Group (Buy/Sell Buttons) */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.buy-button{
+    background-color: #0b0b0b;
+    color: white;
+    text-decoration: none;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+    display: block;
+}
+
+.buy-button:hover, .sell-button:hover {
+    background-color: #ffffff;
+    color: black;
+    border: 2px solid black;
+}
+
+.buy-info, .sell-info {
+    font-size: 12px;
+}
+
+.buy-text, .sell-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.subtext {
+    font-size: 12px;
+}
+
+/* Responsive Design: Make Layout Adjustments for Smaller Screens */
+@media screen and (max-width: 768px) {
+    .product-detail-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .product-image-section, .product-info-section {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .buy-button, .sell-button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+
+
+/* Sticky Bar 컨테이너 */
+.sticky-container {
+    width: 1280px;
+    height: 90px;
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    display: none; /* 기본적으로 숨김 */
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+/* 상품 정보 영역 */
+.product_area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.thumbnail {
+    width: 56px;
+    height: 56px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #f4f4f4;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product_list_info_summary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    height: 100%; /* 부모 요소에 맞게 세로로 정렬 */
+}
+
+.product_title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #222;
+    margin: 0;
+}
+
+.product_subtitle, .product_model {
+    font-size: 13px;
+    color: rgba(34, 34, 34, 0.6);
+    margin: 0;
+}
+
+/* 버튼 영역 */
+.btn_area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 버튼 간격 동일하게 유지 */
+    gap: 10px; /* 버튼 간격 */
+    height: 50px; /* 전체 버튼 영역 높이 */
+}
+
+/* 공통 버튼 스타일 */
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px; /* 버튼 높이 동일 */
+    width: 80px; /* 버튼 너비 동일 */
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+    margin: 0; /* 여백 제거 */
+    padding: 0; /* 내부 여백 제거 */
+}
+
+/* 관심 버튼 */
+.btn_wish2 {
+    color: #222;
+    border: 1px solid #ddd;
+    text-align: center;
+    line-height: 50px; /* 텍스트 세로 정렬 */
+    cursor: pointer;
+}
+
+/* 구매/판매 버튼 스타일 */
+.btn_action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50px; /* 버튼 높이 동일 */
+    width: 80px; /* 버튼 너비 동일 */
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+}
+
+/* 구매 버튼 */
+.buy_button {
+    background-color: #0b0b0b;
+}
+
+/* 판매 버튼 */
+.sell_button {
+    background-color: #41b979;
+}
+
+.price {
+    font-size: 12px;
+}
+
+.dropdown-menu {
+    display: none;
+}
+
+.choose-size {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 200px; /* Adjust width as needed */
+    font-family: Arial, sans-serif;
+}
+
+.choose-size label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+#size-options {
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    appearance: none; /* Removes default browser styles */
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none; /* Firefox */
+}
+
+/* Add a dropdown arrow using background image */
+#size-options {
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5H7z" fill="%23333"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 30px; /* Space for arrow */
+}
+
+/* Hover and Focus Effects */
+#size-options:hover,
+#size-options:focus {
+    border-color: #666;
+    outline: none;
+}
+
+/* Style the dropdown options */
+#size-options option {
+    font-size: 16px;
+}
+
+
+.cart-button {
+    background-color: #151515;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+    display: block;
+    border: 2px solid transparent;
+}
+
+.cart-button:hover {
+    background-color: #ffffff;
+    color: #151515;
+    border-color: black;
+}
+
+
+
+
