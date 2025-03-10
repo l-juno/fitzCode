@@ -5,7 +5,7 @@ import kr.co.fitzcode.common.dto.InquiryDTO;
 
 import java.util.List;
 
-public interface InquiryService {
+public interface AdminInquiryService {
     // 답변되지 않은 문의 개수 조회
     int getUnansweredInquiryCount();
 

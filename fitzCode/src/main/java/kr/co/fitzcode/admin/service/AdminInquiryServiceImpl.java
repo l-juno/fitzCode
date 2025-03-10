@@ -1,6 +1,6 @@
 package kr.co.fitzcode.admin.service;
 
-import kr.co.fitzcode.admin.mapper.InquiryMapper;
+import kr.co.fitzcode.admin.mapper.AdminInquiryMapper;
 import kr.co.fitzcode.common.dto.InquiryDTO;
 import kr.co.fitzcode.common.enums.InquiryStatus;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +10,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class InquiryServiceImpl implements InquiryService {
-    private final InquiryMapper inquiryMapper;
+public class AdminInquiryServiceImpl implements AdminInquiryService {
+    private final AdminInquiryMapper inquiryMapper;
 
     // 답변되지 않은 문의 개수 조회
     @Override
