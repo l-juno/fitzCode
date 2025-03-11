@@ -42,4 +42,6 @@ public interface ProductMapper {
 
     int getProductSizeIdByProductSizeAndCode(@Param("productId") int productId, @Param("sizeCode") int sizeCode);
 
+    int getPriceOfProductByProductId(int productId);
+
 }

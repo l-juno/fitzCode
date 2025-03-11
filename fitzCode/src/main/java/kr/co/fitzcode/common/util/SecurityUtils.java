@@ -15,6 +15,5 @@ public class SecurityUtils {
             return customUserDetails.getUserId();
         }
         throw new RuntimeException("User is not authenticated");
-
     }
 }

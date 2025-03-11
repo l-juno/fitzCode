@@ -7,6 +7,8 @@
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
     <link rel="stylesheet" th:href="@{/css/product/productDetail.css}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
@@ -114,13 +116,13 @@
             
             <!-- 구매/판매 버튼 -->
             <div class="button-group">
-                <a href="/views/product/buy.html" class="buy-button">
+                <div class="buy-button">
                     <div class="buy-text">구매</div>
                     <div class="buy-info">
                         <span class="price" th:text="${product.formattedPrice}" >250,000원</span>
                         <span class="subtext">즉시 구매가</span>
                     </div>
-                </a>
+                </div>
             </div>
             
 
@@ -131,38 +133,284 @@
 
         </div>
     </div>
+    
+    
+    <!-- payment Structure -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Order Summary</h2>
+            <div class="modal-product-name" th:text="${'상품: ' + product.productName}">Product Name</div>
+            <span class="modal-price" th:text="${'가격: ' + product.formattedDiscountedPrice + '원'}" >250,000원</span>
+            <p sec:authorize="isAuthenticated()">구매자: <span th:text="${#authentication.principal.username}"></span></p>
+            <!--  get address of user using ajax call -->
+            <p>배송지:
+                <span id="userAddress">
+                    불러오는 중...
+                </span>
+            </p>
+            
+            <button id="changeAddressBtn" onclick="changeAddress()">변경</button>
+            <button id="continueToPaymentBtn" onclick="closeModal();requestPayment(getSizeCode())">continue</button>
+            
+        </div>
+    </div>
+    
+    
+    
 </div>
 
 
 <p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.userId}"></span></p>
+<p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.username}"></span></p>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 
-<div th:text="${#authentication.principal}"></div>
 
+<!-- check if user exists -->
 <script th:if="${#authentication.principal == 'anonymousUser'}">
     var isAuthenticated = false;
 </script>
-
 <script th:unless="${#authentication.principal == 'anonymousUser'}">
     var isAuthenticated = true;
 </script>
 
 <script>
+    const productId = [[${product.productId}]];
+    console.log("Product ID:", productId);
     const cartBtn = document.querySelector('.cart-button');
+    const buyBtn = document.querySelector('.buy-button')
 
+    function displayModal() {
+        console.log("display modal running...")
+        getUserAddress();
+        document.getElementById("paymentModal").style.display = "flex";
+    }
+
+    function closeModal() {
+        document.getElementById("paymentModal").style.display = "none";
+    }
+    
     cartBtn.addEventListener('click', () => {
         if (isAuthenticated) {
-            checkForAddToCart();
+            checkIfSizeSelected();
         } else {
             window.location.href = '/login';
         }
     });
+
+    buyBtn.addEventListener('click', () => {
+        if (isAuthenticated) {
+            checkIfSizeSelected(1);
+        } else {
+            window.location.href = '/login';
+        }
+    });
+
+    function getSizeCode() {
+        const sizeSelect = document.getElementById("size-options");
+        const selectedOption = sizeSelect ? sizeSelect.selectedOptions[0] : null;
+        return selectedOption.value;
+    }
+
+    function checkIfSizeSelected(command) {
+        const sizeSelect = document.getElementById("size-options");
+        const selectedOption = sizeSelect ? sizeSelect.selectedOptions[0] : null;
+
+        if (!selectedOption || !selectedOption.value) {
+            console.log("Please select a size before adding to cart");
+            alert("Please select a size before adding to cart");
+            return;
+        }
+        
+        const selectedSize = selectedOption.value;
+        const selectedStock = selectedOption.dataset.stock;
+        if (selectedStock <= 0) {
+            console.log("No product of this size is available");
+            alert("No product of this size is available");
+            return;
+        }
+        if (command === 1) {
+            console.log("command is one, loading modal");
+            displayModal();
+            // requestPayment(selectedSize);
+        } else {
+            addToCart(selectedSize, selectedStock);
+        }
+
+    }
+
+    function addToCart(sizeCode, selectedStock) {
+        console.log("Selected sizeCode:", sizeCode);
+        console.log("Stock available:", selectedStock);
+        console.log("product number:", productId);
+        let sendData = { productId: productId, sizeCode: parseInt(sizeCode) };
+        console.log(sendData);
+
+        $.ajax({
+            url: "/api/cart/addToCart",
+            method: "POST",
+            data: { productId: productId, sizeCode: sizeCode },
+            success: function (data) {
+                console.log("success", data);
+                alert("Product added to Cart");
+            },
+            error: function (xhr, status, error) {
+                if (xhr.status === 401) {
+                    console.warn("Unauthorized: Redirecting to login...");
+                    window.location.href = "/login";
+                } else {
+                    console.error("Error adding to cart:", error);
+                }
+            }
+        });
+
+    }
+
+    let addressId;
+    let addressLine1;
+    let postalCode;
+
+    function getUserAddress() {
+        console.log("getting user address");
+        $.ajax({
+            url: "/order/getUserAddress",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                if (response.length > 0) {
+                    renderAddressDropdown(response);
+                } else {
+                    $("#userAddress").html("<p>등록된 주소가 없습니다.</p>");
+                }
+            },
+            error: function () {
+                $("#userAddress").html("<p>주소를 불러올 수 없습니다.</p>");
+            }
+        });
+    }
+
+    function renderAddressDropdown(addressList) {
+        let $select = $("<select>").attr("id", "addressSelect").on("change", function () {
+            let selectedIndex = $(this).val();
+            updateSelectedAddress(addressList[selectedIndex]);
+        });
+
+        addressList.forEach((address, index) => {
+            $select.append($("<option>", {
+                value: index,
+                text: `${address.addressLine1} (우편번호: ${address.postalCode})`
+            }));
+        });
+
+        $("#userAddress").html($select);
+        updateSelectedAddress(addressList[0]);
+    }
+
+    function updateSelectedAddress(address) {
+        addressId = address.addressId;
+        addressLine1 = address.addressLine1;
+        postalCode = address.postalCode;
+        console.log("Selected Address:", addressLine1, postalCode);
+    }
+
+
+    function changeAddress() {
+        console.log("change address pressed");
+        new daum.Postcode({
+            oncomplete: function (data) {
+                let newAddress = {
+                    addressId: null,
+                    addressLine1: data.roadAddress,
+                    postalCode: data.zonecode
+                };
+                addNewAddressToDropdown(newAddress);
+            }
+        }).open();
+    }
+
+    function addNewAddressToDropdown(newAddress) {
+        let $select = $("#addressSelect");
+        let newIndex = $select.children().length;
+        $select.append($("<option>", {
+            value: newIndex,
+            text: `${newAddress.addressLine1} (우편번호: ${newAddress.postalCode})`,
+            selected: true
+        }));
+
+        updateSelectedAddress(newAddress);
+    }
+
+    
+    let price;
+    // TODO configure to after address
+    function requestPayment(sizeCode) {
+        console.log(window.PortOne);
+        console.log("loaded portone");
+
+        $.ajax({
+            url: "/payment/getPostOneInformation",
+            method: "POST",
+            data: { productId: productId, sizeCode: parseInt(sizeCode) },
+            dataType: "json",
+            success: async function (data) {
+                console.log("payment success");
+                console.log(data);
+                price = data.totalAmount;
+                try {
+                    const response = await PortOne.requestPayment(data);
+                    console.log("response in ajax call:", response);
+                    createOrder(response);
+                } catch (error) {
+                    console.error("Error processing payment:", error);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching products:", error);
+                isLoading = false;
+            }
+        });
+    }
+    
+    // TODO
+    function createOrder(response) {
+        console.log("creating order");
+
+        // create order
+        $.ajax({
+            url: "/order/createOrderFromDetailPage",
+            method: "POST",
+            data: {
+                addressLine1:addressLine1,
+                postalCode:postalCode,
+                productId:productId,
+                sizeCode: getSizeCode(),
+                price: price
+            },
+            dataType: "json",
+            success: function (data) {
+                console.log("success");
+                console.log(data);
+                updateSizeOptions(data);
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching products:", error);
+                isLoading = false;
+            }
+        });
+        
+        
+        
+        // redirect to order page with orderId
+        
+    }
     
     
-    const productId = [[${product.productId}]];
-    console.log("Product ID:", productId);
+    
+    
+    
 
     function fetchAvailableSizes() {
         console.log("Fetching available sizes...");
@@ -207,61 +455,9 @@
         sizeContainer.appendChild(newSelect);
     }
 
-    
-
-    function checkForAddToCart() {
-        console.log("add to cart pressed");
-
-        const sizeSelect = document.getElementById("size-options");
-        const selectedOption = sizeSelect ? sizeSelect.selectedOptions[0] : null;
-
-        if (!selectedOption || !selectedOption.value) {
-            console.log("Please select a size before adding to cart");
-            alert("Please select a size before adding to cart");
-            return;
-        }
-
-        const selectedSize = selectedOption.value;
-        const selectedStock = selectedOption.dataset.stock; // Get stock from data attribute
-        if (selectedStock <= 0) {
-            console.log("No product of this size is available");
-            alert("No product of this size is available");
-            return;
-        }
-        addToCart(selectedSize, selectedStock);
-        
-    }
-
-    function addToCart(sizeCode, selectedStock) {
-        console.log("Selected sizeCode:", sizeCode);
-        console.log("Stock available:", selectedStock);
-        console.log("product number:", productId);
-        let sendData = { productId: productId, sizeCode: parseInt(sizeCode) };
-        console.log(sendData);
-
-        $.ajax({
-            url: "/api/cart/addToCart",
-            method: "POST",
-            data: { productId: productId, sizeCode: sizeCode },
-            success: function (data) {
-                console.log("success", data);
-            },
-            error: function (xhr, status, error) {
-                if (xhr.status === 401) {
-                    console.warn("Unauthorized: Redirecting to login...");
-                    window.location.href = "/login";
-                } else {
-                    console.error("Error adding to cart:", error);
-                }
-            }
-        });
-
-    }
 
 
     
-
-
     document.addEventListener("DOMContentLoaded", () => {
         // js for the sticky bar
         const stickyBar = document.getElementById("stickyBar");
@@ -276,8 +472,6 @@
         fetchAvailableSizes();
         
     });
-    
-
 
     let index = 0;
     const nextBtn = document.querySelector('.next-btn');
@@ -300,13 +494,6 @@
         updateImagePosition();
     });
     
-
-
-    
-
-
-
-
 </script>
 
 </html>

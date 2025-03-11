@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,8 +38,10 @@ public class ProductDTO {
     }
 
     public String getFormattedDiscountedPrice() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(discountedPrice);
+        if (this.discountedPrice != null && this.discountedPrice instanceof Number) {
+            return new DecimalFormat("#,###").format(this.discountedPrice);
+        }
+        return "N/A"; // or handle this case differently
     }
 
     public String getFormattedDiscountPercentage() {
