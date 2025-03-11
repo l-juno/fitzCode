@@ -4,18 +4,17 @@ import kr.co.fitzcode.user.service.OAuth2Response;
 
 import java.util.Map;
 
-
-public class NaverResponse implements OAuth2Response {
-
+public class KakaoResponse implements OAuth2Response {
     private final Map<String, Object> attributes;
 
-    public NaverResponse(Map<String, Object> attributes) {
-        this.attributes = (Map<String, Object>) attributes.get("response");
+    public KakaoResponse(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
+
 
     @Override
     public String getProvider() {
-        return "naver";
+        return "kakao";
     }
 
     @Override
@@ -25,7 +24,7 @@ public class NaverResponse implements OAuth2Response {
 
     @Override
     public String getEmail() {
-        return attributes.get("email").toString();
+        return attributes.get("aaccount_email").toString();
     }
 
     @Override
@@ -35,7 +34,7 @@ public class NaverResponse implements OAuth2Response {
 
     @Override
     public String getNickname() {
-        return attributes.get("nickname").toString();
+        return attributes.get("profile_nickname").toString();
     }
 
     @Override
@@ -48,10 +47,9 @@ public class NaverResponse implements OAuth2Response {
         return attributes.get("birthyear").toString();
     }
 
-
     @Override
     public String getPhoneNumber() {
-        return attributes.get("mobile").toString();
+        return attributes.get("phone_number").toString();
     }
 
     @Override

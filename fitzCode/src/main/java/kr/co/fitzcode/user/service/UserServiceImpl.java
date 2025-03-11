@@ -83,8 +83,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findByUsername(String username) {
-        return userMapper.findByUsername(username);
+    public UserDTO findByUserNaverId(String naverId) {
+        return userMapper.findByUserNaverId(naverId);
     }
 
     @Override
