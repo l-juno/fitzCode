@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>환불 상세</title>
+    <style>
+        .error-message { color: red; }
+        .input-group { margin: 10px 0; }
+    </style>
+</head>
+<body>
+<h2>환불 상세</h2>
+<p><strong>환불 ID:</strong> <span th:text="${refund.refundId}"></span></p>
+<p><strong>주문 ID:</strong> <span th:text="${refund.orderId}"></span></p>
+<p><strong>결제 ID:</strong> <span th:text="${refund.paymentId}"></span></p>
+<p><strong>결제 트랜잭션 ID (imp_uid):</strong>
+    <span th:text="${refund.transactionId} ?: '없음'" th:if="${refund.transactionId != null}"></span>
+    <span th:if="${refund.transactionId == null}" style="color: red;">트랜잭션 ID가 없습니다. 결제 구현자에게 확인하세요.</span>
+</p>
+<p><strong>사용자:</strong> <span th:text="${refund.userName}"></span></p>
+<p><strong>환불 사유:</strong> <span th:text="${refund.refundReason}"></span></p>
+<p><strong>환불 상태:</strong>
+    <span th:switch="${refund.refundStatus}">
+            <span th:case="1">요청됨</span>
+            <span th:case="2">처리중</span>
+            <span th:case="3">완료</span>
+            <span th:case="4">거부</span>
+        </span>
+</p>
+<p><strong>결제 금액:</strong> <span th:text="${#numbers.formatInteger(refund.paymentAmount, 3, 'COMMA')}"></span>원</p>
+<p><strong>환불 요청 금액:</strong> <span th:text="${#numbers.formatInteger(refund.refundAmount, 3, 'COMMA')}"></span>원</p>
+<p><strong>남은 환불 가능 금액:</strong> <span th:text="${#numbers.formatInteger(refund.remainingRefundAmount ?: refund.paymentAmount, 3, 'COMMA')}"></span>원</p>
+<div class="input-group" th:if="${refund.refundStatus == 1 or refund.refundStatus == 2}">
+    <label for="customRefundAmount">부분 환불 금액 (선택):</label>
+    <input type="number" id="customRefundAmount" name="customRefundAmount" min="1" th:value="${refund.refundAmount}" required>
+    <button type="button" th:onclick="'updateRefundAmount(' + ${refund.refundId} + ')'">금액 변경</button>
+</div>
+<form th:action="@{/admin/products/refund/{refundId}/updateStatus(refundId=${refund.refundId})}" method="post">
+    <input type="hidden" name="customRefundAmount" th:value="${customRefundAmount ?: refund.refundAmount}">
+    <select name="status">
+        <option value="1" th:selected="${refund.refundStatus == 1}">요청됨</option>
+        <option value="2" th:selected="${refund.refundStatus == 2}">처리중</option>
+        <option value="3" th:selected="${refund.refundStatus == 3}">완료</option>
+        <option value="4" th:selected="${refund.refundStatus == 4}">거부</option>
+    </select>
+    <button type="submit" th:disabled="${refund.refundStatus == 3 || refund.refundStatus == 4}">
+        <span th:if="${refund.refundAmount < refund.paymentAmount}">부분 환불 처리</span>
+        <span th:unless="${refund.refundAmount < refund.paymentAmount}">전액 환불 처리</span>
+    </button>
+</form>
+<a th:href="@{/admin/products/refund}">목록으로 돌아가기</a>
+<div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+
+<script th:inline="javascript">
+    function updateRefundAmount(refundId) {
+        let customAmount = document.getElementById('customRefundAmount').value;
+        if (customAmount > /*[[${refund.remainingRefundAmount ?: refund.paymentAmount}]]*/ || customAmount <= 0) {
+            alert('유효한 부분 환불 금액을 입력하세요. (남은 금액: [[${#numbers.formatInteger(refund.remainingRefundAmount ?: refund.paymentAmount, 3, 'COMMA')}]]원)');
+            return;
+        }
+        fetch('/admin/products/refund/' + refundId + '/updateAmount', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({refundAmount: customAmount})
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) location.reload();
+                else alert(data.message);
+            })
+            .catch(error => alert('오류 발생: ' + error));
+    }
+</script>
+</body>
+</html>
