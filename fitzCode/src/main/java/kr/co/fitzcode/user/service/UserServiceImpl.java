@@ -96,4 +96,9 @@ public class UserServiceImpl implements UserService {
     public void updateUserNaver(UserDTO user) {
         userMapper.updateUserNaver(user);
     }
+
+    @Override
+    public String findEmailByNameAndPhoneNumber(String userName, String phoneNumber) {
+        return userMapper.findEmailByNameAndPhoneNumber(userName, phoneNumber);
+    }
 }

@@ -67,11 +67,13 @@ public class SecurityConfig {
                                     "/product/list/**",
                                     "/product/detail/**",
                                     "/api/product/**",
-                                    "/login",
+                                    "/login/**",
                                     "/logout",
                                     "/joinForm",
                                     "/joinSuccess",
                                     "/pwEmail",
+                                    "/findEmail",
+                                    "/findEmailSuccess",
                                     "/resetPw",
                                     "/resetPwSuccess"
                             ).permitAll()

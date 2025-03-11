@@ -73,4 +73,9 @@
         WHERE kakao_id = #{kakaoId}
     </update>
 
+    <select id="findEmailByNameAndPhoneNumber" resultType="String">
+        SELECT email FROM USER
+        WHERE user_name = #{userName}
+        AND phone_number = #{phoneNumber}
+    </select>
 </mapper>

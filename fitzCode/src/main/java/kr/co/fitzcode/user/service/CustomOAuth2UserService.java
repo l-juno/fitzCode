@@ -47,13 +47,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
             userIdNaver = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
             userBirthNaver = oAuth2Response.getBirthyear() + "-" + oAuth2Response.getBirthday();
-            System.out.println("Kakao Response:::::::::::::::::::::::::: " + oAuth2User.getAttributes());
 
         } else if (registerId.equals("kakao")) {
             // 카카오 응답
             oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
             userIdKakao = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
             userBirthKakao = oAuth2Response.getBirthyear() + "-" + oAuth2Response.getBirthday();
+            System.out.println("Kakao Response:::::::::::::::::::::::::: " + oAuth2User.getAttributes());
+            System.out.println("---------");
 
         } else {
             return null;
@@ -64,7 +65,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 정보 제공자 + 제공자가 주는 아이디 로 사용자를 구분
         // Ex_ naver_eladfkj135, google_1344659012
-//        String userId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
+        // String userId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         // db 에 이런 회원이 존재하는 확인
 
         // 네이버 고유 아이디로 해당 유저가 있는지 화긴
