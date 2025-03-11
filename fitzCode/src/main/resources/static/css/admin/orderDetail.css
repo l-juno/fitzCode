@@ -116,3 +116,8 @@ thead {
     margin-right: 10px;
     vertical-align: middle;
 }
+.error-message {
+    color: red;
+    display: none;
+    margin-top: 5px;
+}

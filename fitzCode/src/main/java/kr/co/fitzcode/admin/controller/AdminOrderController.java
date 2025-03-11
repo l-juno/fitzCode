@@ -3,16 +3,16 @@ package kr.co.fitzcode.admin.controller;
 import kr.co.fitzcode.admin.service.AdminOrderService;
 import kr.co.fitzcode.common.dto.AdminOrderDTO;
 import kr.co.fitzcode.common.dto.AdminOrderDetailDTO;
+import kr.co.fitzcode.common.dto.DeliveryDTO;
+import kr.co.fitzcode.common.enums.DeliveryStatus;
 import kr.co.fitzcode.common.enums.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -20,23 +20,20 @@ import java.util.List;
 @RequestMapping("/admin/orders")
 @RequiredArgsConstructor
 public class AdminOrderController {
+
     private final AdminOrderService orderService;
 
     // 주문 목록 조회
     @GetMapping
     public String getOrderList(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(required = false) Integer status,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "page", defaultValue = "1") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "status", required = false) Integer status,
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
             Model model) {
-        // 주문 목록
         List<AdminOrderDTO> orders = orderService.getOrderList(page, size, status, sortBy);
-        // 전체 주문
         int totalCount = orderService.getTotalOrderCount(status);
-        // 페이지 수
         int totalPages = orderService.calculateTotalPages(totalCount, size);
-        // 페이지네이션 범위
         int[] pageRange = orderService.getPageRange(page, totalPages);
 
         model.addAttribute("orders", orders != null ? orders : List.of());
@@ -51,14 +48,13 @@ public class AdminOrderController {
         return "admin/order/orderList";
     }
 
-    // 특정 주문 상세 정보조회
+    // 특정 주문 상세 정보 조회
     @GetMapping("/{orderId}")
     public String getOrderDetail(@PathVariable Long orderId, Model model) {
-        // 주문 상세 정보 조회
         AdminOrderDetailDTO orderDetail = orderService.getOrderDetail(orderId);
 
         if (orderDetail == null) {
-            log.warn("주문 상세 정보 없ㅇㅁ 주문 ID: {}", orderId);
+            log.warn("주문 상세 정보 없음 주문 ID: {}", orderId);
         } else {
             log.info("주문 ID: {}", orderDetail.getOrderId());
             log.info("총 금액: {}원", orderDetail.getTotalAmount());
@@ -67,7 +63,47 @@ public class AdminOrderController {
         }
 
         model.addAttribute("orderDetail", orderDetail != null ? orderDetail : new AdminOrderDetailDTO());
-
         return "admin/order/orderDetail";
+    }
+
+    // 배송 상태 업데이트
+    @PostMapping("/{orderId}/updateDelivery")
+    public String updateDeliveryStatus(
+            @PathVariable("orderId") Long orderId,
+            @RequestParam("trackingNumber") String trackingNumber,
+            @RequestParam("deliveryStatus") Integer status,
+            Model model) {
+        log.info("Updating delivery status for orderId: {}, status: {}, trackingNumber: {}", orderId, status, trackingNumber);
+
+        // "배송중" 또는 "배송완료" 상태일 때만 운송장 번호 필수
+        if ((status == DeliveryStatus.IN_TRANSIT.getCode() || status == DeliveryStatus.DELIVERED.getCode()) &&
+                (trackingNumber == null || trackingNumber.trim().isEmpty())) {
+            model.addAttribute("errorMessage", "운송장 번호를 입력해주세요.");
+            AdminOrderDetailDTO orderDetail = orderService.getOrderDetail(orderId);
+            model.addAttribute("orderDetail", orderDetail != null ? orderDetail : new AdminOrderDetailDTO());
+            return "admin/order/orderDetail";
+        }
+
+        DeliveryDTO delivery = new DeliveryDTO();
+        delivery.setOrderId(orderId);
+        delivery.setTrackingNumber(trackingNumber);
+        delivery.setDeliveryStatus(DeliveryStatus.fromCode(status));
+
+        // 배송 상태가 "배송 준비중" 또는 "배송중"으로 변경 시 deliveredAt 초기화
+        if (status == DeliveryStatus.PENDING.getCode() || status == DeliveryStatus.IN_TRANSIT.getCode()) {
+            delivery.setDeliveredAt(null);
+            log.info("Reset deliveredAt to null for orderId: {}", orderId);
+        } else if (status == DeliveryStatus.IN_TRANSIT.getCode() && delivery.getShippedAt() == null) {
+            delivery.setShippedAt(LocalDateTime.now());
+            log.info("Set shippedAt to now for orderId: {}", orderId);
+        } else if (status == DeliveryStatus.DELIVERED.getCode() && delivery.getDeliveredAt() == null) {
+            delivery.setDeliveredAt(LocalDateTime.now());
+            log.info("Set deliveredAt to now for orderId: {}", orderId);
+        }
+
+        orderService.updateDelivery(delivery);
+        orderService.updateOrderStatus(orderId, status);
+
+        return "redirect:/admin/orders/" + orderId;
     }
 }

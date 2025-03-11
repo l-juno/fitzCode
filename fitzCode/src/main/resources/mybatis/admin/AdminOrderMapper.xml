@@ -5,6 +5,18 @@
 
 <mapper namespace="kr.co.fitzcode.admin.mapper.AdminOrderMapper">
 
+    <!-- AdminOrderItemDTO -->
+    <resultMap id="OrderItemResultMap" type="kr.co.fitzcode.common.dto.AdminOrderItemDTO">
+        <id property="orderDetailId" column="order_detail_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="description" column="description"/>
+        <result property="quantity" column="quantity"/>
+        <result property="unitPrice" column="price"/>
+        <result property="subtotal" column="subtotal"/>
+        <result property="imageUrl" column="image_url"/>
+    </resultMap>
+
+    <!-- AdminOrderDetailDTO -->
     <resultMap id="OrderDetailResultMap" type="kr.co.fitzcode.common.dto.AdminOrderDetailDTO">
         <id property="orderId" column="order_id"/>
         <result property="orderStatus" column="order_status"/>
@@ -22,17 +34,19 @@
         <result property="bankName" column="bank_name"/>
         <result property="accountNumber" column="account_number"/>
         <result property="accountHolder" column="account_holder"/>
+        <collection property="items" resultMap="OrderItemResultMap"/>
+    </resultMap>
 
-        <!-- items -->
-        <collection property="items" ofType="kr.co.fitzcode.common.dto.AdminOrderItemDTO">
-            <id property="orderDetailId" column="order_detail_id"/>
-            <result property="productName" column="product_name"/>
-            <result property="description" column="description"/>
-            <result property="quantity" column="quantity"/>
-            <result property="unitPrice" column="price"/>
-            <result property="subtotal" column="subtotal"/>
-            <result property="imageUrl" column="image_url"/>
-        </collection>
+    <!-- DeliveryDTO -->
+    <resultMap id="DeliveryResultMap" type="kr.co.fitzcode.common.dto.DeliveryDTO">
+        <id property="deliveryId" column="delivery_id"/>
+        <result property="orderId" column="order_id"/>
+        <result property="trackingNumber" column="tracking_number"/>
+        <result property="courierCode" column="courier_code"/>
+        <result property="deliveryStatus" column="delivery_status" typeHandler="kr.co.fitzcode.admin.handler.DeliveryTypeHandler"/>
+        <result property="shippedAt" column="shipped_at"/>
+        <result property="deliveredAt" column="delivered_at"/>
+        <result property="createdAt" column="created_at"/>
     </resultMap>
 
     <!-- 주문 상세 조회 -->
@@ -68,19 +82,14 @@
         LEFT JOIN DELIVERY d ON o.order_id = d.order_id
         LEFT JOIN ADDRESS a ON o.address_id = a.address_id
         LEFT JOIN PAYMENT pmt ON o.order_id = pmt.order_id
-        LEFT JOIN USER_ACCOUNT ua
-        ON pmt.payment_method = 2
-        AND ua.account_id = (
-        SELECT account_id
-        FROM USER_ACCOUNT
-        WHERE user_id = o.user_id
-        AND is_default = TRUE
+        LEFT JOIN USER_ACCOUNT ua ON pmt.payment_method = 2 AND ua.account_id = (
+        SELECT account_id FROM USER_ACCOUNT WHERE user_id = o.user_id AND is_default = TRUE LIMIT 1
         )
         WHERE o.order_id = #{orderId}
     </select>
 
-    <!-- 주문 목록 조회 (페이지네이션 지원, 정렬) -->
-    <select id="getOrderList" resultType="AdminOrderDTO">
+    <!-- 주문 리스트 조회 -->
+    <select id="getOrderList" resultType="kr.co.fitzcode.common.dto.AdminOrderDTO">
         SELECT
         o.order_id,
         o.order_status,
@@ -116,7 +125,7 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
-    <!-- 전체 주문 개수 조회 (필터 적용 가능) -->
+    <!-- 총 주문 수 조회 -->
     <select id="getTotalOrderCount" parameterType="java.lang.Integer" resultType="int">
         SELECT COUNT(DISTINCT o.order_id)
         FROM ORDERS o
@@ -128,4 +137,72 @@
         </where>
     </select>
 
+    <!-- 주문 상태 업데이트 -->
+    <update id="updateOrderStatus" parameterType="map">
+        UPDATE ORDERS
+        SET order_status = #{status}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <!-- 특정 주문 ID에 해당하는 배송 정보 조회 -->
+    <select id="getDeliveryByOrderId" parameterType="long" resultMap="DeliveryResultMap">
+        SELECT
+        delivery_id,
+        order_id,
+        tracking_number,
+        courier_code,
+        delivery_status,
+        shipped_at,
+        delivered_at,
+        created_at
+        FROM DELIVERY
+        WHERE order_id = #{orderId}
+    </select>
+
+    <!-- 새로운 배송 정보 삽입 -->
+    <insert id="insertDelivery" parameterType="kr.co.fitzcode.common.dto.DeliveryDTO">
+        INSERT INTO DELIVERY (
+        order_id,
+        tracking_number,
+        courier_code,
+        delivery_status,
+        shipped_at,
+        created_at
+        )
+        VALUES (
+        #{orderId},
+        #{trackingNumber},
+        #{courierCode},
+        #{deliveryStatus.code},
+        #{shippedAt},
+        #{createdAt}
+        )
+    </insert>
+
+    <!-- 기존 배송 정보 업데이트 -->
+    <update id="updateDelivery" parameterType="kr.co.fitzcode.common.dto.DeliveryDTO">
+        UPDATE DELIVERY
+        SET
+        tracking_number = #{trackingNumber},
+        courier_code = #{courierCode},
+        delivery_status = #{deliveryStatus.code},
+        shipped_at = #{shippedAt},
+        delivered_at = #{deliveredAt}
+        WHERE order_id = #{orderId}
+    </update>
+
+    <!-- 배송중 상태의 모든 배송 정보 조회 -->
+    <select id="getAllDeliveriesInShipping" resultMap="DeliveryResultMap">
+        SELECT
+        delivery_id,
+        order_id,
+        tracking_number,
+        courier_code,
+        delivery_status,
+        shipped_at,
+        delivered_at,
+        created_at
+        FROM DELIVERY
+        WHERE delivery_status = 2
+    </select>
 </mapper>

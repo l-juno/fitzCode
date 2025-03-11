@@ -2,6 +2,7 @@ package kr.co.fitzcode.admin.service;
 
 import kr.co.fitzcode.common.dto.AdminOrderDTO;
 import kr.co.fitzcode.common.dto.AdminOrderDetailDTO;
+import kr.co.fitzcode.common.dto.DeliveryDTO;
 
 import java.util.List;
 
@@ -21,4 +22,16 @@ public interface AdminOrderService {
 
     // 주문 상세 정보 조회
     AdminOrderDetailDTO getOrderDetail(Long orderId);
+
+    // 주문 상태 업데이트
+    void updateOrderStatus(Long orderId, Integer status);
+
+    // 특정 주문 ID에 대한 배송 정보 조회
+    DeliveryDTO getDeliveryByOrderId(Long orderId);
+
+    // 배송 정보 업데이트
+    void updateDelivery(DeliveryDTO delivery);
+
+    // 배송중 상태의 모든 배송 정보 조회
+    List<DeliveryDTO> getAllDeliveriesInShipping();
 }

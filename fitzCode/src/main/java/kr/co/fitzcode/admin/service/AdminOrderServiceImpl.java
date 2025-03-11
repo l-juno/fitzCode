@@ -3,9 +3,12 @@ package kr.co.fitzcode.admin.service;
 import kr.co.fitzcode.admin.mapper.AdminOrderMapper;
 import kr.co.fitzcode.common.dto.AdminOrderDTO;
 import kr.co.fitzcode.common.dto.AdminOrderDetailDTO;
+import kr.co.fitzcode.common.dto.DeliveryDTO;
+import kr.co.fitzcode.common.enums.DeliveryStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,7 +19,6 @@ public class AdminOrderServiceImpl implements AdminOrderService {
 
     private static final int PAGE_SIZE = 10;
     private static final int PAGE_BUTTON_COUNT = 5;
-
 
     // 주문 목록 조회 (페이지네이션)
     @Override
@@ -37,7 +39,6 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     @Override
     public int calculateTotalPages(int totalCount, int size) {
         if (size != PAGE_SIZE) size = PAGE_SIZE;
-        // 전체 페이지 수
         return Math.max(1, (int) Math.ceil((double) totalCount / size));
     }
 
@@ -48,7 +49,6 @@ public class AdminOrderServiceImpl implements AdminOrderService {
         int endPage = Math.min(totalPages, startPage + PAGE_BUTTON_COUNT - 1);
         startPage = Math.max(1, endPage - PAGE_BUTTON_COUNT + 1);
 
-        // 페이지 범위
         int[] range = new int[endPage - startPage + 1];
         for (int i = 0; i < range.length; i++) {
             range[i] = startPage + i;
@@ -60,5 +60,41 @@ public class AdminOrderServiceImpl implements AdminOrderService {
     @Override
     public AdminOrderDetailDTO getOrderDetail(Long orderId) {
         return orderMapper.getOrderDetail(orderId);
+    }
+
+    // 주문 상태 업데이트
+    @Override
+    public void updateOrderStatus(Long orderId, Integer status) {
+        orderMapper.updateOrderStatus(orderId, status);
+    }
+
+    // 특정 주문 ID에 대한 배송 정보 조회
+    @Override
+    public DeliveryDTO getDeliveryByOrderId(Long orderId) {
+        return orderMapper.getDeliveryByOrderId(orderId);
+    }
+
+    // 배송 정보 업데이트
+    @Override
+    public void updateDelivery(DeliveryDTO delivery) {
+        DeliveryDTO existing = orderMapper.getDeliveryByOrderId(delivery.getOrderId());
+        DeliveryDTO updatedDelivery = existing != null ? existing : new DeliveryDTO();
+        updatedDelivery.setOrderId(delivery.getOrderId());
+        updatedDelivery.setTrackingNumber(delivery.getTrackingNumber());
+        updatedDelivery.setDeliveryStatus(delivery.getDeliveryStatus() != null ? delivery.getDeliveryStatus() : DeliveryStatus.IN_TRANSIT);
+        updatedDelivery.setShippedAt(delivery.getShippedAt() != null ? delivery.getShippedAt() : LocalDateTime.now());
+        updatedDelivery.setDeliveredAt(delivery.getDeliveredAt() != null ? delivery.getDeliveredAt() : updatedDelivery.getDeliveredAt());
+        if (existing == null) {
+            updatedDelivery.setCreatedAt(LocalDateTime.now());
+            orderMapper.insertDelivery(updatedDelivery);
+        } else {
+            orderMapper.updateDelivery(updatedDelivery);
+        }
+    }
+
+    // 배송중 상태의 모든 배송 정보 조회
+    @Override
+    public List<DeliveryDTO> getAllDeliveriesInShipping() {
+        return orderMapper.getAllDeliveriesInShipping();
     }
 }
