@@ -20,5 +20,7 @@ public interface UserMapper {
     UserDTO getUserByEmail(String email);
     List<Integer> getUserRolesByUserId(int userId);
     UserDTO findByUserNaverId(String naverId);
-    void updateUser(UserDTO user);
+    void updateUserNaver(UserDTO user);
+
+    UserDTO findByUserKakaoId(String kakaoId);
 }
