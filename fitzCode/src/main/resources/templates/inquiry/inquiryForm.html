@@ -428,7 +428,7 @@
         <h2>문의 하기</h2>
         <hr>
         <br>
-        <select id="categoryFilter" name="category">
+        <select id="categoryFilter" name="categoryCode">
             <option selected>문의 유형을 선택해주세요</option>
             <option value="1">일반문의</option>
             <option value="2">상품문의</option>
@@ -436,7 +436,7 @@
             <option value="4">결제문의</option>
             <option value="5">반품문의</option>
         </select>
-        <div style="width: 100%; height: 1px; background: lightgray; margin: 7px 0px 17px 0px; " ></div>
+        <div style="width: 100%; height: 1px; background: lightgray; margin: 7px 0px 17px 0px;" ></div>
         <div class="buttons">
             <span>문의할 상품</span>
             <span>
@@ -451,7 +451,7 @@
 
             <input type="text" id="subject" name="subject" placeholder="제목">
             <br>
-            <span th:text="'작성자 : ' + ${userDTO.username} + ' | 연락처 : ' + ${userDTO.phonenumber}" id="userInfo"/>
+            <span th:text="'작성자 : ' + ${userDTO.userName} + ' | 연락처 : ' + ${userDTO.phoneNumber}" id="userInfo"/>
             <textarea id="content" name="content" placeholder="문의사항" rows="6" cols="58"></textarea>
 
             <div class="imageContainer">
@@ -469,8 +469,9 @@
             <button type="submit" class="registerBtn">등록하기</button>
         </div>
         <input type="hidden" name="userId" th:value="${userDTO.userId}">
-        <input type="hidden" name="username" th:value="${userDTO.username}">
-        <input type="hidden" name="phonenumber" th:value="${userDTO.phonenumber}">
+        <input type="hidden" name="userName" th:value="${userDTO.userName}">
+        <input type="hidden" name="phoneNumber" th:value="${userDTO.phoneNumber}">
+        <input type="hidden" name="statusCode" value="1">
 
     </form>
 

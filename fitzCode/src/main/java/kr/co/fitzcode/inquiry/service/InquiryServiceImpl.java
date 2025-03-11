@@ -17,45 +17,44 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class InquiryServiceImpl implements InquiryService {
-    private final InquiryMapper inquiryMapper1;
+    private final InquiryMapper inquiryMapper;
 
+    // 사용자 조회
     @Override
     public UserDTO getUserOne(int userId) {
-        return inquiryMapper1.getUserOne(userId) ;
+        return inquiryMapper.getUserOne(userId) ;
     }
 
     // 문의 내용 등록
-//    @Override
-//    public void registInquiry(InquiryDTO inquiryDTO) {
-//        log.info(inquiryDTO.toString());
-//        int category = inquiryDTO.getCategoryCode();
-//        // 공통 문의 내용
-//        InquiryDTO dto = InquiryDTO.builder()
-//                .userId(inquiryDTO.getUserId())
-//                .orderId(inquiryDTO.getOrderId())
-//                .subject(inquiryDTO.getSubject())
-//                .content(inquiryDTO.getContent())
-//                .categoryCode(category)
-//                .statusCode(1)
-//                .productId(inquiryDTO.getProductId())
-//                .build();
-//        inquiryMapper1.saveInquiry(dto);
-//        log.info(">>>>>>>>>>>>>>> inquiry_id 확인 {}", dto.getInquiryId());
-////        saveImages(dto.getInquiryId(), inquiryDTO.getImageUrls()); // 이미지 dto 에 담기
-//    }
+    @Override
+    public void registInquiry(InquiryDTO inquiryDTO) {
+        log.info(inquiryDTO.toString());
+
+        // 공통 문의 내용
+        InquiryDTO dto = new InquiryDTO();
+        dto.setUserId(inquiryDTO.getUserId());
+        dto.setOrderId(inquiryDTO.getOrderId());
+        dto.setSubject(inquiryDTO.getSubject());
+        dto.setContent(inquiryDTO.getContent());
+        dto.setCategoryCode(inquiryDTO.getCategoryCode());
+        dto.setStatusCode(InquiryStatus.PENDING.getCode());
+        dto.setProductId(inquiryDTO.getProductId());
+        inquiryMapper.saveInquiry(dto);
+        log.info(">>>>>>>>>>>>>>> inquiry_id 확인 {}", dto.getInquiryId());
+//        saveImages(dto.getInquiryId(), inquiryDTO.getImageUrls()); // 이미지 dto 에 담기
+    }
 
     // 개인별 문의 내역 불러오기
     @Override
     public List<HashMap<String, Object>> getInquiryList(int userId) {
         List<HashMap<String, Object>> list = new ArrayList<>();
-        List<InquiryDTO> inquiryDTOList = inquiryMapper1.getInquiryList(userId);
+        List<InquiryDTO> inquiryDTOList = inquiryMapper.getInquiryList(userId);
         for (InquiryDTO inquiryDTO : inquiryDTOList) {
-            log.info(">>>>>>>>>> inquiryDTO {}", inquiryDTO.toString());
             HashMap<String, Object> map = new HashMap<>();
             map.put("subject", inquiryDTO.getSubject());
             map.put("content", inquiryDTO.getContent());
-            map.put("category", setCategory(inquiryDTO.getCategoryCode()).getDescription()); // enum 으로 변환 후 map 에 담기
-            map.put("status", setStatus(inquiryDTO.getStatusCode()).getDescription());           // enum 으로 변환 후 map 에 담기
+            map.put("category", inquiryDTO.getCategoryCode());
+            map.put("status", inquiryDTO.getStatus().getDescription());
             map.put("createdAt", inquiryDTO.getCreatedAt());
             map.put("inquiryId", inquiryDTO.getInquiryId());
             list.add(map);
@@ -69,7 +68,7 @@ public class InquiryServiceImpl implements InquiryService {
         // 상세보기 조회를 위한 데이터 가져오기
         HashMap<String, Object> data = getDataForDetail(inquiryId);
         // 상세보기 조회
-        List<HashMap<String, Object>> detail = inquiryMapper1.getInquiryDetail(data);
+        List<HashMap<String, Object>> detail = inquiryMapper.getInquiryDetail(data);
         // 상세보기 controller에 전달할 객체 설정
         HashMap<String, Object> detailList = getInquiryDetailList(detail);
         log.info(">>>>>>>>>> finalDetail {}", detailList.toString());
@@ -79,20 +78,20 @@ public class InquiryServiceImpl implements InquiryService {
     // 상품 찾기
     @Override
     public List<HashMap<String, Object>> searchProduct(String userInputProductName) {
-        log.info(">>>>>>>>> 상품 검색 : {}", inquiryMapper1.searchProduct(userInputProductName));
-        return inquiryMapper1.searchProduct(userInputProductName);
+        log.info(">>>>>>>>> 상품 검색 : {}", inquiryMapper.searchProduct(userInputProductName));
+        return inquiryMapper.searchProduct(userInputProductName);
     }
 
     @Override
     public HashMap<String, Object> selectedProduct(int productId) {
-        log.info(">>>>>>>>> 선택된 상품 : {} ", inquiryMapper1.selectedProduct(productId));
-        return inquiryMapper1.selectedProduct(productId);
+        log.info(">>>>>>>>> 선택된 상품 : {} ", inquiryMapper.selectedProduct(productId));
+        return inquiryMapper.selectedProduct(productId);
     }
 
     // 주문 내역 불러오기
     @Override
     public List<HashMap<String, Object>> getUserAndOrderList(int userId) {
-        return inquiryMapper1.getUserAndOrderList(userId);
+        return inquiryMapper.getUserAndOrderList(userId);
     }
 
 //    // 이미지 저장하기
@@ -127,12 +126,12 @@ public class InquiryServiceImpl implements InquiryService {
     // 상세보기위한 데이터 가져오기
     public HashMap<String, Object> getDataForDetail(int inquiryId) {
         // 상세보기를 위한 데이터 조회
-        List<HashMap<String, Object>> dataList = inquiryMapper1.getDataForDetail(inquiryId);
+        List<HashMap<String, Object>> dataList = inquiryMapper.getDataForDetail(inquiryId);
 
         // Map 에 담기
         HashMap<String, Object> firstData = dataList.get(0);
         HashMap<String, Object> dataMap = new HashMap<>();
-        int category = (int) firstData.get("category"); // category 형변환
+        int category = (int) firstData.get("categoryCode"); // category 형변환
 
         dataMap.put("inquiryId", inquiryId);
         dataMap.put("category", category);
@@ -157,8 +156,8 @@ public class InquiryServiceImpl implements InquiryService {
         HashMap<String, Object> detailMap = new HashMap<>();
         detailMap.put("subject", firstData.get("subject"));
         detailMap.put("content", firstData.get("content"));
-        detailMap.put("category", setCategory((Integer) firstData.get("category")).getDescription());
-        detailMap.put("status", setStatus((Integer) firstData.get("status")).getDescription());
+        detailMap.put("category", setCategory((Integer) firstData.get("categoryCode")).getDescription());
+        detailMap.put("status", setStatus((Integer) firstData.get("statusCode")).getDescription());
         detailMap.put("createdAt", firstData.get("created_at"));
         detailMap.put("userName", firstData.get("user_name"));
         detailMap.put("phoneNumber", firstData.get("phone_number"));

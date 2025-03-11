@@ -4,6 +4,7 @@ package kr.co.fitzcode.inquiry.control;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.InquiryDTO;
 import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.inquiry.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InquiryController {
     private final InquiryService inquiryService;
+    private final SecurityUtils securityUtils;
 
     // 문의 메뉴로 이동
     @GetMapping("/inquiryForm")
-    public String inquiryForm(Model model, HttpSession session) {
-        session.setAttribute("userId", 20);
-        int userId = (int) session.getAttribute("userId");
+    public String inquiryForm(Model model) {
+        int userId = securityUtils.getUserId();
         UserDTO dto = inquiryService.getUserOne(userId);
         model.addAttribute("userDTO", dto);
         return "inquiry/inquiryForm";
@@ -33,18 +34,16 @@ public class InquiryController {
 
 
     // 문의 데이터 저장
-//    @PostMapping("/inquiryForm")
-//    public String inquiryForm(@ModelAttribute InquiryDTO inquiryDTO) {
-//        inquiryService.registInquiry(inquiryDTO);
-//        return "redirect:/inquiry/inquiryForm";
-//    }
+   @PostMapping("/inquiryForm")
+   public String inquiryForm(@ModelAttribute InquiryDTO inquiryDTO) {
+       inquiryService.registInquiry(inquiryDTO);
+       return "redirect:/inquiry/inquiryForm";
+   }
 
     // 개인 문의 내역 보기
-    // 나중에 세션 생기면 @SessionAttribute("userId") int userId 사용하기
     @GetMapping("/inquiryList")
-    public String inquiryList(Model model, HttpSession session) {
-        session.setAttribute("userId", 20);
-        int userId = (int) session.getAttribute("userId");
+    public String inquiryList(Model model) {
+        int userId = securityUtils.getUserId();
         List<HashMap<String, Object>> list = inquiryService.getInquiryList(userId);
         model.addAttribute("list", list);
         return "inquiry/inquiryList";
