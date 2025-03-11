@@ -5,7 +5,6 @@
 
 <mapper namespace="kr.co.fitzcode.admin.mapper.AdminRefundMapper">
 
-    <!-- RefundDTO와 DB 컬럼 매핑 -->
     <resultMap id="RefundResultMap" type="kr.co.fitzcode.common.dto.RefundDTO">
         <id property="refundId" column="refund_id"/>
         <result property="orderId" column="order_id"/>
@@ -74,14 +73,21 @@
         WHERE refund_id = #{refundId}
     </update>
 
-    <!-- ORDER_DETAIL의 환불 상태 업데이트 -->
+    <!-- 환불 금액 업데이트 -->
+    <update id="updateRefundAmount" parameterType="map">
+        UPDATE REFUND
+        SET refund_amount = #{refundAmount}
+        WHERE refund_id = #{refundId}
+    </update>
+
+    <!-- ORDER_DETAIL 환불 상태 업데이트 -->
     <update id="updateOrderDetailRefundStatus" parameterType="map">
         UPDATE ORDER_DETAIL
         SET refund_status = #{status}
         WHERE order_detail_id = #{orderDetailId}
     </update>
 
-    <!-- SALES_TRANSACTION_LOG에 환불 기록 추가 -->
+    <!-- SALES_TRANSACTION_LOG에 환불 기록 인서트 -->
     <insert id="insertSalesTransactionLog" parameterType="map">
         INSERT INTO SALES_TRANSACTION_LOG (order_id, order_detail_id, product_id, user_id, transaction_date, quantity, amount, transaction_type)
         SELECT #{orderId}, #{orderDetailId}, od.product_id, o.user_id, CURRENT_TIMESTAMP, od.quantity, #{amount}, #{transactionType}
@@ -90,7 +96,7 @@
         WHERE od.order_detail_id = #{orderDetailId}
     </insert>
 
-    <!-- NOTIFICATION에 알림 추가 -->
+    <!-- 알림 -->
     <insert id="insertNotification" parameterType="map">
         INSERT INTO NOTIFICATION (user_id, type, message, related_id)
         VALUES (#{userId}, #{type}, #{message}, #{relatedId})
@@ -109,11 +115,5 @@
                 AND o.order_id = #{orderId}
             </if>
         </where>
-    </select>
-
-    <select id="getTotalOrderCount" resultType="int">
-        SELECT COUNT(DISTINCT o.order_id)
-        FROM ORDERS o
-        INNER JOIN ORDER_DETAIL od ON o.order_id = od.order_id
     </select>
 </mapper>

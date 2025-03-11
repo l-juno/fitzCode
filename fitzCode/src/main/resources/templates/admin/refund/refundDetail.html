@@ -5,8 +5,13 @@
     <title>환불 상세</title>
     <style>
         .error-message { color: red; }
+        .success-message { color: green; }
         .input-group { margin: 10px 0; }
+        button { padding: 5px 10px; }
     </style>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
 </head>
 <body>
 <h2>환불 상세</h2>
@@ -15,61 +20,93 @@
 <p><strong>결제 ID:</strong> <span th:text="${refund.paymentId}"></span></p>
 <p><strong>결제 트랜잭션 ID (imp_uid):</strong>
     <span th:text="${refund.transactionId} ?: '없음'" th:if="${refund.transactionId != null}"></span>
-    <span th:if="${refund.transactionId == null}" style="color: red;">트랜잭션 ID가 없습니다. 결제 구현자에게 확인하세요.</span>
+    <span th:if="${refund.transactionId == null}" style="color: red;">트랜잭션 ID가 없습니다.</span>
 </p>
 <p><strong>사용자:</strong> <span th:text="${refund.userName}"></span></p>
 <p><strong>환불 사유:</strong> <span th:text="${refund.refundReason}"></span></p>
 <p><strong>환불 상태:</strong>
     <span th:switch="${refund.refundStatus}">
-            <span th:case="1">요청됨</span>
-            <span th:case="2">처리중</span>
-            <span th:case="3">완료</span>
-            <span th:case="4">거부</span>
-        </span>
+        <span th:case="1">요청됨</span>
+        <span th:case="2">처리중</span>
+        <span th:case="3">완료</span>
+        <span th:case="4">거부</span>
+    </span>
 </p>
 <p><strong>결제 금액:</strong> <span th:text="${#numbers.formatInteger(refund.paymentAmount, 3, 'COMMA')}"></span>원</p>
 <p><strong>환불 요청 금액:</strong> <span th:text="${#numbers.formatInteger(refund.refundAmount, 3, 'COMMA')}"></span>원</p>
-<p><strong>남은 환불 가능 금액:</strong> <span th:text="${#numbers.formatInteger(refund.remainingRefundAmount ?: refund.paymentAmount, 3, 'COMMA')}"></span>원</p>
-<div class="input-group" th:if="${refund.refundStatus == 1 or refund.refundStatus == 2}">
-    <label for="customRefundAmount">부분 환불 금액 (선택):</label>
-    <input type="number" id="customRefundAmount" name="customRefundAmount" min="1" th:value="${refund.refundAmount}" required>
-    <button type="button" th:onclick="'updateRefundAmount(' + ${refund.refundId} + ')'">금액 변경</button>
-</div>
-<form th:action="@{/admin/products/refund/{refundId}/updateStatus(refundId=${refund.refundId})}" method="post">
-    <input type="hidden" name="customRefundAmount" th:value="${customRefundAmount ?: refund.refundAmount}">
-    <select name="status">
-        <option value="1" th:selected="${refund.refundStatus == 1}">요청됨</option>
-        <option value="2" th:selected="${refund.refundStatus == 2}">처리중</option>
-        <option value="3" th:selected="${refund.refundStatus == 3}">완료</option>
-        <option value="4" th:selected="${refund.refundStatus == 4}">거부</option>
-    </select>
-    <button type="submit" th:disabled="${refund.refundStatus == 3 || refund.refundStatus == 4}">
+
+<!-- 환불 처리 및 상태 변경 폼 -->
+<form id="refundForm" th:if="${refund.refundStatus == 1 or refund.refundStatus == 2}">
+    <div class="input-group">
+        <label for="customRefundAmount">환불 금액:</label>
+        <input type="number" id="customRefundAmount" name="customRefundAmount" min="1" th:value="${refund.refundAmount}" required>
+    </div>
+
+    <div class="input-group" th:if="${refund.refundMethod == 2}">
+        <label for="refundHolder">환불 계좌 예금주:</label>
+        <input type="text" id="refundHolder" name="refundHolder" placeholder="홍길동" required><br><br>
+
+        <label for="refundBank">환불 계좌 은행코드:</label>
+        <input type="text" id="refundBank" name="refundBank" placeholder="88" required><br><br>
+
+        <label for="refundAccount">환불 계좌 번호:</label>
+        <input type="text" id="refundAccount" name="refundAccount" placeholder="56211105948400" required><br><br>
+
+        <label for="refundTel">예금주 연락처 :</label>
+        <input type="text" id="refundTel" name="refundTel" placeholder="010-1234-5678">
+    </div>
+
+    <div class="input-group">
+        <label for="status">환불 상태 변경:</label>
+        <select name="status" id="status">
+            <option value="1" th:selected="${refund.refundStatus == 1}">요청됨</option>
+            <option value="2" th:selected="${refund.refundStatus == 2}">처리중</option>
+            <option value="3">완료</option>
+            <option value="4">거부</option>
+        </select>
+    </div>
+
+    <button type="submit">
         <span th:if="${refund.refundAmount < refund.paymentAmount}">부분 환불 처리</span>
         <span th:unless="${refund.refundAmount < refund.paymentAmount}">전액 환불 처리</span>
     </button>
 </form>
+
 <a th:href="@{/admin/products/refund}">목록으로 돌아가기</a>
 <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+<div th:if="${successMessage}" class="success-message" th:text="${successMessage}"></div>
 
 <script th:inline="javascript">
-    function updateRefundAmount(refundId) {
-        let customAmount = document.getElementById('customRefundAmount').value;
-        if (customAmount > /*[[${refund.remainingRefundAmount ?: refund.paymentAmount}]]*/ || customAmount <= 0) {
-            alert('유효한 부분 환불 금액을 입력하세요. (남은 금액: [[${#numbers.formatInteger(refund.remainingRefundAmount ?: refund.paymentAmount, 3, 'COMMA')}]]원)');
-            return;
-        }
-        fetch('/admin/products/refund/' + refundId + '/updateAmount', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({refundAmount: customAmount})
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) location.reload();
-                else alert(data.message);
-            })
-            .catch(error => alert('오류 발생: ' + error));
-    }
+    $(document).ready(function() {
+        $('#refundForm').on('submit', function(event) {
+            event.preventDefault();
+            let refundId = /*[[${refund.refundId}]]*/;
+            console.log('Refund ID:', refundId);
+            const formData = new FormData(this);
+
+            $.ajax({
+                url: '/admin/products/refund/api/' + refundId + '/process',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    console.log('Response:', response);
+                    if (response.success) {
+                        alert(response.message || '환불 성공');
+                        window.location.reload();
+                    } else {
+                        alert(response.message || '환불 실패');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX Error:', xhr, status, error);
+                    const message = xhr.responseJSON?.message || '서버 오류 발생';
+                    alert('환불 처리 중 오류 발생: ' + message);
+                }
+            });
+        });
+    });
 </script>
 </body>
 </html>
