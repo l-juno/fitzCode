@@ -21,7 +21,6 @@ public class AdminRefundController {
 
     private final AdminRefundService refundService;
 
-    // 환불 목록 조회
     @GetMapping
     public String getRefundList(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -43,7 +42,6 @@ public class AdminRefundController {
         return "admin/refund/refundList";
     }
 
-    // 환불 상세 조회
     @GetMapping("/{refundId}")
     public String getRefundDetail(@PathVariable Long refundId, Model model) {
         log.info("환불 상세 조회 : 환불 ID: {}", refundId);

@@ -30,41 +30,50 @@ public class AdminRefundRestController {
     @Value("${portone.imp_secret}")
     private String impSecret;
 
-    // 환불 처리 요청
     @PostMapping("/{refundId}/process")
     public ResponseEntity<Map<String, Object>> processRefund(
             @PathVariable Long refundId,
-            @RequestParam("customRefundAmount") Integer customRefundAmount,
-            @RequestParam("status") Integer status,
-            @RequestParam(value = "refundHolder", required = false) String refundHolder,
-            @RequestParam(value = "refundBank", required = false) String refundBank,
-            @RequestParam(value = "refundAccount", required = false) String refundAccount,
-            @RequestParam(value = "refundTel", required = false) String refundTel) {
+            @RequestParam(value = "customRefundAmount", required = false) Integer customRefundAmount,
+            @RequestParam("status") Integer status) {
 
         Map<String, Object> response = new HashMap<>();
         RefundDTO refund = refundService.getRefundDetail(refundId);
 
-        // 환불 가능한 금액 체크
-        int remainingAmount = refund.getRemainingRefundAmount() != null ? refund.getRemainingRefundAmount() : refund.getPaymentAmount();
-        if (customRefundAmount <= 0 || customRefundAmount > remainingAmount) {
-            response.put("success", false);
-            response.put("message", "유효한 환불 금액을 입력하세요 (최대: " + remainingAmount + "원)");
-            return ResponseEntity.badRequest().body(response);
+        // 환불 가능한 금액 체크 (환불 거절에는 적용 안할거임)
+        int effectiveRefundAmount = 0;
+        if (status != RefundStatus.REJECTED.getCode()) {
+            int remainingAmount = refund.getRemainingRefundAmount() != null ? refund.getRemainingRefundAmount() : refund.getPaymentAmount();
+            effectiveRefundAmount = (customRefundAmount != null && customRefundAmount > 0) ? customRefundAmount : refund.getCalculatedRefundAmount();
+            if (effectiveRefundAmount <= 0 || effectiveRefundAmount > remainingAmount) {
+                response.put("success", false);
+                response.put("message", "유효한 환불 금액을 입력하세요 (최대: " + remainingAmount + "원)");
+                return ResponseEntity.badRequest().body(response);
+            }
         }
 
-        // 가상계좌 환불 시 계좌 정보 확인
-        if (refund.getRefundMethod() == 2 && (refundHolder == null || refundBank == null || refundAccount == null)) {
-            response.put("success", false);
-            response.put("message", "계좌 정보를 모두 입력하세요");
-            return ResponseEntity.badRequest().body(response);
+        // 계좌 환불 시 계좌 정보
+        if (refund.getRefundMethod() == 2 && status == RefundStatus.COMPLETED.getCode()) {
+            if (refund.getAccountHolder() == null || refund.getBankName() == null || refund.getAccountNumber() == null) {
+                response.put("success", false);
+                response.put("message", "사용자의 계좌 정보가 등록되어 있지 않습니다. 계좌 등록 후 다시 시도해주세요.");
+                return ResponseEntity.badRequest().body(response);
+            }
         }
 
         try {
-            // 포트원 액세스 토큰 발급
-            String accessToken = getAccessToken();
+            RefundStatus refundStatus = RefundStatus.fromCode(status);
+            boolean refundSuccess = true;
 
-            // 환불 요청 실행
-            boolean refundSuccess = requestRefund(refund, customRefundAmount, accessToken, refundHolder, refundBank, refundAccount, refundTel);
+            // 카드(1) 또는 간편 결제(3)일 경우 포트원 호출
+            if ((refund.getRefundMethod() == 1 || refund.getRefundMethod() == 3) && refundStatus == RefundStatus.COMPLETED) {
+                String accessToken = getAccessToken();
+                refundSuccess = requestRefund(refund, effectiveRefundAmount, accessToken);
+            } else if (refund.getRefundMethod() == 2 && refundStatus == RefundStatus.COMPLETED) {
+                // 계좌 환불
+                log.info("계좌 환불 처리: 환불 번호 {}, 금액 {}, 계좌 정보: {} {}",
+                        refundId, effectiveRefundAmount, refund.getAccountHolder(), refund.getAccountNumber());
+            }
+
             if (!refundSuccess) {
                 response.put("success", false);
                 response.put("message", "환불 요청 실패");
@@ -72,10 +81,10 @@ public class AdminRefundRestController {
             }
 
             // 환불 상태 업데이트
-            refundService.updateRefundStatus(refundId, RefundStatus.fromCode(status), customRefundAmount);
+            refundService.updateRefundStatus(refundId, refundStatus, effectiveRefundAmount);
 
             response.put("success", true);
-            response.put("message", "환불이 성공적으로 처리됨");
+            response.put("message", refundStatus == RefundStatus.REJECTED ? "환불이 거절되었습니다" : "환불이 성공적으로 처리됨");
             response.put("refund", refundService.getRefundDetail(refundId));
             return ResponseEntity.ok(response);
 
@@ -87,7 +96,6 @@ public class AdminRefundRestController {
         }
     }
 
-    // 포트원 액세스 토큰 발급
     private String getAccessToken() throws IOException {
         OkHttpClient client = new OkHttpClient();
         JSONObject json = new JSONObject();
@@ -120,22 +128,13 @@ public class AdminRefundRestController {
         }
     }
 
-    // 포트원에 환불 요청
-    private boolean requestRefund(RefundDTO refund, int amount, String accessToken,
-                                  String refundHolder, String refundBank, String refundAccount, String refundTel) throws IOException {
+    private boolean requestRefund(RefundDTO refund, int amount, String accessToken) throws IOException {
         OkHttpClient client = new OkHttpClient();
         JSONObject json = new JSONObject();
         json.put("imp_uid", refund.getTransactionId());
         json.put("amount", amount);
         json.put("reason", refund.getRefundReason());
         json.put("checksum", refund.getRemainingRefundAmount() != null ? refund.getRemainingRefundAmount() : refund.getPaymentAmount());
-
-        if (refund.getRefundMethod() == 2) {
-            json.put("refund_holder", refundHolder);
-            json.put("refund_bank", refundBank);
-            json.put("refund_account", refundAccount);
-            if (refundTel != null) json.put("refund_tel", refundTel);
-        }
 
         log.info("환불 Request Body: {}", json.toString());
 
