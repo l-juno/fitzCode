@@ -1,23 +1,40 @@
 package kr.co.fitzcode.inquiry.service;
 
 import kr.co.fitzcode.common.dto.InquiryDTO;
-import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.common.dto.InquiryImageDTO;
+import kr.co.fitzcode.common.dto.ProductDTO;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 
 public interface InquiryService {
-    UserDTO getUserOne(int userId);
+    // 사용자 조회
+    InquiryDTO getUserOne(int userId);
 
-    void registInquiry(InquiryDTO inquiryDTO);
+    // 문의 데이터 저장
+    void insertInquiry(InquiryDTO inquiryDTO, List<MultipartFile> nonEmptyFiles);
 
-    List<HashMap<String, Object>> getUserAndOrderList(int userId);
+    // 개인 문의 내역보기
+    List<InquiryDTO> getInquiryList(int userId);
 
-    List<HashMap<String, Object>> getInquiryList(int userId);
+    // 문의 상세보기
+    InquiryDTO getInquiryDetail(int inquiryId);
 
-    HashMap<String, Object> getInquiryDetail(int inquiryId);
+    // 문의 이미지 가져오기
+    List<InquiryImageDTO> getInquiryImageList(int inquiryId);
 
-    List<HashMap<String, Object>> searchProduct(String userInputProductName);
+    // 상품 검색
+    List<ProductDTO> searchProduct(String userInputProductName);
 
-    HashMap<String, Object> selectedProduct(int productId);
+    // 선택된 상품 가져오기
+    ProductDTO selectedProduct(int productId);
+
+    // 주문 내역 가져오기
+    List<ProductDTO> getOrderList(int userId);
+
+    // 문의 수정하기
+    void updateInquiryData(InquiryDTO inquiryDTO, List<MultipartFile> imageFiles);
+
+    // 문의 삭제
+    void deleteInquiryData(int inquiryId);
 }

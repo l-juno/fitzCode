@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,7 @@ public class ProductDTO {
     private List<ProductSizeDTO> productSizes; // 사이즈별 재고
     private Integer discountedPrice; // 할인가
 
+    private Integer orderId;
 
     public String getFormattedPrice() {
         DecimalFormat df = new DecimalFormat("#,###");
