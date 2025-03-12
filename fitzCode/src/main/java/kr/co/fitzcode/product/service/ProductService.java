@@ -30,4 +30,6 @@ public interface ProductService {
     int getProductSizeIdByProductSizeAndCode(int productId, int sizeCode);
 
     int getPriceOfProductByProductId(int productId);
+
+    int getPriceOfProductWithCoupon(int productId, int couponId);
 }

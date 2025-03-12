@@ -143,14 +143,26 @@
             <div class="modal-product-name" th:text="${'상품: ' + product.productName}">Product Name</div>
             <span class="modal-price" th:text="${'가격: ' + product.formattedDiscountedPrice + '원'}" >250,000원</span>
             <p sec:authorize="isAuthenticated()">구매자: <span th:text="${#authentication.principal.username}"></span></p>
-            <!--  get address of user using ajax call -->
-            <p>배송지:
-                <span id="userAddress">
-                    불러오는 중...
-                </span>
-            </p>
             
+            <!--  get address of user using ajax call -->
+            <div class="address">
+                <p>
+                    배송지:<span id="userAddress">불러오는 중...</span>
+                </p>
+            </div>
             <button id="changeAddressBtn" onclick="changeAddress()">변경</button>
+            
+            <div class="coupon">
+                <p>
+                    쿠폰: <span id="userCoupon">No coupons available</span>
+                </p>
+            </div>
+            
+            <div class="finalPrice" id="finalPrice">
+                <th:block th:text="${product.formattedDiscountedPrice}"></th:block>
+            </div>
+            
+
             <button id="continueToPaymentBtn" onclick="closeModal();requestPayment(getSizeCode())">continue</button>
             
         </div>
@@ -178,6 +190,10 @@
 
 <script>
     const productId = [[${product.productId}]];
+    const retailPrice = [[${product.discountedPrice}]];
+    let finalPrice = [[${product.discountedPrice}]];
+    console.log("final price: " + finalPrice);
+    
     console.log("Product ID:", productId);
     const cartBtn = document.querySelector('.cart-button');
     const buyBtn = document.querySelector('.buy-button')
@@ -185,6 +201,7 @@
     function displayModal() {
         console.log("display modal running...")
         getUserAddress();
+        getUserCoupon();
         document.getElementById("paymentModal").style.display = "flex";
     }
 
@@ -275,7 +292,7 @@
     function getUserAddress() {
         console.log("getting user address");
         $.ajax({
-            url: "/order/getUserAddress",
+            url: "/api/order/getUserAddress",
             type: "GET",
             dataType: "json",
             success: function (response) {
@@ -288,6 +305,28 @@
             },
             error: function () {
                 $("#userAddress").html("<p>주소를 불러올 수 없습니다.</p>");
+            }
+        });
+    }
+    
+    let couponId;
+    let minOrderAmount;
+    function getUserCoupon() {
+        console.log("getting user coupons");
+        $.ajax({
+            url: "/coupon/getUsersCoupons",
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                if (response.length > 0) {
+                    renderCouponDropdown(response);
+                } else {
+                    $("#userCoupon").html("<p>쓸수있는 쿠폰이 없습니다.</p>");
+                }
+            },
+            error: function () {
+                $("#userCoupon").html("<p>쿠폰을 불러올 수 없습니다.</p>");
             }
         });
     }
@@ -309,6 +348,50 @@
         updateSelectedAddress(addressList[0]);
     }
 
+    function renderCouponDropdown(couponList) {
+        let $select = $("<select>").attr("id", "couponSelect").on("change", function () {
+            let selectedIndex = parseInt($(this).val(), 10);
+            console.log("in render coupon dropdown");
+            console.log(couponList[selectedIndex]);
+
+            if (validCoupon(couponList[selectedIndex])) {
+                console.log("coupon is valid");
+                updateSelectedCoupon(couponList[selectedIndex]);
+            } else {
+                let firstValidCouponIndex = couponList.findIndex(validCoupon);
+                if (firstValidCouponIndex !== -1) {
+                    $(this).val(firstValidCouponIndex).trigger("change");
+                } else {
+                    $(this).val("");
+                }
+            }
+        });
+
+        couponList.forEach((coupon, index) => {
+            let isValid = validCoupon(coupon);
+            $select.append($("<option>", {
+                value: index,
+                text: `${coupon.description} (최소금액: ${coupon.minimumOrderAmount})`,
+                disabled: !isValid
+            }));
+        });
+
+        $("#userCoupon").html($select);
+        
+        let firstValidCouponIndex = couponList.findIndex(validCoupon);
+        if (firstValidCouponIndex !== -1) {
+            $select.val(firstValidCouponIndex).trigger("change");
+        } else {
+            $select.val("");
+        }
+    }
+
+    function validCoupon(coupon) {
+        return coupon.minimumOrderAmount <= retailPrice;
+    }
+
+
+
     function updateSelectedAddress(address) {
         addressId = address.addressId;
         addressLine1 = address.addressLine1;
@@ -316,6 +399,37 @@
         console.log("Selected Address:", addressLine1, postalCode);
     }
 
+
+    function updateSelectedCoupon(coupon) {
+        couponId = coupon.couponId;
+        minOrderAmount = coupon.minimumOrderAmount;
+        console.log("Selected coupon:", couponId);
+        checkValidCouponAndCalculatePrice();
+    }
+    
+    
+    function checkValidCouponAndCalculatePrice() {
+        console.log("checking coupon");
+        console.log("calculating final price with couponId: " + couponId);
+        console.log("for product with productId" + productId);
+        $.ajax({
+            url: "/coupon/getPriceWithCoupon",
+            data: { productId: productId, couponId: couponId },
+            type: "GET",
+            dataType: "json",
+            success: function (response) {
+                console.log(response);
+                finalPrice = response;
+                console.log("finalPrice is set to " + response);
+                $("#finalPrice").html(response);
+            },
+            error: function () {
+                $("#finalPrice").html("<p>쿠폰을 쓰는데 실패했습니다.</p>");
+            }
+        });
+        
+        
+    }
 
     function changeAddress() {
         console.log("change address pressed");
@@ -344,7 +458,7 @@
     }
 
     
-    let price;
+    
     // TODO configure to after address
     function requestPayment(sizeCode) {
         console.log(window.PortOne);
@@ -353,16 +467,19 @@
         $.ajax({
             url: "/payment/getPostOneInformation",
             method: "POST",
-            data: { productId: productId, sizeCode: parseInt(sizeCode) },
+            data: { productId: productId, sizeCode: parseInt(sizeCode), finalPrice:finalPrice },
             dataType: "json",
             success: async function (data) {
                 console.log("payment success");
                 console.log(data);
-                price = data.totalAmount;
+                finalPrice = data.totalAmount;
                 try {
                     const response = await PortOne.requestPayment(data);
                     console.log("response in ajax call:", response);
+                    // imp_uid 저장
+                    // const impUid = response.impUid;
                     createOrder(response);
+                    
                 } catch (error) {
                     console.error("Error processing payment:", error);
                 }
@@ -381,21 +498,22 @@
 
         // create order
         $.ajax({
-            url: "/order/createOrderFromDetailPage",
+            url: "/api/order/createOrderFromDetailPage",
             method: "POST",
             data: {
                 addressLine1:addressLine1,
                 postalCode:postalCode,
                 productId:productId,
                 sizeCode: getSizeCode(),
-                price: price
+                price: finalPrice,
+                couponId: couponId
             },
             dataType: "json",
             success: function (data) {
                 console.log("success");
                 console.log(data);
                 // redirect to order page with orderId
-                window.location.href = "/order/${data.orderId}"
+                // window.location.href = "/order/${data.orderId}"
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching products:", error);

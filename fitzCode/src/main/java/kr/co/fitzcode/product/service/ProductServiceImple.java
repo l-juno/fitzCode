@@ -100,6 +100,11 @@ public class ProductServiceImple implements ProductService {
     }
 
     @Override
+    public int getPriceOfProductWithCoupon(int productId, int couponId) {
+        return productMapper.getPriceOfProductWithCoupon(productId, couponId);
+    }
+
+    @Override
     public List<ProductDTO> getProductsByFilterAndPage(List<String> filters, String searchText, int currentPage) {
 
         int offset = (currentPage - 1) * PRODUCT_PER_PAGE;

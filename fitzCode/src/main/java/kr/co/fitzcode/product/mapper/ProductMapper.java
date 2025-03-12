@@ -44,4 +44,5 @@ public interface ProductMapper {
 
     int getPriceOfProductByProductId(int productId);
 
+    int getPriceOfProductWithCoupon(int productId, int couponId);
 }

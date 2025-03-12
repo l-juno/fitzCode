@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 public class PriceService {
     private final ProductService productService;
 
-    public int calculatePriceByProductId(int userId, int productId, int couponId) {
-        return productService.getPriceOfProductByProductId(productId);
+    public int calculatePriceByProductId(int productId, int couponId) {
+//        return productService.getPriceOfProductByProductId(productId);
+        return productService.getPriceOfProductWithCoupon(productId, couponId);
     }
 }

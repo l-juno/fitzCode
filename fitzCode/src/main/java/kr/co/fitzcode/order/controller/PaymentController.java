@@ -24,7 +24,9 @@ public class PaymentController {
     private final PriceService priceService;
 
     @PostMapping("/getPostOneInformation")
-    public ResponseEntity<Map<String, Object>> getPostOneInformation(@RequestParam int productId, @RequestParam int sizeCode) {
+    public ResponseEntity<Map<String, Object>> getPostOneInformation(@RequestParam int productId,
+                                                                     @RequestParam int sizeCode,
+                                                                     @RequestParam("finalPrice") int finalPrice) {
         Map<String, Object> response = new HashMap<>();
 
         //TODO use japsyt to encrypt storeId and channelKey
@@ -40,11 +42,7 @@ public class PaymentController {
 
         response.put("paymentId", paymentId);
         response.put("orderName", orderInformation);
-
-        // TODO
-        // get coupon information do the discount on price, then put that as total amount
-        int price = priceService.calculatePriceByProductId(userId, productId, -1);
-        response.put("totalAmount", price);
+        response.put("totalAmount", finalPrice);
 
         response.put("currency", "CURRENCY_KRW");
         response.put("payMethod", "CARD");
