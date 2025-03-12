@@ -1,28 +1,36 @@
 package kr.co.fitzcode.common.dto;
 
+import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.user.service.OAuth2Response;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CustomOAuth2User implements OAuth2User {
 
     private final OAuth2Response oAuth2Response;
     private final String role;
 
-    public CustomOAuth2User(OAuth2Response oAuth2Response, int role) {
+    public CustomOAuth2User(OAuth2Response oAuth2Response, String role) {
         this.oAuth2Response = oAuth2Response;
-        this.role = String.valueOf(role);
+        this.role = role;
     }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        Map<String, Object> attributes = new HashMap<>();
+        attributes.put("birthyear", oAuth2Response.getBirthyear());
+        attributes.put("birthday", oAuth2Response.getBirthday());
+        attributes.put("email", oAuth2Response.getEmail());
+        attributes.put("phonenumber", oAuth2Response.getPhoneNumber());
+        attributes.put("username", oAuth2Response.getuserName());
+        attributes.put("profileimg", oAuth2Response.getProfileImageUrl());
+        attributes.put("provider", oAuth2Response.getProvider());
+        attributes.put("providerid", oAuth2Response.getProviderId());
+        attributes.put("nickname", oAuth2Response.getNickname());
+        return attributes;
     }
 
     @Override
