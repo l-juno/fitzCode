@@ -34,16 +34,55 @@ public class AdminRefundRestController {
     public ResponseEntity<Map<String, Object>> processRefund(
             @PathVariable Long refundId,
             @RequestParam(value = "customRefundAmount", required = false) Integer customRefundAmount,
-            @RequestParam("status") Integer status) {
+            @RequestParam("status") Integer status,
+            @RequestParam Map<String, String> allParams) {
 
         Map<String, Object> response = new HashMap<>();
         RefundDTO refund = refundService.getRefundDetail(refundId);
 
-        // 환불 가능한 금액 체크 (환불 거절에는 적용 안할거임)
+        if (refund == null) {
+            response.put("success", false);
+            response.put("message", "환불 정보를 찾을 수 없습니다.");
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        // 체크박스 선택된 항목 처리
+        Map<Long, Integer> selectedItems = new HashMap<>();
+        int calculatedRefundAmount = allParams.entrySet().stream()
+                .filter(entry -> entry.getKey().startsWith("item_"))
+                .mapToInt(entry -> {
+                    try {
+                        Long orderDetailId = Long.valueOf(entry.getValue()); // 직접 Long으로 변환
+                        selectedItems.put(orderDetailId, 1);
+                        for (RefundDTO.OrderDetailDTO item : refund.getRequestedItems()) {
+                            if (item.getOrderDetailId().equals(orderDetailId)) {
+                                return item.getPrice() * item.getQuantity();
+                            }
+                        }
+                        return 0;
+                    } catch (NumberFormatException e) {
+                        log.warn("Invalid orderDetailId format: {}", entry.getValue());
+                        return 0;
+                    }
+                })
+                .sum();
+
         int effectiveRefundAmount = 0;
+        if (!selectedItems.isEmpty()) {
+            effectiveRefundAmount = (customRefundAmount != null && customRefundAmount > 0) ? customRefundAmount : calculatedRefundAmount;
+            if (customRefundAmount != null && customRefundAmount != calculatedRefundAmount) {
+                log.warn("커스텀 금액({})과 선택된 항목 합계({})가 일치하지 않습니다. 선택된 항목 합계를 우선 적용합니다.", customRefundAmount, calculatedRefundAmount);
+                effectiveRefundAmount = calculatedRefundAmount;
+            }
+        } else if (customRefundAmount != null && customRefundAmount > 0) {
+            effectiveRefundAmount = customRefundAmount;
+        } else {
+            effectiveRefundAmount = refund.getCalculatedRefundAmount();
+        }
+
+        // 환불 가능한 금액 체크 (환불 거절에는 적용 안함)
         if (status != RefundStatus.REJECTED.getCode()) {
             int remainingAmount = refund.getRemainingRefundAmount() != null ? refund.getRemainingRefundAmount() : refund.getPaymentAmount();
-            effectiveRefundAmount = (customRefundAmount != null && customRefundAmount > 0) ? customRefundAmount : refund.getCalculatedRefundAmount();
             if (effectiveRefundAmount <= 0 || effectiveRefundAmount > remainingAmount) {
                 response.put("success", false);
                 response.put("message", "유효한 환불 금액을 입력하세요 (최대: " + remainingAmount + "원)");
@@ -51,7 +90,7 @@ public class AdminRefundRestController {
             }
         }
 
-        // 계좌 환불 시 계좌 정보
+        // 계좌 환불 시 계좌 정보 체크
         if (refund.getRefundMethod() == 2 && status == RefundStatus.COMPLETED.getCode()) {
             if (refund.getAccountHolder() == null || refund.getBankName() == null || refund.getAccountNumber() == null) {
                 response.put("success", false);
@@ -69,7 +108,6 @@ public class AdminRefundRestController {
                 String accessToken = getAccessToken();
                 refundSuccess = requestRefund(refund, effectiveRefundAmount, accessToken);
             } else if (refund.getRefundMethod() == 2 && refundStatus == RefundStatus.COMPLETED) {
-                // 계좌 환불
                 log.info("계좌 환불 처리: 환불 번호 {}, 금액 {}, 계좌 정보: {} {}",
                         refundId, effectiveRefundAmount, refund.getAccountHolder(), refund.getAccountNumber());
             }
@@ -80,8 +118,25 @@ public class AdminRefundRestController {
                 return ResponseEntity.status(500).body(response);
             }
 
-            // 환불 상태 업데이트
+            // 선택된 항목의 상태 업데이트
+            if (!selectedItems.isEmpty()) {
+                for (RefundDTO.OrderDetailDTO item : refund.getRequestedItems()) {
+                    if (selectedItems.containsKey(item.getOrderDetailId())) {
+                        refundService.updateOrderDetailRefundStatus(item.getOrderDetailId(), status);
+                    }
+                }
+            }
+
+            // 전체 환불 상태 및 금액 업데이트
+            int newRefundAmount = (refund.getRefundAmount() != null ? refund.getRefundAmount() : 0) + effectiveRefundAmount;
             refundService.updateRefundStatus(refundId, refundStatus, effectiveRefundAmount);
+            refundService.updateRefundAmount(refundId, newRefundAmount);
+
+            int newRemainingAmount = (refund.getRemainingRefundAmount() != null ? refund.getRemainingRefundAmount() : refund.getPaymentAmount()) - effectiveRefundAmount;
+            if (newRemainingAmount < 0) {
+                newRemainingAmount = 0;
+            }
+            refundService.updateRemainingRefundAmount(refundId, newRemainingAmount);
 
             response.put("success", true);
             response.put("message", refundStatus == RefundStatus.REJECTED ? "환불이 거절되었습니다" : "환불이 성공적으로 처리됨");

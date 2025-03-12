@@ -193,6 +193,7 @@
     <table class="refund-table">
         <thead>
         <tr>
+            <th>선택</th>
             <th>상품명</th>
             <th>수량</th>
             <th>단가</th>
@@ -201,7 +202,12 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="item : ${refund.requestedItems}">
+        <tr th:each="item, stat : ${refund.requestedItems}">
+            <td>
+                <input type="checkbox" class="refund-item" th:name="'item_' + ${item.orderDetailId}"
+                       th:value="${item.orderDetailId}"
+                       th:data-price="${item.price * item.quantity}">
+            </td>
             <td th:text="${item.productName} ?: '-'"></td>
             <td th:text="${item.quantity} ?: '-'"></td>
             <td th:text="${#numbers.formatInteger(item.price, 3, 'COMMA')} ?: '-' + '원'"></td>
@@ -209,14 +215,14 @@
             <td th:text="${item.getRefundStatusInKorean()} ?: '-'"></td>
         </tr>
         <tr th:unless="${refund.requestedItems != null and !refund.requestedItems.isEmpty()}">
-            <td colspan="5">환불 신청된 상품이 없습니다.</td>
+            <td colspan="6">환불 신청된 상품이 없습니다.</td>
         </tr>
         </tbody>
     </table>
     <div class="total-amount">
-        <p>총 환불 요청 금액: <span th:text="${#numbers.formatInteger(refund.getCalculatedRefundAmount(), 3, 'COMMA')} ?: '427,000'"></span>원</p>
+        <p>총 환불 요청 금액: <span id="totalRequestedAmount" th:text="${#numbers.formatInteger(refund.getCalculatedRefundAmount(), 3, 'COMMA')} ?: '427,000'"></span>원</p>
         <input type="number" id="customRefundAmount" name="customRefundAmount" class="custom-amount-input" min="1"
-               th:value="${refund.getCalculatedRefundAmount()}" placeholder="커스텀 금액 입력">
+               readonly value="0" placeholder="선택된 항목의 환불 금액">
     </div>
 
     <!-- 계좌 결제일 경우 계좌 정보 표시 -->
@@ -260,12 +266,20 @@
         // 계좌 결제일 경우 계좌 정보 표시
         if (refundMethod === 2) {
             $('#accountInfo').show();
-            // 계좌 정보가 없으면 경고 메시지 표시
             if (!accountHolder || !bankName || !accountNumber) {
                 $('#message').removeClass('success-message').addClass('error-message')
                     .text('계좌 정보가 등록되어 있지 않습니다. 환불 처리가 불가능합니다.').show();
             }
         }
+
+        // 체크박스 선택 시 합계 업데이트
+        $('.refund-item').on('change', function() {
+            let total = 0;
+            $('.refund-item:checked').each(function() {
+                total += parseInt($(this).data('price')) || 0;
+            });
+            $('#customRefundAmount').val(total);
+        });
 
         $('#completeRefund').on('click', function() {
             if ($(this).hasClass('btn-disabled')) {
@@ -284,8 +298,26 @@
             const customAmount = $('#customRefundAmount').val();
             const formData = new FormData();
             formData.append('status', status);
-            if (customAmount) {
+
+            // 체크된 항목 수집
+            let hasSelectedItems = false;
+            $('input[name^="item_"]:checked').each(function() {
+                formData.append($(this).attr('name'), $(this).val());
+                hasSelectedItems = true;
+            });
+
+            if (!hasSelectedItems) {
+                $('#message').removeClass('success-message').addClass('error-message')
+                    .text('선택된 항목이 없습니다.').show();
+                return;
+            }
+
+            if (customAmount && customAmount > 0) {
                 formData.append('customRefundAmount', customAmount);
+            } else {
+                $('#message').removeClass('success-message').addClass('error-message')
+                    .text('환불 금액이 0원입니다.').show();
+                return;
             }
 
             $.ajax({

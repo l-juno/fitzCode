@@ -19,24 +19,26 @@ public class AdminRefundServiceImpl implements AdminRefundService {
     private final AdminRefundMapper refundMapper;
     private static final int PAGE_SIZE = 10;
 
+    // 환불 목록 (페이징)
     @Override
     public List<RefundDTO> getRefundList(int page, int size, Integer status, String orderId) {
         if (page < 1) page = 1;
         if (size != PAGE_SIZE) size = PAGE_SIZE;
         int offset = (page - 1) * size;
-        log.info("환불 목록 조회 : 페이지: {}, 개수: {}, 상태: {}, 주문 ID: {}", page, size, status, orderId);
+        log.info("환불 목록 조회 - 페이지: {}, 개수: {}, 상태: {}, 주문 ID: {}", page, size, status, orderId);
         List<RefundDTO> refunds = refundMapper.getRefundList(size, offset, status, orderId);
-        log.debug("Fetched refunds size: {}", refunds.size());
+        log.debug("조회된 환불 목록 개수: {}", refunds.size());
 
         for (RefundDTO refund : refunds) {
             List<RefundDTO.OrderDetailDTO> items = refundMapper.getRequestedRefundItems(refund.getOrderId());
             refund.setRequestedItems(items);
-            log.debug("Refund ID: {}, Requested items size: {}, Requested refund amount: {}",
+            log.debug("환불 ID: {}, 요청된 항목 개수: {}, 요청 환불 금액: {}",
                     refund.getRefundId(), items != null ? items.size() : 0, refund.getRequestedRefundAmount());
         }
         return refunds;
     }
 
+    // 특정 환불 ID에 해당하는 환불 상세 정보 조회
     @Override
     public RefundDTO getRefundDetail(Long refundId) {
         log.info("환불 상세 조회 - 환불 ID: {}", refundId);
@@ -45,38 +47,40 @@ public class AdminRefundServiceImpl implements AdminRefundService {
             log.warn("환불 기록 없음 - 환불 ID: {}", refundId);
             throw new RuntimeException("환불 기록을 찾을 수 없음");
         }
-        log.debug("Fetched RefundDTO: refundId={}, orderId={}, paymentAmount={}, refundAmount={}, remainingRefundAmount={}",
+        log.debug("조회된 환불 정보 - 환불 ID: {}, 주문 ID: {}, 결제 금액: {}, 환불 금액: {}, 남은 환불 가능 금액: {}",
                 refund.getRefundId(), refund.getOrderId(), refund.getPaymentAmount(), refund.getRefundAmount(), refund.getRemainingRefundAmount());
         List<RefundDTO.OrderDetailDTO> items = refundMapper.getRequestedRefundItems(refund.getOrderId());
         refund.setRequestedItems(items);
-        log.debug("Requested items size: {}, items: {}", items != null ? items.size() : 0, items);
+        log.debug("요청된 항목 개수: {}, 항목: {}", items != null ? items.size() : 0, items);
         int calculatedAmount = refund.getCalculatedRefundAmount();
-        log.debug("Calculated amount after setting items: {}", calculatedAmount);
+        log.debug("계산된 환불 금액: {}", calculatedAmount);
         if (refund.getRefundAmount() == null || refund.getRefundAmount() == 0) {
             int adjustedAmount = Math.min(calculatedAmount, refund.getPaymentAmount() != null ? refund.getPaymentAmount() : calculatedAmount);
             refund.setRefundAmount(adjustedAmount);
-            log.debug("Adjusted refund amount: {}", adjustedAmount);
+            log.debug("조정된 환불 금액: {}", adjustedAmount);
         } else {
-            // db에서 가져온 refundAmount를 유지
-            log.debug("Using existing refund amount from DB: {}", refund.getRefundAmount());
+            log.debug("DB에서 가져온 기존 환불 금액 사용: {}", refund.getRefundAmount());
         }
-        // remaining_refund_amount를 db값으로 유지
         int remainingAmount = refund.getRemainingRefundAmount() != null ? refund.getRemainingRefundAmount()
                 : (refund.getPaymentAmount() - (refund.getRefundAmount() != null ? refund.getRefundAmount() : 0));
         if (remainingAmount < 0) {
-            log.warn("Remaining refund amount is negative, resetting to 0. refundId: {}", refundId);
+            log.warn("남은 환불 가능 금액이 음수 - 0으로 재설정, 환불 ID: {}", refundId);
             remainingAmount = 0;
         }
         refundMapper.updateRemainingRefundAmount(refundId, remainingAmount);
         refund.setRemainingRefundAmount(remainingAmount);
-        log.debug("Updated remaining refund amount: {}", remainingAmount);
+        log.debug("업데이트된 남은 환불 가능 금액: {}", remainingAmount);
         return refund;
     }
 
+
+    // 환불 상태를 업데이트
+    // 환불 금액과 남은 환불 가능 금액도 같이 업데이트하고
+    // 상태 변경에 따라 알림 및 트랜잭션 로그 기록
     @Override
     @Transactional
     public void updateRefundStatus(Long refundId, RefundStatus status, Integer refundAmount) {
-        log.info("환불 상태 변경 : 환불 ID: {}, 상태: {}, 환불 금액: {}", refundId, status, refundAmount);
+        log.info("환불 상태 변경 - 환불 ID: {}, 상태: {}, 환불 금액: {}", refundId, status, refundAmount);
         RefundDTO refund = getRefundDetail(refundId);
 
         int effectiveRefundAmount = (refundAmount != null && refundAmount > 0) ? refundAmount : refund.getCalculatedRefundAmount();
@@ -85,19 +89,17 @@ public class AdminRefundServiceImpl implements AdminRefundService {
             if (effectiveRefundAmount > remainingAmount) {
                 throw new IllegalArgumentException("유효한 환불 금액을 입력하세요 (최대: " + remainingAmount + "원)");
             }
-            // 누적 환불 금액 업데이트
             int newRefundAmount = (refund.getRefundAmount() != null ? refund.getRefundAmount() : 0) + effectiveRefundAmount;
-            refundMapper.updateRefundAmount(refundId, newRefundAmount);
+            updateRefundAmount(refundId, newRefundAmount);
             refund.setRefundAmount(newRefundAmount);
 
-            // remaining_refund_amount 업데이트
             int newRemainingAmount = remainingAmount - effectiveRefundAmount;
             if (newRemainingAmount < 0) {
                 throw new IllegalStateException("남은 환불 금액이 0원보다 아래임");
             }
             refundMapper.updateRemainingRefundAmount(refundId, newRemainingAmount);
             refund.setRemainingRefundAmount(newRemainingAmount);
-            log.debug("Updated refund amount: {}, remaining refund amount: {}", newRefundAmount, newRemainingAmount);
+            log.debug("업데이트된 환불 금액: {}, 남은 환불 가능 금액: {}", newRefundAmount, newRemainingAmount);
         }
 
         if (status == RefundStatus.COMPLETED) {
@@ -112,20 +114,19 @@ public class AdminRefundServiceImpl implements AdminRefundService {
         }
 
         refundMapper.updateRefundStatus(refundId, status.getCode());
-        log.info("환불 상태 변경됨 - 환불 ID: {}, 상태: {}", refundId, status);
+        log.info("환불 상태 변경 완료 - 환불 ID: {}, 상태: {}", refundId, status);
     }
 
+    // 새로운 환불 요청 생성
     @Override
     @Transactional
     public void createRefund(Long orderId, String refundReason, Integer refundMethod) {
-        log.info("환불 신청 생성 - orderId: {}, reason: {}, method: {}", orderId, refundReason, refundMethod);
-        // 기존 환불 기록 확인
+        log.info("환불 신청 생성 - 주문 ID: {}, 사유: {}, 방식: {}", orderId, refundReason, refundMethod);
         RefundDTO existingRefund = refundMapper.getRefundDetailByOrderId(orderId);
         if (existingRefund != null) {
-            throw new IllegalStateException("이미 환불 신청이 존재합니다: refund_id = " + existingRefund.getRefundId());
+            throw new IllegalStateException("이미 환불 신청이 존재합니다: 환불 ID = " + existingRefund.getRefundId());
         }
 
-        // 새로운 환불 DTO 생성
         RefundDTO refund = new RefundDTO();
         refund.setOrderId(orderId);
         refund.setRefundReason(refundReason);
@@ -134,36 +135,31 @@ public class AdminRefundServiceImpl implements AdminRefundService {
         refund.setRefundStatusCode(RefundStatus.REQUESTED.getCode());
         refund.setRefundStatus(RefundStatus.REQUESTED);
 
-        // requestedItems 조회
         List<RefundDTO.OrderDetailDTO> items = refundMapper.getRequestedRefundItems(orderId);
         refund.setRequestedItems(items);
 
-        // refund_amount를 요청된 상품의 총 구매 가격으로 설정
         int requestedRefundAmount = refund.getRequestedRefundAmount();
         refund.setRefundAmount(requestedRefundAmount);
-        log.debug("Initial refund amount set to: {}", requestedRefundAmount);
+        log.debug("초기 환불 금액 설정: {}", requestedRefundAmount);
 
-        // paymentAmount 조회
         Integer paymentAmount = refundMapper.getPaymentAmountByOrderId(orderId);
         refund.setPaymentAmount(paymentAmount != null ? paymentAmount : 0);
-        log.debug("Payment amount for orderId {}: {}", orderId, paymentAmount);
+        log.debug("주문 ID {}의 결제 금액: {}", orderId, paymentAmount);
 
-        // remaining_refund_amount 초기화 (결제 금액 - 환불 금액)
         int initialRemainingAmount = paymentAmount != null ? paymentAmount - requestedRefundAmount : 0;
         if (initialRemainingAmount < 0) {
-            throw new IllegalStateException("결제 금액이 요청 환불 금액보다 작습니다: paymentAmount=" + paymentAmount + ", requestedRefundAmount=" + requestedRefundAmount);
+            throw new IllegalStateException("결제 금액이 요청 환불 금액보다 작습니다: 결제 금액=" + paymentAmount + ", 요청 환불 금액=" + requestedRefundAmount);
         }
         refund.setRemainingRefundAmount(initialRemainingAmount);
-        log.debug("Initial remaining refund amount: {}", initialRemainingAmount);
+        log.debug("초기 남은 환불 가능 금액: {}", initialRemainingAmount);
 
-        // REFUND 테이블에 삽입
         refundMapper.insertRefund(refund);
-        log.info("환불 신청 생성 완료 - refund_id: {}", refund.getRefundId());
+        log.info("환불 신청 생성 완료 - 환불 ID: {}", refund.getRefundId());
 
-        // ORDER_DETAIL 상태 업데이트
         updateRequestedItemsStatus(refund, RefundStatus.REQUESTED.getCode());
     }
 
+    // 요청된 항목의 환불 상태 업데이트
     private void updateRequestedItemsStatus(RefundDTO refund, int status) {
         if (refund.getRequestedItems() != null) {
             refund.getRequestedItems().forEach(item ->
@@ -172,21 +168,24 @@ public class AdminRefundServiceImpl implements AdminRefundService {
         }
     }
 
+    // 남은 환불 가능 금액을 업데이트
     @Override
     public void updateRemainingRefundAmount(Long refundId, int remainingAmount) {
         if (remainingAmount < 0) {
             throw new IllegalStateException("남은 환불 금액이 0원보다 아래임");
         }
         refundMapper.updateRemainingRefundAmount(refundId, remainingAmount);
-        log.info("남은 환불 가능 금액 업데이트 완료 : 환불 ID: {}, 남은 금액: {}", refundId, remainingAmount);
+        log.info("남은 환불 가능 금액 업데이트 완료 - 환불 ID: {}, 남은 금액: {}", refundId, remainingAmount);
     }
 
+    // 주문 상세 항목의 환불 상태 업데이트
     @Override
     public void updateOrderDetailRefundStatus(Long orderDetailId, int status) {
         refundMapper.updateOrderDetailRefundStatus(orderDetailId, status);
-        log.info("주문 상세 환불 상태 변경 : 주문 상세 ID: {}, 새로운 상태: {}", orderDetailId, status);
+        log.info("주문 상세 환불 상태 변경 - 주문 상세 ID: {}, 새로운 상태: {}", orderDetailId, status);
     }
 
+    // 환불 트랜잭션을 로그 기록
     @Override
     public void logTransaction(RefundDTO refund) {
         refundMapper.insertSalesTransactionLog(
@@ -196,9 +195,10 @@ public class AdminRefundServiceImpl implements AdminRefundService {
                 refund.getRefundAmount() != null ? refund.getRefundAmount().longValue() : null,
                 2
         );
-        log.info("환불 트랜잭션 기록 완료 : 환불 ID: {}", refund.getRefundId());
+        log.info("환불 트랜잭션 기록 완료 - 환불 ID: {}", refund.getRefundId());
     }
 
+    // 사용자에게 환불 관련 알림 전송
     @Override
     public void sendNotification(RefundDTO refund, String message) {
         refundMapper.insertNotification(
@@ -207,12 +207,20 @@ public class AdminRefundServiceImpl implements AdminRefundService {
                 message,
                 refund.getRefundId()
         );
-        log.info("환불 알림 전송 완료 : 환불 ID: {}", refund.getRefundId());
+        log.info("환불 알림 전송 완료 - 환불 ID: {}", refund.getRefundId());
     }
 
+    // 조건에 맞는 환불 건수 조회
     @Override
     public int getRefundCount(Integer status, String orderId) {
-        log.info("환불 건수 조회 : 상태: {}, 주문 ID: {}", status, orderId);
+        log.info("환불 건수 조회 - 상태: {}, 주문 ID: {}", status, orderId);
         return refundMapper.getRefundCount(status, orderId);
+    }
+
+    // 환불 금액 업데이트
+    @Override
+    public void updateRefundAmount(Long refundId, int refundAmount) {
+        refundMapper.updateRefundAmount(refundId, refundAmount);
+        log.info("환불 금액 업데이트 완료 - 환불 ID: {}, 금액: {}", refundId, refundAmount);
     }
 }
