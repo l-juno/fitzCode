@@ -45,9 +45,9 @@
         SELECT role_id FROM USER WHERE user_id = #{userId}
     </select>
 
-    <select id="findByUsername" resultType="UserDTO">
+    <select id="findByUserNaverId" resultType="UserDTO">
         SELECT * FROM USER
-        WHERE user_name = #{userName}
+        WHERE naver_id = #{naverId}
     </select>
 
     <update id="updateUser" parameterType="UserDTO">

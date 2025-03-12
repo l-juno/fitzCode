@@ -3,6 +3,7 @@ package kr.co.fitzcode.user.service;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.CustomOAuth2User;
+import kr.co.fitzcode.common.dto.KakaoResponse;
 import kr.co.fitzcode.common.dto.NaverResponse;
 import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.user.mapper.UserMapper;
@@ -38,11 +39,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (registerId.equals("naver")) {
             // 네이버 응답
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
+        } else if (registerId.equals("kakao")) {
+            oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         } else {
             return null;
         }
 
-        // 로그인한 회원 데이터베이스에 추가!!!!!!!!!!!!!!!!!!!!!!!
 
         // 기존에 있는 사용자라면 데이터 갱신, 신규 사용자라면 데이터 저장
 
@@ -51,8 +53,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String userId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
         // db 에 이런 회원이 존재하는 확인
 
-        // 나는 이거 findByUsername 매퍼에 sql 문 적어야됨 ㅇㅇ
-        UserDTO user = userMapper.findByUsername(userId);
+        // 네이버 고유 아이디로 해당 유저가 있는지 화긴
+        UserDTO user = userMapper.findByUserNaverId(userId);
 
         HttpSession session = request.getSession();
 
@@ -65,35 +67,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         // 신규 사용자라면 db 에 데이터 저장
         if (user == null) {
-            UserDTO user1 = new UserDTO();
-            user1.setNaverId(userId);
-            user1.setUserName(oAuth2Response.getuserName());
-            user1.setNickname(oAuth2Response.getNickname());
-            user1.setEmail(oAuth2Response.getEmail());
-            user1.setPhoneNumber(oAuth2Response.getPhoneNumber());
-            user1.setBirthDate(birth);
-            user1.setProfileImage(oAuth2Response.getProfileImageUrl());
-            user1.setRoleId(1);
+            UserDTO newUser = new UserDTO();
+            newUser.setNaverId(userId);
+            newUser.setUserName(oAuth2Response.getuserName());
+            newUser.setNickname(oAuth2Response.getNickname());
+            newUser.setEmail(oAuth2Response.getEmail());
+            newUser.setPhoneNumber(oAuth2Response.getPhoneNumber());
+            newUser.setBirthDate(birth);
+            newUser.setProfileImage(oAuth2Response.getProfileImageUrl());
+            newUser.setRoleId(1);
 
-            userMapper.insertUser(user1);
+            userMapper.insertUser(newUser);
 
-            // 세션에 사용자 정보 저장
-            session.setAttribute("dto", user1);
+            // 신규 사용자 로그인 처리
+            session.setAttribute("dto", newUser);
         } else {
-            if (user.getEmail().equals(oAuth2Response.getEmail())) {
-                throw new IllegalStateException("이미 등록된 이메일입니다. 로그인해주세요.");
-            } else {
-                // 기존 사용자가 아닌 경우 이메일 갱신
-                user.setEmail(oAuth2Response.getEmail());
-                userMapper.updateUser(user);
-
-                session.setAttribute("dto", user);
-
-            }
+            // 기존 사용자 로그인 처리
+            session.setAttribute("dto", user);
         }
-
-
-
 
         return new CustomOAuth2User(oAuth2Response, role);
 
