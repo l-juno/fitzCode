@@ -374,9 +374,10 @@
         });
     }
     
-    // TODO
+    // TODO save paymentId to payment table
     function createOrder(response) {
         console.log("creating order");
+        console.log(response);
 
         // create order
         $.ajax({
@@ -393,7 +394,8 @@
             success: function (data) {
                 console.log("success");
                 console.log(data);
-                updateSizeOptions(data);
+                // redirect to order page with orderId
+                window.location.href = "/order/${data.orderId}"
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching products:", error);
@@ -403,7 +405,7 @@
         
         
         
-        // redirect to order page with orderId
+        
         
     }
     

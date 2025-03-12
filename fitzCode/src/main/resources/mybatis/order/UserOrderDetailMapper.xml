@@ -5,10 +5,17 @@
 
 <mapper namespace="kr.co.fitzcode.order.mapper.UserOrderDetailMapper">
 
-    <select id="addOrderSingleDetailToOrder">
-        insert into ORDER_DETAIL
-        (order_id, product_id, quantity, price, coupon_id, refund_status)
+    <insert id="batchInsertOrderDetails">
+        INSERT INTO ORDER_DETAIL (order_id, product_id, quantity, price, size_code, coupon_id)
+        VALUES
+        <foreach collection="orderDetails" item="item" separator=",">
+            (#{item.orderId}, #{item.productId}, #{item.quantity}, #{item.price}, #{item.sizeCode},
+            <if test="item.couponId != null">#{item.couponId}</if>
+            <if test="item.couponId == null">NULL</if>)
+        </foreach>
+    </insert>
 
-    </select>
+
+
 
 </mapper>

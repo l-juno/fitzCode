@@ -4,7 +4,10 @@ import kr.co.fitzcode.order.mapper.UserOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -14,7 +17,8 @@ public class UserOrderDetailServiceImple implements UserOrderDetailService {
 
 
     @Override
-    public void addOrderSingleDetailToOrder(int orderId, List<Integer> productIdList) {
-        userOrderDetailMapper.addOrderSingleDetailToOrder(orderId, productIdList);
+    public void addOrderDetailToOrder(List<Map<String, Object>> batchInsertList) {
+
+        userOrderDetailMapper.batchInsertOrderDetails(batchInsertList);
     }
 }

@@ -10,8 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,6 +49,7 @@ public class OrderController {
                     .build();
             orderService.addNonDefaultAddressForUser(userId, addressDTO);
         }
+
         int addressId = orderService.getAddressIdUsingAddressLine1AndPostalCode(addressLine1, postalCode, userId);
         log.info("addressId::::::::::::::: {}", addressId);
 
@@ -62,15 +62,32 @@ public class OrderController {
                 .build();
 
         int orderId = orderService.insertNewOrder(orderDTO);
-//        log.info("orderId just made::::::::::::::: {}", orderId);
+        log.info("orderId just made::::::::::::::: {}", orderId);
 
-        List<Integer> productIdList = List.of(productId);
-        log.info("productIdList::::::::::::::: {}", productIdList);
-        userOrderDetailService.addOrderSingleDetailToOrder(orderId, productIdList);
-
-
+        // create a product map
+        Map<Integer, Integer> productListMap = new HashMap<>();
+        productListMap.put(productId, sizeCode);
 
 
-        return null;
+        List<Map<String, Object>> batchInsertList = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : productListMap.entrySet()) {
+            Map<String, Object> paramMap = new HashMap<>();
+            paramMap.put("orderId", orderId);
+            paramMap.put("productId", entry.getKey());
+            paramMap.put("sizeCode", entry.getValue());
+            paramMap.put("price", price);
+            paramMap.put("quantity", 1);
+
+            // coupon not done yet, add coupon when done
+//            paramMap.put("couponId", couponId);
+
+            batchInsertList.add(paramMap);
+        }
+
+
+
+        log.info("productIdList::::::::::::::: {}", productListMap);
+        userOrderDetailService.addOrderDetailToOrder(batchInsertList);
+        return ResponseEntity.ok(orderDTO);
     }
 }
