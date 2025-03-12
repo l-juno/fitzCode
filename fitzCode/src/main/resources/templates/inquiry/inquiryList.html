@@ -33,10 +33,10 @@
         </tr>
         <tr th:each="dto, state : ${list}">
             <td th:text="${state.count}"></td>
-            <td><a th:href="@{detail(inquiryId=${dto['inquiryId']})}" th:text="${dto['subject']}"></a></td>
-            <td th:text="${dto['category']}"></td>
-            <td th:text="${dto['status']}"></td>
-            <td th:text="${#temporals.format(dto['createdAt'],'yyyy/MM/dd')}"></td>
+            <td><a th:href="@{detail/{inquiryId}(inquiryId=${dto.inquiryId})}" th:text="${dto.subject}"></a></td>
+            <td th:text="${dto.getCategory().description}"></td>
+            <td th:text="${dto.getStatus().description}"></td>
+            <td th:text="${#temporals.format(dto.createdAt,'yyyy/MM/dd')}"></td>
         </tr>
     </table>
 </div>

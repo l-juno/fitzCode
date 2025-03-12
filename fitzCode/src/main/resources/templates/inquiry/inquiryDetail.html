@@ -29,7 +29,7 @@
 
     }
 
-    .inquiryData1 {
+    .inquiryData {
         display: flex;
         flex-direction: row;
         align-items: flex-start;
@@ -44,7 +44,7 @@
         margin-left: 10px;
     }
 
-    #content{
+    .content {
         width: 98%;
         border: 1px gray solid;
         height: 110px;
@@ -53,14 +53,35 @@
         padding: 10px;
     }
 
-    #subject{
+    .reply-container{
+        height: 110px;
+        border-radius: 10px;
+        padding: 10px 20px;
+        width: 94%;
+        margin: 20px 0px;
+        border: 1px black solid;
+        background: #bed8e8;
+    }
+
+    .reply-container h3{
+        padding-bottom: 10px;
+        margin: 10px 0px;
+        border-bottom: 1px black solid;
+    }
+
+
+    #subject {
         font-size: 15px;
         border: 1px lightgray solid;
         display: inline-block;
         width: 98%;
         padding: 10px;
         border-radius: 10px;
-        margin: 10px 0px;
+    }
+
+    .productContainer,
+    .imageContainer {
+        margin: 20px 0px;
     }
 </style>
 <body>
@@ -81,42 +102,63 @@
     <div class="inquiryContent">
         <h2>문의 상세보기</h2>
         <hr>
-        <div class="inquiryData1">
-            <span> 문의 유형 <span class="data" th:text="${inquiryDetail['categoryCode']}"/></span>
-            <span> 문의 상태 <span class="data" th:text="${inquiryDetail['statusCode']}"/> </span>
+        <div class="inquiryData">
+            <span> 문의 유형 <span class="data" th:text="${dto.getCategory().description}"/></span>
+            <span> 문의 상태 <span class="data" th:text="${dto.getStatus().description}"/> </span>
             <span> 등록 날짜 <span class="data"
-                               th:text="${#dates.format(inquiryDetail['createdAt'], 'yyyy / MM / dd')}"/></span>
+                               th:text="${#temporals.format(dto.createdAt, 'yyyy/MM/dd')}"/></span>
         </div>
-        <div class="inquiryData1">
-            <span>작성자 <span class="data" th:text="${inquiryDetail['userName']}"/></span>
-            <span>연락처 <span class="data" th:text="${inquiryDetail['phoneNumber']}"/></span>
+        <div class="inquiryData">
+            <span>작성자 <span class="data" th:text="${dto.userName}"/></span>
+            <span>연락처 <span class="data" th:text="${dto.phoneNumber}"/></span>
         </div>
-        제목 <span th:text="${inquiryDetail['subject']}" id="subject"></span>
+        <h3>제목</h3>
+        <span th:text="${dto.subject}" id="subject"></span>
         <br>
-        문의 내용
-        <div th:text="${inquiryDetail['content']}" id="content"></div>
-<!--        <div class="imageContainer" th:if="${!inquiryDetail['productName']}">-->
-<!--            <table>-->
-<!--                <tr>-->
-<!--                    <td rowspan="4" style="height: 120px; width: 120px;">-->
-<!--                        <img src="${inquiryDetail['productImageUrl']}" alt="${inquiryDetail['productName']}">-->
-<!--                    </td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td style="font-weight: bold;" th:text="${inquiryDetail['productBrand']}"/>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td th:text="${inquiryDetail['productName']}"/>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td style="color: lightgray;" th:text="${inquiryDetail['productName']}"></td>-->
-<!--                </tr>-->
-<!--            </table>-->
-<!--        </div>-->
+        <h3> 문의 내용</h3>
+        <div th:text="${dto.content}" class="content"></div>
+        <!-- 문의 이미지 -->
+        <div class="imageContainer" th:if="${list != null and list.size() > 0}">
+            <table>
+                <tr th:each="image : ${list}">
+                    <td rowspan="4">
+                        <img th:src="${image.imageUrl}" th:alt="${image.imageUrl}" style="height: 75px; width: 75px;">
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <!-- 상품 이미지 -->
+        <div class="productContainer" th:if="${dto.productName != null}">
+            <h4>문의하신 상품</h4>
+            <table>
+                <tr>
+                    <td rowspan="4">
+                        <img th:src="${dto.productImgUrl}" th:alt="${dto.productName}"
+                             style="height: 120px; width: 120px">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-weight: bold;" th:text="${dto.brand}"/>
+                </tr>
+                <tr>
+                    <td th:text="${dto.productName}"/>
+                </tr>
+                <tr>
+                    <td style="color: lightgray" th:text="${dto.description}"/>
+                </tr>
+            </table>
+        </div>
+        <!-- 답변 -->
+        <div th:if="${dto.reply != null}" class="reply-container">
+            <h3>답변</h3>
+            <div  class="reply" th:text="${dto.reply}"/>
+        </div>
         <div class="finalButtons">
             <a th:href="@{inquiryList}">목록으로</a>
-            <a th:href="@{modify}">수정</a>
-            <a th:href="@{delete}">삭제</a>
+            <th:block th:if="${dto.getStatusCode() == 1}">
+                <a th:href="@{/inquiry/modify/{inquiryId}(inquiryId=${dto.inquiryId})}">수정</a>
+            </th:block>
+            <a th:href="@{/inquiry/delete/{inquiryId}(inquiryId=${dto.inquiryId})}">삭제</a>
         </div>
     </div>
 </div>

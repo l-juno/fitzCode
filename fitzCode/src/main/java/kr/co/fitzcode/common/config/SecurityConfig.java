@@ -73,7 +73,10 @@ public class SecurityConfig {
                                     "/joinSuccess",
                                     "/pwEmail",
                                     "/resetPw",
-                                    "/resetPwSuccess"
+                                    "/resetPwSuccess",
+                                    "/inquiry/searchProduct",
+                                    "/inquiry/searchOrderList",
+                                    "/inquiry/selectedProduct"
                             ).permitAll()
                             .requestMatchers("/admin/dashboard")
                             .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")
@@ -112,9 +115,9 @@ public class SecurityConfig {
                             .failureHandler(failureHandler())
                             .permitAll();
                 })
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedHandler(accessDeniedHandler())
-                )
+//                .exceptionHandling(exceptionHandling ->
+//                        exceptionHandling.accessDeniedHandler(accessDeniedHandler())
+//                )
                 .logout(logout -> {
                     logout
                             .logoutUrl("/logout")
