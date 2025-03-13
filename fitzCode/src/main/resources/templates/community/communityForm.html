@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>communityForm</title>
+    <style>
+        main {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #496b9a;
+            font-size: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 95%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 200px;
+        }
+
+        .form-group input[type="file"] {
+            padding: 0;
+        }
+
+        .tag-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag-input input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .tag {
+            background-color: #496b9a;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .tag-input button {
+            background-color: #496b9a;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .tag-input button:hover {
+            background-color: #355c7d;
+        }
+
+        .form-group .error {
+            color: red;
+            font-size: 12px;
+        }
+
+        .submit-button {
+            background-color: #496b9a;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #355c7d;
+        }
+
+        /* 이미지 미리보기 슬라이드 효과 */
+        .image-preview-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            margin-top: 15px;
+            padding-bottom: 10px; /* 스크롤바와 겹치지 않게 */
+        }
+
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* 파일 이름 리스트 */
+        .file-name-list {
+            margin-top: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .file-name-list li {
+            padding: 5px;
+            background-color: #f4f4f4;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<!-- 메인 콘텐츠 -->
+<main>
+    <h1>커뮤니티 글 작성</h1>
+
+    <form action="#" method="post" enctype="multipart/form-data">
+        <!-- 제목 입력 -->
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
+            <div class="error" id="titleError"></div>
+        </div>
+
+        <!-- 내용 입력 -->
+        <div class="form-group">
+            <label for="content">내용</label>
+            <textarea id="content" name="content" placeholder="내용을 입력하세요" required></textarea>
+            <div class="error" id="contentError"></div>
+        </div>
+
+        <!-- 이미지 첨부 -->
+        <div class="form-group">
+            <label for="image">이미지 첨부</label>
+            <input type="file" id="image" name="image" accept="image/*" multiple>
+            <!-- 이미지 미리보기 컨테이너 -->
+            <div id="imagePreviewContainer" class="image-preview-container"></div>
+            <!-- 파일 이름 리스트 -->
+            <ul id="fileNameList" class="file-name-list"></ul>
+        </div>
+
+        <!-- 상품 태그 -->
+        <div class="form-group">
+            <label for="tags">상품 태그</label>
+            <div class="tag-input">
+                <input type="text" id="tagInput" placeholder="상품 태그를 입력하고 엔터를 눌러 추가" />
+                <button type="button" id="addTagButton">태그 추가</button>
+            </div>
+            <br><br>
+            <div id="tagList" class="tag-list"></div>
+        </div>
+        <br>
+        <!-- 제출 버튼 -->
+        <div class="form-group">
+            <button type="submit" class="submit-button">글 작성하기</button>
+        </div>
+    </form>
+</main>
+
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+<script>
+    // 이미지 선택 시 기존 선택된 이미지를 유지하고 새로 선택한 이미지도 추가하는 기능
+    document.getElementById("image").addEventListener("change", function(event) {
+        const files = event.target.files;
+        const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+        const fileNameList = document.getElementById("fileNameList");
+
+        if (files) {
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const imgContainer = document.createElement("div");
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("image-preview");
+                    imgContainer.appendChild(img);
+
+                    // 이미지 클릭 시 해당 이미지 삭제
+                    img.addEventListener("click", function() {
+                        imagePreviewContainer.removeChild(imgContainer);
+                        fileNameList.removeChild(fileNameList.querySelector(`[data-file="${file.name}"]`));
+                    });
+
+                    imagePreviewContainer.appendChild(imgContainer);
+                };
+
+                reader.readAsDataURL(file);
+
+                // 파일 이름 리스트에 추가
+                const fileNameItem = document.createElement("li");
+                fileNameItem.textContent = file.name;
+                fileNameItem.setAttribute("data-file", file.name);
+                fileNameList.appendChild(fileNameItem);
+            });
+        }
+    });
+
+    // 태그 추가 기능
+    document.getElementById("addTagButton").addEventListener("click", function() {
+        const tagInput = document.getElementById("tagInput");
+        const tagValue = tagInput.value.trim();
+
+        if (tagValue) {
+            const tagList = document.getElementById("tagList");
+
+            // 태그 div 생성
+            const tag = document.createElement("div");
+            tag.classList.add("tag");
+            tag.textContent = tagValue;
+
+            // 태그 클릭 시 삭제
+            tag.addEventListener("click", function() {
+                tagList.removeChild(tag);
+            });
+
+            // 태그 추가
+            tagList.appendChild(tag);
+            tagInput.value = ""; // 입력 필드 비우기
+        }
+    });
+
+    // 폼 제출 시 검증 (예시)
+    document.querySelector("form").addEventListener("submit", function(event) {
+        let isValid = true;
+
+        // 제목 검증
+        const title = document.getElementById("title");
+        if (!title.value.trim()) {
+            document.getElementById("titleError").textContent = "제목을 입력하세요.";
+            isValid = false;
+        } else {
+            document.getElementById("titleError").textContent = "";
+        }
+
+        // 내용 검증
+        const content = document.getElementById("content");
+        if (!content.value.trim()) {
+            document.getElementById("contentError").textContent = "내용을 입력하세요.";
+            isValid = false;
+        } else {
+            document.getElementById("contentError").textContent = "";
+        }
+
+        if (!isValid) {
+            event.preventDefault(); // 폼 제출 막기
+        }
+    });
+</script>
+
+</body>
+</html>
