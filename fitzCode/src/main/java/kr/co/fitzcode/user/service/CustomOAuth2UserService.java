@@ -6,14 +6,17 @@ import kr.co.fitzcode.common.dto.CustomOAuth2User;
 import kr.co.fitzcode.common.dto.KakaoResponse;
 import kr.co.fitzcode.common.dto.NaverResponse;
 import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.webmvc.ui.SwaggerIndexTransformer;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -22,60 +25,63 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserMapper userMapper;
     private final HttpServletRequest request;
-
+    private final SwaggerIndexTransformer indexPageTransformer;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         System.out.println("oAuth2User >>>>>>>>>>>>>>>>>>>>>>>" + oAuth2User);
-        // 어떤 정보가 넘어 오는지 확인
+        // 어떤 정보가 넘어오는지 확인
         String registerId = userRequest.getClientRegistration().getRegistrationId();
         System.out.println("registerId >>>>>>>>>>>>>>>>>>>>>" + registerId);
 
-        OAuth2Response oAuth2Response = null;
+        HttpSession session = request.getSession();
 
-        // 여기에 카카오 추가
+        OAuth2Response oAuth2Response = null;
+        String userId = null;
+        String userBirth = null;
+
+        // 여기에 카카오와 네이버 응답 추가
         if (registerId.equals("naver")) {
             // 네이버 응답
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registerId.equals("kakao")) {
+            // 카카오 응답
             oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
         } else {
             return null;
         }
 
+        userId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
+        userBirth = oAuth2Response.getBirthyear() + "-" + oAuth2Response.getBirthday();
 
-        // 기존에 있는 사용자라면 데이터 갱신, 신규 사용자라면 데이터 저장
+        // 역할 부여
+        UserRole role = UserRole.USER;
+        int roleId = role.getCode();
 
-        // 정보 제공자 + 제공자가 주는 아이디 로 사용자를 구분
-        // Ex_ naver_eladfkj135, google_1344659012
-        String userId = oAuth2Response.getProvider() + "_" + oAuth2Response.getProviderId();
-        // db 에 이런 회원이 존재하는 확인
+        UserDTO user = null;
+        if (registerId.equals("naver")) {
+            user = userMapper.findByUserNaverId(userId);
+        } else if (registerId.equals("kakao")) {
+            user = userMapper.findByUserKakaoId(userId);
+        }
 
-        // 네이버 고유 아이디로 해당 유저가 있는지 화긴
-        UserDTO user = userMapper.findByUserNaverId(userId);
-
-        HttpSession session = request.getSession();
-
-
-        // 역할 주기
-        // 이게  role_id
-        // null 로 주고 신규 사용자는 무조건 1
-        int role = 1;
-        String birth = oAuth2Response.getBirthyear() + "-" + oAuth2Response.getBirthday();
-
-        // 신규 사용자라면 db 에 데이터 저장
+        // 신규 사용자라면 db에 데이터 저장
         if (user == null) {
             UserDTO newUser = new UserDTO();
-            newUser.setNaverId(userId);
+            if (registerId.equals("naver")) {
+                newUser.setNaverId(userId);
+            } else if (registerId.equals("kakao")) {
+                newUser.setKakaoId(userId);
+            }
             newUser.setUserName(oAuth2Response.getuserName());
             newUser.setNickname(oAuth2Response.getNickname());
             newUser.setEmail(oAuth2Response.getEmail());
             newUser.setPhoneNumber(oAuth2Response.getPhoneNumber());
-            newUser.setBirthDate(birth);
+            newUser.setBirthDate(userBirth);
             newUser.setProfileImage(oAuth2Response.getProfileImageUrl());
-            newUser.setRoleId(1);
+            newUser.setRoleId(roleId);
 
             userMapper.insertUser(newUser);
 
@@ -86,7 +92,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             session.setAttribute("dto", user);
         }
 
-        return new CustomOAuth2User(oAuth2Response, role);
-
+        return new CustomOAuth2User(oAuth2Response, role.getRoleName());
     }
 }

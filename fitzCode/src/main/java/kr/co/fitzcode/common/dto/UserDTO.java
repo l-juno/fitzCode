@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import kr.co.fitzcode.common.enums.UserRole;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -41,4 +42,6 @@ public class UserDTO {
     private LocalDateTime updatedAt;
     // 추가
     private int roleId;
+//    private UserRole roleId;
+
 }
