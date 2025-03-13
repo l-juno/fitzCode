@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    < GARAGEtitle>Sales Status</title>
+    <title>Sales Status</title>
     <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -73,6 +73,9 @@
         .sales-ranking th {
             font-weight: bold;
         }
+        .sales-ranking th:nth-child(3) {
+            text-align: center; /* '총 매출' th 가운데 정렬 (3번째 열) */
+        }
         .sales-ranking td.rank {
             font-weight: bold;
             text-align: center;
@@ -92,6 +95,9 @@
         .sales-ranking td.sales, .sales-ranking td.quantity {
             text-align: right;
             font-weight: bold;
+        }
+        .sales-ranking td.quantity {
+            text-align: center; /* 'quantity' td 가운데 정렬 */
         }
         .pagination {
             display: flex;
@@ -118,8 +124,8 @@
             font-weight: bold;
         }
         .additional-content {
-            width: 530px; /* 조정 (530px -> 500px) */
-            height: 455px; /* 고정 */
+            width: 530px;
+            height: 455px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -275,14 +281,13 @@
             </div>
             <script th:inline="javascript">
                 let currentPage = 1;
-                let totalCount = /*[[${totalCount}]]*/ 0; // 초기 총 항목 수
-                let totalPages = Math.min(Math.ceil(totalCount / 5), 2); // 최대 2페이지로 제한
+                let totalCount = /*[[${totalCount}]]*/ 0;
+                let totalPages = Math.min(Math.ceil(totalCount / 5), 2);
 
                 function updatePagination() {
                     const prevButton = document.getElementById('prevPage');
                     const nextButton = document.getElementById('nextPage');
 
-                    // 총 페이지 수 동적 갱신
                     fetch('/admin/sales/total-count', {
                         method: 'GET',
                         headers: { 'Accept': 'application/json' }
@@ -290,7 +295,7 @@
                         .then(response => response.json())
                         .then(total => {
                             totalCount = total;
-                            totalPages = Math.min(Math.ceil(totalCount / 5), 2); // 최대 2페이지
+                            totalPages = Math.min(Math.ceil(totalCount / 5), 2);
                             prevButton.disabled = currentPage === 1;
                             nextButton.disabled = currentPage === totalPages || totalCount <= 5;
                             prevButton.classList.toggle('active', !prevButton.disabled);
@@ -301,7 +306,7 @@
 
                 function changePage(direction) {
                     const newPage = currentPage + direction;
-                    if (newPage < 1 || newPage > totalPages) return; // 페이지 범위 제한
+                    if (newPage < 1 || newPage > totalPages) return;
 
                     currentPage = newPage;
                     updatePagination();
@@ -332,7 +337,6 @@
                         .catch(error => console.error('Error fetching ranking data:', error));
                 }
 
-                // 초기 로드 시 페이징 상태 설정
                 document.addEventListener('DOMContentLoaded', () => {
                     updatePagination();
                 });
