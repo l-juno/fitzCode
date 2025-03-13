@@ -13,16 +13,13 @@ public class SearchLogServiceImpl implements SearchLogService {
     private final SearchLogMapper searchLogMapper;
 
     @Override
-    public void saveSearchLog(int userId, String keyword) { // 시그니처 맞춤
-        log.debug("Attempting to save search log: userId={}, keyword={}", userId, keyword);
+    public void saveSearchLog(int userId, String keyword) {
         Long count = searchLogMapper.countValidKeyword(keyword);
-        log.debug("Keyword validity check: count={}", count);
 
         if (count != null && count > 0) {
             searchLogMapper.insertSearchLog(userId, keyword);
-            log.debug("Search log saved: userId={}, keyword={}", userId, keyword);
         } else {
-            log.debug("Keyword not found in PRODUCT or CATEGORY, skipping save: keyword={}", keyword);
+            log.debug("키워드를 찾을 수 없음 PRODUCT or CATEGORY : keyword={}", keyword);
         }
     }
 }

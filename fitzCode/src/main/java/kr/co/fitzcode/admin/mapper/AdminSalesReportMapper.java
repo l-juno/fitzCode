@@ -5,6 +5,7 @@ import kr.co.fitzcode.common.dto.SearchRankingDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -30,4 +31,7 @@ public interface AdminSalesReportMapper {
 
     // 오늘 검색된 고유 키워드 수 조회
     int getTotalSearchRankingCount();
+
+    // 이전 날짜의 순위 조회 (search_ranking_history에서)
+    Integer getPreviousRanking(@Param("keyword") String keyword, @Param("date") LocalDate date);
 }

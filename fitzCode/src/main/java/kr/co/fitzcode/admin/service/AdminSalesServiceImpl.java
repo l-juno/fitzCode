@@ -5,6 +5,8 @@ import kr.co.fitzcode.common.dto.ChartDataDTO;
 import kr.co.fitzcode.common.dto.SalesRankingDTO;
 import kr.co.fitzcode.common.dto.SearchRankingDTO;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,6 +20,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AdminSalesServiceImpl implements AdminSalesService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AdminSalesServiceImpl.class);
 
     private final AdminSalesReportMapper adminSalesReportMapper;
 
@@ -97,7 +101,24 @@ public class AdminSalesServiceImpl implements AdminSalesService {
 
     @Override
     public List<SearchRankingDTO> getSearchRanking() {
-        return adminSalesReportMapper.getSearchRanking();
+        // search_log에서 오늘 데이터만으로 순위 계산
+        List<SearchRankingDTO> rankings = adminSalesReportMapper.getSearchRanking();
+        if (rankings == null || rankings.isEmpty()) {
+            logger.warn("No search ranking data found for today.");
+            return new ArrayList<>();
+        }
+
+        for (int i = 0; i < rankings.size(); i++) {
+            SearchRankingDTO dto = rankings.get(i);
+            dto.setCurrentRanking(i + 1); // 1부터 시작하는 현재 순위 설정
+            // previousRanking은 어제 데이터 조회 (없으면 0)
+            Integer prevRank = adminSalesReportMapper.getPreviousRanking(dto.getKeyword(), LocalDate.now().minusDays(1));
+            dto.setPreviousRanking(prevRank != null ? prevRank : 0);
+            dto.setDate(LocalDate.now()); // 현재 날짜 설정
+            logger.debug("Keyword: {}, Current Rank: {}, Previous Rank: {}, Ranking Change: {}",
+                    dto.getKeyword(), dto.getCurrentRanking(), dto.getPreviousRanking(), dto.getRankingChange());
+        }
+        return rankings;
     }
 
     @Override

@@ -38,12 +38,12 @@
             gap: 30px;
         }
         .ranking-container {
-            width: 500px;
+            width: 600px;
             margin-top: 10px;
             margin-left: 0;
         }
         .sales-ranking {
-            width: 500px;
+            width: 600px;
             height: 455px;
             background-color: #fff;
             border-radius: 8px;
@@ -52,15 +52,22 @@
             font-size: 14px;
             border: 1px solid #ddd;
         }
+        .sales-ranking .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
         .sales-ranking h3 {
             font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin: 0;
             text-align: left;
         }
         .sales-ranking table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 30px;
         }
         .sales-ranking th, .sales-ranking td {
             padding: 12px;
@@ -99,8 +106,23 @@
         .sales-ranking td.quantity {
             text-align: center;
         }
+        .sales-ranking .pagination {
+            display: flex;
+            gap: 5px;
+        }
+        .sales-ranking .pagination button {
+            padding: 5px 10px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+        }
+        .sales-ranking .pagination button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
         .additional-content {
-            width: 530px;
+            width: 430px;
             height: 455px;
             background-color: #fff;
             border-radius: 8px;
@@ -120,7 +142,7 @@
         }
         .additional-content th, .additional-content td {
             padding: 12px;
-            text-align: left;
+            text-align: center;
             border-bottom: 1px solid #ddd;
         }
         .additional-content thead {
@@ -131,12 +153,25 @@
         }
         .additional-content td.rank {
             font-weight: bold;
+            color: #333;
+        }
+        .additional-content td.keyword {
             text-align: center;
+            color: #555;
         }
         .additional-content td.quantity {
             text-align: center;
             font-weight: bold;
-            color: red;
+            color: #000;
+        }
+        .additional-content td.rank .increase {
+            color: #28a745;
+        }
+        .additional-content td.rank .decrease {
+            color: #dc3545;
+        }
+        .additional-content td.rank .no-change {
+            color: #6c757d;
         }
         @media screen and (max-width: 900px) {
             .content-row {
@@ -242,12 +277,16 @@
         </script>
     </div>
 
-    <!-- 판매 순위 및 추가 콘텐츠 -->
     <div class="content-row">
-        <!-- 판매 순위 (왼쪽) -->
         <div class="ranking-container">
             <div class="sales-ranking">
-                <h3>판매 상품 순위 (최근 14일)</h3>
+                <div class="header-container">
+                    <h3>판매 상품 순위 (최근 14일)</h3>
+                    <div class="pagination" id="pagination">
+                        <button id="prevPage" onclick="changePage(-1)" disabled><</button>
+                        <button id="nextPage" onclick="changePage(1)">></button>
+                    </div>
+                </div>
                 <table id="ranking-table">
                     <thead>
                     <tr>
@@ -269,10 +308,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="pagination" id="pagination">
-                    <button id="prevPage" onclick="changePage(-1)" disabled><</button>
-                    <button id="nextPage" onclick="changePage(1)">></button>
-                </div>
             </div>
             <script th:inline="javascript">
                 let currentPage = 1;
@@ -346,17 +381,72 @@
                 <tr>
                     <th>순위</th>
                     <th>검색어</th>
-                    <th>오늘 검색</th>
+                    <th>검색량</th>
                 </tr>
                 </thead>
                 <tbody id="search-ranking-body">
                 <tr th:each="item, iter : ${searchRanking}" th:if="${iter.count <= 10}">
-                    <td class="rank" th:text="${item.currentRanking} + '(' + ${item.rankingChange} + ')'"></td>
-                    <td th:text="${item.keyword}"></td>
+                    <td class="rank">
+                        <span th:text="${item.currentRanking}"></span>
+                        <span th:text="' (' + ${item.rankingChange} + ')'">
+                                <span th:switch="${item.rankingChange}">
+                                    <span th:case="'+'" class="increase"></span>
+                                    <span th:case="'-'" class="no-change"></span>
+                                    <span th:default class="decrease"></span>
+                                </span>
+                            </span>
+                    </td>
+                    <td class="keyword" th:text="${item.keyword}"></td>
                     <td class="quantity" th:text="${item.todaySearchCount}"></td>
                 </tr>
                 </tbody>
             </table>
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    fetch('/admin/sales/search-ranking', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('search ranking data:', data);
+                            const tbody = document.getElementById('search-ranking-body');
+                            tbody.innerHTML = '';
+                            if (data.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="3">검색어 데이터가 없습니다.</td></tr>';
+                                return;
+                            }
+                            data.forEach((item, index) => {
+                                const tr = document.createElement('tr');
+                                let changeClass = 'no-change';
+                                if (item.rankingChange && item.rankingChange.startsWith('+')) {
+                                    changeClass = 'increase';
+                                } else if (item.rankingChange && item.rankingChange.startsWith('-') && item.rankingChange !== '-') {
+                                    changeClass = 'decrease';
+                                }
+                                tr.innerHTML = `
+                                <td class="rank">${item.currentRanking}<span class="${changeClass}"> (${item.rankingChange || '-'})</span></td>
+                                <td class="keyword">${item.keyword}</td>
+                                <td class="quantity">${item.todaySearchCount}</td>
+                            `;
+                                tbody.appendChild(tr);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching search ranking:', error);
+                            const tbody = document.getElementById('search-ranking-body');
+                            tbody.innerHTML = '<tr><td colspan="3">데이터를 불러오는 데 실패했습니다.</td></tr>';
+                        });
+                });
+            </script>
         </div>
     </div>
 </div>

@@ -49,7 +49,7 @@ public class AdminSalesController {
     @GetMapping("/search-ranking")
     @ResponseBody
     public List<SearchRankingDTO> getSearchRanking() {
-        return adminSalesService.getSearchRanking(); // 상위 10개 반환
+        return adminSalesService.getSearchRanking();
     }
 
     @GetMapping("/search-total-count")
