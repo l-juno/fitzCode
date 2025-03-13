@@ -1,11 +1,18 @@
 package kr.co.fitzcode.common.controller;
 
 import kr.co.fitzcode.admin.service.SearchLogService;
-import kr.co.fitzcode.common.service.CustomUserDetails;
+import kr.co.fitzcode.common.dto.CustomOAuth2User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -19,12 +26,21 @@ public class FitzCodeController {
     }
 
     @PostMapping("/search")
-    @ResponseBody
-    public String search(@RequestParam("keyword") String keyword,
-                         @AuthenticationPrincipal CustomUserDetails user) {
-        int userId = (user != null) ? user.getUserId() : 0;
+    public ResponseEntity<Map<String, Object>> search(@RequestParam("keyword") String keyword) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        int userId = (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User)
+                ? ((CustomOAuth2User) authentication.getPrincipal()).getUserId()
+                : 0;
+
         searchLogService.saveSearchLog(userId, keyword);
-        return "success";
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "검색이 성공적으로 처리되었습니다.");
+        response.put("keyword", keyword);
+
+//        System.out.println("Search response: " + response);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search/result")
