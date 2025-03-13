@@ -12,8 +12,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -30,9 +31,7 @@ public class SecurityConfig {
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        return (request, response, accessDeniedException) -> {
-            response.sendRedirect("/access-denied");
-        };
+        return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 
     @Bean
@@ -54,6 +53,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityContext(securityContext ->
+                        securityContext.securityContextRepository(new HttpSessionSecurityContextRepository())
+                )
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests
                             .requestMatchers(
@@ -80,8 +82,14 @@ public class SecurityConfig {
                                     "/inquiry/searchOrderList",
                                     "/inquiry/selectedProduct"
                             ).permitAll()
+
+                            // 관리자 전용 페이지
+                            .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+
+                            // 특정 권한이 필요한 페이지
                             .requestMatchers("/admin/dashboard")
-                            .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_INQUIRY")
+
                             .requestMatchers(
                                     "/admin/products",
                                     "/admin/products/*",
@@ -93,18 +101,21 @@ public class SecurityConfig {
                                     "/admin/products/refund/*",
                                     "/admin/shipping",
                                     "/admin/shipping/*"
-                            ).hasRole("LOGISTICS")
+                            ).hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
+
                             .requestMatchers(
                                     "/admin/inquiries",
                                     "/admin/inquiries/*",
                                     "/admin/products/qna/{productId}"
-                            ).hasRole("INQUIRY")
+                            ).hasAnyAuthority("ROLE_ADMIN", "ROLE_INQUIRY")
+
                             .requestMatchers("/admin/notice", "/admin/notice/*")
-                            .hasAnyRole("ADMIN", "LOGISTICS")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
+
                             .requestMatchers("/admin/products/{productId}", "/admin/products/{productId}/**")
-                            .hasAnyRole("ADMIN", "LOGISTICS")
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
-                            .requestMatchers("/api/cart/**").hasRole("USER")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
+
+                            .requestMatchers("/api/cart/**").hasAuthority("ROLE_USER")
                             .anyRequest().authenticated();
                 })
                 .formLogin(formLogin -> {
@@ -117,9 +128,6 @@ public class SecurityConfig {
                             .failureHandler(failureHandler())
                             .permitAll();
                 })
-//                .exceptionHandling(exceptionHandling ->
-//                        exceptionHandling.accessDeniedHandler(accessDeniedHandler())
-//                )
                 .logout(logout -> {
                     logout
                             .logoutUrl("/logout")
@@ -130,13 +138,14 @@ public class SecurityConfig {
                             .permitAll();
                 })
                 .csrf(auth -> auth.disable());
+
         http
-            .oauth2Login(oauth2 ->
-                    oauth2.loginPage("/login")
-                            .defaultSuccessUrl("/", true)
-                            .userInfoEndpoint(userInfoEndpointConfig ->
-                                    userInfoEndpointConfig.userService(customOAuth2UserService))
-            );
+                .oauth2Login(oauth2 ->
+                        oauth2.loginPage("/login")
+                                .defaultSuccessUrl("/", true)
+                                .userInfoEndpoint(userInfoEndpointConfig ->
+                                        userInfoEndpointConfig.userService(customOAuth2UserService))
+                );
 
         return http.build();
     }
