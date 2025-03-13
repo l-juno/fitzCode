@@ -6,28 +6,23 @@
     <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* 대시보드 전체 컨테이너 (사이드바 + 컨텐츠) */
         .dashboard-container {
             display: flex;
-            min-height: 100vh; /* 화면 전체 높이 사용 */
+            min-height: 100vh;
         }
-
-        /* 메인 컨텐츠 (사이드바 크기 제외하고 중앙 정렬) */
         .main-content {
             position: absolute;
             top: 0;
-            left: 350px; /* 오른쪽으로 이동 */
+            left: 350px;
             width: calc(100% - 350px);
             display: flex;
             flex-direction: column;
-            align-items: flex-start; /* 왼쪽 정렬 */
+            align-items: flex-start;
             padding: 20px;
             box-sizing: border-box;
         }
-
-        /* 차트 컨테이너 */
         .chart-container {
-            width: 1030px; /* 고정 */
+            width: 1030px;
             height: 500px;
             margin-bottom: 20px;
             background-color: #fff;
@@ -36,25 +31,19 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             padding: 15px;
         }
-
-        /* 판매 순위와 추가 콘텐츠를 담을 컨테이너 */
         .content-row {
             display: flex;
-            justify-content: space-between; /* 좌우 배치 */
-            width: 1060px; /* 차트와 동일하게 조정 (1080px -> 1030px) */
-            gap: 30px; /* 컨텐츠 사이 공간, 고정 */
+            justify-content: space-between;
+            width: 1060px;
+            gap: 30px;
         }
-
-        /* 판매 순위 테이블 컨테이너 */
         .ranking-container {
-            width: 500px; /* 고정 */
+            width: 500px;
             margin-top: 10px;
-            margin-left: 0; /* 왼쪽 여백 조정 */
+            margin-left: 0;
         }
-
-        /* 판매 순위 테이블 */
         .sales-ranking {
-            width: 500px; /* 고정 */
+            width: 500px;
             height: 455px;
             background-color: #fff;
             border-radius: 8px;
@@ -63,43 +52,31 @@
             font-size: 14px;
             border: 1px solid #ddd;
         }
-
-        /* 제목 스타일 */
         .sales-ranking h3 {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 10px;
             text-align: left;
         }
-
-        /* 테이블 스타일 */
         .sales-ranking table {
             width: 100%;
             border-collapse: collapse;
         }
-
         .sales-ranking th, .sales-ranking td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
-        /* 헤더 스타일 */
         .sales-ranking thead {
             background-color: #f8f9fa;
         }
-
         .sales-ranking th {
             font-weight: bold;
         }
-
-        /* 순위 숫자 스타일 */
         .sales-ranking td.rank {
             font-weight: bold;
             text-align: center;
         }
-
-        /* 이미지 스타일 */
         .sales-ranking td img {
             width: 40px;
             height: 40px;
@@ -108,26 +85,20 @@
             margin-right: 10px;
             vertical-align: middle;
         }
-
-        /* 상품명 스타일 */
         .sales-ranking .product {
             display: flex;
             align-items: center;
         }
-
-        /* 금액 스타일 */
         .sales-ranking td.sales, .sales-ranking td.quantity {
             text-align: right;
             font-weight: bold;
         }
-
         .pagination {
             display: flex;
             justify-content: center;
             margin-top: 10px;
             gap: 10px;
         }
-
         .pagination button {
             padding: 5px 10px;
             cursor: pointer;
@@ -138,18 +109,14 @@
             font-size: 14px;
             transition: color 0.3s;
         }
-
         .pagination button:disabled {
             color: #9e9898;
             cursor: not-allowed;
         }
-
         .pagination button.active {
             color: #496b9a;
             font-weight: bold;
         }
-
-        /* 추가 콘텐츠 컨테이너 */
         .additional-content {
             width: 530px; /* 조정 (530px -> 500px) */
             height: 455px; /* 고정 */
@@ -159,21 +126,16 @@
             padding: 15px;
             border: 1px solid #ddd;
         }
-
-        /* 추가 콘텐츠 내부 스타일 */
         .additional-content h3 {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 10px;
             text-align: left;
         }
-
         .additional-content p {
             font-size: 14px;
             color: #666;
         }
-
-        /* 반응형 스타일 */
         @media screen and (max-width: 900px) {
             .content-row {
                 flex-direction: column;
@@ -186,11 +148,10 @@
                 margin-left: 0;
             }
             .additional-content {
-                width: 500px; /* 모바일에서도 조정된 너비 유지 */
+                width: 500px;
                 margin-top: 20px;
             }
         }
-
         @media screen and (max-width: 768px) {
             .main-content {
                 margin-left: 200px;
@@ -207,7 +168,7 @@
 <body>
 <div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
 <div class="main-content">
-    <!-- 차트 영역 -->
+    <!-- 차트 -->
     <div class="chart-container">
         <canvas id="salesRevenueChart" width="400" height="200"></canvas>
         <script th:inline="javascript">
