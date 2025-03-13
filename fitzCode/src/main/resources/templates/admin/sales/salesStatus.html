@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Status</title>
+    <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        .main-content {
+            position: absolute;
+            top: 0;
+            left: 350px;
+            width: calc(100% - 350px);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .chart-container {
+            width: 1030px;
+            height: 500px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+        .content-row {
+            display: flex;
+            justify-content: space-between;
+            width: 1060px;
+            gap: 30px;
+        }
+        .ranking-container {
+            width: 500px;
+            margin-top: 10px;
+            margin-left: 0;
+        }
+        .sales-ranking {
+            width: 500px;
+            height: 455px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+        }
+        .sales-ranking h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .sales-ranking table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .sales-ranking th, .sales-ranking td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .sales-ranking thead {
+            background-color: #f8f9fa;
+        }
+        .sales-ranking th {
+            font-weight: bold;
+        }
+        .sales-ranking th:nth-child(3) {
+            text-align: center;
+        }
+        .sales-ranking td.rank {
+            font-weight: bold;
+            text-align: center;
+        }
+        .sales-ranking td img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        .sales-ranking .product {
+            display: flex;
+            align-items: center;
+        }
+        .sales-ranking td.sales, .sales-ranking td.quantity {
+            text-align: right;
+            font-weight: bold;
+        }
+        .sales-ranking td.quantity {
+            text-align: center;
+        }
+        .additional-content {
+            width: 530px;
+            height: 455px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+        .additional-content h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+        .additional-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .additional-content th, .additional-content td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .additional-content thead {
+            background-color: #f8f9fa;
+        }
+        .additional-content th {
+            font-weight: bold;
+        }
+        .additional-content td.rank {
+            font-weight: bold;
+            text-align: center;
+        }
+        .additional-content td.quantity {
+            text-align: center;
+            font-weight: bold;
+            color: red;
+        }
+        @media screen and (max-width: 900px) {
+            .content-row {
+                flex-direction: column;
+                width: 100%;
+                align-items: center;
+            }
+            .ranking-container {
+                width: 100%;
+                overflow-x: auto;
+                margin-left: 0;
+            }
+            .additional-content {
+                width: 500px;
+                margin-top: 20px;
+            }
+        }
+        @media screen and (max-width: 768px) {
+            .main-content {
+                margin-left: 200px;
+            }
+            .ranking-container {
+                margin-left: 0;
+            }
+            .chart-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+<div class="main-content">
+    <!-- 차트 -->
+    <div class="chart-container">
+        <canvas id="salesRevenueChart" width="400" height="200"></canvas>
+        <script th:inline="javascript">
+            const revenueData = /*[[${revenueData}]]*/ [];
+            const volumeData = /*[[${volumeData}]]*/ [];
+            const labels = /*[[${labels}]]*/ [];
+
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: revenueData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        order: 1,
+                        type: 'bar',
+                        yAxisID: 'y-axis-revenue'
+                    },
+                    {
+                        label: 'Sales Count',
+                        data: volumeData,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        type: 'line',
+                        order: 0,
+                        yAxisID: 'y-axis-count'
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: {
+                            display: true,
+                            text: '한달 매출현황',
+                            color: '#2f2f32',
+                            align: 'start',
+                            font: { size: 20, weight: 'bold' },
+                            padding: { top: 10, bottom: 20, left: -50 }
+                        }
+                    },
+                    scales: {
+                        'y-axis-revenue': {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: '매출액' },
+                            beginAtZero: true
+                        },
+                        'y-axis-count': {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: '판매수' },
+                            beginAtZero: true,
+                            ticks: { stepSize: 3, max: 24 },
+                            grid: { drawOnChartArea: false }
+                        },
+                        x: { title: { display: true, text: 'Days' } }
+                    }
+                }
+            };
+
+            const salesRevenueChart = new Chart(document.getElementById('salesRevenueChart'), config);
+        </script>
+    </div>
+
+    <!-- 판매 순위 및 추가 콘텐츠 -->
+    <div class="content-row">
+        <!-- 판매 순위 (왼쪽) -->
+        <div class="ranking-container">
+            <div class="sales-ranking">
+                <h3>판매 상품 순위 (최근 14일)</h3>
+                <table id="ranking-table">
+                    <thead>
+                    <tr>
+                        <th>순위</th>
+                        <th>상품</th>
+                        <th>총 매출</th>
+                        <th>판매량</th>
+                    </tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                    <tr th:each="item, iter : ${salesRanking}" th:if="${iter.count <= 5}">
+                        <td class="rank" th:text="${iter.count}"></td>
+                        <td class="product">
+                            <img th:src="${item.imageUrl}" alt="Product Image" th:if="${item.imageUrl}">
+                            <span th:text="${#strings.length(item.productName) > 18} ? ${#strings.substring(item.productName, 0, 18) + '...'} : ${item.productName}"></span>
+                        </td>
+                        <td class="sales" th:text="'₩' + ${#numbers.formatInteger(item.totalSales, 3, 'COMMA')}"></td>
+                        <td class="quantity" th:text="${item.quantitySold}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <button id="prevPage" onclick="changePage(-1)" disabled><</button>
+                    <button id="nextPage" onclick="changePage(1)">></button>
+                </div>
+            </div>
+            <script th:inline="javascript">
+                let currentPage = 1;
+                let totalCount = /*[[${totalCount}]]*/ 0;
+                let totalPages = Math.min(Math.ceil(totalCount / 5), 2);
+
+                function updatePagination() {
+                    const prevButton = document.getElementById('prevPage');
+                    const nextButton = document.getElementById('nextPage');
+
+                    fetch('/admin/sales/total-count', {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    })
+                        .then(response => response.json())
+                        .then(total => {
+                            totalCount = total;
+                            totalPages = Math.min(Math.ceil(totalCount / 5), 2);
+                            prevButton.disabled = currentPage === 1;
+                            nextButton.disabled = currentPage === totalPages || totalCount <= 5;
+                            prevButton.classList.toggle('active', !prevButton.disabled);
+                            nextButton.classList.toggle('active', !nextButton.disabled);
+                        })
+                        .catch(error => console.error('Error fetching total count:', error));
+                }
+
+                function changePage(direction) {
+                    const newPage = currentPage + direction;
+                    if (newPage < 1 || newPage > totalPages) return;
+
+                    currentPage = newPage;
+                    updatePagination();
+
+                    fetch(`/admin/sales/ranking?page=${currentPage}`, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const tbody = document.getElementById('ranking-body');
+                            tbody.innerHTML = '';
+                            data.forEach((item, index) => {
+                                const rank = (currentPage - 1) * 5 + index + 1;
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                                <td class="rank">${rank}</td>
+                                <td class="product">
+                                    ${item.imageUrl ? `<img src="${item.imageUrl}" alt="Product Image">` : ''}
+                                    <span>${item.productName.length > 18 ? item.productName.substring(0, 18) + '...' : item.productName}</span>
+                                </td>
+                                <td class="sales">₩${item.totalSales.toLocaleString()}</td>
+                                <td class="quantity">${item.quantitySold}</td>
+                            `;
+                                tbody.appendChild(tr);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching ranking data:', error));
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    updatePagination();
+                });
+            </script>
+        </div>
+
+        <!-- 검색어 순위 -->
+        <div class="additional-content" style="margin-top: 10px; margin-left: 20px;">
+            <h3>인기 검색어</h3>
+            <table id="search-ranking-table">
+                <thead>
+                <tr>
+                    <th>순위</th>
+                    <th>검색어</th>
+                    <th>오늘 검색</th>
+                </tr>
+                </thead>
+                <tbody id="search-ranking-body">
+                <tr th:each="item, iter : ${searchRanking}" th:if="${iter.count <= 10}">
+                    <td class="rank" th:text="${item.currentRanking} + '(' + ${item.rankingChange} + ')'"></td>
+                    <td th:text="${item.keyword}"></td>
+                    <td class="quantity" th:text="${item.todaySearchCount}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
