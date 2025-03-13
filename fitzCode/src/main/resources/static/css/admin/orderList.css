@@ -33,7 +33,7 @@ h2 {
     font-weight: 600;
     color: #2c3e50;
     margin-bottom: 20px;
-    border-bottom: 2px solid #496b9a;
+    border-bottom: 2px solid #2f2f32;
     padding-bottom: 5px;
     display: inline-block;
 }
@@ -68,7 +68,7 @@ h2 {
 
 .search-container button {
     padding: 8px 16px;
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     border: none;
     border-radius: 5px;
@@ -82,7 +82,7 @@ h2 {
 
 .back-button {
     padding: 8px 16px;
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     border: none;
     border-radius: 5px;
@@ -111,7 +111,7 @@ th, td {
 }
 
 thead {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
 }
 
@@ -168,7 +168,7 @@ td a:hover {
 
 .pagination a.active {
     font-weight: bold;
-    color: #496b9a;
+    color: #2f2f32;
 }
 
 .pagination a.disabled {

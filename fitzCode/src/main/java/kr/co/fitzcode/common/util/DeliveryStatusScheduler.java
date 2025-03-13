@@ -16,7 +16,7 @@ public class DeliveryStatusScheduler {
 
     private final AdminOrderService orderService;
 
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 00시마다 실행함
+    @Scheduled(cron = "0 0 0,6 * * ?")
     public void updateDeliveryStatus() {
         List<DeliveryDTO> deliveries = orderService.getAllDeliveriesInShipping();
         for (DeliveryDTO delivery : deliveries) {

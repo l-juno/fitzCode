@@ -93,7 +93,7 @@ span {
 }
 
 .phonespan{
-    color: black;
+    color: #2f2f32;
     font-size: 12px;
     display: block;
 }
@@ -148,7 +148,7 @@ span {
     cursor: not-allowed;
 }
 .signup-btn.active {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     cursor: pointer;
 }
 

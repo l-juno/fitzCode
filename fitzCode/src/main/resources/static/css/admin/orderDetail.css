@@ -44,7 +44,7 @@ h2::after {
     bottom: -5px;
     width: 90px;
     height: 2px;
-    background-color: #496b9a;
+    background-color: #2f2f32;
 }
 
 .button-group {
@@ -54,7 +54,7 @@ h2::after {
 
 .button-group a {
     padding: 8px 14px;
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     border: none;
     border-radius: 4px;
@@ -106,7 +106,7 @@ th, td {
 }
 
 thead {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
 }
 

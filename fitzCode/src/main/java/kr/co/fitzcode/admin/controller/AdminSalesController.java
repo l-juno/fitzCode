@@ -3,6 +3,7 @@ package kr.co.fitzcode.admin.controller;
 import kr.co.fitzcode.admin.service.AdminSalesService;
 import kr.co.fitzcode.common.dto.ChartDataDTO;
 import kr.co.fitzcode.common.dto.SalesRankingDTO;
+import kr.co.fitzcode.common.dto.SearchRankingDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,8 @@ public class AdminSalesController {
         model.addAttribute("labels", adminSalesService.getDailyLabels());
         model.addAttribute("salesRanking", adminSalesService.getSalesRankingForLast14Days(1, 5)); // 첫 페이지 5개
         model.addAttribute("totalCount", adminSalesService.getTotalSalesRankingCount()); // 총 상품 수
+        model.addAttribute("searchRanking", adminSalesService.getSearchRanking()); // 검색어 순위 추가
+        model.addAttribute("searchTotalCount", adminSalesService.getTotalSearchRankingCount()); // 검색어 총 개수 추가
         return "/admin/sales/salesStatus";
     }
 
@@ -41,5 +44,17 @@ public class AdminSalesController {
     @ResponseBody
     public int getTotalSalesRankingCount() {
         return adminSalesService.getTotalSalesRankingCount();
+    }
+
+    @GetMapping("/search-ranking")
+    @ResponseBody
+    public List<SearchRankingDTO> getSearchRanking() {
+        return adminSalesService.getSearchRanking(); // 상위 10개 반환
+    }
+
+    @GetMapping("/search-total-count")
+    @ResponseBody
+    public int getTotalSearchRankingCount() {
+        return adminSalesService.getTotalSearchRankingCount();
     }
 }

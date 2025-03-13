@@ -3,6 +3,7 @@ package kr.co.fitzcode.admin.service;
 import kr.co.fitzcode.admin.mapper.AdminSalesReportMapper;
 import kr.co.fitzcode.common.dto.ChartDataDTO;
 import kr.co.fitzcode.common.dto.SalesRankingDTO;
+import kr.co.fitzcode.common.dto.SearchRankingDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -70,17 +71,17 @@ public class AdminSalesServiceImpl implements AdminSalesService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
-        int offset = (page - 1) * 5; // 페이지당 5개 고정
+        int offset = (page - 1) * 5;
         int totalCount = adminSalesReportMapper.getTotalSalesRankingCount(startDateTime, endDateTime);
         if (page > 2 || (page == 2 && totalCount <= 5)) {
-            return new ArrayList<>(); // 2페이지 초과 또는 불필요한 경우 빈 리스트
+            return new ArrayList<>();
         }
         return adminSalesReportMapper.getSalesRankingForLast14Days(startDateTime, endDateTime, offset);
     }
 
     @Override
     public List<SalesRankingDTO> getSalesRankingForLast14Days() {
-        return getSalesRankingForLast14Days(1, 5); // 초기 로드 시 첫 페이지 5개
+        return getSalesRankingForLast14Days(1, 5);
     }
 
     @Override
@@ -92,5 +93,15 @@ public class AdminSalesServiceImpl implements AdminSalesService {
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
         return adminSalesReportMapper.getTotalSalesRankingCount(startDateTime, endDateTime);
+    }
+
+    @Override
+    public List<SearchRankingDTO> getSearchRanking() {
+        return adminSalesReportMapper.getSearchRanking();
+    }
+
+    @Override
+    public int getTotalSearchRankingCount() {
+        return adminSalesReportMapper.getTotalSearchRankingCount();
     }
 }

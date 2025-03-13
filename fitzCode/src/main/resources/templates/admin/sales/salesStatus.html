@@ -74,7 +74,7 @@
             font-weight: bold;
         }
         .sales-ranking th:nth-child(3) {
-            text-align: center; /* '총 매출' th 가운데 정렬 (3번째 열) */
+            text-align: center;
         }
         .sales-ranking td.rank {
             font-weight: bold;
@@ -97,31 +97,7 @@
             font-weight: bold;
         }
         .sales-ranking td.quantity {
-            text-align: center; /* 'quantity' td 가운데 정렬 */
-        }
-        .pagination {
-            display: flex;
-            justify-content: center;
-            margin-top: 10px;
-            gap: 10px;
-        }
-        .pagination button {
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 5px;
-            border: none;
-            background-color: transparent;
-            color: #496b9a;
-            font-size: 14px;
-            transition: color 0.3s;
-        }
-        .pagination button:disabled {
-            color: #9e9898;
-            cursor: not-allowed;
-        }
-        .pagination button.active {
-            color: #496b9a;
-            font-weight: bold;
+            text-align: center;
         }
         .additional-content {
             width: 530px;
@@ -138,9 +114,29 @@
             margin-bottom: 10px;
             text-align: left;
         }
-        .additional-content p {
-            font-size: 14px;
-            color: #666;
+        .additional-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .additional-content th, .additional-content td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .additional-content thead {
+            background-color: #f8f9fa;
+        }
+        .additional-content th {
+            font-weight: bold;
+        }
+        .additional-content td.rank {
+            font-weight: bold;
+            text-align: center;
+        }
+        .additional-content td.quantity {
+            text-align: center;
+            font-weight: bold;
+            color: red;
         }
         @media screen and (max-width: 900px) {
             .content-row {
@@ -216,7 +212,7 @@
                         title: {
                             display: true,
                             text: '한달 매출현황',
-                            color: 'black',
+                            color: '#2f2f32',
                             align: 'start',
                             font: { size: 20, weight: 'bold' },
                             padding: { top: 10, bottom: 20, left: -50 }
@@ -262,7 +258,6 @@
                     </tr>
                     </thead>
                     <tbody id="ranking-body">
-                    <!-- Thymeleaf로 초기 데이터 렌더링 시 5개로 제한 -->
                     <tr th:each="item, iter : ${salesRanking}" th:if="${iter.count <= 5}">
                         <td class="rank" th:text="${iter.count}"></td>
                         <td class="product">
@@ -343,10 +338,25 @@
             </script>
         </div>
 
-        <!-- 추가 콘텐츠 (오른쪽) -->
+        <!-- 검색어 순위 -->
         <div class="additional-content" style="margin-top: 10px; margin-left: 20px;">
-            <h3>추가 콘텐츠</h3>
-            <p>여기에 추가적인 내용을 채울 수 있습니다.</p>
+            <h3>인기 검색어</h3>
+            <table id="search-ranking-table">
+                <thead>
+                <tr>
+                    <th>순위</th>
+                    <th>검색어</th>
+                    <th>오늘 검색</th>
+                </tr>
+                </thead>
+                <tbody id="search-ranking-body">
+                <tr th:each="item, iter : ${searchRanking}" th:if="${iter.count <= 10}">
+                    <td class="rank" th:text="${item.currentRanking} + '(' + ${item.rankingChange} + ')'"></td>
+                    <td th:text="${item.keyword}"></td>
+                    <td class="quantity" th:text="${item.todaySearchCount}"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

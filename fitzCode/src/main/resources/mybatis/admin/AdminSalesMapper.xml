@@ -61,4 +61,40 @@
         ) AS subquery
     </select>
 
+    <!-- 검색어 순위 상위 10개 조회 -->
+    <select id="getSearchRanking" resultType="kr.co.fitzcode.common.dto.SearchRankingDTO">
+        SELECT
+        sl.search_keyword AS keyword,
+        COUNT(*) AS todaySearchCount,
+        sh.ranking AS currentRanking,
+        COALESCE(sh_prev.ranking, 0) AS previousRanking
+        FROM
+        search_log sl
+        JOIN
+        search_ranking_history sh
+        ON sl.search_keyword = sh.search_keyword
+        AND sh.date = CURDATE()
+        LEFT JOIN
+        search_ranking_history sh_prev
+        ON sl.search_keyword = sh_prev.search_keyword
+        AND sh_prev.date = DATE_SUB(CURDATE(), INTERVAL 1 DAY)
+        WHERE
+        DATE(sl.search_time) = CURDATE()
+        GROUP BY
+        sl.search_keyword, sh.ranking
+        ORDER BY
+        sh.ranking ASC
+        LIMIT 10
+    </select>
+
+    <!-- 오늘 검색된 고유 키워드 수 조회 -->
+    <select id="getTotalSearchRankingCount" resultType="int">
+        SELECT
+        COUNT(DISTINCT search_keyword)
+        FROM
+        search_log
+        WHERE
+        DATE(search_time) = CURDATE()
+    </select>
+
 </mapper>
