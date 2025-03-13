@@ -39,7 +39,7 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler successHandler() {
         return (request, response, authentication) -> {
             System.out.println("Login successful: " + authentication.getName());
-            response.sendRedirect("/admin/sales");
+            response.sendRedirect("/");
         };
     }
 
