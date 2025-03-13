@@ -14,7 +14,7 @@
         }
 
         h1 {
-            color: #496b9a;
+            color: #2f2f32;
             font-size: 20px;
             text-align: center;
             margin-bottom: 30px;
@@ -37,14 +37,17 @@
             border: 1px solid #ccc;
             border-radius: 4px;
             font-size: 14px;
+            resize: none;
         }
 
+
+
         .form-group textarea {
-            height: 200px;
+            height: 100px;
         }
 
         .form-group input[type="file"] {
-            padding: 0;
+            padding: 10px;
         }
 
         .tag-input {
@@ -58,25 +61,19 @@
             min-width: 200px;
         }
 
-        .tag {
-            background-color: #496b9a;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            display: inline-block;
-        }
 
         .tag-input button {
-            background-color: #496b9a;
+            background-color: #2f2f32;
             color: white;
             border: none;
             padding: 10px;
             border-radius: 4px;
             cursor: pointer;
+            margin-top: 10px;
         }
 
         .tag-input button:hover {
-            background-color: #355c7d;
+            background-color: #2f2f32;
         }
 
         .form-group .error {
@@ -85,7 +82,7 @@
         }
 
         .submit-button {
-            background-color: #496b9a;
+            background-color: #2f2f32;
             color: white;
             padding: 12px 20px;
             border: none;
@@ -96,33 +93,40 @@
         }
 
         .submit-button:hover {
-            background-color: #355c7d;
+            background-color: #2f2f32;
         }
 
-        /* 이미지 미리보기 슬라이드 효과 */
+        /*!* 이미지 미리보기 슬라이드 효과 *!*/
+        /*.image-preview-container {*/
+        /*    display: flex;*/
+        /*    overflow-x: auto;*/
+        /*    gap: 10px;*/
+        /*    margin-top: 15px;*/
+        /*    padding-bottom: 10px; !* 스크롤바와 겹치지 않게 *!*/
+        /*}*/
+
+        /*.image-preview img {*/
+        /*    width: 100%;*/
+        /*    height: 100%;*/
+        /*    object-fit: cover;*/
+        /*    border-radius: 8px;*/
+        /*}*/
+
         .image-preview-container {
             display: flex;
             overflow-x: auto;
             gap: 10px;
             margin-top: 15px;
-            padding-bottom: 10px; /* 스크롤바와 겹치지 않게 */
+            padding-bottom: 10px;
         }
 
-        .image-preview {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .image-preview img {
-            width: 100%;
-            height: 100%;
+        .image-preview-container img {
+            max-width: 100px;
+            max-height: 100px;
             object-fit: cover;
-            border-radius: 8px;
+            margin: 5px;
         }
 
-        /* 파일 이름 리스트 */
         .file-name-list {
             margin-top: 10px;
             list-style: none;
@@ -135,6 +139,99 @@
             margin-bottom: 5px;
             border-radius: 4px;
         }
+
+        .line{
+            width: 100%;
+            height: 4tpx;
+            background-color: #2f2f32;
+            margin: 20px 0;
+        }
+
+        .style-tag {
+            background-color: #f4f4f4;
+            border: 1px solid #2f2f32;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .style-tag.selected {
+            background-color: #2f2f32;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            margin: 150px auto;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .close {
+            float: right;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .search-results {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        /*.product-item {*/
+        /*    width: 100px;*/
+        /*    height: 100px;*/
+        /*    position: relative;*/
+        /*    cursor: pointer;*/
+        /*    border: 2px solid transparent;*/
+        /*    border-radius: 8px;*/
+        /*    overflow: hidden;*/
+        /*}*/
+
+        .product-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 선택한 상품 표시 */
+        #tagList {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .selected-product {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .selected-product img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
@@ -145,7 +242,9 @@
 <!-- 메인 콘텐츠 -->
 <main>
     <h1>커뮤니티 글 작성</h1>
-
+    <div class="line">
+    </div>
+    <br>
     <form action="#" method="post" enctype="multipart/form-data">
         <!-- 제목 입력 -->
         <div class="form-group">
@@ -175,17 +274,39 @@
         <div class="form-group">
             <label for="tags">상품 태그</label>
             <div class="tag-input">
-                <input type="text" id="tagInput" placeholder="상품 태그를 입력하고 엔터를 눌러 추가" />
                 <button type="button" id="addTagButton">태그 추가</button>
             </div>
             <br><br>
             <div id="tagList" class="tag-list"></div>
         </div>
+
+        <!-- 모달 -->
+        <div id="productModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>상품 검색</h2>
+                <input type="text" id="searchInput" placeholder="상품을 검색하세요">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+        </div>
+        <!-- 스타일 태그 -->
+        <div class="form-group">
+            <label>스타일 태그 (최대 2개 선택 가능)</label>
+            <div id="styleTagContainer">
+                <button type="button" class="style-tag" data-style="캐주얼">캐주얼</button>
+                <button type="button" class="style-tag" data-style="스트릿">스트릿</button>
+                <button type="button" class="style-tag" data-style="시크">시크</button>
+                <button type="button" class="style-tag" data-style="고프코어">고프코어</button>
+                <button type="button" class="style-tag" data-style="클래식">클래식</button>
+            </div>
+            <div id="selectedStyles" class="selected-styles"></div>
+        </div>
         <br>
         <!-- 제출 버튼 -->
         <div class="form-group">
-            <button type="submit" class="submit-button">글 작성하기</button>
+            <button type="submit" class="submit-button">업로드</button>
         </div>
+
     </form>
 </main>
 
@@ -193,92 +314,156 @@
 <div th:replace="~{fragments/footer}"></div>
 
 <script>
-    // 이미지 선택 시 기존 선택된 이미지를 유지하고 새로 선택한 이미지도 추가하는 기능
-    document.getElementById("image").addEventListener("change", function(event) {
+        document.getElementById("image").addEventListener("change", function(event) {
         const files = event.target.files;
         const imagePreviewContainer = document.getElementById("imagePreviewContainer");
         const fileNameList = document.getElementById("fileNameList");
 
         if (files) {
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
+        Array.from(files).forEach(file => {
+        // 이미 존재하는 파일인지 체크 (삭제 후 다시 추가될 수 있도록)
+        const existingFile = fileNameList.querySelector(`[data-file="${file.name}"]`);
+        if (existingFile) return;  // 이미 추가된 파일이면 처리하지 않음
 
-                reader.onload = function(e) {
-                    const imgContainer = document.createElement("div");
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.classList.add("image-preview");
-                    imgContainer.appendChild(img);
+        const reader = new FileReader();
 
-                    // 이미지 클릭 시 해당 이미지 삭제
-                    img.addEventListener("click", function() {
-                        imagePreviewContainer.removeChild(imgContainer);
-                        fileNameList.removeChild(fileNameList.querySelector(`[data-file="${file.name}"]`));
-                    });
+        reader.onload = function(e) {
+        const imgContainer = document.createElement("div");
+        const img = document.createElement("img");
+        img.src = e.target.result;
+        img.classList.add("image-preview");
+        imgContainer.appendChild(img);
 
-                    imagePreviewContainer.appendChild(imgContainer);
-                };
+        // 이미지 클릭 시 해당 이미지 삭제
+        img.addEventListener("click", function() {
+        imagePreviewContainer.removeChild(imgContainer);
+        fileNameList.removeChild(fileNameList.querySelector(`[data-file="${file.name}"]`));
+    });
 
-                reader.readAsDataURL(file);
+        imagePreviewContainer.appendChild(imgContainer);
+    };
 
-                // 파일 이름 리스트에 추가
-                const fileNameItem = document.createElement("li");
-                fileNameItem.textContent = file.name;
-                fileNameItem.setAttribute("data-file", file.name);
-                fileNameList.appendChild(fileNameItem);
+        reader.readAsDataURL(file);
+
+        // 파일 이름 리스트에 추가
+        const fileNameItem = document.createElement("li");
+        fileNameItem.textContent = file.name;
+        fileNameItem.setAttribute("data-file", file.name);
+        fileNameList.appendChild(fileNameItem);
+    });
+    }
+    });
+
+// 태그 추가 기능
+document.getElementById("addTagButton").addEventListener("click", function() {
+const tagInput = document.getElementById("tagInput");
+const tagValue = tagInput.value.trim();
+
+if (tagValue) {
+const tagList = document.getElementById("tagList");
+
+// 태그 div 생성
+const tag = document.createElement("div");
+tag.classList.add("tag");
+tag.textContent = tagValue;
+
+// 태그 클릭 시 삭제
+tag.addEventListener("click", function() {
+tagList.removeChild(tag);
+});
+
+// 태그 추가
+tagList.appendChild(tag);
+tagInput.value = ""; // 입력 필드 비우기
+}
+});
+
+// 폼 제출 시 검증 (예시)
+document.querySelector("form").addEventListener("submit", function(event) {
+let isValid = true;
+
+// 제목 검증
+const title = document.getElementById("title");
+if (!title.value.trim()) {
+document.getElementById("titleError").textContent = "제목을 입력하세요.";
+isValid = false;
+} else {
+document.getElementById("titleError").textContent = "";
+}
+
+// 내용 검증
+const content = document.getElementById("content");
+if (!content.value.trim()) {
+document.getElementById("contentError").textContent = "내용을 입력하세요.";
+isValid = false;
+} else {
+document.getElementById("contentError").textContent = "";
+}
+
+if (!isValid) {
+event.preventDefault(); // 폼 제출 막기
+}
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+const styleButtons = document.querySelectorAll(".style-tag");
+let selectedStyles = [];
+
+        styleButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const style = button.getAttribute("data-style");
+
+                // 이미 선택된 스타일이면 제거
+                if (selectedStyles.includes(style)) {
+                    selectedStyles = selectedStyles.filter(s => s !== style);
+                    button.classList.remove("selected");
+                    return;
+                }
+
+                // 최대 2개까지 선택 가능
+                if (selectedStyles.length < 2) {
+                    selectedStyles.push(style);
+                    button.classList.add("selected");
+                }
             });
+        });
+    });
+
+    document.getElementById("searchInput").addEventListener("input", async function() {
+        const query = this.value.trim();
+        if (query === "") return;
+
+        const resultsContainer = document.getElementById("searchResults");
+
+        try {
+            const response = await fetch(`/products/search?keyword=${encodeURIComponent(query)}`);
+            const products = await response.json();
+
+            resultsContainer.innerHTML = "";
+            products.forEach(product => {
+                const productDiv = document.createElement("div");
+                productDiv.classList.add("product-item");
+                productDiv.innerHTML = `<img src="${product.image}" alt="${product.name}">`;
+
+                // 선택 기능
+                productDiv.addEventListener("click", function() {
+                    toggleProductSelection(product, productDiv);
+                });
+
+                resultsContainer.appendChild(productDiv);
+            });
+        } catch (error) {
+            console.error("검색 요청 실패", error);
         }
     });
 
-    // 태그 추가 기능
     document.getElementById("addTagButton").addEventListener("click", function() {
-        const tagInput = document.getElementById("tagInput");
-        const tagValue = tagInput.value.trim();
-
-        if (tagValue) {
-            const tagList = document.getElementById("tagList");
-
-            // 태그 div 생성
-            const tag = document.createElement("div");
-            tag.classList.add("tag");
-            tag.textContent = tagValue;
-
-            // 태그 클릭 시 삭제
-            tag.addEventListener("click", function() {
-                tagList.removeChild(tag);
-            });
-
-            // 태그 추가
-            tagList.appendChild(tag);
-            tagInput.value = ""; // 입력 필드 비우기
-        }
+        document.getElementById("productModal").style.display = "block";
     });
 
-    // 폼 제출 시 검증 (예시)
-    document.querySelector("form").addEventListener("submit", function(event) {
-        let isValid = true;
-
-        // 제목 검증
-        const title = document.getElementById("title");
-        if (!title.value.trim()) {
-            document.getElementById("titleError").textContent = "제목을 입력하세요.";
-            isValid = false;
-        } else {
-            document.getElementById("titleError").textContent = "";
-        }
-
-        // 내용 검증
-        const content = document.getElementById("content");
-        if (!content.value.trim()) {
-            document.getElementById("contentError").textContent = "내용을 입력하세요.";
-            isValid = false;
-        } else {
-            document.getElementById("contentError").textContent = "";
-        }
-
-        if (!isValid) {
-            event.preventDefault(); // 폼 제출 막기
-        }
+    // 모달 닫기
+    document.querySelector(".close").addEventListener("click", function() {
+        document.getElementById("productModal").style.display = "none";
     });
 </script>
 

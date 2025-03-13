@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/community")
 public class CommentController {
 
-    @GetMapping("list")
+    @GetMapping("/list")
     public String list(){
-        return "community/communityForm";
+        return "community/communityList";
+    }
+
+    @GetMapping("/detail")
+    public String detail(){
+        return "community/communityDetail";
     }
 }

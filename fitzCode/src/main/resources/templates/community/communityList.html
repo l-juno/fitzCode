@@ -2,7 +2,96 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>communityList</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community List</title>
+    <style>
+        /*body {*/
+        /*    font-family: Arial, sans-serif;*/
+        /*    margin: 0;*/
+        /*    padding: 0;*/
+        /*    background-color: #f4f4f4;*/
+        /*}*/
+
+
+
+        /* 카테고리 버튼 스타일 */
+        .category-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .category-button {
+            background-color: #2f2f32;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .category-button:hover {
+            background-color: #2f2f32;
+        }
+
+        /* 글 작성 버튼 스타일 */
+        .create-post-button {
+            background-color: #2f2f32;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .create-post-button:hover {
+            background-color: #2f2f32;
+        }
+
+        /* 게시물 카드 스타일 */
+        .community-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 0 20px;
+        }
+
+        .community-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .community-card h3 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .community-card p {
+            color: #777;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .community-card .read-more {
+            color: #007BFF;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .community-card .read-more:hover {
+            text-decoration: underline;
+        }
+
+    </style>
 </head>
 <body>
 
@@ -10,38 +99,52 @@
 <div th:replace="~{fragments/header}"></div>
 
 <!-- 메인 콘텐츠 -->
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+<div class="category-container">
+    <button class="category-button">All</button>
+    <button class="category-button">클래식</button>
+    <button class="category-button">캐주얼</button>
+    <button class="category-button">스트릿</button>
+    <button class="category-button">시크</button>
+    <button class="category-button">고프코어</button>
+</div>
+
+<!-- 글 작성 버튼 -->
+<a href="/community/detail">
+    <button class="create-post-button">글 작성</button>
+</a>
+
+<div class="community-list">
+    <div class="community-card">
+        <h3>커뮤니티 글 제목 1</h3>
+        <p>커뮤니티 글 내용 1. 글 내용이 길어지면 이 부분에 내용이 들어갑니다...</p>
+        <a href="#" class="read-more">더 보기</a>
+    </div>
+    <div class="community-card">
+        <h3>커뮤니티 글 제목 2</h3>
+        <p>커뮤니티 글 내용 2. 글 내용이 길어지면 이 부분에 내용이 들어갑니다...</p>
+        <a href="#" class="read-more">더 보기</a>
+    </div>
+    <div class="community-card">
+        <h3>커뮤니티 글 제목 3</h3>
+        <p>커뮤니티 글 내용 3. 글 내용이 길어지면 이 부분에 내용이 들어갑니다...</p>
+        <a href="#" class="read-more">더 보기</a>
+    </div>
+    <div class="community-card">
+        <h3>커뮤니티 글 제목 4</h3>
+        <p>커뮤니티 글 내용 4. 글 내용이 길어지면 이 부분에 내용이 들어갑니다...</p>
+        <a href="#" class="read-more">더 보기</a>
+    </div>
+    <div class="community-card">
+        <h3>커뮤니티 글 제목 5</h3>
+        <p>커뮤니티 글 내용 5. 글 내용이 길어지면 이 부분에 내용이 들어갑니다...</p>
+        <a href="#" class="read-more">더 보기</a>
+    </div>
+    <div class="community-card">
+        <h3>커뮤니티 글 제목 6</h3>
+        <p>커뮤니티 글 내용 6. 글 내용이 길어지면 이 부분에 내용이 들어갑니다...</p>
+        <a href="#" class="read-more">더 보기</a>
+    </div>
+</div>
 
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
