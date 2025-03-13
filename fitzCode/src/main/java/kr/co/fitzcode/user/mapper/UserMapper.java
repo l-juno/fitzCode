@@ -17,7 +17,7 @@ public interface UserMapper {
     UserDTO findByEmail(String email);
     // CommonUserController 에서 사용
     UserDTO getUserByEmail(String email);
-    List<Integer> getUserRolesByUserId(int userId);
+    List<Integer> getUserRolesByUserId(@Param("userId") int userId);
     UserDTO findByUserNaverId(String naverId);
     void updateUserNaver(UserDTO user);
     UserDTO findByUserKakaoId(String kakaoId);
