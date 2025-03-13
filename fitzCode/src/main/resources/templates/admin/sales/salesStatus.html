@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Status</title>
+    <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* 대시보드 전체 컨테이너 (사이드바 + 컨텐츠) */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh; /* 화면 전체 높이 사용 */
+        }
+
+        /* 메인 컨텐츠 (사이드바 크기 제외하고 중앙 정렬) */
+        .main-content {
+            position: absolute;
+            top: 0;
+            left: 300px; /* 사이드바 크기 제외 */
+            width: calc(100% - 300px);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 왼쪽 정렬 */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 차트 컨테이너 */
+        .chart-container {
+            width: 1000px;
+            height: 500px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+
+        /* 판매 순위와 추가 콘텐츠를 담을 컨테이너 */
+        .content-row {
+            display: flex;
+            justify-content: space-between; /* 좌우 배치 */
+            width: 1000px; /* 차트와 동일한 너비 */
+            gap: 20px; /* 왼쪽과 오른쪽 콘텐츠 간격 */
+        }
+
+        /* 판매 순위 테이블 컨테이너 */
+        .ranking-container {
+            width: 500px; /* 왼쪽 절반 너비 */
+            margin-top: 10px;
+            margin-left: 0; /* 왼쪽 여백 조정 */
+        }
+
+        /* 판매 순위 테이블 */
+        .sales-ranking {
+            width: 500px;
+            height: 455px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+        }
+
+        /* 제목 스타일 */
+        .sales-ranking h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        /* 테이블 스타일 */
+        .sales-ranking table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .sales-ranking th, .sales-ranking td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* 헤더 스타일 */
+        .sales-ranking thead {
+            background-color: #f8f9fa;
+        }
+
+        .sales-ranking th {
+            font-weight: bold;
+        }
+
+        /* 순위 숫자 스타일 */
+        .sales-ranking td.rank {
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* 이미지 스타일 */
+        .sales-ranking td img {
+            width: 40px;
+            height: 40px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        /* 상품명 스타일 */
+        .sales-ranking .product {
+            display: flex;
+            align-items: center;
+        }
+
+        /* 금액 스타일 */
+        .sales-ranking td.sales, .sales-ranking td.quantity {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            background-color: transparent;
+            color: #496b9a;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .pagination button:disabled {
+            color: #9e9898;
+            cursor: not-allowed;
+        }
+
+        .pagination button.active {
+            color: #496b9a;
+            font-weight: bold;
+        }
+
+        /* 추가 콘텐츠 컨테이너 */
+        .additional-content {
+            width: 480px; /* 오른쪽 나머지 공간 활용 (1000px - 500px - 20px gap) */
+            height: 455px; /* .sales-ranking과 동일한 높이 */
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        /* 추가 콘텐츠 내부 스타일 */
+        .additional-content h3 {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .additional-content p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 반응형 스타일 */
+        @media screen and (max-width: 900px) {
+            .content-row {
+                flex-direction: column;
+                width: 100%;
+                align-items: center;
+            }
+            .ranking-container {
+                width: 100%;
+                overflow-x: auto;
+                margin-left: 0;
+            }
+            .additional-content {
+                width: 500px; /* 모바일에서 동일한 너비 */
+                margin-top: 20px;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .main-content {
+                margin-left: 200px;
+            }
+            .ranking-container {
+                margin-left: 0;
+            }
+            .chart-container {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+<div class="main-content">
+    <!-- 차트 영역 -->
+    <div class="chart-container">
+        <canvas id="salesRevenueChart" width="400" height="200"></canvas>
+        <script th:inline="javascript">
+            const revenueData = /*[[${revenueData}]]*/ [];
+            const volumeData = /*[[${volumeData}]]*/ [];
+            const labels = /*[[${labels}]]*/ [];
+
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Revenue',
+                        data: revenueData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                        order: 1,
+                        type: 'bar',
+                        yAxisID: 'y-axis-revenue'
+                    },
+                    {
+                        label: 'Sales Count',
+                        data: volumeData,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        type: 'line',
+                        order: 0,
+                        yAxisID: 'y-axis-count'
+                    }
+                ]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: {
+                            display: true,
+                            text: '최근 한달 매출현황',
+                            font: { size: 25, weight: 'bold' },
+                            padding: { top: 10, bottom: 20, left: -50 }
+                        }
+                    },
+                    scales: {
+                        'y-axis-revenue': {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: 'Amount (Revenue)' },
+                            beginAtZero: true
+                        },
+                        'y-axis-count': {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: 'Count (Sales)' },
+                            beginAtZero: true,
+                            ticks: { stepSize: 3, max: 24 },
+                            grid: { drawOnChartArea: false }
+                        },
+                        x: { title: { display: true, text: 'Days' } }
+                    }
+                }
+            };
+
+            const salesRevenueChart = new Chart(document.getElementById('salesRevenueChart'), config);
+        </script>
+    </div>
+
+    <!-- 판매 순위 및 추가 콘텐츠 -->
+    <div class="content-row">
+        <!-- 판매 순위 (왼쪽) -->
+        <div class="ranking-container">
+            <div class="sales-ranking">
+                <h3>판매 상품 순위 (최근 14일)</h3>
+                <table id="ranking-table">
+                    <thead>
+                    <tr>
+                        <th>순위</th>
+                        <th>상품</th>
+                        <th>총 매출</th>
+                        <th>판매량</th>
+                    </tr>
+                    </thead>
+                    <tbody id="ranking-body">
+                    <!-- Thymeleaf로 초기 데이터 렌더링 시 5개로 제한 -->
+                    <tr th:each="item, iter : ${salesRanking}" th:if="${iter.count <= 5}">
+                        <td class="rank" th:text="${iter.count}"></td>
+                        <td class="product">
+                            <img th:src="${item.imageUrl}" alt="Product Image" th:if="${item.imageUrl}">
+                            <span th:text="${#strings.length(item.productName) > 18} ? ${#strings.substring(item.productName, 0, 18) + '...'} : ${item.productName}"></span>
+                        </td>
+                        <td class="sales" th:text="'₩' + ${#numbers.formatInteger(item.totalSales, 3, 'COMMA')}"></td>
+                        <td class="quantity" th:text="${item.quantitySold}"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="pagination" id="pagination">
+                    <button id="prevPage" onclick="changePage(-1)" disabled><</button>
+                    <button id="nextPage" onclick="changePage(1)">></button>
+                </div>
+            </div>
+            <script th:inline="javascript">
+                let currentPage = 1;
+                let totalCount = /*[[${totalCount}]]*/ 0; // 초기 총 항목 수
+                let totalPages = Math.min(Math.ceil(totalCount / 5), 2); // 최대 2페이지로 제한
+
+                function updatePagination() {
+                    const prevButton = document.getElementById('prevPage');
+                    const nextButton = document.getElementById('nextPage');
+
+                    // 총 페이지 수 동적 갱신
+                    fetch('/admin/sales/total-count', {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    })
+                        .then(response => response.json())
+                        .then(total => {
+                            totalCount = total;
+                            totalPages = Math.min(Math.ceil(totalCount / 5), 2); // 최대 2페이지
+                            prevButton.disabled = currentPage === 1;
+                            nextButton.disabled = currentPage === totalPages || totalCount <= 5;
+                            prevButton.classList.toggle('active', !prevButton.disabled);
+                            nextButton.classList.toggle('active', !nextButton.disabled);
+                        })
+                        .catch(error => console.error('Error fetching total count:', error));
+                }
+
+                function changePage(direction) {
+                    const newPage = currentPage + direction;
+                    if (newPage < 1 || newPage > totalPages) return; // 페이지 범위 제한
+
+                    currentPage = newPage;
+                    updatePagination();
+
+                    fetch(`/admin/sales/ranking?page=${currentPage}`, {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            const tbody = document.getElementById('ranking-body');
+                            tbody.innerHTML = '';
+                            data.forEach((item, index) => {
+                                const rank = (currentPage - 1) * 5 + index + 1;
+                                const tr = document.createElement('tr');
+                                tr.innerHTML = `
+                                <td class="rank">${rank}</td>
+                                <td class="product">
+                                    ${item.imageUrl ? `<img src="${item.imageUrl}" alt="Product Image">` : ''}
+                                    <span>${item.productName.length > 18 ? item.productName.substring(0, 18) + '...' : item.productName}</span>
+                                </td>
+                                <td class="sales">₩${item.totalSales.toLocaleString()}</td>
+                                <td class="quantity">${item.quantitySold}</td>
+                            `;
+                                tbody.appendChild(tr);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching ranking data:', error));
+                }
+
+                // 초기 로드 시 페이징 상태 설정
+                document.addEventListener('DOMContentLoaded', () => {
+                    updatePagination();
+                });
+            </script>
+        </div>
+
+        <!-- 추가 콘텐츠 (오른쪽) -->
+        <div class="additional-content">
+            <h3>추가 콘텐츠</h3>
+            <p>여기에 추가적인 내용을 채울 수 있습니다.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

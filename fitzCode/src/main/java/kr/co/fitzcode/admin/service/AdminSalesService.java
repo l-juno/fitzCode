@@ -1,16 +1,14 @@
 package kr.co.fitzcode.admin.service;
 
-import java.time.LocalDate;
+import kr.co.fitzcode.common.dto.ChartDataDTO;
+import kr.co.fitzcode.common.dto.SalesRankingDTO;
+
 import java.util.List;
 
 public interface AdminSalesService {
-
-    // 최근 기간의 날짜 레이블 조회
-    List<String> getDailyLabels(LocalDate startDate, LocalDate endDate);
-
-    // 최근 기간의 일별 매출액을 조회
-    List<Integer> getDailySalesAmount(LocalDate startDate, LocalDate endDate);
-
-    //최근 기간의 일별 판매 수량을 조회
-    List<Integer> getDailySalesQuantity(LocalDate startDate, LocalDate endDate);
+    ChartDataDTO getSalesDataForLast30Days();
+    List<String> getDailyLabels();
+    List<SalesRankingDTO> getSalesRankingForLast14Days(int page, int size);
+    List<SalesRankingDTO> getSalesRankingForLast14Days();
+    int getTotalSalesRankingCount();
 }
