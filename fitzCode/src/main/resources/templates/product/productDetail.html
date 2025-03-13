@@ -172,10 +172,6 @@
     
 </div>
 
-
-<p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.userId}"></span></p>
-<p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.username}"></span></p>
-
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 
@@ -492,6 +488,7 @@
     }
     
     // TODO save paymentId to payment table
+    // TODO: mark as transaction when creating order fails, transaction needs to roll back
     function createOrder(response) {
         console.log("creating order");
         console.log(response);
@@ -513,7 +510,7 @@
                 console.log("success");
                 console.log(data);
                 // redirect to order page with orderId
-                // window.location.href = "/order/${data.orderId}"
+                window.location.href = `/order/${data.orderId}`;
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching products:", error);

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.springframework.org/schema/security">
+<head>
+    <meta charset="UTF-8">
+    <title>cart</title>
+    <th:block th:replace="~{fragments/header :: header-head}"></th:block>
+    <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/order/cart.css}" />
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+    
+   <div class="title">
+       <h2>Cart</h2>
+   </div>
+    
+    <div class="cart-list">
+        
+        
+        <div class="cart-item">
+            <input type="checkbox" class="cart-item-checkbox">
+            <div class="cart-item-content">
+                <img src="https://img.soldout.co.kr/item_thumb/2023/11/24/61df9a66-ea23-4169-aaee-6923f3b1ca77.png/soldout/resize/1000/optimize"
+                     alt="Product Image" class="cart-item-image">
+                
+                <div class="cart-item-details">
+                    <!-- Product Name and Added On -->
+                    <div class="cart-item-header">
+                        <p class="cart-item-name">Product Name</p>
+                        <p class="cart-item-date">Added on: 2025-03-13</p>
+                    </div>
+                    
+                    <!-- Product Description -->
+                    <p class="cart-item-description">Product Description</p>
+                    
+                    <!-- Price (in red) -->
+                    <p class="cart-item-price">Price: <span class="item-price">$XX.XX</span></p>
+                    
+                    <!-- Options (size, quantity, coupon) -->
+                    <div class="cart-item-options">
+                        <label>Size:</label>
+                        <select class="cart-item-size-selector">
+                            <option value="S">S</option>
+                            <option value="M" selected>M</option>
+                            <option value="L">L</option>
+                        </select>
+                        
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn decrease">-</button>
+                            <input type="number" class="quantity-input" value="1" min="1">
+                            <button class="quantity-btn increase">+</button>
+                        </div>
+                        
+                        <label>Coupon:</label>
+                        <select class="cart-item-coupon">
+                            <option value="none">No Coupon</option>
+                            <option value="discount10">10% Off</option>
+                            <option value="freeshipping">Free Shipping</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Final Price -->
+                    <p class="cart-item-final-price">Final Price: <span class="final-price">$XX.XX</span></p>
+                </div>
+            </div>
+        </div>
+        
+    
+    </div>
+    
+</div>
+
+
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+
+
+
+<script>
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".cart-item").forEach(cartItem => {
+            const decreaseBtn = cartItem.querySelector(".quantity-btn.decrease");
+            const increaseBtn = cartItem.querySelector(".quantity-btn.increase");
+            const quantityInput = cartItem.querySelector(".quantity-input");
+            const priceElement = cartItem.querySelector(".item-price");
+            const finalPriceElement = cartItem.querySelector(".final-price");
+
+            const updateFinalPrice = () => {
+                const basePrice = parseFloat(priceElement.textContent.replace("$", "")) || 0;
+                const quantity = parseInt(quantityInput.value) || 1;
+                finalPriceElement.textContent = `$${(basePrice * quantity).toFixed(2)}`;
+            };
+
+            decreaseBtn.addEventListener("click", () => {
+                let value = parseInt(quantityInput.value);
+                if (value > 1) {
+                    quantityInput.value = value - 1;
+                    updateFinalPrice();
+                }
+            });
+
+            increaseBtn.addEventListener("click", () => {
+                let value = parseInt(quantityInput.value);
+                quantityInput.value = value + 1;
+                updateFinalPrice();
+            });
+
+            quantityInput.addEventListener("input", updateFinalPrice);
+
+            // Initialize final price
+            updateFinalPrice();
+        });
+
+        document.querySelectorAll(".cart-item").forEach(item => {
+            item.addEventListener("click", function (event) {
+                // Prevent toggling the checkbox when clicking on interactive elements
+                if (event.target.closest(".quantity-btn") || event.target.closest(".quantity-input") || event.target.closest(".cart-item-coupon") || event.target.closest(".cart-item-size-selector") || event.target.tagName === "INPUT") {
+                    return; // Stop here if the target is a button, input field, or select element
+                }
+
+                let checkbox = this.querySelector(".cart-item-checkbox");
+                checkbox.checked = !checkbox.checked; // Toggle checkbox when clicking outside interactive elements
+            });
+        });
+    });
+
+
+
+
+</script>
+
+
+</html>

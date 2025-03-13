@@ -25,12 +25,6 @@
     </div>
     
     
-    <p>Current user: <span th:text="${#authentication.name}"></span></p>
-    <p>User roles: <span th:text="${#authentication.authorities}"></span></p>
-    <p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.userId}"></span></p>
-    
-    
-    
     
     
     

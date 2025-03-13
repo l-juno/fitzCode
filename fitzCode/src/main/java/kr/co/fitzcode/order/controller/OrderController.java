@@ -13,4 +13,9 @@ public class OrderController {
         return "order/order";
     }
 
+    @GetMapping("/cart")
+    public String cart(Model model) {
+        return "order/cart";
+    }
+
 }
