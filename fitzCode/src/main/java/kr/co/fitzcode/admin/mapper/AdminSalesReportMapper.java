@@ -34,4 +34,8 @@ public interface AdminSalesReportMapper {
 
     // 이전 날짜의 순위 조회 (search_ranking_history에서)
     Integer getPreviousRanking(@Param("keyword") String keyword, @Param("date") LocalDate date);
+
+    // 특정 기간 동안의 총 매출 조회
+    Long getTotalIncome(@Param("startDate") LocalDateTime startDate,
+                        @Param("endDate") LocalDateTime endDate);
 }

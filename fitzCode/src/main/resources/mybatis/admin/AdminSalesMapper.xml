@@ -61,7 +61,7 @@
         ) AS subquery
     </select>
 
-    <!-- 상위 10개 검색어 조회 (search_ranking_history에 의존하지 않음) -->
+    <!-- 상위 10개 검색어 조회 -->
     <select id="getSearchRanking" resultType="kr.co.fitzcode.common.dto.SearchRankingDTO">
         SELECT search_keyword AS keyword, COUNT(*) AS todaySearchCount
         FROM search_log
@@ -87,11 +87,18 @@
         LIMIT 1
     </select>
 
-    <!-- search_ranking_history에 삽입/갱신 (배치 작업에서 사용 가능) -->
+    <!-- search_ranking_history에 삽입/갱신 (배치 작업에서 사용) -->
     <insert id="insertOrUpdateSearchRanking">
         INSERT INTO search_ranking_history (search_keyword, ranking, date)
         VALUES (#{keyword}, #{ranking}, #{date})
         ON DUPLICATE KEY UPDATE ranking = #{ranking}
     </insert>
 
+    <!-- 특정 기간 동안의 총 매출 조회 -->
+    <select id="getTotalIncome" resultType="long">
+        SELECT COALESCE(SUM(total_price), 0)
+        FROM ORDERS
+        WHERE created_at BETWEEN #{startDate} AND #{endDate}
+        AND order_status != 4;
+    </select>
 </mapper>

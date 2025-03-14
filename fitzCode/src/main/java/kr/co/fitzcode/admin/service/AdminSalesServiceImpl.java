@@ -125,4 +125,39 @@ public class AdminSalesServiceImpl implements AdminSalesService {
     public int getTotalSearchRankingCount() {
         return adminSalesReportMapper.getTotalSearchRankingCount();
     }
+
+    @Override
+    public long getTotalIncome(LocalDateTime startDate, LocalDateTime endDate) {
+        Long totalIncome = adminSalesReportMapper.getTotalIncome(startDate, endDate);
+        return totalIncome != null ? totalIncome : 0L;
+    }
+
+    @Override
+    public double calculateExpenseGrowthRate(long lastMonthIncome, long thisMonthIncome) {
+        if (lastMonthIncome == 0) return 0; // 0으로 나누기 방지요ㅇ
+        return ((double) (thisMonthIncome - lastMonthIncome) / lastMonthIncome) * 100;
+    }
+
+    @Override
+    public double calculateIncomeGrowthRate(long lastMonthIncome, long thisMonthIncome) {
+        if (lastMonthIncome == 0) return 0; // 0으로 나누기 방지용
+        return ((double) (thisMonthIncome - lastMonthIncome) / lastMonthIncome) * 100;
+    }
+
+    @Override
+    public long calculatePredictedIncome(LocalDateTime startOfThisMonth, LocalDateTime endOfThisMonth, long totalIncome, LocalDate today) {
+        // 현재까지의 일수 계산
+        long daysPassed = ChronoUnit.DAYS.between(startOfThisMonth.toLocalDate(), today) + 1; // +1해서 오늘 포함함
+        // 이번 달의 총 일수
+        int totalDaysInMonth = today.lengthOfMonth();
+        // 하루 평균 매출
+        long averageDailyIncome = daysPassed > 0 ? totalIncome / daysPassed : totalIncome;
+        // 남은 일수
+        long remainingDays = totalDaysInMonth - daysPassed;
+        // 예상 매출 = 현재 매출 + (하루 평균 * 남은 일수)
+        long predicted = totalIncome + (averageDailyIncome * remainingDays);
+        logger.debug("Predicted Income: totalIncome={}, daysPassed={}, averageDailyIncome={}, remainingDays={}, predicted={}",
+                totalIncome, daysPassed, averageDailyIncome, remainingDays, predicted);
+        return predicted > 0 ? predicted : totalIncome; // 마이너스 나오는거 방지함
+    }
 }

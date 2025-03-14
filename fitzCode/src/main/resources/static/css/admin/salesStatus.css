@@ -286,6 +286,18 @@
     color: #FF4423;
 }
 
+.percentage-value {
+    color: inherit;
+}
+
+.percentage-increase .percentage-value {
+    color: #7FB519;
+}
+
+.percentage-decrease .percentage-value {
+    color: #FF4423;
+}
+
 @media (max-width: 900px) {
     .total-box {
         flex-direction: column;

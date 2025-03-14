@@ -20,11 +20,14 @@
                 <path d="M13.8699 3.19994C13.5599 3.10994 13.2399 3.03994 12.9099 2.99994C11.9499 2.87994 11.0299 2.94994 10.1699 3.19994C10.4599 2.45994 11.1799 1.93994 12.0199 1.93994C12.8599 1.93994 13.5799 2.45994 13.8699 3.19994Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
             </svg>
+            <!-- 알림이 없으므로 빨간 점 표시 안 함 -->
             <span th:if="${hasNotifications}" class="notification-dot"></span>
         </button>
         <div class="user-info">
+            <!-- 기본 프로필 이미지 -->
             <img src="/img/default-profile.png" alt="User Profile" class="user-image" />
-            <span class="user-name">admin</span>
+            <!-- 사용자 이름 -->
+            <span class="user-name" th:text="${loggedUserName}"></span>
         </div>
     </div>
 </div>
@@ -33,7 +36,7 @@
         <div class="total-box">
             <div class="total-box__left">
                 <div class="header-container">
-                    <h3 class="section-header">Total Income</h3>
+                    <h3 class="section-header">이번달 매출</h3>
                     <svg class="up-arrow" width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="42" height="42" rx="8" fill="#F6F7F9"/>
                         <path d="M27.0702 18.57L21.0002 12.5L14.9302 18.57" stroke="#7FB519" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
@@ -43,21 +46,21 @@
                 <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(totalIncome, 3, 'COMMA')}">
                     <span class="price-currency">(원)</span>
                 </h1>
-                <p><span class="percentage-increase" th:text="${incomeGrowthRate} + '%'"></span> increase compared to last week</p>
+                <p>
+                <span class="percentage-increase">
+                    <span th:text="${#numbers.formatInteger(incomeGrowthRate, 0)} + '%'" class="percentage-value"></span>
+                    <span style="color: #90A3BF;"> increase compared to last month</span>
+                </span>
+                </p>
             </div>
             <div class="total-box__right">
                 <div class="header-container">
-                    <h3 class="section-header">Total Expense</h3>
-                    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="42" height="42" rx="8" fill="#F6F7F9"/>
-                        <path d="M27.0702 23.43L21.0002 29.5L14.9302 23.43" stroke="#FF4423" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 12.5V29.33" stroke="#FF4423" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <h3 class="section-header">이번달 예상 매출</h3>
                 </div>
-                <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(totalExpense, 3, 'COMMA')}">
+                <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(predictedIncome, 3, 'COMMA')}">
                     <span class="price-currency">(원)</span>
                 </h1>
-                <p><span class="percentage-decrease" th:text="${expenseGrowthRate} + '%'"></span> decrease compared to last week</p>
+                <p style="color: #90A3BF;">현재까지 매출을 기반으로 한 예상치입니다</p>
             </div>
         </div>
     </div>
