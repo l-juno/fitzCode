@@ -81,7 +81,10 @@
             font-weight: bold;
         }
         .sales-ranking th:nth-child(3) {
-            text-align: center;
+            text-align: center; /* "총 매출" 가운데 정렬 */
+        }
+        .sales-ranking th:nth-child(4) {
+            text-align: center; /* "판매량" 가운데 정렬 */
         }
         .sales-ranking td.rank {
             font-weight: bold;
@@ -99,12 +102,13 @@
             display: flex;
             align-items: center;
         }
-        .sales-ranking td.sales, .sales-ranking td.quantity {
-            text-align: right;
+        .sales-ranking td.sales {
+            text-align: center; /* "총 매출" 데이터 가운데 정렬 */
             font-weight: bold;
         }
         .sales-ranking td.quantity {
             text-align: center;
+            font-weight: bold;
         }
         .sales-ranking .pagination {
             display: flex;
@@ -127,23 +131,28 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
+            padding: 10px;
             border: 1px solid #ddd;
+            box-sizing: border-box;
         }
         .additional-content h3 {
             font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin: 0 0 5px 0;
             text-align: left;
         }
         .additional-content table {
             width: 100%;
             border-collapse: collapse;
+            margin: 0;
         }
         .additional-content th, .additional-content td {
-            padding: 12px;
+            padding: 2px;
             text-align: center;
             border-bottom: 1px solid #ddd;
+            font-size: 14px;
+            line-height: 1.2;
+            height: 33px;
         }
         .additional-content thead {
             background-color: #f8f9fa;
@@ -374,8 +383,8 @@
         </div>
 
         <!-- 검색어 순위 -->
-        <div class="additional-content" style="margin-top: 10px; margin-left: 20px;">
-            <h3>인기 검색어</h3>
+        <div class="additional-content" style="margin-top: 10px; margin-left: 20px; height: 486px;">
+            <h3 class="search2" style="margin-top: 8px; margin-bottom: 10px;">인기 검색어</h3>
             <table id="search-ranking-table">
                 <thead>
                 <tr>
@@ -389,12 +398,12 @@
                     <td class="rank">
                         <span th:text="${item.currentRanking}"></span>
                         <span th:text="' (' + ${item.rankingChange} + ')'">
-                                <span th:switch="${item.rankingChange}">
-                                    <span th:case="'+'" class="increase"></span>
-                                    <span th:case="'-'" class="no-change"></span>
-                                    <span th:default class="decrease"></span>
-                                </span>
+                            <span th:switch="${item.rankingChange}">
+                                <span th:case="'+'" class="increase"></span>
+                                <span th:case="'-'" class="no-change"></span>
+                                <span th:default class="decrease"></span>
                             </span>
+                        </span>
                     </td>
                     <td class="keyword" th:text="${item.keyword}"></td>
                     <td class="quantity" th:text="${item.todaySearchCount}"></td>
