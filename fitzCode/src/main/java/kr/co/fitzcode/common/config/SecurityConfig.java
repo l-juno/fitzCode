@@ -15,6 +15,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
 
 @Configuration
 @EnableWebSecurity
@@ -48,6 +49,11 @@ public class SecurityConfig {
             System.out.println("Login failed: " + exception.getMessage());
             response.sendRedirect("/login?error=true");
         };
+    }
+
+    @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
     }
 
     @Bean
@@ -136,6 +142,13 @@ public class SecurityConfig {
                             .clearAuthentication(true)
                             .deleteCookies("JSESSIONID")
                             .permitAll();
+                })
+                .sessionManagement(session -> {
+                    session
+                            .sessionFixation().migrateSession()
+                            .maximumSessions(1) // 동일 사용자의 최대 세션 수
+                            .maxSessionsPreventsLogin(true) // 추가 로그인 차단
+                            .expiredUrl("/login?expired"); // 세션 만료 시 리다이렉트
                 })
                 .csrf(auth -> auth.disable());
 

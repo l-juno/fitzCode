@@ -14,6 +14,11 @@
 <div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
 <div class="top-container">
     <div class="user-nav">
+        <!-- 타이머와 연장 버튼을 왼쪽으로 이동 -->
+        <div class="timer-section">
+            <span id="session-timer" class="session-timer">00:00</span>
+            <button id="extend-session-btn" class="extend-btn">시간 연장</button>
+        </div>
         <button class="notification">
             <svg class="notification__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M12.0201 2.91003C8.71009 2.91003 6.02009 5.60003 6.02009 8.91003V11.8C6.02009 12.41 5.76009 13.34 5.45009 13.86L4.30009 15.77C3.59009 16.95 4.08009 18.26 5.38009 18.7C9.69009 20.14 14.3401 20.14 18.6501 18.7C19.8601 18.3 20.3901 16.87 19.7301 15.77L18.5801 13.86C18.2801 13.34 18.0201 12.41 18.0201 11.8V8.91003C18.0201 5.61003 15.3201 2.91003 12.0201 2.91003Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/>
@@ -183,8 +188,8 @@
                         headers: { 'Accept': 'application/json' }
                     })
                         .then(response => response.json())
-                        .then(total => {
-                            totalCount = total;
+                        .then(full => {
+                            totalCount = full;
                             totalPages = Math.min(Math.ceil(totalCount / 5), 2);
                             prevButton.disabled = currentPage === 1;
                             nextButton.disabled = currentPage === totalPages || totalCount <= 5;
@@ -310,5 +315,6 @@
         </div>
     </div>
 </div>
+<script th:src="@{/js/admin/adminHeader.js}"></script>
 </body>
 </html>
