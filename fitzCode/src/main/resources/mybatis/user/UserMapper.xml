@@ -50,10 +50,32 @@
         WHERE naver_id = #{naverId}
     </select>
 
+    <select id="findByUserKakaoId" resultType="UserDTO">
+        SELECT * FROM USER
+        WHERE kakao_id = #{kakaoId}
+    </select>
+
     <update id="updateUser" parameterType="UserDTO">
         UPDATE USER
         SET email = #{email}
         WHERE naver_id = #{naverId}
     </update>
 
+    <update id="updateUserNaver" parameterType="UserDTO">
+        UPDATE USER
+        SET email = #{email}
+        WHERE kakao_id = #{kakaoId}
+    </update>
+
+    <update id="updateUserKakao" parameterType="UserDTO">
+        UPDATE USER
+        SET email = #{email}
+        WHERE kakao_id = #{kakaoId}
+    </update>
+
+    <select id="findEmailByNameAndPhoneNumber" resultType="String">
+        SELECT email FROM USER
+        WHERE user_name = #{userName}
+        AND phone_number = #{phoneNumber}
+    </select>
 </mapper>
