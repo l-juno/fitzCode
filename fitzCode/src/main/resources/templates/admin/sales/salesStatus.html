@@ -4,216 +4,64 @@
     <meta charset="UTF-8">
     <title>Sales Status</title>
     <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin/salesStatus.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        .main-content {
-            position: absolute;
-            top: 0;
-            left: 350px;
-            width: calc(100% - 350px);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .chart-container {
-            width: 1030px;
-            height: 500px;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-        }
-        .content-row {
-            display: flex;
-            justify-content: space-between;
-            width: 1060px;
-            gap: 30px;
-        }
-        .ranking-container {
-            width: 600px;
-            margin-top: 10px;
-            margin-left: 0;
-        }
-        .sales-ranking {
-            width: 600px;
-            height: 455px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-        }
-        .sales-ranking .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .sales-ranking h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0;
-            text-align: left;
-        }
-        .sales-ranking table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
-        .sales-ranking th, .sales-ranking td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .sales-ranking thead {
-            background-color: #f8f9fa;
-        }
-        .sales-ranking th {
-            font-weight: bold;
-        }
-        .sales-ranking th:nth-child(3) {
-            text-align: center; /* "총 매출" 가운데 정렬 */
-        }
-        .sales-ranking th:nth-child(4) {
-            text-align: center; /* "판매량" 가운데 정렬 */
-        }
-        .sales-ranking td.rank {
-            font-weight: bold;
-            text-align: center;
-        }
-        .sales-ranking td img {
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            object-fit: cover;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        .sales-ranking .product {
-            display: flex;
-            align-items: center;
-        }
-        .sales-ranking td.sales {
-            text-align: center; /* "총 매출" 데이터 가운데 정렬 */
-            font-weight: bold;
-        }
-        .sales-ranking td.quantity {
-            text-align: center;
-            font-weight: bold;
-        }
-        .sales-ranking .pagination {
-            display: flex;
-            gap: 5px;
-        }
-        .sales-ranking .pagination button {
-            padding: 5px 10px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            font-size: 16px;
-        }
-        .sales-ranking .pagination button:disabled {
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-        .additional-content {
-            width: 430px;
-            height: 455px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-        }
-        .additional-content h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 0 0 5px 0;
-            text-align: left;
-        }
-        .additional-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 0;
-        }
-        .additional-content th, .additional-content td {
-            padding: 2px;
-            text-align: center;
-            border-bottom: 1px solid #ddd;
-            font-size: 14px;
-            line-height: 1.2;
-            height: 33px;
-        }
-        .additional-content thead {
-            background-color: #f8f9fa;
-        }
-        .additional-content th {
-            font-weight: bold;
-        }
-        .additional-content td.rank {
-            font-weight: bold;
-            color: #333;
-        }
-        .additional-content td.keyword {
-            text-align: center;
-            color: #555;
-        }
-        .additional-content td.quantity {
-            text-align: center;
-            font-weight: bold;
-            color: #000;
-        }
-        .additional-content td.rank .increase {
-            color: #28a745;
-        }
-        .additional-content td.rank .decrease {
-            color: #dc3545;
-        }
-        .additional-content td.rank .no-change {
-            color: #6c757d;
-        }
-        @media screen and (max-width: 900px) {
-            .content-row {
-                flex-direction: column;
-                width: 100%;
-                align-items: center;
-            }
-            .ranking-container {
-                width: 100%;
-                overflow-x: auto;
-                margin-left: 0;
-            }
-            .additional-content {
-                width: 500px;
-                margin-top: 20px;
-            }
-        }
-        @media screen and (max-width: 768px) {
-            .main-content {
-                margin-left: 200px;
-            }
-            .ranking-container {
-                margin-left: 0;
-            }
-            .chart-container {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
 <div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+<div class="top-container">
+    <div class="user-nav">
+        <button class="notification">
+            <svg class="notification__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.0201 2.91003C8.71009 2.91003 6.02009 5.60003 6.02009 8.91003V11.8C6.02009 12.41 5.76009 13.34 5.45009 13.86L4.30009 15.77C3.59009 16.95 4.08009 18.26 5.38009 18.7C9.69009 20.14 14.3401 20.14 18.6501 18.7C19.8601 18.3 20.3901 16.87 19.7301 15.77L18.5801 13.86C18.2801 13.34 18.0201 12.41 18.0201 11.8V8.91003C18.0201 5.61003 15.3201 2.91003 12.0201 2.91003Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round"/>
+                <path d="M13.8699 3.19994C13.5599 3.10994 13.2399 3.03994 12.9099 2.99994C11.9499 2.87994 11.0299 2.94994 10.1699 3.19994C10.4599 2.45994 11.1799 1.93994 12.0199 1.93994C12.8599 1.93994 13.5799 2.45994 13.8699 3.19994Z" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M15.02 19.0601C15.02 20.7101 13.67 22.0601 12.02 22.0601C11.2 22.0601 10.44 21.7201 9.90002 21.1801C9.36002 20.6401 9.02002 19.8801 9.02002 19.0601" stroke="#292D32" stroke-width="1.5" stroke-miterlimit="10"/>
+            </svg>
+            <span th:if="${hasNotifications}" class="notification-dot"></span>
+        </button>
+        <div class="user-info">
+            <img src="/img/default-profile.png" alt="User Profile" class="user-image" />
+            <span class="user-name">admin</span>
+        </div>
+    </div>
+</div>
 <div class="main-content">
+    <div class="total-box-container">
+        <div class="total-box">
+            <div class="total-box__left">
+                <div class="header-container">
+                    <h3 class="section-header">Total Income</h3>
+                    <svg class="up-arrow" width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="42" height="42" rx="8" fill="#F6F7F9"/>
+                        <path d="M27.0702 18.57L21.0002 12.5L14.9302 18.57" stroke="#7FB519" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 29.5V12.67" stroke="#7FB519" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(totalIncome, 3, 'COMMA')}">
+                    <span class="price-currency">(원)</span>
+                </h1>
+                <p><span class="percentage-increase" th:text="${incomeGrowthRate} + '%'"></span> increase compared to last week</p>
+            </div>
+            <div class="total-box__right">
+                <div class="header-container">
+                    <h3 class="section-header">Total Expense</h3>
+                    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="42" height="42" rx="8" fill="#F6F7F9"/>
+                        <path d="M27.0702 23.43L21.0002 29.5L14.9302 23.43" stroke="#FF4423" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 12.5V29.33" stroke="#FF4423" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(totalExpense, 3, 'COMMA')}">
+                    <span class="price-currency">(원)</span>
+                </h1>
+                <p><span class="percentage-decrease" th:text="${expenseGrowthRate} + '%'"></span> decrease compared to last week</p>
+            </div>
+        </div>
+    </div>
+
     <!-- 차트 -->
     <div class="chart-container">
         <canvas id="salesRevenueChart" width="400" height="200"></canvas>
