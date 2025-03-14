@@ -61,6 +61,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         int roleId = role.getCode();
 
         UserDTO user = null;
+
         if (registerId.equals("naver")) {
             user = userMapper.findByUserNaverId(userId);
         } else if (registerId.equals("kakao")) {
