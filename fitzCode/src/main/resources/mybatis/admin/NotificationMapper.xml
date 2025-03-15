@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.fitzcode.admin.mapper.NotificationMapper">
+    <insert id="insertNotification" parameterType="NotificationDTO">
+        INSERT INTO NOTIFICATION (user_id, type, message, is_read, created_at, related_id)
+        VALUES (#{userId}, #{type, typeHandler=kr.co.fitzcode.admin.handler.NotificationTypeHandler}, #{message}, #{read}, #{createdAt}, #{relatedId})
+    </insert>
+
+    <select id="findByUserId" parameterType="long" resultType="NotificationDTO">
+        SELECT notification_id, user_id, type, message, is_read, created_at, read_at, related_id
+        FROM NOTIFICATION
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <update id="markAsRead" parameterType="long">
+        UPDATE NOTIFICATION
+        SET is_read = TRUE, read_at = NOW()
+        WHERE notification_id = #{notificationId}
+    </update>
+</mapper>
