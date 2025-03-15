@@ -1,29 +1,5 @@
 // 헤더와 알림 관련 UI 로직을 처리하는 스크립트 파일
 $(document).ready(function () {
-    // 검색 버튼 클릭: 검색 오버레이 표시 및 포커스 설정
-    $('#search-btn').click(function (e) {
-        e.preventDefault();
-        $('.search-overlay').fadeIn();
-        $('#searchInput').focus();
-    });
-
-    // 검색 닫기 버튼 클릭: 검색 오버레이 닫기 및 입력값 초기화
-    $('#close-search').click(function () {
-        $('.search-overlay').fadeOut();
-        $('#searchInput').val('');
-    });
-
-    // 검색 입력창에서 Enter 키 입력: 검색 실행
-    $('#searchInput').on('keypress', function (e) {
-        if (e.which === 13) {
-            e.preventDefault();
-            const keyword = $(this).val().trim();
-            if (keyword) {
-                search(keyword);
-            }
-        }
-    });
-
     // 알림 아이콘 클릭 시 드롭다운 표시: 알림 목록 표시/숨김 토글
     $('#notificationBell').click(function (e) {
         e.preventDefault();
@@ -65,6 +41,28 @@ $(document).ready(function () {
         updateNotificationBadge();
         addNotificationActions();
     });
+
+    // 검색 입력창에서 Enter 키 입력: 검색 실행
+    $('.input').on('keypress', function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            const keyword = $(this).val().trim();
+            if (keyword) {
+                search(keyword);
+            }
+        }
+    });
+
+    // 초기 카트 수량 로드
+    updateCartCount();
+
+    // 10초마다 카트 수량 갱신 (예시)
+    setInterval(updateCartCount, 10000);
+
+    // 가상 상품 추가 이벤트 (실제 프로젝트에서는 버튼 클릭 시 호출)
+    $('#addToCartButton').on('click', function () {
+        addToCart();
+    });
 });
 
 // 검색 요청 실행: 키워드로 검색 요청 보내기
@@ -98,6 +96,56 @@ function updateNotificationBadge() {
         notification.attr('data-count', '0');
         notification.css('display', 'flex');
     }
+}
+
+// 카트 수량 업데이트: 서버에서 카트 수량 가져와 UI에 반영
+function updateCartCount() {
+    $.ajax({
+        url: '/api/cart/count', // 서버에서 카트 수량을 제공하는 API
+        type: 'GET',
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true // 세션 쿠키 포함
+        },
+        success: function (data) {
+            if (data && data.count !== undefined) {
+                const cartCount = data.count || 0;
+                $('#ex4 .p1').attr('data-count', cartCount); // 카트 뱃지 업데이트
+                console.log('카트 수량 업데이트 완료: ' + cartCount);
+            } else {
+                console.warn('카트 수량 데이터가 없습니다.');
+                $('#ex4 .p1').attr('data-count', '0');
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('카트 수량 로드 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
+            $('#ex4 .p1').attr('data-count', '0');
+        }
+    });
+}
+
+// 상품을 카트에 추가 (가상 함수, 실제로는 서버 요청 필요)
+function addToCart() {
+    $.ajax({
+        url: '/api/cart/add', // 가상 API, 실제로는 상품 추가 로직
+        type: 'POST',
+        data: { productId: 1 }, // 예시: 상품 ID 전달
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true // 세션 쿠키 포함
+        },
+        success: function (response) {
+            if (response.success) {
+                console.log('상품 추가 성공, 카트 수량 갱신');
+                updateCartCount(); // 카트 수량 갱신
+            } else {
+                console.error('상품 추가 실패:', response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error('상품 추가 오류:', error);
+        }
+    });
 }
 
 // 알림 항목 추가: 드롭다운에 알림 항목 추가
