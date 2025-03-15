@@ -6,24 +6,24 @@ import kr.co.fitzcode.common.service.CustomUserDetails;
 import kr.co.fitzcode.common.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
 public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @PostMapping
+    @PostMapping("/notifications")
     public ResponseEntity<String> createNotification(@RequestBody NotificationDTO notificationDTO, Principal principal) {
         log.info("POST /api/notifications 요청 처리");
         if (principal == null) {
@@ -36,22 +36,20 @@ public class NotificationController {
         return ResponseEntity.ok("알림 생성 완료");
     }
 
-    @GetMapping
+    @GetMapping("/notifications")
     public ResponseEntity<?> getNotifications(Principal principal) {
         log.info("GET /api/notifications 요청 처리");
         if (principal == null) {
-            log.warn("Principal이 null입니다 - 인증되지 않은 접근");
+            log.warn("Principal null - 인증되지 않은 접근");
             return ResponseEntity.status(401).body("{\"error\": \"Unauthorized\", \"message\": \"Authentication required\"}");
         }
 
         int userId = extractUserId(principal);
         log.info("userId {}에 대한 알림 조회", userId);
-        List<NotificationDTO> notifications = notificationService.getNotificationsByUserId(userId);
-        log.info("userId {}에 대한 알림 반환: {}", userId, notifications);
-        return ResponseEntity.ok(notifications);
+        return ResponseEntity.ok(notificationService.getNotificationsByUserId(userId));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/notifications/{id}")
     public ResponseEntity<String> deleteNotification(@PathVariable int id, Principal principal) {
         log.info("DELETE /api/notifications/{} 요청 처리", id);
         if (principal == null) {
@@ -61,7 +59,7 @@ public class NotificationController {
         return ResponseEntity.ok("알림 삭제 완료");
     }
 
-    @DeleteMapping
+    @DeleteMapping("/notifications")
     public ResponseEntity<String> deleteAllNotifications(Principal principal) {
         log.info("DELETE /api/notifications 요청 처리");
         if (principal == null) {
@@ -73,7 +71,7 @@ public class NotificationController {
         return ResponseEntity.ok("모든 알림 삭제 완료");
     }
 
-    @PostMapping("/read")
+    @PostMapping("/notifications/read")
     public ResponseEntity<String> markAllAsRead(Principal principal) {
         log.info("POST /api/notifications/read 요청 처리");
         if (principal == null) {
@@ -83,6 +81,15 @@ public class NotificationController {
         int userId = extractUserId(principal);
         notificationService.markAllAsRead(userId);
         return ResponseEntity.ok("모든 알림 읽음 처리 완료");
+    }
+
+    // 인증 상태 확인 엔드포인트
+    @GetMapping("/user/check")
+    public ResponseEntity<Map<String, Boolean>> checkAuthenticated(Principal principal) {
+        log.info("GET /api/user/check 요청 처리");
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("authenticated", principal != null); // Principal이 null이 아니면 인증됨
+        return ResponseEntity.ok(response);
     }
 
     // Principal에서 userId를 추출하는 헬퍼 메서드
