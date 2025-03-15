@@ -31,6 +31,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +51,8 @@ public class NoticeController {
     private String bucketName;
 
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter subscribe() {
-        return notificationService.subscribe();
+    public SseEmitter subscribe(Principal principal) {
+        return notificationService.subscribe(principal);
     }
 
     @PostMapping
@@ -67,10 +68,10 @@ public class NoticeController {
 
             int userId = extractUserId(auth);
             noticeDTO.setUserId(userId);
-            noticeService.createNotice(noticeDTO, imageFile, attachmentFile);
-            log.info("공지사항 생성 완료 - 제목: {}, 공지사항 ID: {}", noticeDTO.getTitle(), noticeDTO.getNoticeId());
-            log.info("NOTICE_CREATED 이벤트 전송 - 공지사항 DTO: {}", noticeDTO.getTitle());
-            notificationService.sendNotificationToAll("NOTICE_CREATED", noticeDTO);
+            NoticeDTO savedNotice = noticeService.createNotice(noticeDTO, imageFile, attachmentFile);
+            log.info("공지사항 생성 완료 - 제목: {}, 공지사항 ID: {}", savedNotice.getTitle(), savedNotice.getNoticeId());
+            log.info("NOTICE_CREATED 이벤트 전송 - 공지사항 DTO: {}", savedNotice.getTitle());
+            notificationService.sendNotificationToAll("NOTICE_CREATED", savedNotice);
             return "redirect:/admin/notice";
         } catch (Exception e) {
             log.error("공지사항 생성 중 오류 발생: {}", e.getMessage(), e);
@@ -216,18 +217,15 @@ public class NoticeController {
         return response;
     }
 
-    // Principal에서 userId를 추출하는 헬퍼 메서드
     private int extractUserId(Object principal) {
         Object principalObj = principal;
 
-        // UsernamePasswordAuthenticationToken 또는 OAuth2AuthenticationToken 처리
         if (principalObj instanceof UsernamePasswordAuthenticationToken) {
             principalObj = ((UsernamePasswordAuthenticationToken) principalObj).getPrincipal();
         } else if (principalObj instanceof OAuth2AuthenticationToken) {
             principalObj = ((OAuth2AuthenticationToken) principalObj).getPrincipal();
         }
 
-        // 내부 Principal 객체에서 userId 추출
         if (principalObj instanceof CustomUserDetails) {
             return ((CustomUserDetails) principalObj).getUserId();
         } else if (principalObj instanceof CustomOAuth2User) {

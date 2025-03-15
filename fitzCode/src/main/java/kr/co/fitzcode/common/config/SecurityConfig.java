@@ -97,7 +97,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/styles",
                                     "/notice",
                                     "/api/cart/**",
-                                    "/api/user/check"
+                                    "/api/user/check",
+                                    "/admin/notice/subscribe"
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")

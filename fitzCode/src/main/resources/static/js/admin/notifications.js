@@ -3,17 +3,19 @@ window.notificationCount = 0;
 // 인증 상태 체크 함수
 function checkAuthenticated(callback) {
     $.ajax({
-        url: '/api/user/check', // 인증 상태를 확인하는 엔드포인트
+        url: '/api/user/check',
         type: 'GET',
         success: function(response) {
+            console.log("인증 상태 체크 응답:", response);
             if (response.authenticated) {
                 callback(true);
             } else {
                 callback(false);
             }
         },
-        error: function() {
-            callback(false); // 오류 발생 시 인증안된 사용자라고 생각하고
+        error: function(xhr, status, error) {
+            console.error("인증 상태 체크 오류:", error, "상태:", xhr.status, "응답:", xhr.responseText);
+            callback(false);
         }
     });
 }
@@ -22,23 +24,23 @@ function checkAuthenticated(callback) {
 $(document).ready(function () {
     checkAuthenticated(function(isAuthenticated) {
         if (isAuthenticated) {
-            loadNotifications(); // 인증된 경우에만 알림 로드
+            loadNotifications();
         }
     });
 });
 
-// 알림 구독 시작: SSE 사용해서 공지사항 생성 이벤트 수신
+// 알림 구독 시작
 function subscribeToNotifications() {
     checkAuthenticated(function(isAuthenticated) {
         if (!isAuthenticated) {
-            console.log("로그인하지 않은 사용자입니다. 알림 구독을 비활성화합니다.");
-            return; // 비인증 사용자면 중단
+            console.log("로그인 안한 사용자 : 알림 구독 비활성화");
+            return;
         }
 
         const eventSource = new EventSource("/admin/notice/subscribe");
 
         eventSource.onopen = () => {
-            console.log("알림 연결이 시작되었습니다: " + new Date().toLocaleTimeString());
+            console.log("알림 연결 시작: " + new Date().toLocaleTimeString());
         };
 
         eventSource.addEventListener("NOTICE_CREATED", (event) => {
@@ -47,14 +49,15 @@ function subscribeToNotifications() {
             try {
                 const notice = JSON.parse(event.data);
                 console.log("파싱된 공지사항:", notice);
-                if (notice && notice.title) {
-                    const notificationMessage = "새로운 공지사항이 있습니다.";
+                if (notice && notice.noticeId && notice.title) {
+                    const notificationMessage = "새로운 공지사항: " + notice.title;
                     addNotification(notificationMessage);
                     window.notificationCount++;
                     updateNotificationBadge();
                     saveNotification(notice);
+                    loadNotifications(); // 알림 목록 갱신
                 } else {
-                    console.error("공지사항 데이터 오류: 제목이 없습니다.", notice);
+                    console.error("공지사항 데이터 오류: noticeId 또는 title이 없음", notice);
                 }
             } catch (e) {
                 console.error("JSON 파싱 오류:", e, "데이터:", event.data);
@@ -64,7 +67,7 @@ function subscribeToNotifications() {
         eventSource.onerror = (error) => {
             console.error("알림 연결 오류 발생: " + new Date().toLocaleTimeString(), error);
             eventSource.close();
-            setTimeout(subscribeToNotifications, 1000); // 재연결 시도
+            setTimeout(subscribeToNotifications, 1000);
         };
     });
 }
@@ -78,26 +81,30 @@ function addNotification(message) {
 
 // 알림 서버 저장
 function saveNotification(notice) {
-    $.ajax({
-        url: '/api/notifications',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            userId: null, // 인증 상태에 따라 동적으로 설정 가능
-            type: 1,
-            message: "새로운 공지사항이 있습니다.",
-            relatedId: notice.noticeId
-        }),
-        success: function () {
-            console.log('알림 저장 성공');
-        },
-        error: function (xhr, status, error) {
-            console.error('알림 저장 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
-        }
+    checkAuthenticated(function(isAuthenticated) {
+        if (!isAuthenticated) return;
+
+        $.ajax({
+            url: '/api/notifications',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                userId: null,
+                type: 1,
+                message: "새로운 공지사항: " + notice.title,
+                relatedId: notice.noticeId
+            }),
+            success: function () {
+                console.log('알림 저장 성공');
+            },
+            error: function (xhr, status, error) {
+                console.error('알림 저장 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
+            }
+        });
     });
 }
 
-// 알림 구독 시작: 페이지 로드 시 인증 상태 체크 후 구독
+// 알림 구독 시작
 window.onload = () => {
     checkAuthenticated(function(isAuthenticated) {
         if (isAuthenticated) {
@@ -106,7 +113,7 @@ window.onload = () => {
     });
 };
 
-// 알림 배지 업데이트 (기존 코드 유지)
+// 알림 배지 업데이트
 function updateNotificationBadge() {
     const notificationElement = document.querySelector('.notification');
     if (notificationElement) {
@@ -114,12 +121,69 @@ function updateNotificationBadge() {
     }
 }
 
-// 알림 로드 함수 (인증 상태에 따라 호출)
+// 알림 로드 함수
 function loadNotifications() {
     checkAuthenticated(function(isAuthenticated) {
-        if (isAuthenticated) {
-            // 인증된 사용자에 대한 알림 로드 로직 추가
-            console.log("알림 로드 시작");
+        if (!isAuthenticated) {
+            console.log("로그인하지 않은 사용자 : 알림 로드를 중단");
+            return;
+        }
+
+        console.log("알림 로드 시작");
+        $.ajax({
+            url: '/api/notifications',
+            type: 'GET',
+            dataType: 'json',
+            xhrFields: {
+                withCredentials: true
+            },
+            success: function (data) {
+                console.log("알림 목록 데이터 수신:", data);
+                $('#notificationDropdown').empty(); // headerNotification.js와 통합 위해
+                window.notificationCount = data ? data.length || 0 : 0;
+                updateNotificationBadge();
+                if (Array.isArray(data)) {
+                    if (data.length === 0) {
+                        console.log("알림이 없음");
+                        $('#notificationDropdown').prepend('<div class="notification-item">알림이 없습니다.</div>');
+                    } else {
+                        data.forEach(notification => {
+                            console.log("알림 항목:", notification);
+                            const message = notification.message || '새로운 공지사항이 있음';
+                            addNotificationItem(notification.notificationId, message); // headerNotification.js와 통합
+                        });
+                    }
+                } else {
+                    console.warn('예상치 못한 데이터 형식:', data);
+                    $('#notificationDropdown').prepend('<div class="notification-item">데이터 형식 오류</div>');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('알림 목록 로드 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
+                $('#notificationDropdown').prepend('<div class="notification-item">알림 로드 실패 (상태: ' + xhr.status + ')</div>');
+            }
+        });
+    });
+}
+
+// headerNotification.js와 통합을 위한 함수
+function addNotificationItem(notificationId, message) {
+    const dropdown = $('#notificationDropdown');
+    dropdown.find('.notification-actions').remove();
+    const item = $(`<div class="notification-item" data-id="${notificationId}"><span>${message}</span><button class="close-btn" data-id="${notificationId}">X</button></div>`);
+    item.click(function (e) {
+        if (!$(e.target).hasClass('close-btn')) {
+            window.location.href = '/notice/list';
         }
     });
+    dropdown.prepend(item);
+    addNotificationActions();
+}
+
+function addNotificationActions() {
+    const dropdown = $('#notificationDropdown');
+    if (dropdown.find('.notification-actions').length === 0) {
+        const actions = $(`<div class="notification-actions"><button id="markAllRead">모두 읽음</button><button id="deleteAll" class="secondary">모두 삭제</button></div>`);
+        dropdown.append(actions);
+    }
 }
