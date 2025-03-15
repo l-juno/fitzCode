@@ -86,7 +86,9 @@ public class SecurityConfig {
                                     "/resetPwSuccess",
                                     "/inquiry/searchProduct",
                                     "/inquiry/searchOrderList",
-                                    "/inquiry/selectedProduct"
+                                    "/inquiry/selectedProduct",
+                                    "/admin/notice/subscribe",
+                                    "/api/notifications"
                             ).permitAll()
 
                             // 관리자 전용 페이지
@@ -146,9 +148,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> {
                     session
                             .sessionFixation().migrateSession()
-                            .maximumSessions(1) // 동일 사용자의 최대 세션 수
-                            .maxSessionsPreventsLogin(true) // 추가 로그인 차단
-                            .expiredUrl("/login?expired"); // 세션 만료 시 리다이렉트
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(true)
+                            .expiredUrl("/login?expired");
                 })
                 .csrf(auth -> auth.disable());
 

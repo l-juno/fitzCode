@@ -15,7 +15,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +31,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
         String registerId = userRequest.getClientRegistration().getRegistrationId();
-        System.out.println("registerId >>>>>>>>>>>>>>>>>>>>>" + registerId);
+        System.out.println("registerId >>>>>>>>>>>>>>>>>>>>> " + registerId);
 
         HttpSession session = request.getSession();
 
@@ -51,7 +53,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         UserDTO user = registerId.equals("naver") ? userMapper.findByUserNaverId(providerUserId) : userMapper.findByUserKakaoId(providerUserId);
 
         int dbUserId;
-        String userRole;
+        List<String> roles;
         if (user == null) {
             UserDTO newUser = new UserDTO();
             if (registerId.equals("naver")) {
@@ -65,26 +67,27 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setPhoneNumber(oAuth2Response.getPhoneNumber());
             newUser.setBirthDate(userBirth);
             newUser.setProfileImage(oAuth2Response.getProfileImageUrl());
-            newUser.setRoleId(UserRole.USER.getCode()); // 기본값
+            newUser.setRoleId(UserRole.USER.getCode()); // 기본값: USER (roleId = 1)
 
             userMapper.insertUser(newUser);
             user = userMapper.findByEmail(newUser.getEmail());
             dbUserId = user.getUserId();
-            userRole = UserRole.USER.getRoleName(); // 신규 사용자: ROLE_USER
-            session.setAttribute("dto", user);
+            roles = Collections.singletonList(UserRole.USER.getRoleName());
         } else {
             dbUserId = user.getUserId();
             // USER_ROLE_MAPPING에서 역할 목록 가져오기
             List<Integer> roleIds = userMapper.getUserRolesByUserId(dbUserId);
             if (roleIds != null && !roleIds.isEmpty()) {
-                userRole = UserRole.fromCode(roleIds.get(0)).getRoleName();
+                roles = roleIds.stream()
+                        .map(roleId -> UserRole.fromCode(roleId).getRoleName())
+                        .collect(Collectors.toList());
             } else {
-                userRole = UserRole.USER.getRoleName(); // 기본값
+                roles = Collections.singletonList(UserRole.USER.getRoleName()); // 기본값
             }
-            session.setAttribute("dto", user);
         }
 
-        System.out.println("Returning CustomOAuth2User with userId=" + dbUserId + ", role=" + userRole);
-        return new CustomOAuth2User(oAuth2Response, userRole, dbUserId);
+        session.setAttribute("dto", user);
+        System.out.println("Returning CustomOAuth2User with userId=" + dbUserId + ", roles=" + roles);
+        return new CustomOAuth2User(oAuth2Response, roles, dbUserId);
     }
 }

@@ -40,5 +40,4 @@
     <delete id="deleteNotice" parameterType="int">
         DELETE FROM NOTICE WHERE notice_id = #{noticeId}
     </delete>
-
 </mapper>

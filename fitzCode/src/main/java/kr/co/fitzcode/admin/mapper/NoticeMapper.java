@@ -1,6 +1,5 @@
 package kr.co.fitzcode.admin.mapper;
 
-
 import kr.co.fitzcode.common.dto.NoticeDTO;
 import org.apache.ibatis.annotations.Mapper;
 

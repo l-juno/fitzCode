@@ -10,7 +10,7 @@ public interface NoticeService {
     List<NoticeDTO> getAllNotices();
 
     // 공지사항 작성
-    void createNotice(NoticeDTO noticeDTO, MultipartFile imageFile, MultipartFile attachmentFile);
+    NoticeDTO createNotice(NoticeDTO noticeDTO, MultipartFile imageFile, MultipartFile attachmentFile);
 
     // 공지사항 조회
     NoticeDTO getNoticeById(int noticeId);

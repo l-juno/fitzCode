@@ -28,9 +28,9 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
-    public void createNotice(NoticeDTO noticeDTO, MultipartFile imageFile, MultipartFile attachmentFile) {
+    public NoticeDTO createNotice(NoticeDTO noticeDTO, MultipartFile imageFile, MultipartFile attachmentFile) {
         if (noticeDTO.getTitle() == null || noticeDTO.getContent() == null) {
-            throw new IllegalArgumentException("제목과 내용은 필수");
+            throw new IllegalArgumentException("제목과 내용은 필수입니다.");
         }
 
         // 대표 이미지 업로드 처리
@@ -52,18 +52,21 @@ public class NoticeServiceImpl implements NoticeService {
                 noticeDTO.setAttachmentName(attachmentFile.getOriginalFilename());
                 noticeDTO.setAttachmentSize(attachmentFile.getSize());
             } else {
-                throw new IllegalArgumentException("허용된 파일 형식(HWP, XLS, XLSX, DOC, DOCX)이 아님");
+                throw new IllegalArgumentException("허용된 파일 형식(HWP, XLS, XLSX, DOC, DOCX)이 아닙니다.");
             }
         }
 
+        // 공지사항 저장 (noticeId가 자동 생성됨)
         noticeMapper.insertNotice(noticeDTO);
+        // 생성된 noticeId를 포함한 NoticeDTO 반환
+        return noticeDTO; // noticeId가 이미 설정됨 (useGeneratedKeys로 인해)
     }
 
     @Override
     public NoticeDTO getNoticeById(int noticeId) {
         NoticeDTO notice = noticeMapper.selectNoticeById(noticeId);
         if (notice == null) {
-            throw new NoticeNotFoundException("해당 공지사항을 찾을 수 없음 ID: " + noticeId);
+            throw new NoticeNotFoundException("해당 공지사항을 찾을 수 없습니다. ID: " + noticeId);
         }
         return notice;
     }
@@ -72,7 +75,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     public void updateNotice(NoticeDTO noticeDTO, MultipartFile imageFile, MultipartFile attachmentFile) {
         if (noticeDTO.getNoticeId() <= 0) {
-            throw new InvalidNoticeIdException("유효한 공지사항 ID가 필요함");
+            throw new InvalidNoticeIdException("유효한 공지사항 ID가 필요합니다.");
         }
 
         NoticeDTO existingNotice = getNoticeById(noticeDTO.getNoticeId());
@@ -80,18 +83,18 @@ public class NoticeServiceImpl implements NoticeService {
         // 대표 이미지 처리
         if (imageFile != null && !imageFile.isEmpty()) {
             if (existingNotice.getImageUrl() != null && !existingNotice.getImageUrl().isEmpty()) {
-                s3Service.deleteFile(existingNotice.getImageUrl()); // 기존 이미지 S3에서 삭제
+                s3Service.deleteFile(existingNotice.getImageUrl());
             }
             String newImageUrl = s3Service.uploadFile(imageFile, NOTICE_IMAGE_FOLDER);
             noticeDTO.setImageUrl(newImageUrl);
         } else {
-            noticeDTO.setImageUrl(existingNotice.getImageUrl()); // 새로운 파일 업로드가 없으면 기존 유지
+            noticeDTO.setImageUrl(existingNotice.getImageUrl());
         }
 
         // 첨부 파일 처리
         if (attachmentFile != null && !attachmentFile.isEmpty()) {
             if (existingNotice.getAttachmentUrl() != null && !existingNotice.getAttachmentUrl().isEmpty()) {
-                s3Service.deleteFile(existingNotice.getAttachmentUrl()); // 기존 첨부 파일 S3에서 삭제
+                s3Service.deleteFile(existingNotice.getAttachmentUrl());
             }
             String contentType = attachmentFile.getContentType();
             if (contentType != null && (contentType.equals("application/x-hwp") ||
@@ -104,7 +107,7 @@ public class NoticeServiceImpl implements NoticeService {
                 noticeDTO.setAttachmentName(attachmentFile.getOriginalFilename());
                 noticeDTO.setAttachmentSize(attachmentFile.getSize());
             } else {
-                throw new IllegalArgumentException("허용된 파일 형식(HWP, XLS, XLSX, DOC, DOCX)이 아님");
+                throw new IllegalArgumentException("허용된 파일 형식(HWP, XLS, XLSX, DOC, DOCX)이 아닙니다.");
             }
         } else {
             noticeDTO.setAttachmentUrl(existingNotice.getAttachmentUrl());
@@ -119,7 +122,7 @@ public class NoticeServiceImpl implements NoticeService {
     @Transactional
     public void deleteNotice(int noticeId) {
         if (noticeId <= 0) {
-            throw new InvalidNoticeIdException("유효한 공지사항 ID가 필요함");
+            throw new InvalidNoticeIdException("유효한 공지사항 ID가 필요합니다.");
         }
 
         NoticeDTO notice = getNoticeById(noticeId);
@@ -136,7 +139,6 @@ public class NoticeServiceImpl implements NoticeService {
         noticeMapper.deleteNotice(noticeId);
     }
 
-    // 이미지 삭제
     @Override
     @Transactional
     public void deleteImage(int noticeId) {
@@ -148,7 +150,6 @@ public class NoticeServiceImpl implements NoticeService {
         }
     }
 
-    // 첨부파일 삭제
     @Override
     @Transactional
     public void deleteAttachment(int noticeId) {
