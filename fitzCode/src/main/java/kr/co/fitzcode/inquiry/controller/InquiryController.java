@@ -1,4 +1,4 @@
-package kr.co.fitzcode.inquiry.control;
+package kr.co.fitzcode.inquiry.controller;
 
 
 import jakarta.validation.Valid;
@@ -15,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,9 +102,12 @@ public class InquiryController {
     @RequestMapping("/modify/{inquiryId}")
     public String modify(@PathVariable("inquiryId") int inquiryId, Model model) {
         int userId = securityUtils.getUserId();
-        InquiryDTO dto = inquiryService.getUserOne(userId);
-        model.addAttribute("userDTO", dto);
-        model.addAttribute("inquiryId", inquiryId);
+        InquiryDTO userDTO = inquiryService.getUserOne(userId);
+        InquiryDTO inquiryDTO = inquiryService.getInquiryDetail(inquiryId);
+        log.info(">>>>>>>>> userDTO {}", userDTO.getPhoneNumber());
+        log.info(">>>>>>>>> inquiryDTO {}", inquiryDTO.getSubject());
+        model.addAttribute("userDTO", userDTO);
+        model.addAttribute("inquiryDTO", inquiryDTO);
         return "inquiry/inquiryModify";
     }
 
