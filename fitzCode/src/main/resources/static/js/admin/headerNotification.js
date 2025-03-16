@@ -89,8 +89,54 @@ $(document).ready(function () {
         $('#addToCartButton').on('click', function () {
             addToCart();
         });
+
+        // 알림 구독 시작
+        subscribeToNotifications();
     });
 });
+
+// 알림 구독 시작
+function subscribeToNotifications() {
+    checkAuthenticated(function(isAuthenticated) {
+        if (!isAuthenticated) {
+            console.log("로그인하지 않은 사용자 : 알림 구독 비활성화");
+            return;
+        }
+
+        const eventSource = new EventSource("/admin/notice/subscribe");
+
+        eventSource.onopen = () => {
+            console.log("알림 연결 시작: " + new Date().toLocaleTimeString());
+        };
+
+        eventSource.addEventListener("INQUIRY_ANSWERED", (event) => {
+            console.log("1대1 문의 답변 이벤트 수신: " + new Date().toLocaleTimeString());
+            console.log("이벤트 데이터:", event.data);
+            try {
+                const inquiry = JSON.parse(event.data);
+                console.log("파싱된 문의:", inquiry);
+                if (inquiry && inquiry.inquiryId && inquiry.subject) {
+                    const notificationMessage = "1대1 문의에 대한 답변 도착: " + inquiry.subject;
+                    addNotification(notificationMessage);
+                    window.notificationCount++;
+                    updateNotificationBadge();
+                    saveNotificationForInquiry(inquiry);
+                    loadNotifications(); // 알림 목록 갱신
+                } else {
+                    console.error("문의 데이터 오류: inquiryId 또는 subject가 없음", inquiry);
+                }
+            } catch (e) {
+                console.error("JSON 파싱 오류:", e, "데이터:", event.data);
+            }
+        });
+
+        eventSource.onerror = (error) => {
+            console.error("알림 연결 오류 발생: " + new Date().toLocaleTimeString(), error);
+            eventSource.close();
+            setTimeout(subscribeToNotifications, 1000);
+        };
+    });
+}
 
 // 검색 요청 실행
 function search(keyword) {
@@ -328,4 +374,11 @@ function updateNotificationsReadStatus() {
             }
         });
     });
+}
+
+// 알림 메시지를 화면에 추가
+function addNotification(message) {
+    const div = document.createElement("div");
+    div.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+    document.getElementById("notificationDropdown").appendChild(div);
 }
