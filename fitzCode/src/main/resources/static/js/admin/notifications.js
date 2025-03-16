@@ -71,11 +71,32 @@ function subscribeToNotifications() {
                 const inquiry = JSON.parse(event.data);
                 console.log("파싱된 문의:", inquiry);
                 if (inquiry && inquiry.inquiryId && inquiry.subject) {
-                    const notificationMessage = "1대1 문의에 대한 답변 도착: " + inquiry.subject;
+                    const notificationMessage = "1대1 문의 답변이 있습니다.";
                     addNotification(notificationMessage);
                     window.notificationCount++;
                     updateNotificationBadge();
                     saveNotificationForInquiry(inquiry);
+                    loadNotifications(); // 알림 목록 갱신
+                } else {
+                    console.error("문의 데이터 오류: inquiryId 또는 subject가 없음", inquiry);
+                }
+            } catch (e) {
+                console.error("JSON 파싱 오류:", e, "데이터:", event.data);
+            }
+        });
+
+        eventSource.addEventListener("INQUIRY_CLOSED", (event) => {
+            console.log("1대1 문의 종료 이벤트 수신: " + new Date().toLocaleTimeString());
+            console.log("이벤트 데이터:", event.data);
+            try {
+                const inquiry = JSON.parse(event.data);
+                console.log("파싱된 문의:", inquiry);
+                if (inquiry && inquiry.inquiryId && inquiry.subject) {
+                    const notificationMessage = "1대1 문의가 종료되었습니다.";
+                    addNotification(notificationMessage);
+                    window.notificationCount++;
+                    updateNotificationBadge();
+                    saveNotificationForInquiryClosed(inquiry);
                     loadNotifications(); // 알림 목록 갱신
                 } else {
                     console.error("문의 데이터 오류: inquiryId 또는 subject가 없음", inquiry);
@@ -125,7 +146,7 @@ function saveNotification(notice) {
     });
 }
 
-// 1대1 문의 알림 서버 저장
+// 1대1 문의 답변 알림 서버 저장
 function saveNotificationForInquiry(inquiry) {
     checkAuthenticated(function(isAuthenticated) {
         if (!isAuthenticated) return;
@@ -137,14 +158,39 @@ function saveNotificationForInquiry(inquiry) {
             data: JSON.stringify({
                 userId: null,
                 type: 4, // INQUIRY_RESPONSE
-                message: "1대1 문의에 대한 답변 도착: " + inquiry.subject,
+                message: "1대1 문의 답변이 있습니다.",
                 relatedId: inquiry.inquiryId
             }),
             success: function () {
-                console.log('1대1 문의 알림 저장 성공');
+                console.log('1대1 문의 답변 알림 저장 성공');
             },
             error: function (xhr, status, error) {
-                console.error('1대1 문의 알림 저장 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
+                console.error('1대1 문의 답변 알림 저장 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
+            }
+        });
+    });
+}
+
+// 1대1 문의 종료
+function saveNotificationForInquiryClosed(inquiry) {
+    checkAuthenticated(function(isAuthenticated) {
+        if (!isAuthenticated) return;
+
+        $.ajax({
+            url: '/api/notifications',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                userId: null,
+                type: 10, // INQUIRY_CLOSED
+                message: "1대1 문의가 종료되었습니다.",
+                relatedId: inquiry.inquiryId
+            }),
+            success: function () {
+                console.log('1대1 문의 종료 알림 저장 성공');
+            },
+            error: function (xhr, status, error) {
+                console.error('1대1 문의 종료 알림 저장 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
             }
         });
     });
@@ -185,7 +231,7 @@ function loadNotifications() {
             },
             success: function (data) {
                 console.log("알림 목록 데이터 수신:", data);
-                $('#notificationDropdown').empty();
+                $('#notificationDropdown').empty(); // headerNotification.js와 통합 위해
                 window.notificationCount = data ? data.length || 0 : 0;
                 updateNotificationBadge();
                 if (Array.isArray(data)) {
@@ -196,7 +242,7 @@ function loadNotifications() {
                         data.forEach(notification => {
                             console.log("알림 항목:", notification);
                             const message = notification.message || '새로운 공지사항이 있음';
-                            addNotificationItem(notification.notificationId, message);
+                            addNotificationItem(notification.notificationId, message); // headerNotification.js와 통합
                         });
                     }
                 } else {

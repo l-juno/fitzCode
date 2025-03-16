@@ -1,11 +1,11 @@
 package kr.co.fitzcode.inquiry.control;
 
-
 import jakarta.validation.Valid;
 import kr.co.fitzcode.common.dto.InquiryDTO;
 import kr.co.fitzcode.common.dto.InquiryImageDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
 import kr.co.fitzcode.common.util.SecurityUtils;
+import kr.co.fitzcode.common.service.NotificationService;
 import kr.co.fitzcode.inquiry.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 public class InquiryController {
     private final InquiryService inquiryService;
     private final SecurityUtils securityUtils;
+    private final NotificationService notificationService;
 
     // 문의작성 폼으로 이동
     @GetMapping("/inquiryForm")
@@ -37,7 +37,6 @@ public class InquiryController {
         return "inquiry/inquiryForm";
     }
 
-
     // 문의 데이터 저장
     @PostMapping("/inquiryForm")
     public String inquiryForm(@Valid @ModelAttribute("dto") InquiryDTO inquiryDTO,
@@ -46,14 +45,21 @@ public class InquiryController {
         if (bindingResult.hasErrors()) {
             return "inquiry/inquiryForm";
         }
+
         // 비어있는 파일을 제외한 이미지 리스트
         List<MultipartFile> nonEmptyFiles = imageFiles.stream()
                 .filter(file -> !file.isEmpty())
                 .collect(Collectors.toList());
+        inquiryDTO.setUserId(securityUtils.getUserId()); // 사용자 ID 설정
         inquiryService.insertInquiry(inquiryDTO, nonEmptyFiles); // 문의 데이터 저장
+
+        // 관리자에게만 알림 저장
+        log.info("관리자 알림 발송 시작 - 문의 ID: {}", inquiryDTO.getInquiryId());
+        notificationService.sendNotificationToAllAdmins("INQUIRY_CREATED", inquiryDTO);
+        log.info("관리자 알림 발송 완료");
+
         return "redirect:/inquiry/inquiryList";
     }
-
 
     // 개인 문의 내역 보기
     @GetMapping("/inquiryList")
@@ -127,5 +133,4 @@ public class InquiryController {
         inquiryService.deleteInquiryData(inquiryId);
         return "redirect:/inquiry/inquiryList";
     }
-
 }

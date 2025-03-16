@@ -4,6 +4,7 @@ import kr.co.fitzcode.common.dto.CustomOAuth2User;
 import kr.co.fitzcode.common.dto.NotificationDTO;
 import kr.co.fitzcode.common.service.CustomUserDetails;
 import kr.co.fitzcode.common.service.NotificationService;
+import kr.co.fitzcode.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,9 @@ public class NotificationController {
 
         int userId = extractUserId(principal);
         notificationDTO.setUserId(userId);
+
+        // 관리자 알림이면 userId를 관리자 ID로 설정 (필요 시)
+        notificationService.createNotification(notificationDTO);
         return ResponseEntity.ok("알림 생성 완료");
     }
 
@@ -46,6 +50,7 @@ public class NotificationController {
 
         int userId = extractUserId(principal);
         log.info("userId {}에 대한 알림 조회", userId);
+
         return ResponseEntity.ok(notificationService.getNotificationsByUserId(userId));
     }
 
@@ -96,14 +101,12 @@ public class NotificationController {
     private int extractUserId(Principal principal) {
         Object principalObj = principal;
 
-        // UsernamePasswordAuthenticationToken 또는 OAuth2AuthenticationToken 처리
         if (principalObj instanceof UsernamePasswordAuthenticationToken) {
             principalObj = ((UsernamePasswordAuthenticationToken) principalObj).getPrincipal();
         } else if (principalObj instanceof OAuth2AuthenticationToken) {
             principalObj = ((OAuth2AuthenticationToken) principalObj).getPrincipal();
         }
 
-        // 내부 Principal 객체에서 userId 추출
         if (principalObj instanceof CustomUserDetails) {
             return ((CustomUserDetails) principalObj).getUserId();
         } else if (principalObj instanceof CustomOAuth2User) {
@@ -112,5 +115,16 @@ public class NotificationController {
             log.error("알 수 없는 Principal 내부 타입: {}", principalObj.getClass().getName());
             throw new IllegalStateException("알 수 없는 Principal 내부 타입: " + principalObj.getClass().getName());
         }
+    }
+
+    // 관리자 역할 확인
+    private boolean isAdmin(Principal principal) {
+        Object principalObj = principal;
+        if (principalObj instanceof OAuth2AuthenticationToken) {
+            CustomOAuth2User oauthUser = (CustomOAuth2User) ((OAuth2AuthenticationToken) principalObj).getPrincipal();
+            return oauthUser.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals(UserRole.ADMIN.getRoleName()));
+        }
+        return false;
     }
 }

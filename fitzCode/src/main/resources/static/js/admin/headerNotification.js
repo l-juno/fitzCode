@@ -1,4 +1,3 @@
-// 헤더와 알림 관련 UI 로직을 처리하는 스크립트 파일
 let cartUpdateInterval;
 
 // 인증 상태 체크 함수

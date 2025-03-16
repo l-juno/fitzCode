@@ -9,6 +9,13 @@
         FROM USER
     </select>
 
+    <!-- 모든 관리자 ID 조회 -->
+    <select id="getAllAdminIds" resultType="int">
+        SELECT user_id AS userId
+        FROM USER
+        WHERE role_id = #{roleId}
+    </select>
+
     <!-- 알림 삽입 -->
     <insert id="insertNotification" parameterType="kr.co.fitzcode.common.dto.NotificationDTO" useGeneratedKeys="true" keyProperty="notificationId">
         INSERT INTO NOTIFICATION (user_id, type, message, related_id, created_at, is_read)
@@ -46,4 +53,10 @@
         AND is_read = FALSE
     </update>
 
+    <!-- 중복 알림 확인 -->
+    <select id="existsNotification" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM NOTIFICATION
+        WHERE user_id = #{userId} AND type = #{type} AND related_id = #{relatedId}
+    </select>
 </mapper>
