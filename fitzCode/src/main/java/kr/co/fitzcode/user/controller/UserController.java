@@ -171,4 +171,26 @@ public class UserController {
 
         return "user/resetPwSuccess";
     }
+
+    @GetMapping("findEmail")
+    public String findEmail() {
+        return "user/findEmail";
+    }
+
+    @PostMapping("findEmailSuccess")
+    public String findEmailSuccess(@RequestParam("userName") String userName,
+                                   @RequestParam("phoneNumber") String phoneNumber,
+                                   Model model) {
+        // 입력 받은 이름과 전화번호를 사용하여 이메일 조회
+        String email = userService.findEmailByNameAndPhoneNumber(userName, phoneNumber);
+
+        if (email != null) {
+            model.addAttribute("email", email);
+            model.addAttribute("userName", userName);
+            return "user/findEmailSuccess"; // 이메일을 찾았을 때 이메일 화면 반환
+        } else {
+            model.addAttribute("errorMessage", "해당 전화번호와 이름에 대한 이메일을 찾을 수 없습니다.");
+            return "redirect:/user/findEmail"; // 이메일을 찾지 못했을 때 다시 찾기 페이지로 리다이렉트
+        }
+    }
 }

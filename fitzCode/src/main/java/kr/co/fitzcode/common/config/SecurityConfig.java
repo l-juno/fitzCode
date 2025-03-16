@@ -77,7 +77,9 @@ public class SecurityConfig {
                                     "/inquiry/searchProduct",
                                     "/inquiry/searchOrderList",
                                     "/inquiry/selectedProduct",
-                                    "/community/list/**"
+                                    "/community/list/**",
+                                    "community/form/**",
+                                    "community/detail/**"
                             ).permitAll()
                             .requestMatchers("/admin/dashboard")
                             .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")

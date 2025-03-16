@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>스타일 페이지</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="script.js"></script>
+  <style>
+    /* Reset 스타일 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* body 스타일 */
+    body {
+      background-color: #ffffff;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    /* 메인 컨테이너 스타일 */
+    main {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .style-header{
+
+    }
+
+    /* 스타일 컨테이너 */
+    .style-container {
+      background: white;
+      border-radius: 7px;
+      /*box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);*/
+      padding: 20px;
+      margin-bottom: 40px;
+    }
+
+    /* 사용자 정보 섹션 */
+    .user-info {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 15px;
+    }
+
+    .user-info strong {
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .user-info p {
+      font-size: 14px;
+      color: #777;
+    }
+
+    .edit-btn {
+      margin-left: auto;
+      padding: 10px 20px;
+      background-color: #ffffff;
+      border: 1px solid #cfcfcf;
+      color: #4a4a4a;
+      /*border: none;*/
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .edit-btn:hover {
+      background-color: #ededed;
+    }
+
+    /* 스타일 콘텐츠 섹션 */
+    .style-content {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .style-img {
+      width: 100%;
+      height: 500px;
+      border-radius: 7px;
+      margin-bottom: 20px;
+      object-fit: contain; /* 원본 비율 유지하면서 카드 헤더 안에 맞춤 */
+
+    }
+
+    .style-content h2 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .style-content p {
+      font-size: 16px;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* 상품 태그 섹션 */
+    .product-tags h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .product-list {
+      display: flex;
+      gap: 20px;
+    }
+
+    .product-item {
+      background: #f9f9f9;
+      border-radius: 7px;
+      padding: 10px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .product-img {
+      width: 100%;
+      height: auto;
+      border-radius: 7px;
+      margin-bottom: 10px;
+    }
+
+    .product-item p {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .product-item span {
+      font-size: 14px;
+      color: #777;
+    }
+
+    /* 상호작용 섹션 */
+    .interactions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      font-size: 18px;
+      color: #555;
+    }
+
+    /* 다른 스타일 섹션 */
+    .other-styles {
+      margin-top: 40px;
+    }
+
+    .other-styles h3 {
+      font-size: 20px;
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    .style-list {
+      display: flex;
+      gap: 20px;
+    }
+
+    .style-thumbnail {
+      width: 100%;
+      height: auto;
+      border-radius: 7px;
+    }
+  </style>
+</head>
+<body>
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+<main>
+  <div class="style-header">
+    <div class="user-info">
+      <img src="/img/checkmark.png" alt="사용자 프로필" class="profile-img">
+      <div>
+        <strong>admin</strong>
+        <p>작성일: 2024-12-30 19:36:08</p>
+      </div>
+      <button class="edit-btn">스타일 수정하기</button>
+    </div>
+  </div>
+  <div class="style-container">
+<!--    <div class="user-info">-->
+<!--      <img src="/img/checkmark.png" alt="사용자 프로필" class="profile-img">-->
+<!--      <div>-->
+<!--        <strong>admin</strong>-->
+<!--        <p>작성일: 2024-12-30 19:36:08</p>-->
+<!--      </div>-->
+<!--      <button class="edit-btn">스타일 수정하기</button>-->
+<!--    </div>-->
+
+    <div class="style-content">
+      <img src="/img/communityEx.jpg" alt="스타일 이미지" class="style-img">
+      <h2>스타일 테스트입니다-제목-</h2>
+      <p>스타일 테스트입니다-내용-</p>
+    </div>
+
+    <div class="product-tags">
+      <h3>상품태그 2개</h3>
+      <div class="product-list">
+        <div class="product-item">
+          <img src="product1.jpg" alt="나이키 에어 포스 1" class="product-img">
+          <p>나이키 에어 포스 1 107 카...</p>
+          <span>169,000원</span>
+        </div>
+        <div class="product-item">
+          <img src="product2.jpg" alt="나이키 에어 맥스 1" class="product-img">
+          <p>나이키 에어 맥스 1 '86 ...</p>
+          <span>179,000원</span>
+        </div>
+      </div>
+    </div>
+
+<!--    <div class="interactions">-->
+<!--      <span>👀 8</span>-->
+<!--      <span>❤️ 0</span>-->
+<!--      <span>💬 1</span>-->
+<!--      <span>🔖 1</span>-->
+<!--    </div>-->
+  </div>
+
+  <section class="other-styles">
+    <h3>@admin님의 다른 스타일</h3>
+    <div class="style-list">
+      <img src="other1.jpg" alt="다른 스타일 1" class="style-thumbnail">
+      <img src="other2.jpg" alt="다른 스타일 2" class="style-thumbnail">
+    </div>
+  </section>
+</main>
+
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+</body>
+</html>

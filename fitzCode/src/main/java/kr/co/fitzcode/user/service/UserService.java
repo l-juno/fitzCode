@@ -16,6 +16,7 @@ public interface UserService {
     List<Integer> getUserRolesByUserId(int userId);
     List<UserRole> findRolesInStringByUserId(int userId);
     UserDTO findByUserNaverId(String naverId);
-    void updateUser(UserDTO user);
-
+    UserDTO findBykakaoId(String kakaoId);
+    void updateUserNaver(UserDTO user);
+    String findEmailByNameAndPhoneNumber(String userName, String phoneNumber);
 }
