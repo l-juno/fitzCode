@@ -65,13 +65,14 @@ public class FitzCodeController {
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getSessionInfo(HttpSession session) {
         Map<String, Object> response = new HashMap<>();
-        long creationTime = session.getCreationTime(); // 세션 생성 시간 (밀리초)
-        int maxInactiveInterval = session.getMaxInactiveInterval(); // 최대 비활성 간격 (초)
-        int lastAccessedTime = (int) (session.getLastAccessedTime() / 1000); // 마지막 접근 시간 (초 단위)
-        int currentTime = (int) (System.currentTimeMillis() / 1000); // 현재 시간 (초 단위)
-        int timeLeft = maxInactiveInterval - (currentTime - lastAccessedTime); // 남은 시간
+        long creationTime = session.getCreationTime();
+        int maxInactiveInterval = session.getMaxInactiveInterval();
+        long lastAccessedTime = session.getLastAccessedTime();
+        long currentTime = System.currentTimeMillis();
+        int timeLeft = (int) ((maxInactiveInterval * 1000 - (currentTime - lastAccessedTime)) / 1000);
+
         response.put("creationTime", creationTime);
-        response.put("timeLeft", Math.max(timeLeft, 0)); // 음수 방지
+        response.put("timeLeft", Math.max(timeLeft, 0));
         return ResponseEntity.ok(response);
     }
 }
