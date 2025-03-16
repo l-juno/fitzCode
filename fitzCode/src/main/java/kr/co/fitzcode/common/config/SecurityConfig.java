@@ -66,13 +66,13 @@ public class SecurityConfig implements WebMvcConfigurer {
                         securityContext.securityContextRepository(new HttpSessionSecurityContextRepository())
                 )
                 .authorizeHttpRequests(authorizeRequests -> {
-                    // permitAll() 경로를 가장 먼저 명시
                     authorizeRequests
                             .requestMatchers(
                                     "/",
                                     "/css/**",
                                     "/js/**",
                                     "/img/**",
+                                    "/favicon.ico",
                                     "/access-denied",
                                     "/404-error",
                                     "/something",
