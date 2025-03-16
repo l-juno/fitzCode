@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.user.mapper.AddressMapper">
+    <resultMap id="AddressMap" type="AddressDTO">
+        <result property="userId" column="user_id"/>
+        <result property="addressId" column="address_id"/>
+        <result property="addressLine1" column="address_line1"/>
+        <result property="addressLine2" column="address_line2"/>
+        <result property="postalCode" column="postal_code"/>
+        <result property="isDefault" column="is_default"/>
+        <result property="defaultAddressLine1" column="default_address_line1"/>
+        <result property="defaultAddressLine2" column="default_address_line2"/>
+        <result property="defaultPostalCode" column="default_postal_code"/>
+
+    </resultMap>
+
+    <!-- 사용자 주소록 가져오기 -->
+    <select id="getUserAddress" parameterType="int" resultMap="AddressMap">
+        SELECT
+        user_id,
+        address_id,
+        address_line1,
+        COALESCE(address_line2, '') AS address_line2,
+        postal_code,
+        is_default
+        FROM ADDRESS
+        WHERE user_id = #{userId}
+    </select>
+
+    <update id="toUnDefaultAddress" parameterType="int">
+        UPDATE ADDRESS
+        SET
+        is_default = false
+        WHERE is_default = 1 AND user_id = 1;
+    </update>
+
+    <insert id="insertAddress" parameterType="map">
+        INSERT INTO ADDRESS (user_id, address_line1, address_line2, postal_code, is_default)
+        VALUES (#{userId},
+        <choose>
+            <when test="addressDTO.isDefault == true">
+                #{addressDTO.defaultAddressLine1}, #{addressDTO.defaultAddressLine2}, #{addressDTO.defaultPostalCode}, true);
+            </when>
+            <otherwise>
+                #{addressDTO.addressLine1}, #{addressDTO.addressLine2}, #{addressDTO.postalCode}, false);
+            </otherwise>
+        </choose>
+    </insert>
+
+    <update id="toDefaultAddress" parameterType="int">
+        UPDATE ADDRESS
+        SET
+        is_default = true
+        WHERE address_id = #{addressId}
+    </update>
+
+    <delete id="deleteAddress" parameterType="list">
+        DELETE FROM ADDRESS
+        WHERE address_id IN
+        <foreach collection="addressIdList" item="addressId" open="(" separator="," close=")">
+            #{addressId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>fitzCode</title>
+    <link rel="stylesheet" th:href="@{/css/user/myInfo.css}">
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<br><br><br><br>
+<div class="mypageContainer">
+    <!-- navi -->
+    <div th:replace="~{fragments/mypageNavi}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="mypageContent">
+        <h2>내 정보</h2>
+        <div id="hr"></div>
+        <div class="myInfo">
+            <div class="userProfileInfo">
+                <div id="profileImage">
+                    <img th:src="${userDTO.profileImage}" th:alt="${userDTO.profileImage}">
+                </div>
+                <div id="profileInfo">
+                    <div>
+                    <p th:text="${userDTO.nickname}" style="font-weight: bold; font-size: 17.5px;"></p>
+                    <p th:if="${userDTO.tierLevel == 1}" style="background: saddlebrown;" th:text="'Lv.' + ${userDTO.getTier().description}" th:href="@{/user/mypage/tierLevel}" class="userTier"></p>
+                    <p th:if="${userDTO.tierLevel == 2}" style="background: dimgray;" th:text="'Lv.' + ${userDTO.getTier().description}" th:href="@{/user/mypage/tierLevel}" class="userTier"></p>
+                    <p th:if="${userDTO.tierLevel == 3}" style="background: darkgoldenrod;" th:text="'Lv.' + ${userDTO.getTier().description}" th:href="@{/user/mypage/tierLevel}" class="userTier"></p>
+                    <p th:if="${userDTO.tierLevel == 4}" style="background: royalblue;" th:text="'Lv.' + ${userDTO.getTier().description}" th:href="@{/user/mypage/tierLevel}" class="userTier"></p>
+                    </div>
+                    <p th:text="${userDTO.phoneNumber}"/>
+                </div>
+                <div id="updateProfileLink">
+                    <a th:href="@{/mypage/updateProfile}">프로필 수정</a>
+                </div>
+            </div>
+            <div class="userShoppingInfo">
+                <div id="trackingInfo">
+                    <h3>주문 내역</h3>
+                    <table>
+                        <tr>
+                            <th>주문 번호</th>
+                            <th>주문 금액</th>
+                            <th>주문 상태</th>
+                            <th></th>
+                        </tr>
+                        <tr th:each="dto : ${orderDTO}">
+                            <td th:text="${dto.orderId}"/>
+                            <td th:text="${dto.formattedTotalPrice}"/>
+                            <td th:text="${dto.getStatus().description}"/>
+                            <th:block th:if="${dto.trackingNumber != null}">
+                            <td><a th:href="@{/user/mypage/searchTracking}">배송조회</a></td>
+                            </th:block>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+</body>
+</html>

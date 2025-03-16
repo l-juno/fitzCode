@@ -76,9 +76,8 @@ public class SecurityConfig {
                                     "/findEmailSuccess",
                                     "/resetPw",
                                     "/resetPwSuccess",
-                                    "/inquiry/searchProduct",
-                                    "/inquiry/searchOrderList",
-                                    "/inquiry/selectedProduct"
+                                    "/mypage/*",
+                                    "/inquiry/*"
                             ).permitAll()
                             .requestMatchers("/admin/dashboard")
                             .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")
