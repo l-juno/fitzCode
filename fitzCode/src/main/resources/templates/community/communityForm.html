@@ -245,7 +245,7 @@
     <div class="line">
     </div>
     <br>
-    <form action="#" method="post" enctype="multipart/form-data">
+<!--    <form action="#" method="post" enctype="multipart/form-data">-->
         <!-- 제목 입력 -->
         <div class="form-group">
             <label for="title">제목</label>
@@ -286,6 +286,9 @@
                 <span class="close">&times;</span>
                 <h2>상품 검색</h2>
                 <input type="text" id="searchInput" placeholder="상품을 검색하세요">
+                <!-- 검색 입력 필드 추가 -->
+                <input type="text" id="productName" placeholder="상품 이름을 입력하세요">
+                <button type="button" id="searchButton">검색</button>
                 <div id="searchResults" class="search-results"></div>
             </div>
         </div>
@@ -307,7 +310,7 @@
             <button type="submit" class="submit-button">업로드</button>
         </div>
 
-    </form>
+<!--    </form>-->
 </main>
 
 <!-- footer -->
@@ -429,42 +432,59 @@ let selectedStyles = [];
         });
     });
 
-    document.getElementById("searchInput").addEventListener("input", async function() {
-        const query = this.value.trim();
-        if (query === "") return;
+        // 태그 추가 버튼 클릭 시 모달 열기
+        document.getElementById("addTagButton").addEventListener("click", function() {
+            const modal = document.getElementById("productModal");
+            modal.style.display = "block"; // 모달 표시
+        });
 
-        const resultsContainer = document.getElementById("searchResults");
+        // 모달 닫기
+        document.querySelector(".close").addEventListener("click", function() {
+            const modal = document.getElementById("productModal");
+            modal.style.display = "none"; // 모달 숨기기
+        });
 
-        try {
-            const response = await fetch(`/products/search?keyword=${encodeURIComponent(query)}`);
-            const products = await response.json();
+        // 모달 외부 클릭 시 모달 닫기
+        window.addEventListener("click", function(event) {
+            const modal = document.getElementById("productModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        });
 
-            resultsContainer.innerHTML = "";
-            products.forEach(product => {
-                const productDiv = document.createElement("div");
-                productDiv.classList.add("product-item");
-                productDiv.innerHTML = `<img src="${product.image}" alt="${product.name}">`;
+// 상품 검색
 
-                // 선택 기능
-                productDiv.addEventListener("click", function() {
-                    toggleProductSelection(product, productDiv);
+        $(document).ready(function() {
+            // 검색 버튼 클릭 시
+            $('#searchButton').on('click', function() {
+                var productName = $('#productName').val();
+                var offset = 0;  // 기본값: 첫 번째 페이지
+
+                // 상품 검색 API 호출
+                $.ajax({
+                    url: '/api/community/search-products',
+                    method: 'GET',
+                    data: {
+                        productName: productName,
+                        offset: offset
+                    },
+                    success: function(data) {
+                        // 결과를 화면에 표시
+                        var html = '';
+                        data.forEach(function(product) {
+                            html += '<div>';
+                            html += '<h3>' + product.productName + '</h3>';
+                            html += '<img src="' + product.imageUrl + '" alt="' + product.productName + '" width="200"/>';
+                            html += '</div>';
+                        });
+                        $('#productList').html(html);
+                    },
+                    error: function(error) {
+                        console.error("상품 검색 실패:", error);
+                    }
                 });
-
-                resultsContainer.appendChild(productDiv);
             });
-        } catch (error) {
-            console.error("검색 요청 실패", error);
-        }
-    });
-
-    document.getElementById("addTagButton").addEventListener("click", function() {
-        document.getElementById("productModal").style.display = "block";
-    });
-
-    // 모달 닫기
-    document.querySelector(".close").addEventListener("click", function() {
-        document.getElementById("productModal").style.display = "none";
-    });
+        });
 </script>
 
 </body>
