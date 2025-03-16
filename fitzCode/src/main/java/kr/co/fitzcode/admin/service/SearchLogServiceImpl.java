@@ -13,7 +13,7 @@ public class SearchLogServiceImpl implements SearchLogService {
     private final SearchLogMapper searchLogMapper;
 
     @Override
-    public void saveSearchLog(int userId, String keyword) {
+    public void saveSearchLog(Integer userId, String keyword) {
         Long count = searchLogMapper.countValidKeyword(keyword);
 
         if (count != null && count > 0) {

@@ -10,5 +10,5 @@ public interface SearchLogMapper {
     Long countValidKeyword(@Param("keyword") String keyword);
 
     // 검색 기록을 DB에 추가
-    void insertSearchLog(@Param("userId") int userId, @Param("keyword") String keyword);
+    void insertSearchLog(@Param("userId") Integer userId, @Param("keyword") String keyword);
 }

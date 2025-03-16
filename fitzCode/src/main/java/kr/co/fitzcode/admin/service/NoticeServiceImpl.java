@@ -23,8 +23,14 @@ public class NoticeServiceImpl implements NoticeService {
     private static final String NOTICE_ATTACHMENT_FOLDER = "notices/attachments";
 
     @Override
-    public List<NoticeDTO> getAllNotices() {
-        return noticeMapper.selectAllNotices();
+    public List<NoticeDTO> getNoticesWithPagination(int page, int size) {
+        int offset = page * size; // 0-based 인덱스로 변환 (page는 1-based)
+        return noticeMapper.selectNoticesWithPagination(offset, size);
+    }
+
+    @Override
+    public long getTotalNoticeCount() {
+        return noticeMapper.countNotices();
     }
 
     @Override

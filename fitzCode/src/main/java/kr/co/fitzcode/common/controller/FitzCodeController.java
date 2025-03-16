@@ -4,6 +4,7 @@ import kr.co.fitzcode.admin.service.SearchLogService;
 import kr.co.fitzcode.common.dto.CustomOAuth2User;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class FitzCodeController {
 
     private final SearchLogService searchLogService;
@@ -29,20 +31,28 @@ public class FitzCodeController {
     }
 
     @PostMapping("/search")
+    @ResponseBody
     public ResponseEntity<Map<String, Object>> search(@RequestParam("keyword") String keyword) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        int userId = (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User)
-                ? ((CustomOAuth2User) authentication.getPrincipal()).getUserId()
-                : 0;
-
-        searchLogService.saveSearchLog(userId, keyword);
-
         Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "검색이 성공적으로 처리되었습니다.");
-        response.put("keyword", keyword);
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Integer userId = null; // 비로그인 시 null
+            if (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User) {
+                userId = ((CustomOAuth2User) authentication.getPrincipal()).getUserId();
+            }
 
-        return ResponseEntity.ok(response);
+            searchLogService.saveSearchLog(userId, keyword);
+
+            response.put("success", true);
+            response.put("message", "검색이 성공적으로 처리되었습니다.");
+            response.put("keyword", keyword);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("검색 처리 중 오류 발생: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "검색 처리 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @GetMapping("/search/result")

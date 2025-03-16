@@ -96,9 +96,12 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/products",
                                     "/styles",
                                     "/notice",
+                                    "/notice/**",
                                     "/api/cart/**",
                                     "/api/user/check",
-                                    "/admin/notice/subscribe"
+                                    "/admin/notice/subscribe",
+                                    "/search",
+                                    "/search/result"
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
@@ -157,7 +160,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                     exceptionHandling
                             .authenticationEntryPoint((request, response, authException) -> {
                                 String requestUri = request.getRequestURI();
-                                // permitAll() 경로면 리디렉션 안할거임
+                                // permitAll() 경로면 리디렉션 안함
                                 if (requestUri.equals("/") || requestUri.equals("/login") || requestUri.equals("/logout") ||
                                         requestUri.startsWith("/css/") || requestUri.startsWith("/js/") ||
                                         requestUri.startsWith("/img/") ||
@@ -170,7 +173,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                                         requestUri.equals("/inquiry/selectedProduct") || requestUri.equals("/admin/notice/subscribe") ||
                                         requestUri.equals("/api/notifications") || requestUri.equals("/products") ||
                                         requestUri.equals("/styles") || requestUri.equals("/notice") ||
-                                        requestUri.startsWith("/api/cart/")) {
+                                        requestUri.startsWith("/api/cart/") || requestUri.equals("/search") ||
+                                        requestUri.equals("/search/result")) {
                                     return;
                                 }
                                 response.sendRedirect("/login");

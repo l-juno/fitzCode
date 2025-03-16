@@ -35,12 +35,14 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/admin/notice")
 @Slf4j
-public class NoticeController {
+public class AdminNoticeController {
 
     private final NoticeService noticeService;
     private final NotificationService notificationService;
@@ -81,10 +83,43 @@ public class NoticeController {
     }
 
     @GetMapping
-    public String getAllNotices(Model model) {
+    public String getAllNotices(
+            @RequestParam(defaultValue = "1") int page, // 현재 페이지
+            @RequestParam(defaultValue = "10") int size, // 페이지당 항목 수
+            Model model) {
         try {
-            List<NoticeDTO> notices = noticeService.getAllNotices();
+            // 페이지 번호는 1부터 시작하므로 0-based로 변환
+            int pageIndex = page - 1;
+            if (pageIndex < 0) {
+                pageIndex = 0;
+            }
+
+            // 공지사항 목록 조회 (페이징 적용)
+            List<NoticeDTO> notices = noticeService.getNoticesWithPagination(pageIndex, size);
+            // 총 공지사항 수 조회
+            long totalNotices = noticeService.getTotalNoticeCount();
+            // 총 페이지 수 계산
+            int totalPages = (int) Math.ceil((double) totalNotices / size);
+            if (totalPages == 0) {
+                totalPages = 1; // 최소 1페이지 보장
+            }
+
+            // 페이지 번호 목록 생성 (최대 5개 페이지 표시)
+            int startPage = Math.max(1, page - 2);
+            int endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+            List<Integer> pageNumbers = IntStream.rangeClosed(startPage, endPage)
+                    .boxed()
+                    .collect(Collectors.toList());
+
+            // 모델에 데이터 추가
             model.addAttribute("notices", notices);
+            model.addAttribute("currentPage", page);
+            model.addAttribute("totalPages", totalPages);
+            model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute("size", size);
             return "admin/notice/list";
         } catch (NoticeNotFoundException e) {
             log.error("공지사항 목록 조회 실패: {}", e.getMessage(), e);

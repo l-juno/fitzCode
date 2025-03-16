@@ -21,9 +21,22 @@ function checkAuthenticated(callback) {
 }
 
 $(document).ready(function () {
+    // 검색 입력창 Enter 키 (비로그인 포함)
+    $('.input').on('keypress', function (e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            const keyword = $(this).val().trim();
+            if (keyword) {
+                search(keyword);
+            }
+        }
+    });
+
+    // 로그인 여부에 따른 추가 기능 활성화
     checkAuthenticated(function(isAuthenticated) {
         if (!isAuthenticated) {
-            console.log("로그인하지 않은 사용자 : 이벤트 처리를 비활성화");
+            console.log("비로그인 사용자: 알림 및 카트 비활성화");
+            $('#ex4 .p1').attr('data-count', '0');
             return;
         }
 
@@ -67,17 +80,6 @@ $(document).ready(function () {
             window.notificationCount = 0;
             updateNotificationBadge();
             addNotificationActions();
-        });
-
-        // 검색 입력창 Enter 키
-        $('.input').on('keypress', function (e) {
-            if (e.which === 13) {
-                e.preventDefault();
-                const keyword = $(this).val().trim();
-                if (keyword) {
-                    search(keyword);
-                }
-            }
         });
 
         // 초기 카트 수량 로드
@@ -137,7 +139,7 @@ function subscribeToNotifications() {
     });
 }
 
-// 검색 요청 실행
+// 검색 요청 실행 (비로그인 가능)
 function search(keyword) {
     $.ajax({
         url: '/search',

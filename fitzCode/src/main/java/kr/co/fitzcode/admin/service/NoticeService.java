@@ -6,8 +6,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface NoticeService {
-    // 공지사항 목록 조회
-    List<NoticeDTO> getAllNotices();
+    // 공지사항 목록 조회 (페이징 추가)
+    List<NoticeDTO> getNoticesWithPagination(int page, int size);
+
+    // 총 공지사항 수 조회
+    long getTotalNoticeCount();
 
     // 공지사항 작성
     NoticeDTO createNotice(NoticeDTO noticeDTO, MultipartFile imageFile, MultipartFile attachmentFile);
