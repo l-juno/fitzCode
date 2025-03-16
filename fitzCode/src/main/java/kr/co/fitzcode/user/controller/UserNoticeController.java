@@ -137,13 +137,12 @@ public class UserNoticeController {
             @RequestParam(defaultValue = "10") int size,
             Model model) {
         try {
-            int totalFaqs = 12; // HTML에 하드코딩된 FAQ 수
+            int totalFaqs = 12; // FAQ 개수
             int pageIndex = page - 1;
             if (pageIndex < 0) {
                 pageIndex = 0;
             }
 
-            // 페이지네이션 계산
             int start = pageIndex * size;
             int end = Math.min(start + size, totalFaqs);
             int totalPages = (int) Math.ceil((double) totalFaqs / size);
@@ -160,13 +159,13 @@ public class UserNoticeController {
                     .boxed()
                     .collect(Collectors.toList());
 
-            // 더미 FaqDTO 리스트 (HTML에서 처리하므로 최소한의 데이터만 전달)
+            // 더미 리스트
             List<FaqDTO> faqs = new ArrayList<>();
             for (int i = start; i < end; i++) {
                 FaqDTO faq = new FaqDTO();
-                faq.setFaqId(i + 1); // 1부터 시작하는 ID
-                faq.setTitle(getFaqTitle(i + 1)); // 동적 제목 설정
-                faq.setContent(getFaqContent(i + 1)); // 동적 내용 설정
+                faq.setFaqId(i + 1);
+                faq.setTitle(getFaqTitle(i + 1));
+                faq.setContent(getFaqContent(i + 1));
                 faqs.add(faq);
             }
 
@@ -184,7 +183,7 @@ public class UserNoticeController {
         }
     }
 
-    // 더미 FaqDTO 클래스 (컨트롤러 내에서만 사용)
+    // 더미
     @Data
     private static class FaqDTO {
         private int faqId;
@@ -199,7 +198,7 @@ public class UserNoticeController {
         }
     }
 
-    // 하드코딩된 FAQ 제목 반환 메서드
+    // FAQ 제목
     private String getFaqTitle(int id) {
         switch (id) {
             case 1: return "배송은 얼마나 걸리나요?";
@@ -218,7 +217,7 @@ public class UserNoticeController {
         }
     }
 
-    // 하드코딩된 FAQ 내용 반환 메서드
+    // FAQ 내용
     private String getFaqContent(int id) {
         switch (id) {
             case 1: return "배송은 보통 3~5일 소요됩니다.";
