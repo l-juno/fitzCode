@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <title>communityForm</title>
     <style>
         main {
@@ -39,7 +40,6 @@
             font-size: 14px;
             resize: none;
         }
-
 
 
         .form-group textarea {
@@ -140,7 +140,7 @@
             border-radius: 4px;
         }
 
-        .line{
+        .line {
             width: 100%;
             height: 4px;
             background-color: #2f2f32;
@@ -245,246 +245,187 @@
     <div class="line">
     </div>
     <br>
-<!--    <form action="#" method="post" enctype="multipart/form-data">-->
-        <!-- 제목 입력 -->
-        <div class="form-group">
-            <label for="title">제목</label>
-            <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
-            <div class="error" id="titleError"></div>
-        </div>
+    <!--    <form action="#" method="post" enctype="multipart/form-data">-->
+    <!-- 제목 입력 -->
+    <div class="form-group">
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title" placeholder="제목을 입력하세요" required>
+        <div class="error" id="titleError"></div>
+    </div>
 
-        <!-- 내용 입력 -->
-        <div class="form-group">
-            <label for="content">내용</label>
-            <textarea id="content" name="content" placeholder="내용을 입력하세요" required></textarea>
-            <div class="error" id="contentError"></div>
-        </div>
+    <!-- 내용 입력 -->
+    <div class="form-group">
+        <label for="content">내용</label>
+        <textarea id="content" name="content" placeholder="내용을 입력하세요" required></textarea>
+        <div class="error" id="contentError"></div>
+    </div>
 
-        <!-- 이미지 첨부 -->
-        <div class="form-group">
-            <label for="image">이미지 첨부</label>
-            <input type="file" id="image" name="image" accept="image/*" multiple>
-            <!-- 이미지 미리보기 컨테이너 -->
-            <div id="imagePreviewContainer" class="image-preview-container"></div>
-            <!-- 파일 이름 리스트 -->
-            <ul id="fileNameList" class="file-name-list"></ul>
-        </div>
+    <!-- 이미지 첨부 -->
+    <div class="form-group">
+        <label for="image">이미지 첨부</label>
+        <input type="file" id="image" name="image" accept="image/*" multiple>
+        <!-- 이미지 미리보기 컨테이너 -->
+        <div id="imagePreviewContainer" class="image-preview-container"></div>
+        <!-- 파일 이름 리스트 -->
+        <ul id="fileNameList" class="file-name-list"></ul>
+    </div>
 
-        <!-- 상품 태그 -->
-        <div class="form-group">
-            <label for="tags">상품 태그</label>
-            <div class="tag-input">
-                <button type="button" id="addTagButton">태그 추가</button>
-            </div>
-            <br><br>
-            <div id="tagList" class="tag-list"></div>
+    <!-- 상품 태그 -->
+    <div class="form-group">
+        <label for="tags">상품 태그</label>
+        <div class="tag-input">
+            <button type="button" id="addTagButton">태그 추가</button>
         </div>
+        <br><br>
+        <div id="tagList" class="tag-list"></div>
+    </div>
 
-        <!-- 모달 -->
-        <div id="productModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>상품 검색</h2>
-                <input type="text" id="searchInput" placeholder="상품을 검색하세요">
-                <!-- 검색 입력 필드 추가 -->
-                <input type="text" id="productName" placeholder="상품 이름을 입력하세요">
-                <button type="button" id="searchButton">검색</button>
-                <div id="searchResults" class="search-results"></div>
-            </div>
+    <!-- 모달 -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>상품 검색</h2>
+            <input type="text" id="productName" name="productName" placeholder="상품을 검색하세요">
+            <button type="button" id="searchButton">검색</button>
+            <div id="searchResults" class="search-results"></div>
         </div>
-        <!-- 스타일 태그 -->
-        <div class="form-group">
-            <label>스타일 태그 (최대 2개 선택 가능)</label>
-            <div id="styleTagContainer">
-                <button type="button" class="style-tag" data-style="캐주얼">캐주얼</button>
-                <button type="button" class="style-tag" data-style="스트릿">스트릿</button>
-                <button type="button" class="style-tag" data-style="시크">시크</button>
-                <button type="button" class="style-tag" data-style="고프코어">고프코어</button>
-                <button type="button" class="style-tag" data-style="클래식">클래식</button>
-            </div>
-            <div id="selectedStyles" class="selected-styles"></div>
-        </div>
-        <br>
-        <!-- 제출 버튼 -->
-        <div class="form-group">
-            <button type="submit" class="submit-button">업로드</button>
-        </div>
+    </div>
 
-<!--    </form>-->
+    <!-- 스타일 태그 -->
+    <div class="form-group">
+        <label>스타일 태그 (최대 2개 선택 가능)</label>
+        <div id="styleTagContainer">
+            <button type="button" class="style-tag" data-style="캐주얼">캐주얼</button>
+            <button type="button" class="style-tag" data-style="스트릿">스트릿</button>
+            <button type="button" class="style-tag" data-style="시크">시크</button>
+            <button type="button" class="style-tag" data-style="고프코어">고프코어</button>
+            <button type="button" class="style-tag" data-style="클래식">클래식</button>
+        </div>
+        <div id="selectedStyles" class="selected-styles"></div>
+    </div>
+    <br>
+    <!-- 제출 버튼 -->
+    <div class="form-group">
+        <button type="submit" class="submit-button">업로드</button>
+    </div>
+
+    <!--    </form>-->
 </main>
 
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
 <script>
-        document.getElementById("image").addEventListener("change", function(event) {
+    document.getElementById("image").addEventListener("change", function (event) {
         const files = event.target.files;
         const imagePreviewContainer = document.getElementById("imagePreviewContainer");
         const fileNameList = document.getElementById("fileNameList");
 
         if (files) {
-        Array.from(files).forEach(file => {
-        // 이미 존재하는 파일인지 체크 (삭제 후 다시 추가될 수 있도록)
-        const existingFile = fileNameList.querySelector(`[data-file="${file.name}"]`);
-        if (existingFile) return;  // 이미 추가된 파일이면 처리하지 않음
+            Array.from(files).forEach(file => {
+                // 이미 존재하는 파일인지 체크 (삭제 후 다시 추가될 수 있도록)
+                const existingFile = fileNameList.querySelector(`[data-file="${file.name}"]`);
+                if (existingFile) return;  // 이미 추가된 파일이면 처리하지 않음
 
-        const reader = new FileReader();
+                const reader = new FileReader();
 
-        reader.onload = function(e) {
-        const imgContainer = document.createElement("div");
-        const img = document.createElement("img");
-        img.src = e.target.result;
-        img.classList.add("image-preview");
-        imgContainer.appendChild(img);
+                reader.onload = function (e) {
+                    const imgContainer = document.createElement("div");
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.classList.add("image-preview");
+                    imgContainer.appendChild(img);
 
-        // 이미지 클릭 시 해당 이미지 삭제
-        img.addEventListener("click", function() {
-        imagePreviewContainer.removeChild(imgContainer);
-        fileNameList.removeChild(fileNameList.querySelector(`[data-file="${file.name}"]`));
+                    // 이미지 클릭 시 해당 이미지 삭제
+                    img.addEventListener("click", function () {
+                        imagePreviewContainer.removeChild(imgContainer);
+                        fileNameList.removeChild(fileNameList.querySelector(`[data-file="${file.name}"]`));
+                    });
+
+                    imagePreviewContainer.appendChild(imgContainer);
+                };
+
+                reader.readAsDataURL(file);
+
+                // 파일 이름 리스트에 추가
+                const fileNameItem = document.createElement("li");
+                fileNameItem.textContent = file.name;
+                fileNameItem.setAttribute("data-file", file.name);
+                fileNameList.appendChild(fileNameItem);
+            });
+        }
     });
 
-        imagePreviewContainer.appendChild(imgContainer);
-    };
+    document.addEventListener("DOMContentLoaded", function () {
+        // 모달 열기 버튼 클릭 이벤트
+        document.getElementById("addTagButton").addEventListener("click", function () {
+            const modal = document.getElementById("productModal");
+            modal.style.display = "block"; // 모달 표시
+        });
 
-        reader.readAsDataURL(file);
+        // 모달 닫기 버튼 클릭 이벤트
+        document.querySelector(".close").addEventListener("click", function () {
+            const modal = document.getElementById("productModal");
+            modal.style.display = "none"; // 모달 숨기기
+        });
 
-        // 파일 이름 리스트에 추가
-        const fileNameItem = document.createElement("li");
-        fileNameItem.textContent = file.name;
-        fileNameItem.setAttribute("data-file", file.name);
-        fileNameList.appendChild(fileNameItem);
-    });
-    }
-    });
+        // 모달 외부 클릭 시 모달 닫기
+        window.addEventListener("click", function (event) {
+            const modal = document.getElementById("productModal");
+            if (event.target === modal) {
+                modal.style.display = "none"; // 모달 숨기기
+            }
+        });
 
-// 태그 추가 기능
-document.getElementById("addTagButton").addEventListener("click", function() {
-const tagInput = document.getElementById("tagInput");
-const tagValue = tagInput.value.trim();
-
-if (tagValue) {
-const tagList = document.getElementById("tagList");
-
-// 태그 div 생성
-const tag = document.createElement("div");
-tag.classList.add("tag");
-tag.textContent = tagValue;
-
-// 태그 클릭 시 삭제
-tag.addEventListener("click", function() {
-tagList.removeChild(tag);
-});
-
-// 태그 추가
-tagList.appendChild(tag);
-tagInput.value = ""; // 입력 필드 비우기
-}
-});
-
-// 폼 제출 시 검증 (예시)
-document.querySelector("form").addEventListener("submit", function(event) {
-let isValid = true;
-
-// 제목 검증
-const title = document.getElementById("title");
-if (!title.value.trim()) {
-document.getElementById("titleError").textContent = "제목을 입력하세요.";
-isValid = false;
-} else {
-document.getElementById("titleError").textContent = "";
-}
-
-// 내용 검증
-const content = document.getElementById("content");
-if (!content.value.trim()) {
-document.getElementById("contentError").textContent = "내용을 입력하세요.";
-isValid = false;
-} else {
-document.getElementById("contentError").textContent = "";
-}
-
-if (!isValid) {
-event.preventDefault(); // 폼 제출 막기
-}
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-const styleButtons = document.querySelectorAll(".style-tag");
-let selectedStyles = [];
+        // 스타일 태그 선택 로직
+        const styleButtons = document.querySelectorAll(".style-tag");
+        let selectedStyles = [];
 
         styleButtons.forEach(button => {
             button.addEventListener("click", function () {
                 const style = button.getAttribute("data-style");
-
-                // 이미 선택된 스타일이면 제거
                 if (selectedStyles.includes(style)) {
                     selectedStyles = selectedStyles.filter(s => s !== style);
                     button.classList.remove("selected");
-                    return;
-                }
-
-                // 최대 2개까지 선택 가능
-                if (selectedStyles.length < 2) {
+                } else if (selectedStyles.length < 2) {
                     selectedStyles.push(style);
                     button.classList.add("selected");
                 }
             });
         });
     });
+    // 상품 검색
+    $(document).ready(function () {
+        // 검색 버튼 클릭 시
+        $('#searchButton').on('click', function () {
+            var productName = $('#productName').val();
+            var offset = 0;  // 기본값: 첫 번째 페이지
 
-        // 태그 추가 버튼 클릭 시 모달 열기
-        document.getElementById("addTagButton").addEventListener("click", function() {
-            const modal = document.getElementById("productModal");
-            modal.style.display = "block"; // 모달 표시
-        });
-
-        // 모달 닫기
-        document.querySelector(".close").addEventListener("click", function() {
-            const modal = document.getElementById("productModal");
-            modal.style.display = "none"; // 모달 숨기기
-        });
-
-        // 모달 외부 클릭 시 모달 닫기
-        window.addEventListener("click", function(event) {
-            const modal = document.getElementById("productModal");
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        });
-
-// 상품 검색
-
-        $(document).ready(function() {
-            // 검색 버튼 클릭 시
-            $('#searchButton').on('click', function() {
-                var productName = $('#productName').val();
-                var offset = 0;  // 기본값: 첫 번째 페이지
-
-                // 상품 검색 API 호출
-                $.ajax({
-                    url: '/api/community/search-products',
-                    method: 'GET',
-                    data: {
-                        productName: productName,
-                        offset: offset
-                    },
-                    success: function(data) {
-                        // 결과를 화면에 표시
-                        var html = '';
-                        data.forEach(function(product) {
-                            html += '<div>';
-                            html += '<h3>' + product.productName + '</h3>';
-                            html += '<img src="' + product.imageUrl + '" alt="' + product.productName + '" width="200"/>';
-                            html += '</div>';
-                        });
-                        $('#productList').html(html);
-                    },
-                    error: function(error) {
-                        console.error("상품 검색 실패:", error);
-                    }
-                });
+            // 상품 검색 API 호출
+            $.ajax({
+                url: '/api/community/search-products',
+                method: 'GET',
+                data: {
+                    productName: productName,
+                    offset: offset
+                },
+                success: function (data) {
+                    // 결과를 화면에 표시
+                    var html = '';
+                    data.forEach(function (product) {
+                        html += '<div>';
+                        html += '<h3>' + product.productName + '</h3>';
+                        html += '<img src="' + product.imageUrl + '" alt="' + product.productName + '" width="200"/>';
+                        html += '</div>';
+                    });
+                    $('#productList').html(html);
+                },
+                error: function (error) {
+                    console.error("상품 검색 실패:", error);
+                }
             });
         });
+    });
 </script>
 
 </body>

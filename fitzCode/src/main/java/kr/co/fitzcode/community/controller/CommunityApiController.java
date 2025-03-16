@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -24,8 +25,8 @@ public class CommunityApiController {
     public List<ProductDTO> searchProductsByName(
             @RequestParam String productName,
             @RequestParam(defaultValue = "0") int offset) {
-        // 상품 이름과 오프셋을 받아서 검색
         List<ProductDTO> products = communityService.searchProductsByName(productName, offset);
-        return products;
+        return products != null ? products : Collections.emptyList();
     }
+
 }
