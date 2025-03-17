@@ -22,16 +22,20 @@
         <div class="myInfo">
             <div class="userProfileInfo">
                 <div id="profileImage">
-                    <img th:src="${userDTO.profileImage}" th:alt="${userDTO.profileImage}">
+                    <!-- profileImage가 null이면  기본 이미지 표시 -->
+                    <img th:src="${userDTO != null and userDTO.profileImage != null} ? ${userDTO.profileImage} : '/img/default-profile.png'"
+                         th:alt="${userDTO != null and userDTO.nickname != null} ? ${userDTO.nickname} + '의 프로필' : '기본 프로필 사진'"
+                         class="profile-image" />
                 </div>
                 <div id="profileInfo">
                     <div>
-                    <p th:text="${userDTO.nickname}" style="font-weight: bold; font-size: 17.5px;"></p>
-                    <p th:text="'Lv.' + ${userDTO.getTier().description}" class="userTier"></p>
+                        <p th:text="${userDTO != null} ? userDTO.nickname : '사용자 정보 없음'" style="font-weight: bold; font-size: 17.5px;"></p>
+                        <p th:text="${userDTO != null and userDTO.tier != null} ? 'Lv.' + userDTO.tier.description : 'Lv. 정보 없음'" class="userTier"></p>
                     </div>
                 </div>
                 <div id="updateProfileLink">
-                    <a th:href="@{/mypage/updateProfile}">프로필 수정</a>
+                    <a th:href="@{/mypage/updateProfile}" th:if="${userDTO != null}">프로필 수정</a>
+                    <p th:if="${userDTO == null}">프로필 수정 불가</p>
                 </div>
             </div>
             <div class="userShoppingInfo">
@@ -45,14 +49,14 @@
                             <th></th>
                         </tr>
                         <tr th:each="dto : ${orderDTO}">
-                            <td th:text="${dto.orderId}"/>
-                            <td th:text="${dto.formattedTotalPrice}"/>
-                            <td th:text="${dto.getStatus().description}"/>
+                            <td th:text="${dto.orderId}"></td>
+                            <td th:text="${dto.formattedTotalPrice}"></td>
+                            <td th:text="${dto.getStatus().description}"></td>
                             <th:block th:if="${dto.trackingNumber != null}">
-                            <td style="padding: 0px">
-                                <button class="searchTracking">배송조회</button>
-                                <input type="hidden" id="trackingNumber" th:value="${dto.trackingNumber}">
-                            </td>
+                                <td style="padding: 0px">
+                                    <button class="searchTracking">배송조회</button>
+                                    <input type="hidden" id="trackingNumber" th:value="${dto.trackingNumber}">
+                                </td>
                             </th:block>
                         </tr>
                     </table>
@@ -61,7 +65,6 @@
         </div>
     </div>
 </div>
-
 
 <br>
 <br>
@@ -72,13 +75,12 @@
 <!-- 택배 추적 모달 -->
 <div class="hidden" id="modalContainer">
     <div id="modalContent">
-        <div class="modalCloseBtn">&times;</div>
+        <div class="modalCloseBtn">×</div>
         <div>
             <div id="msg"></div>
             <span id="deliveryCompany"></span>
         </div>
-        <table class="table" id="trackingData">
-        </table>
+        <table class="table" id="trackingData"></table>
         <button class="modalCloseBtn" id="close-search">확인</button>
     </div>
 </div>
