@@ -61,16 +61,5 @@
     </div>
 </header>
 <script th:src="@{/js/admin/headerNotification.js}"></script>
-<script>
-    $(document).ready(function () {
-        const currentPath = window.location.pathname;
-        $('.nav-link').each(function () {
-            const linkPath = $(this).data('path');
-            if (currentPath === linkPath) {
-                $(this).addClass('active');
-            }
-        });
-    });
-</script>
 </body>
 </html>

@@ -21,10 +21,13 @@
             <span class="filter-arrow">▼</span>
         </button>
         <div class="filter-dropdown">
-            <h3>Filters</h3>
+            <h3>카테고리</h3>
             <form action="/product/filterList" method="GET" id="filter-form">
                 <div id="categories-container" class="categories-container"></div>
-                <input type="submit" value="Apply" class="apply-button">
+                <div class="filter-buttons">
+                    <button type="button" id="reset-filters" class="reset-button">초기화</button>
+                    <input type="submit" value="적용" class="apply-button">
+                </div>
             </form>
         </div>
     </div>
@@ -43,7 +46,7 @@
     let hasMoreProducts = true;
 
     $(document).ready(function () {
-        // 필터 버튼 이벤트 바인딩
+        // 필터 버튼
         console.log("Document ready, binding filter button events...");
         if ($(".filter-button").length) {
             console.log("Filter button found, binding click event");
@@ -56,7 +59,6 @@
                 if (dropdown.hasClass("active")) {
                     console.log("Filter dropdown opened");
                     arrow.text("▲");
-                    // 상품 리스트를 아래로 밀지 않음
                 } else {
                     console.log("Filter dropdown closed");
                     arrow.text("▼");
@@ -94,7 +96,6 @@
                 });
 
                 if (categoryMap[0]) {
-                    // 상위 카테고리를 가로로 1열로 나열
                     const topCategories = $('<div class="top-categories"></div>');
                     categoryMap[0].forEach(parentCategory => {
                         const categorySection = $(`
@@ -107,7 +108,6 @@
                     });
                     categoriesContainer.append(topCategories);
 
-                    // 하위 카테고리 추가
                     categoryMap[0].forEach(parentCategory => {
                         if (categoryMap[parentCategory.categoryId]) {
                             const subcategories = $(`#category-${parentCategory.categoryId}`);
@@ -130,20 +130,33 @@
 
         // 초기 상품 로드
         loadProducts();
+
+        // 초기화 버튼 이벤트
+        $("#reset-filters").click(function(e) {
+            e.preventDefault();
+            console.log("Reset button clicked");
+            $("input[type='checkbox']").prop("checked", false);
+            loadProducts(); // 필터 초기화 후 상품 다시 로드
+            // 드롭다운 닫기 로직 제거
+        });
+
+        // 필터 적용 버튼 이벤트
+        $(".apply-button").click(function(event) {
+            event.preventDefault();
+            console.log("Apply button clicked");
+            currentPage = 1;
+            loadProducts();
+            hasMoreProducts = true;
+            // 필터 적용 후 드롭다운 닫기
+            $(".filter-dropdown").removeClass("active");
+            $(".filter-arrow").text("▼");
+        });
     });
 
     // 상품 로드 함수
     function loadProducts() {
         getProductsByFilter(currentPage);
     }
-
-    $(".apply-button").click(function(event) {
-        event.preventDefault();
-        console.log("Apply button clicked");
-        currentPage = 1;
-        loadProducts();
-        hasMoreProducts = true;
-    });
 
     function getProductsByFilter(pageNum) {
         let formData = $("#filter-form").serialize();

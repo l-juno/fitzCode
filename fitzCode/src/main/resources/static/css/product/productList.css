@@ -130,9 +130,9 @@
 }
 
 .filter-wrapper {
-    position: fixed;
-    top: 134px;
-    right: 130px;
+    position: absolute;
+    top: 0;
+    right: 20px;
     width: auto;
     padding: 0 20px;
     z-index: 1001 !important;
@@ -145,7 +145,7 @@
     align-items: center;
     gap: 8px;
     padding: 8px 12px;
-    background-color: #fff;
+    background-color: transparent;
     border: none !important;
     border-radius: 5px;
     cursor: pointer;
@@ -182,19 +182,44 @@
     right: 0;
     width: 500px !important;
     background: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     padding: 20px;
     z-index: 1000;
     border-radius: 5px;
+    border: solid black 1px;
     visibility: visible !important;
 }
 
 .filter-dropdown.active {
     display: block !important;
+    margin-right: 28px;
 }
 
 .filter-dropdown h3 {
     margin: 0 0 10px 0;
+}
+
+.filter-buttons {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.reset-button {
+    padding: 6px 12px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+.reset-button:hover {
+    background-color: #f0f0f0;
 }
 
 .categories-container {
@@ -250,9 +275,6 @@
 }
 
 .apply-button {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
     background-color: #0b0b0b;
     color: #fff;
     border: none;
