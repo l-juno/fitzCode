@@ -102,7 +102,7 @@ tr{
     border-bottom: 1px solid lightgray;
 }
 th{
-    padding-bottom: 10px;
+    padding: 10px;
     font-size: 14.5px;
 }
 td{
@@ -120,7 +120,7 @@ td button{
 }
 
 /*모달관련*/
-#searchTracking{
+.searchTracking{
     background-color: white;
     border: #ddd 1px solid;
     padding: 5px 8px;
@@ -173,6 +173,7 @@ td button{
 #trackingData{
     border: 1px solid #ddd;
     border-collapse: collapse;
+    font-size: 13.3px;
 }
 #trackingData td,
 #trackingData th{
@@ -182,4 +183,15 @@ td button{
 #deliveryCompany{
     display: inline-block;
     margin-bottom: 16px;
+}
+#close-search{
+    position: relative;
+    margin: 15px 0px 20px 0px;
+    padding: 10px;
+    border-radius: 16px;
+    font-size: 14px;
+    width: 60px;
+    background: #2f2f32;
+    border: 1px #2f2f32;
+    color: white;
 }

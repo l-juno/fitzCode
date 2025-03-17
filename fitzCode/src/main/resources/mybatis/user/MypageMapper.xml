@@ -83,4 +83,22 @@
         phone_number = #{userDTO.phoneNumber}
         WHERE user_id = #{userDTO.userId};
     </update>
+
+
+    <!-- 프로필 이미지 가져오기 -->
+    <select id="getProfileUrl" parameterType="int" resultType="String">
+        SELECT
+            profile_image
+        FROM USER
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 프로필 수정 -->
+    <update id="updateProfile" parameterType="UserDTO">
+        UPDATE USER
+        SET
+        nickname = #{userDTO.nickname},
+        profile_image = #{userDTO.profileImage}
+        WHERE user_id = #{userDTO.userId};
+    </update>
 </mapper>

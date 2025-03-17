@@ -38,6 +38,8 @@
             </a>
 
             <a href="/cart">CART</a>
+            <a th:if="${session.dto != null}" href="/user/mypage/login">MyPage1</a>
+            <a th:if="${session.dto == null}" href="/login">MyPage2</a>
             <a href="/notification">알림</a>
         </nav>
     </div>

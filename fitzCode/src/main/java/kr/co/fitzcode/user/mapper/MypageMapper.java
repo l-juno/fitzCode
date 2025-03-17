@@ -28,4 +28,11 @@ public interface MypageMapper {
 
     // 회원정보 업데이트
     void updateUserInfo(@Param("userDTO") UserDTO userDTO);
+
+    // 프로필 수정
+    void updateProfile(@Param("userDTO") UserDTO userDTO);
+
+    // 사용자 프로필 이미지 가져오기
+    String getProfileUrl(@Param("userId") int userId);
+
 }

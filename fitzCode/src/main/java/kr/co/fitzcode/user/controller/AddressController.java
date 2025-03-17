@@ -37,10 +37,10 @@ public class AddressController {
 
     // 주소 추가 -> 주소 목록으로 리다이렉트
     @PostMapping("/insertAddress")
-    public String insertAddress(@ModelAttribute AddressDTO addressDTO) {
+    public void insertAddress(@RequestBody AddressDTO addressDTO) {
         int userId = securityUtils.getUserId();
         addressService.insertAddress(addressDTO, userId);
-        return "redirect:/mypage/address";
+        log.info(">>>>>>>>>>>>>>>>>>>>>>>>>> 아무메세지 ");
     }
 
     // 일반 배송지 -> 기본배송지로 설정 -> 주소목록으로 리다이렉트

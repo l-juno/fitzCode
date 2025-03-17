@@ -4,6 +4,7 @@ import kr.co.fitzcode.common.dto.AccountDTO;
 import kr.co.fitzcode.common.dto.CouponDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
 import kr.co.fitzcode.common.dto.UserDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -24,4 +25,7 @@ public interface MypageService {
 
     // 회원정보 업데이트
     void updateUserInfo(UserDTO userDTO);
+
+    // 프로필 수정
+    void updateProfile(UserDTO userDTO, MultipartFile profileImage);
 }

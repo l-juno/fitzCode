@@ -29,13 +29,15 @@
         WHERE user_id = #{userId}
     </select>
 
+    <!-- 기존의 기본배송지 -> 일반배송지-->
     <update id="toUnDefaultAddress" parameterType="int">
         UPDATE ADDRESS
         SET
         is_default = false
-        WHERE is_default = 1 AND user_id = 1;
+        WHERE is_default = 1 AND user_id = #{userId};
     </update>
 
+    <!-- 주소 추가 -->
     <insert id="insertAddress" parameterType="map">
         INSERT INTO ADDRESS (user_id, address_line1, address_line2, postal_code, is_default)
         VALUES (#{userId},
@@ -49,6 +51,8 @@
         </choose>
     </insert>
 
+
+    <!-- 일반 배송지 -> 기본 배송지 -->
     <update id="toDefaultAddress" parameterType="int">
         UPDATE ADDRESS
         SET
@@ -56,6 +60,7 @@
         WHERE address_id = #{addressId}
     </update>
 
+    <!-- 주소 삭제 -->
     <delete id="deleteAddress" parameterType="list">
         DELETE FROM ADDRESS
         WHERE address_id IN

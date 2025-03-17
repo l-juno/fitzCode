@@ -107,6 +107,9 @@ padding: 20px 10px 0px 20px;
 }
 
 
+#add-address-modalCloseButton {
+    cursor: pointer;
+}
 /* 모달 컨테이너 */
 #add-address-modalContainer{
     width: 100%;
@@ -118,6 +121,7 @@ padding: 20px 10px 0px 20px;
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 #add-address-modalContainer.hidden {
@@ -136,6 +140,8 @@ padding: 20px 10px 0px 20px;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     position: relative;
+    overflow-y: auto;
+    max-height: 80vh;
 }
 
 .modalContent .modal-close {
@@ -182,7 +188,7 @@ input[type="text"]:focus {
     outline: none;
 }
 
-.name-alert {
+#name-alert {
     margin-top: 5px;
     color: red;
     font-size: 12px;
@@ -192,8 +198,7 @@ input[type="text"]:focus {
     margin: 20px 0px;
 }
 
-#searchAddress,
-#searchModifyAddress {
+#searchAddress {
     font-size: 12px;
     display: flex;
     border: #ddd 1px solid;
@@ -231,12 +236,11 @@ input[type="text"]:focus {
     font-size: 14px;
 }
 
-#saveBtn,
-#modifyBtn {
+#saveBtn {
     background: #ddd;
     border-radius: 14px;
     padding: 13px;
-    margin: 39px 168px;
+    margin: 30px 168px;
     width: 114px;
     border: none;
     color: #f4f4f4;

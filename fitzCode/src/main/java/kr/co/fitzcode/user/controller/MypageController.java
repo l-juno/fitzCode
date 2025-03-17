@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,16 +34,22 @@ public class MypageController {
         return "user/mypage/myInfo";
     }
 
-    // 내정보 - 회원 등급
-    @GetMapping("/tierLevel")
-    public void tierLevel(Model model) {
-
+    // 프로필 수정 폼으로 이동
+    @GetMapping("/updateProfile")
+    public String updateProfile(Model model) {
+        int userId = securityUtils.getUserId();
+        UserDTO userDTO = mypageService.getMyInfo(userId);
+        model.addAttribute("dto", userDTO);
+        return "user/mypage/updateProfile";
     }
 
-    // 내 프로필 - 배송추적
-    @GetMapping("/searchTracking")
-    public void searchTracking(Model model) {}
-
+    // 프로필 수정 저장
+    @PostMapping("/updateProfile")
+    public String updateProfile(@ModelAttribute UserDTO userDTO,
+                                @RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImage) {
+        mypageService.updateProfile(userDTO, profileImage);
+        return "redirect:/mypage/myInfo";
+    }
 
     // 계좌 관리
     @GetMapping("/account")
@@ -62,7 +69,6 @@ public class MypageController {
     }
 
 
-
     // 회원정보 수정 폼으로 이동
     @GetMapping("/updateInfo")
     public String updateInfo(Model model) {
@@ -74,7 +80,7 @@ public class MypageController {
 
     // 수정된 회원 정보 저장
     @PostMapping("/updateInfo")
-    public String updateInfo(@ModelAttribute UserDTO userDTO){
+    public String updateInfo(@ModelAttribute UserDTO userDTO) {
 //        log.info(">>>>>>>>>>> updateInfo : {}", userDTO.getPassword() );
         mypageService.updateUserInfo(userDTO);
         return "redirect:user/mypage/updateInfo";

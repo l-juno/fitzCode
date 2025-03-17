@@ -14,7 +14,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 모달 초기화 (값 초기화)
         document.querySelectorAll(".inputText").forEach(input => input.value = "");
-        document.getElementById("name-alert").textContent = "";
         document.querySelectorAll(".checkBtn").forEach(btn => {
             btn.style.background = "white";
             btn.style.color = "black";
@@ -22,10 +21,15 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    addAddressModalCloseButton.addEventListener("click", () => {
+    // 모달창 닫기
+    function closeModal() {
         addAddressModal.classList.add("hidden");
         document.body.style.overflow = "auto";
-    });
+    }
+
+    document.getElementById("add-address-modalCloseButton").addEventListener("click", closeModal);
+    document.getElementById("saveBtn").addEventListener("click", closeModal);
+
 
     // alert 올바른 이름 입력 메시지
     let nameInput = document.getElementById("input-name");
@@ -61,6 +65,8 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.style.background = check ? "black" : "white";
             btn.style.color = check ? "white" : "black";
             btn.style.border = check ? "black 1px solid" : "#ddd 1px solid";
+            console.log(cnt)
+            console.log(check)
         });
     });
 
@@ -85,13 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         }
 
-        fetch("http://localhost:8080/address/insertAddress", {
+        fetch("http://localhost:8080/mypage/insertAddress", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(data)
-        });
+        })
+            .then(data => {
+                location.href = "http://localhost:8080/mypage/address";  // 리다이렉트
+            })
+
     });
 
     // 삭제할 주소 미체크 방지
