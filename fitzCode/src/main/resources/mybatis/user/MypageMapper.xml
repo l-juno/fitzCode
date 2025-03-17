@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.fitzcode.user.mapper.MypageMapper">
+
+
+    <!-- 사용자 정보 -->
+    <select id="getMyInfo" parameterType="int" resultType="UserDTO">
+        SELECT
+        u.user_id,
+        u.user_name,
+        u.password,
+        u.email,
+        u.nickname,
+        u.phone_number,
+        u.profile_image,
+        ut.tier_level
+        FROM USER u
+        JOIN USER_TIER ut ON (ut.user_id = u.user_id)
+        WHERE u.user_id = #{userId}
+    </select>
+
+    <!-- 구매내역 & 운송장 정보 -->
+    <select id="getOrderList" parameterType="int" resultType="OrderDTO">
+        SELECT
+        o.order_id,
+        o.total_price,
+        o.order_status,
+        d.tracking_number,
+        d.delivery_status,
+        d.shipped_at,
+        d.delivered_at
+        FROM ORDERS o
+        LEFT JOIN DELIVERY d ON (o.order_id = d.order_id)
+        WHERE o.user_id =  #{userId}
+    </select>
+
+    <!-- 사용자 계좌 정보 -->
+    <select id="getUserAccount" parameterType="int" resultType="AccountDTO">
+        SELECT
+        account_id,
+        user_id,
+        bank_name,
+        account_number,
+        account_holder
+        FROM USER_ACCOUNT
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 사용자 계좌 정보 변경(수정) -->
+    <update id="updateAccountData" parameterType="AccountDTO">
+        UPDATE USER_ACCOUNT
+        SET
+            bank_name = #{AccountDTO.bankName},
+            account_holder= #{AccountDTO.accountHolder},
+            account_number= #{AccountDTO.accountNumber}
+        WHERE account_id = #{AccountDTO.accountId};
+    </update>
+
+    <!-- 사용자 쿠폰 정보 -->
+    <select id="getUserCoupon" parameterType="int" resultType="CouponDTO">
+        SELECT
+            c.coupon_code,
+            c.description,
+            c.discount_amount,
+            c.discount_percentage,
+            c.minimum_order_amount,
+            uc.valid_until
+        FROM COUPON c
+        JOIN fitzCode.USER_COUPON uc
+        on c.coupon_id = uc.coupon_id
+        WHERE uc.user_id = #{userId}
+        AND uc.is_used = 0
+    </select>
+
+    <!-- 회원정보 업데이트 -->
+    <update id="updateUserInfo" parameterType="UserDTO">
+        UPDATE USER
+        SET
+        email = #{userDTO.email},
+        password = #{userDTO.password},
+        phone_number = #{userDTO.phoneNumber}
+        WHERE user_id = #{userDTO.userId};
+    </update>
+
+
+    <!-- 프로필 이미지 가져오기 -->
+    <select id="getProfileUrl" parameterType="int" resultType="String">
+        SELECT
+            profile_image
+        FROM USER
+        WHERE user_id = #{userId}
+    </select>
+
+    <!-- 프로필 수정 -->
+    <update id="updateProfile" parameterType="UserDTO">
+        UPDATE USER
+        SET
+        nickname = #{userDTO.nickname},
+        profile_image = #{userDTO.profileImage}
+        WHERE user_id = #{userDTO.userId};
+    </update>
+</mapper>

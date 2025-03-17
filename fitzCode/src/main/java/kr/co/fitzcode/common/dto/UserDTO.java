@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import kr.co.fitzcode.common.enums.UserRole;
+import kr.co.fitzcode.common.enums.UserTier;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -40,6 +40,14 @@ public class UserDTO {
     private String profileImage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    // 추가
     private int roleId;
+//    private UserRole roleId;
+    private int tierLevel;
+
+    // 회원 등급 (int) -> UserTier Enum 변환
+    public UserTier getTier() {
+        return UserTier.fromCode(tierLevel);
+    }
 
 }

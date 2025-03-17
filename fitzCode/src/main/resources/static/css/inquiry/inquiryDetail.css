@@ -1,0 +1,94 @@
+.mypageContainer {
+    display: flex;
+}
+
+.mypageContent {
+    width: 800px;
+}
+
+#hr {
+    width: 100%;
+    background: #2f2f32;
+    height: 3px;
+    border-radius: 10px;
+}
+
+.inquiryContainer {
+    display: flex;
+    font-size: 13.3px;
+    margin: 30px 20px;
+    padding: 27px 0px;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+/*여기까지 공통*/
+.inquiryContent {
+    width: 600px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid;
+    padding-right: 25px;
+
+}
+
+.finalButtons a {
+    color: gray;
+}
+
+
+.inquiryData {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 0px 5px 15px 0px;
+    justify-content: space-between;
+    margin: 23px 0px 15px;
+    border-bottom: 1px gray solid;
+}
+
+.data {
+    color: darkgray;
+    margin-left: 10px;
+}
+
+.content {
+    width: 98%;
+    border: 1px gray solid;
+    height: 110px;
+    border-radius: 20px;
+    margin: 10px 0px;
+    padding: 10px;
+}
+
+.reply-container {
+    height: 110px;
+    border-radius: 20px;
+    padding: 10px 20px;
+    width: 94%;
+    margin: 20px 0px;
+    border: 1px #cbcbcb solid;
+    background: #f7f7f7;
+}
+
+.reply-container h3 {
+    padding-bottom: 10px;
+    margin: 10px 0px;
+    border-bottom: 1px black solid;
+}
+
+
+#subject {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.productContainer,
+.imageContainer {
+    margin: 20px 0px;
+}
+
+a {
+    color: #2f2f32;
+}
