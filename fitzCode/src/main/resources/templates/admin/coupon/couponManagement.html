@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>쿠폰 관리</title>
+  <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    .content-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding-left: 20px;
+      max-width: 1200px;
+    }
+    .coupon-container {
+      padding: 20px;
+      font-family: 'Apple SD Gothic Neo', sans-serif;
+      margin-left: 20px;
+    }
+    .coupon-title {
+      font-size: 24px;
+      display: inline-block;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .coupon-title::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 100%;
+      height: 2px;
+      background-color: #000;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+    }
+    .pagination {
+      margin-top: 20px;
+      text-align: center;
+    }
+    .pagination a {
+      margin: 0 5px;
+      text-decoration: none;
+      color: #333;
+    }
+    .form-container {
+      margin-bottom: 20px;
+    }
+    button[type="submit"], button[type="button"] {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      padding: 4px 16px;
+    }
+    button.update-btn {
+      background-color: #000;
+      color: #fff;
+    }
+    button.delete-btn {
+      background-color: #808080;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<div class="content-wrapper">
+  <!-- 사이드바 -->
+  <div class="adminSidebarWrap">
+    <div class="sidebar" th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+  </div>
+
+  <!-- 쿠폰 관리 -->
+  <div class="main-content">
+    <div class="coupon-container">
+      <h3 class="coupon-title">쿠폰 관리</h3>
+
+      <!-- 쿠폰 추가/발급 폼 -->
+      <div class="form-container">
+        <h4>쿠폰 추가</h4>
+        <form id="addCouponForm">
+          <input type="text" name="couponCode" placeholder="쿠폰 코드" required>
+          <input type="text" name="description" placeholder="설명">
+          <select name="couponType" required>
+            <option value="1">금액할인</option>
+            <option value="2">비율할인</option>
+            <option value="3">무료배송</option>
+            <option value="4">첫주문할인</option>
+          </select>
+          <input type="number" name="discountAmount" placeholder="할인 금액">
+          <input type="number" name="discountPercentage" placeholder="할인 비율">
+          <input type="number" name="minimumOrderAmount" placeholder="최소 주문 금액">
+          <input type="date" name="expiryDate" required>
+          <button type="submit">추가</button>
+        </form>
+
+        <h4>쿠폰 발급</h4>
+        <form id="issueCouponForm">
+          <input type="number" name="couponId" placeholder="쿠폰 ID" required>
+          <input type="number" name="userId" placeholder="사용자 ID (개별 발급 시)">
+          <input type="date" name="validUntil" required>
+          <button type="button" onclick="issueToUser()">개별 발급</button>
+          <button type="button" onclick="issueToAll()">전체 발급</button>
+        </form>
+      </div>
+
+      <!-- 쿠폰 목록 -->
+      <table>
+        <thead>
+        <tr>
+          <th>쿠폰 번호</th>
+          <th>쿠폰 코드</th>
+          <th>설명</th>
+          <th>유형</th>
+          <th>할인 금액</th>
+          <th>할인 비율</th>
+          <th>최소 주문 금액</th>
+          <th>만료 날짜</th>
+          <th>활성화</th>
+          <th>생성 날짜</th>
+          <th>작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="coupon : ${coupons}">
+          <td th:text="${coupon.couponId}"></td>
+          <td th:text="${coupon.couponCode}"></td>
+          <td th:text="${coupon.description}"></td>
+          <td>
+                        <span th:switch="${coupon.couponType}">
+                            <span th:case="1">금액할인</span>
+                            <span th:case="2">비율할인</span>
+                            <span th:case="3">무료배송</span>
+                            <span th:case="4">첫주문할인</span>
+                            <span th:case="*">알 수 없음</span>
+                        </span>
+          </td>
+          <td th:text="${coupon.discountAmount}"></td>
+          <td th:text="${coupon.discountPercentage}"></td>
+          <td th:text="${coupon.minimumOrderAmount}"></td>
+          <td th:text="${coupon.formattedExpiryDate}"></td>
+          <td th:text="${coupon.isActive} ? '예' : '아니오'"></td>
+          <td th:text="${coupon.formattedCreatedAt}"></td>
+          <td>
+            <button class="update-btn" th:onclick="'updateCoupon(' + ${coupon.couponId} + ')'">수정</button>
+            <button class="delete-btn" th:onclick="'deleteCoupon(' + ${coupon.couponId} + ')'">삭제</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- 페이지네이션 -->
+      <div class="pagination">
+        <a th:each="i : ${#numbers.sequence(1, totalPages)}"
+           th:href="@{/admin/coupon(page=${i})}"
+           th:text="${i}"></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 쿠폰 추가
+  $('#addCouponForm').submit(function(e) {
+    e.preventDefault();
+    const formData = {
+      couponCode: $('input[name="couponCode"]').val(),
+      description: $('input[name="description"]').val(),
+      couponType: parseInt($('select[name="couponType"]').val()),
+      discountAmount: parseInt($('input[name="discountAmount"]').val()) || null,
+      discountPercentage: parseInt($('input[name="discountPercentage"]').val()) || null,
+      minimumOrderAmount: parseInt($('input[name="minimumOrderAmount"]').val()) || null,
+      expiryDate: $('input[name="expiryDate"]').val()
+    };
+
+    $.ajax({
+      url: '/admin/coupon/add',
+      method: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify(formData),
+      success: function(response) {
+        if (response.success) {
+          alert(response.message);
+          location.reload();
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(xhr) {
+        alert('쿠폰 추가 중 오류가 발생했습니다.');
+      }
+    });
+  });
+
+  // 쿠폰 수정 (간단히 ID로 조회 후 수정 폼 띄우기 예시)
+  function updateCoupon(couponId) {
+    // 실제 구현은 별도 폼 또는 모달로 처리 추천
+    alert('쿠폰 ID ' + couponId + ' 수정 기능은 별도 구현 필요');
+  }
+
+  // 쿠폰 삭제
+  function deleteCoupon(couponId) {
+    if (confirm('쿠폰을 삭제하시겠습니까?')) {
+      $.ajax({
+        url: '/admin/coupon/delete',
+        method: 'POST',
+        data: { couponId: couponId },
+        success: function(response) {
+          if (response.success) {
+            alert(response.message);
+            location.reload();
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function(xhr) {
+          alert('쿠폰 삭제 중 오류가 발생했습니다.');
+        }
+      });
+    }
+  }
+
+  // 특정 사용자에게 쿠폰 발급
+  function issueToUser() {
+    const couponId = $('input[name="couponId"]').val();
+    const userId = $('input[name="userId"]').val();
+    const validUntil = $('input[name="validUntil"]').val();
+
+    if (!couponId || !userId || !validUntil) {
+      alert('모든 필드를 입력해주세요');
+      return;
+    }
+
+    $.ajax({
+      url: '/admin/coupon/issue/user',
+      method: 'POST',
+      data: { couponId: couponId, userId: userId, validUntil: validUntil },
+      success: function(response) {
+        if (response.success) {
+          alert(response.message);
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(xhr) {
+        alert('쿠폰 발급 중 오류가 발생했습니다.');
+      }
+    });
+  }
+
+  // 전체 사용자에게 쿠폰 발급
+  function issueToAll() {
+    const couponId = $('input[name="couponId"]').val();
+    const validUntil = $('input[name="validUntil"]').val();
+
+    if (!couponId || !validUntil) {
+      alert('쿠폰 ID와 유효기간을 입력해주세요.');
+      return;
+    }
+
+    if (confirm('전체 사용자에게 쿠폰을 발급하시겠습니까?')) {
+      $.ajax({
+        url: '/admin/coupon/issue/all',
+        method: 'POST',
+        data: { couponId: couponId, validUntil: validUntil },
+        success: function(response) {
+          if (response.success) {
+            alert(response.message);
+          } else {
+            alert(response.message);
+          }
+        },
+        error: function(xhr) {
+          alert('쿠폰 발급 중 오류가 발생했습니다.');
+        }
+      });
+    }
+  }
+</script>
+</body>
+</html>

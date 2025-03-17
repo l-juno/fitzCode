@@ -11,10 +11,10 @@
 <div th:fragment="sidebar" class="adminSidebarWrap">
   <div class="sidebar">
     <div class="sidebar-header">
-      <!-- 로고 -->
-      <a th:href="@{/}">
-        <img th:src="@{/img/fitzLogo.png}" alt="관리자 로고" class="sidebar-logo">
-      </a>
+<!--      &lt;!&ndash; 로고 &ndash;&gt;-->
+<!--      <a th:href="@{/}">-->
+<!--        <img th:src="@{/img/fitzLogo.png}" alt="관리자 로고" class="sidebar-logo">-->
+<!--      </a>-->
     </div>
 
     <!-- 현재 페이지 URI 가져오기 -->
@@ -67,6 +67,17 @@
           <a th:href="@{/admin/products}"
              th:classappend="${currentUri == '/admin/products'} ? 'active'">
             상품 관리
+          </a>
+        </div>
+      </div>
+
+      <!-- 쿠폰 관리 -->
+      <div class="sidebar-section">
+        <h3>쿠폰 관리</h3>
+        <div class="submenu">
+          <a th:href="@{/admin/coupon}"
+             th:classappend="${currentUri == '/admin/coupon'} ? 'active'">
+            쿠폰 관리
           </a>
         </div>
       </div>
