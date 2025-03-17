@@ -5,7 +5,17 @@
     <!-- 쿠폰 추가 -->
     <insert id="insertCoupon" parameterType="CouponDTO" useGeneratedKeys="true" keyProperty="couponId">
         INSERT INTO COUPON (coupon_code, description, coupon_type, discount_amount, discount_percentage, minimum_order_amount, expiry_date, is_active, created_at)
-        VALUES (#{couponCode}, #{description}, #{couponType}, #{discountAmount}, #{discountPercentage}, #{minimumOrderAmount}, #{expiryDate}, #{isActive}, #{createdAt})
+        VALUES (
+        #{couponCode},
+        #{description},
+        #{couponType},
+        #{discountAmount},
+        #{discountPercentage},
+        #{minimumOrderAmount},
+        #{expiryDate},
+        #{isActive},
+        #{createdAt}
+        )
     </insert>
 
     <!-- 전체 쿠폰 조회 -->
@@ -71,7 +81,12 @@
     <!-- 사용자에게 쿠폰 발급 -->
     <insert id="issueCouponToUser">
         INSERT INTO USER_COUPON (user_id, coupon_id, is_used, valid_until)
-        VALUES (#{userId}, #{couponId}, 0, #{validUntil})
+        VALUES (
+        #{userId},
+        #{couponId},
+        0,
+        #{validUntil}
+        )
         ON DUPLICATE KEY UPDATE valid_until = #{validUntil}
     </insert>
 

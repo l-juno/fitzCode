@@ -39,19 +39,18 @@
         h2 {
             font-size: 24px;
             font-weight: 600;
-            color: #000000; /* 포인트 컬러: 블랙 */
+            color: #2f2f32;
             margin-bottom: 20px;
-            border-bottom: 2px solid #000000; /* 블랙 테두리 */
+            border-bottom: 2px solid #2f2f32;
             padding-bottom: 5px;
             display: inline-block;
         }
 
-        /* 필터 섹션 */
         .filter-form {
             margin-top: 0;
             margin-bottom: 20px;
             display: flex;
-            flex-direction: column; /* 세로로 배치 */
+            flex-direction: column;
             gap: 10px;
             justify-content: flex-start;
             align-items: flex-start;
@@ -59,7 +58,7 @@
 
         .filter-form label {
             font-weight: 500;
-            color: #000000; /* 포인트 컬러: 블랙 */
+            color: #2f2f32;
         }
 
         .filter-form select#status {
@@ -67,7 +66,7 @@
             border: 1px solid #e0e0e0;
             border-radius: 5px;
             font-size: 14px;
-            width: 94px; /* 상태 드롭다운 가로 94px */
+            width: 94px;
         }
 
         .filter-form input[type="text"] {
@@ -75,13 +74,13 @@
             border: 1px solid #e0e0e0;
             border-radius: 5px;
             font-size: 14px;
-            width: 125px; /* 주문 ID 입력 칸 가로 125px */
-            margin-left: 10px; /* 상태와 주문 ID 간격 10px */
+            width: 125px;
+            margin-left: 10px;
         }
 
         .filter-form button {
             padding: 8px 16px;
-            background-color: #000000; /* 포인트 컬러: 블랙 */
+            background-color: #2f2f32;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -90,10 +89,9 @@
         }
 
         .filter-form button:hover {
-            background-color: #333; /* 호버 시 약간의 어두운 그레이 */
+            background-color: #333;
         }
 
-        /* 테이블 스타일 */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -110,7 +108,7 @@
         }
 
         thead {
-            background-color: #000000; /* 포인트 컬러: 블랙 */
+            background-color: #2f2f32;
             color: #fff;
         }
 
@@ -124,7 +122,7 @@
 
         td a {
             text-decoration: none;
-            color: #000000; /* 포인트 컬러: 블랙 */
+            color: #2f2f32;
             font-weight: 500;
         }
 
@@ -132,8 +130,6 @@
             color: #333;
             text-decoration: underline;
         }
-
-        /* 페이징 스타일 */
         .pagination {
             margin-top: 20px;
             text-align: center;
@@ -143,21 +139,20 @@
             padding: 5px 10px;
             margin: 0 5px;
             text-decoration: none;
-            color: #000000; /* 포인트 컬러: 블랙 */
-            border: none; /* 테두리 제거 */
-            background: none; /* 배경 제거 */
+            color: #2f2f32;
+            border: none;
+            background: none;
         }
 
         .pagination a.active {
-            font-weight: bold; /* 활성화된 페이지 볼드 */
-            color: #000000; /* 포인트 컬러: 블랙 */
+            font-weight: bold;
+            color: #2f2f32;
         }
 
         .pagination a:hover:not(.active) {
             color: #333;
         }
 
-        /* 오류 메시지 스타일 */
         div[th:if="${errorMessage}"] {
             color: #dc3545;
             margin-top: 10px;
@@ -165,8 +160,6 @@
             background-color: #ffebee;
             border-radius: 4px;
         }
-
-        /* 반응형 디자인 */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -26,19 +27,16 @@ public class AdminCouponController {
 
     private final CouponService couponService;
 
-    // 관리자 권한 확인 메서드
+    // 관리자 권한 확인
     private boolean isAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-            log.info("비로그인 사용자가 /admin/coupon에 접근 시도 -> /login으로 리다이렉트");
             return false;
         }
 
-        // 소셜 로그인 및 폼 로그인 모두에서 ROLE_ADMIN 확인
         boolean hasAdminRole = authentication.getAuthorities().stream()
                 .anyMatch(authority -> authority.getAuthority().equals(UserRole.ADMIN.getAuthority()));
         if (!hasAdminRole) {
-            log.info("권한 없는 사용자가 /admin/coupon에 접근 시도 -> /로 리다이렉트");
             return false;
         }
         return true;
@@ -51,7 +49,7 @@ public class AdminCouponController {
             return "redirect:/login";
         }
 
-        int pageSize = 10; // 페이지당 10개 쿠폰
+        int pageSize = 10;
         List<CouponDTO> coupons = couponService.getAllCoupons(page, pageSize);
         int totalCoupons = couponService.countAllCoupons();
         int totalPages = (int) Math.ceil((double) totalCoupons / pageSize);
@@ -60,6 +58,48 @@ public class AdminCouponController {
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", totalPages);
         return "admin/coupon/couponManagement";
+    }
+
+    // 특정 쿠폰 조회 (모달용)
+    @GetMapping("/get/{couponId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getCoupon(@PathVariable("couponId") Integer couponId) {
+        Map<String, Object> response = new HashMap<>();
+        if (!isAdmin()) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 필요합니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+
+        try {
+            CouponDTO coupon = couponService.getCouponById(couponId);
+            if (coupon == null) {
+                response.put("success", false);
+                response.put("message", "쿠폰을 찾을 수 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            // Timestamp를 JSON에 맞게 문자열로 변환
+            Map<String, Object> couponMap = new HashMap<>();
+            couponMap.put("couponId", coupon.getCouponId());
+            couponMap.put("couponCode", coupon.getCouponCode());
+            couponMap.put("description", coupon.getDescription());
+            couponMap.put("couponType", coupon.getCouponType());
+            couponMap.put("discountAmount", coupon.getDiscountAmount());
+            couponMap.put("discountPercentage", coupon.getDiscountPercentage());
+            couponMap.put("minimumOrderAmount", coupon.getMinimumOrderAmount());
+            couponMap.put("expiryDate", coupon.getExpiryDate() != null ? coupon.getExpiryDate().toString() : null);
+            couponMap.put("isActive", coupon.getIsActive());
+            couponMap.put("createdAt", coupon.getCreatedAt() != null ? coupon.getCreatedAt().toString() : null);
+            couponMap.put("validUntil", coupon.getValidUntil() != null ? coupon.getValidUntil().toString() : null);
+            response.put("success", true);
+            response.put("coupon", couponMap);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("쿠폰 조회 중 오류 발생: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("message", "쿠폰 조회 중 오류가 발생했습니다: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     // 쿠폰 추가
@@ -74,8 +114,8 @@ public class AdminCouponController {
         }
 
         try {
-            couponDTO.setIsActive(true); // 기본값 설정
-            couponDTO.setCreatedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+            couponDTO.setIsActive(true);
+            couponDTO.setCreatedAt(new Timestamp(System.currentTimeMillis()));
             couponService.addCoupon(couponDTO);
             response.put("success", true);
             response.put("message", "쿠폰이 성공적으로 추가되었습니다.");
@@ -95,14 +135,14 @@ public class AdminCouponController {
         Map<String, Object> response = new HashMap<>();
         if (!isAdmin()) {
             response.put("success", false);
-            response.put("message", "관리자 권한이 필요합니다.");
+            response.put("message", "관리자 권한이 필요합니다");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         try {
             couponService.updateCoupon(couponDTO);
             response.put("success", true);
-            response.put("message", "쿠폰이 성공적으로 수정되었습니다.");
+            response.put("message", "쿠폰이 성공적으로 수정되었습니다");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("쿠폰 수정 중 오류 발생: {}", e.getMessage(), e);
@@ -119,17 +159,17 @@ public class AdminCouponController {
         Map<String, Object> response = new HashMap<>();
         if (!isAdmin()) {
             response.put("success", false);
-            response.put("message", "관리자 권한이 필요합니다.");
+            response.put("message", "관리자 권한이 필요합니다");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         try {
             couponService.deleteCoupon(couponId);
             response.put("success", true);
-            response.put("message", "쿠폰이 성공적으로 삭제되었습니다.");
+            response.put("message", "쿠폰이 성공적으로 삭제되었습니다");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("쿠폰 삭제 중 오류 발생: {}", e.getMessage(), e);
+            log.error("쿠폰 삭제 오류 발생: {}", e.getMessage(), e);
             response.put("success", false);
             response.put("message", "쿠폰 삭제 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -151,15 +191,16 @@ public class AdminCouponController {
         }
 
         try {
-            LocalDate validUntilDate = LocalDate.parse(validUntil); // "YYYY-MM-DD" 형식 예상
-            couponService.issueCouponToUser(couponId, userId, java.sql.Timestamp.valueOf(validUntilDate.atStartOfDay()));
+            LocalDate validUntilDate = LocalDate.parse(validUntil);
+            Timestamp validUntilTimestamp = Timestamp.valueOf(validUntilDate.atStartOfDay());
+            couponService.issueCouponToUser(couponId, userId, validUntilTimestamp);
             response.put("success", true);
-            response.put("message", "쿠폰이 사용자에게 성공적으로 발급되었습니다.");
+            response.put("message", "쿠폰이 사용자에게 성공적으로 발급되었습니다");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("쿠폰 발급 중 오류 발생: {}", e.getMessage(), e);
+            log.error("오류 발생: {}", e.getMessage(), e);
             response.put("success", false);
-            response.put("message", "쿠폰 발급 중 오류가 발생했습니다: " + e.getMessage());
+            response.put("message", "오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
@@ -173,18 +214,19 @@ public class AdminCouponController {
         Map<String, Object> response = new HashMap<>();
         if (!isAdmin()) {
             response.put("success", false);
-            response.put("message", "관리자 권한이 필요합니다.");
+            response.put("message", "관리자 권한이 필요합니다");
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         }
 
         try {
-            LocalDate validUntilDate = LocalDate.parse(validUntil); // "YYYY-MM-DD" 형식 예상
-            couponService.issueCouponToAllUsers(couponId, java.sql.Timestamp.valueOf(validUntilDate.atStartOfDay()));
+            LocalDate validUntilDate = LocalDate.parse(validUntil);
+            Timestamp validUntilTimestamp = Timestamp.valueOf(validUntilDate.atStartOfDay());
+            couponService.issueCouponToAllUsers(couponId, validUntilTimestamp);
             response.put("success", true);
-            response.put("message", "쿠폰이 전체 사용자에게 성공적으로 발급되었습니다.");
+            response.put("message", "쿠폰이 전체 사용자에게 성공적으로 발급되었습니다");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("전체 쿠폰 발급 중 오류 발생: {}", e.getMessage(), e);
+            log.error("오류 발생: {}", e.getMessage(), e);
             response.put("success", false);
             response.put("message", "쿠폰 발급 중 오류가 발생했습니다: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);

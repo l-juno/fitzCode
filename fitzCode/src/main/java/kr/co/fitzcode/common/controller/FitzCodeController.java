@@ -1,5 +1,8 @@
 package kr.co.fitzcode.common.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.admin.service.ProductService;
 import kr.co.fitzcode.admin.service.SearchLogService;
@@ -12,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,16 +27,19 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "FitzCode Core API", description = "FitzCode 핵심 API 제공. 검색, 세션 관리, 관리자 기능 포함")
 public class FitzCodeController {
 
     private final SearchLogService searchLogService;
     private final ProductService productService;
 
+    @Operation(summary = "메인 페이지 리다이렉션", description = "애플리케이션의 메인 페이지로 이동")
     @GetMapping("/")
     public String mainPage() {
         return "fitzCode";
     }
 
+    @Operation(summary = "키워드 검색", description = "사용자 입력 키워드로 검색을 수행하고 로그 저장")
     @PostMapping("/search")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> search(@RequestParam("keyword") String keyword) {
@@ -56,15 +65,19 @@ public class FitzCodeController {
         }
     }
 
+    @Operation(summary = "검색 결과 페이지", description = "검색 키워드에 따른 결과 페이지 로드")
     @GetMapping("/search/result")
     public String searchResult(@RequestParam("keyword") String keyword) {
         return "searchResult";
     }
 
+    @Operation(summary = "상품 검색", description = "키워드와 페이지로 상품 검색")
     @GetMapping("/api/product/search")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> searchProducts(
+            @Parameter(description = "검색 키워드", required = true, example = "shoes")
             @RequestParam("keyword") String keyword,
+            @Parameter(description = "페이지 번호", example = "1")
             @RequestParam(value = "page", defaultValue = "1") int page) {
         Map<String, Object> response = new HashMap<>();
         try {
@@ -82,6 +95,7 @@ public class FitzCodeController {
         }
     }
 
+    @Operation(summary = "세션 연장", description = "관리자 세션의 유효 시간을 30분으로 연장")
     @PostMapping("/admin/extend-session")
     @ResponseBody
     public ResponseEntity<String> extendSession(HttpSession session) {
@@ -93,6 +107,7 @@ public class FitzCodeController {
         }
     }
 
+    @Operation(summary = "세션 정보 조회", description = "현재 세션의 생성 시간과 남은 시간 조회")
     @GetMapping("/admin/session-info")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> getSessionInfo(HttpSession session) {

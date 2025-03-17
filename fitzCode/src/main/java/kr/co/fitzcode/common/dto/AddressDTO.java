@@ -1,24 +1,39 @@
 package kr.co.fitzcode.common.dto;
 
-import lombok.AllArgsConstructor;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Schema(description = "주소 정보")
 public class AddressDTO {
+    @Schema(description = "사용자 ID")
     private int userId;
+
+    @Schema(description = "주소 ID")
     private int addressId;
-    private String addressLine1; // 주소1
-    private String addressLine2; // 주소2
-    private String postalCode;   // 우편번호
 
+    @Schema(description = "주소1")
+    private String addressLine1;
 
-    private String defaultAddressLine1;     // 기본 배송지 주소1
-    private String defaultAddressLine2;     // 기본 배송지 주소2
-    private String defaultPostalCode;       // 기본 배송지 우편번호
-    private Boolean isDefault;              // 기본 배송지 여부
+    @Schema(description = "주소2")
+    private String addressLine2;
+
+    @Schema(description = "우편번호")
+    private String postalCode;
+
+    @Schema(description = "기본 배송지 주소1")
+    private String defaultAddressLine1;
+
+    @Schema(description = "기본 배송지 주소2")
+    private String defaultAddressLine2;
+
+    @Schema(description = "기본 배송지 우편번호")
+    private String defaultPostalCode;
+
+    @Schema(description = "기본 배송지 여부")
+    private Boolean isDefault;
 
     public boolean isDefault() {
         return isDefault;
