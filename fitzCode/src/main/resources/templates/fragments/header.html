@@ -20,7 +20,7 @@
             <!-- 고객센터, 마이페이지, 로그인 -->
             <div class="header-utils-top">
                 <a href="/notice">고객센터</a>
-                <a href="/mypage">마이페이지</a>
+                <a href="/mypage/myinfo">마이페이지</a>
                 <a th:if="${session.dto == null}" href="/login">로그인</a>
                 <a th:if="${session.dto != null}" href="/logout">
                     <span th:text="${session.dto.getUserName()} + ' 님'" style="font-weight: bold;"></span>
