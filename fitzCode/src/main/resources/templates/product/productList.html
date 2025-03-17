@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en"
-      xmlns:sec="http://www.springframework.org/schema/security">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sec="http://www.springframework.org/schema/security">
 <head>
     <th:block th:replace="~{fragments/header :: header-head}"></th:block>
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
@@ -38,7 +37,25 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+
+<button id="scrollToTopBtn" class="scroll-to-top">
+    <i class="fa fa-arrow-up"></i>
+</button>
+
+<div id="loadingSpinner" class="spinner center">
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+</div>
 
 <script>
     let currentPage = 1;
@@ -136,8 +153,7 @@
             e.preventDefault();
             console.log("Reset button clicked");
             $("input[type='checkbox']").prop("checked", false);
-            loadProducts(); // 필터 초기화 후 상품 다시 로드
-            // 드롭다운 닫기 로직 제거
+            loadProducts();
         });
 
         // 필터 적용 버튼 이벤트
@@ -147,13 +163,26 @@
             currentPage = 1;
             loadProducts();
             hasMoreProducts = true;
-            // 필터 적용 후 드롭다운 닫기
             $(".filter-dropdown").removeClass("active");
             $(".filter-arrow").text("▼");
         });
+
+        $('#scrollToTopBtn').click(function() {
+            $('html, body').animate({ scrollTop: 0 }, 500);
+            return false;
+        });
+
+        // 스크롤 위치에 따라 버튼
+        $(window).on('scroll', function () {
+            if ($(window).scrollTop() > 200) {
+                $('#scrollToTopBtn').addClass('visible');
+            } else {
+                $('#scrollToTopBtn').removeClass('visible');
+            }
+        });
     });
 
-    // 상품 로드 함수
+    // 상품 로드
     function loadProducts() {
         getProductsByFilter(currentPage);
     }
@@ -178,11 +207,14 @@
                 } else {
                     console.log("No more products to load.");
                     hasMoreProducts = false;
+                    isLoading = false;
                 }
+                $('#loadingSpinner').hide();
             },
             error: function(xhr, status, error) {
                 console.error("Error fetching products - Status:", status, "Error:", error, "Response:", xhr.responseText);
                 isLoading = false;
+                $('#loadingSpinner').hide();
             }
         });
     }
@@ -231,7 +263,10 @@
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
                 console.log("Triggering infinite scroll...");
                 isLoading = true;
-                getProductsByFilter(currentPage);
+                $('#loadingSpinner').show();
+                setTimeout(function() {
+                    getProductsByFilter(currentPage);
+                }, 500);
             }
         }
     });
