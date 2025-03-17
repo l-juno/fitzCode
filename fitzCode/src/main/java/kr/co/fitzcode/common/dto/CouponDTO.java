@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,6 +24,8 @@ public class CouponDTO {
     private boolean isActive;
     private LocalDateTime createdAt;
 
-
+    public String getFormattedMinimumOrderAmount() {
+        return new DecimalFormat("#,###").format(this.minimumOrderAmount);
+    }
 
 }

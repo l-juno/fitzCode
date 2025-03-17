@@ -1,6 +1,7 @@
 package kr.co.fitzcode.product.controller;
 
 import kr.co.fitzcode.common.dto.CartDTO;
+import kr.co.fitzcode.common.dto.CartProductDTO;
 import kr.co.fitzcode.common.service.CustomUserDetails;
 import kr.co.fitzcode.common.service.UserService;
 import kr.co.fitzcode.common.util.SecurityUtils;
@@ -8,10 +9,10 @@ import kr.co.fitzcode.product.service.CartService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -22,12 +23,11 @@ public class CartApiController {
     private final CartService cartService;
     private final ProductService productService;
     private final UserService userService;
-    private final SecurityUtils securityUtils;
 
     @PostMapping("/addToCart")
     public void addToCart(@RequestParam int productId, @RequestParam int sizeCode) {
         // get userid
-        int userId = securityUtils.getUserId();
+        int userId = SecurityUtils.getUserId();
         int productSizeId = productService.getProductSizeIdByProductSizeAndCode(productId, sizeCode);
         log.info("--------------------------called addToCart---------------");
         log.info("productId>>>>>>>>>>>>>>>>>>>>: {}", productId);
@@ -46,6 +46,21 @@ public class CartApiController {
         cartService.addProductToCart(cartDTO);
 
     }
+
+    @GetMapping("/getCartItems")
+    public ResponseEntity<List<CartProductDTO>> getCartItems() {
+        int userid = SecurityUtils.getUserId();
+
+        List<CartProductDTO> list =cartService.getCartInformationByUserId(userid);
+        log.info("list : {}", list);
+
+        for (CartProductDTO cartProductDTO : list) {
+            cartProductDTO.setProductSizes(productService.getAllSizeOfProduct(cartProductDTO.getProductId()));
+        }
+        return ResponseEntity.ok().body(list);
+    }
+
+
 
 
 }

@@ -36,6 +36,13 @@
         VALUES (#{userId}, #{addressId}, #{totalPrice}, #{orderStatus}, NOW())
     </insert>
 
+    <insert id="addPayment">
+        INSERT INTO PAYMENT (order_id, payment_method, payment_status, amount, payment_date, transaction_id)
+        VALUES (#{paymentDTO.orderId}, #{paymentDTO.paymentMethod}, #{paymentDTO.paymentStatus}, #{paymentDTO.amount}, NOW(), #{paymentDTO.transactionId})
+    </insert>
+
+
+
 
 
 

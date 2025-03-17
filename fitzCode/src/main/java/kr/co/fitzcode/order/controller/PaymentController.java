@@ -48,4 +48,25 @@ public class PaymentController {
         response.put("payMethod", "CARD");
         return ResponseEntity.ok(response);
     }
+
+
+    @PostMapping("/getPostOneInfo")
+    public ResponseEntity<Map<String, Object>> getPostOneInfo(@RequestParam("totalPrice") int totalPrice) {
+        Map<String, Object> response = new HashMap<>();
+        // TODO encrypt channel key
+        response.put("channelKey", "channel-key-de5c26f0-b9a4-4b9e-a433-78a2fdf6ba13");
+        response.put("payMethod", "card");
+
+        int userId = SecurityUtils.getUserId();
+        String date = LocalDate.now().toString();
+        String orderInformation = userId + "-" + date;
+
+        // TODO add payment id to payment table
+        String merchant_uid = orderInformation + "-" +UUID.randomUUID().toString();
+        response.put("merchant_uid", merchant_uid);
+        response.put("name", orderInformation);
+        response.put("amount", totalPrice);
+
+        return ResponseEntity.ok(response);
+    }
 }

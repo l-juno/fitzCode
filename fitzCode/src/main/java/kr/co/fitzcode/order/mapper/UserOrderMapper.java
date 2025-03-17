@@ -2,6 +2,7 @@ package kr.co.fitzcode.order.mapper;
 
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
+import kr.co.fitzcode.common.dto.PaymentDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,5 +21,6 @@ public interface UserOrderMapper {
 
     int insertNewOrder(OrderDTO orderDTO);
 
+    void addPayment(@Param("paymentDTO") PaymentDTO paymentDTO);
 }
 

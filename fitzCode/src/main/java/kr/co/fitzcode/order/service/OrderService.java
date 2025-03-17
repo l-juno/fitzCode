@@ -2,6 +2,7 @@ package kr.co.fitzcode.order.service;
 
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
+import kr.co.fitzcode.common.dto.PaymentDTO;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface OrderService {
     int getAddressIdUsingAddressLine1AndPostalCode(String addressLine1, String postalCode, int userId);
 
     int insertNewOrder(OrderDTO orderDTO);
+
+    void addPayment(PaymentDTO paymentDTO);
 }

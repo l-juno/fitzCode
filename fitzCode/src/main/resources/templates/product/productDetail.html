@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
@@ -163,7 +164,7 @@
             </div>
             
 
-            <button id="continueToPaymentBtn" onclick="closeModal();requestPayment(getSizeCode())">continue</button>
+            <button id="continueToPaymentBtn" onclick="closeModal();loadPortOne()">continue</button>
             
         </div>
     </div>
@@ -193,6 +194,25 @@
     console.log("Product ID:", productId);
     const cartBtn = document.querySelector('.cart-button');
     const buyBtn = document.querySelector('.buy-button')
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+        IMP.init("imp44587248");
+        console.log("imp loaded");
+        // js for the sticky bar
+        const stickyBar = document.getElementById("stickyBar");
+        window.addEventListener("scroll", () => {
+            const scrollY = window.scrollY || window.pageYOffset;
+            if (scrollY > 400) {
+                stickyBar.style.display = "flex";
+            } else {
+                stickyBar.style.display = "none";
+            }
+        });
+        fetchAvailableSizes();
+        
+
+    });
 
     function displayModal() {
         console.log("display modal running...")
@@ -423,8 +443,6 @@
                 $("#finalPrice").html("<p>쿠폰을 쓰는데 실패했습니다.</p>");
             }
         });
-        
-        
     }
 
     function changeAddress() {
@@ -456,36 +474,47 @@
     
     
     // TODO configure to after address
-    function requestPayment(sizeCode) {
-        console.log(window.PortOne);
-        console.log("loaded portone");
-
+    function loadPortOne() {
+        console.log(finalPrice);
         $.ajax({
-            url: "/payment/getPostOneInformation",
-            method: "POST",
-            data: { productId: productId, sizeCode: parseInt(sizeCode), finalPrice:finalPrice },
+            url: "/payment/getPostOneInfo",
+            type: "POST",
             dataType: "json",
-            success: async function (data) {
-                console.log("payment success");
-                console.log(data);
-                finalPrice = data.totalAmount;
-                try {
-                    const response = await PortOne.requestPayment(data);
-                    console.log("response in ajax call:", response);
-                    // imp_uid 저장
-                    // const impUid = response.impUid;
-                    createOrder(response);
-                    
-                } catch (error) {
-                    console.error("Error processing payment:", error);
-                }
+            data: {totalPrice: finalPrice},
+            success: function (response) {
+                requestPayment(response);
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching products:", error);
-                isLoading = false;
             }
         });
     }
+
+
+
+    function requestPayment(paymentInfo) {
+        // call portOne
+        IMP.request_pay(
+            {
+                channelKey: paymentInfo.channelKey,
+                pay_method: paymentInfo.payMethod,
+                merchant_uid: paymentInfo.merchant_uid,
+                name: paymentInfo.name,
+                amount: paymentInfo.amount
+            },
+            async (response) => {
+                if (response.error_code != null) {
+                    return alert(`결제에 실패하였습니다. 에러 내용: ${response.error_msg}`);
+                }
+                console.log(response);
+                createOrder(response);
+            }
+        );
+    }
+    
+    
+    
+    
     
     // TODO save paymentId to payment table
     // TODO: mark as transaction when creating order fails, transaction needs to roll back
@@ -498,6 +527,7 @@
             url: "/api/order/createOrderFromDetailPage",
             method: "POST",
             data: {
+                impUid: response.impUid,
                 addressLine1:addressLine1,
                 postalCode:postalCode,
                 productId:productId,
@@ -575,20 +605,7 @@
 
 
     
-    document.addEventListener("DOMContentLoaded", () => {
-        // js for the sticky bar
-        const stickyBar = document.getElementById("stickyBar");
-        window.addEventListener("scroll", () => {
-            const scrollY = window.scrollY || window.pageYOffset;
-            if (scrollY > 400) {
-                stickyBar.style.display = "flex";
-            } else {
-                stickyBar.style.display = "none";
-            }
-        });
-        fetchAvailableSizes();
-        
-    });
+    
 
     let index = 0;
     const nextBtn = document.querySelector('.next-btn');

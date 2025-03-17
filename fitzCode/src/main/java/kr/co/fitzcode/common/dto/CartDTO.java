@@ -18,4 +18,7 @@ public class CartDTO {
     private int quantity;
     private LocalDateTime createdAt;
     private int productSizeId;
+
+
+
 }

@@ -2,6 +2,7 @@ package kr.co.fitzcode.order.service;
 
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
+import kr.co.fitzcode.common.dto.PaymentDTO;
 import kr.co.fitzcode.order.mapper.UserOrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,5 +40,10 @@ public class OrderServiceImple implements OrderService {
     public int insertNewOrder(OrderDTO orderDTO) {
         userOrderMapper.insertNewOrder(orderDTO);
         return orderDTO.getOrderId();
+    }
+
+    @Override
+    public void addPayment(PaymentDTO paymentDTO) {
+        userOrderMapper.addPayment(paymentDTO);
     }
 }

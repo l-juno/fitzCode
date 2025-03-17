@@ -20,8 +20,10 @@ public class CouponServiceImple implements CouponService {
 
     @Override
     public void markCouponAsUsed(int userId, Integer couponId, int orderId) {
-        couponMapper.markCouponAsUsed(userId, couponId, orderId);
-        couponMapper.setIsUsedToTrue(userId, couponId);
+        if(couponId != null) {
+            couponMapper.markCouponAsUsed(userId, couponId, orderId);
+            couponMapper.setIsUsedToTrue(userId, couponId);
+        }
     }
 
 

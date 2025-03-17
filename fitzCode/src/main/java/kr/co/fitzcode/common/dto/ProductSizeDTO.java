@@ -1,11 +1,14 @@
 package kr.co.fitzcode.common.dto;
 
 import kr.co.fitzcode.common.enums.ProductSize;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductSizeDTO {
     private Long productSizeId;
     private Long productId;

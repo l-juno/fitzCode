@@ -2,12 +2,14 @@ package kr.co.fitzcode.order.controller;
 
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
+import kr.co.fitzcode.common.dto.PaymentDTO;
 import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.order.service.CouponService;
 import kr.co.fitzcode.order.service.OrderService;
 import kr.co.fitzcode.order.service.UserOrderDetailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,18 +42,8 @@ public class OrderApiController {
                                           ) {
 
         int userId = SecurityUtils.getUserId();
+        addAddressForUserIfNotExists(userId ,addressLine1, postalCode);
 
-        // create address for user if address is not registered in the db
-        if (orderService.checkIfAddressExistsForUser(userId ,addressLine1, postalCode)) {
-            log.info("address already exists for user");
-        } else {
-            log.info("address does not exists for user, creating address information");
-            AddressDTO addressDTO = AddressDTO.builder()
-                    .addressLine1(addressLine1)
-                    .postalCode(postalCode)
-                    .build();
-            orderService.addNonDefaultAddressForUser(userId, addressDTO);
-        }
 
         int addressId = orderService.getAddressIdUsingAddressLine1AndPostalCode(addressLine1, postalCode, userId);
         log.info("addressId::::::::::::::: {}", addressId);
@@ -85,5 +77,108 @@ public class OrderApiController {
 
         userOrderDetailService.addOrderDetailToOrder(batchInsertList);
         return ResponseEntity.ok(orderDTO);
+    }
+
+
+
+    @PostMapping("/createOrderFromCart")
+    public ResponseEntity<?> createOrderFromCart(@RequestBody Map<String, Object> orderData) {
+        try {
+            // Extract payment details
+            String impUid = (String) orderData.get("imp_uid");
+            String merchantUid = (String) orderData.get("merchant_uid");
+            Integer totalPrice = (Integer) orderData.get("totalPrice");
+
+            // Extract order details
+            Integer addressId = (Integer) orderData.get("addressId");
+            String addressLine1 = (String) orderData.get("addressLine1");
+            String postalCode = (String) orderData.get("postalCode");
+
+            Object orderDetailObj = orderData.get("orderDetail");
+
+            List<Map<String, Object>> orderDetail;
+            if (orderDetailObj instanceof List) {
+                orderDetail = (List<Map<String, Object>>) orderDetailObj;
+            } else {
+                throw new IllegalArgumentException("Invalid orderDetail format");
+            }
+
+            log.info("impUid::::::::::::::: {}", impUid);
+            log.info("merchantUid::::::::::::::: {}", merchantUid);
+            log.info("addressId::::::::::::::: {}", addressId);
+            log.info("addressLine1::::::::::::: {}", addressLine1);
+            log.info("postalCode::::::::::::::: {}", postalCode);
+            log.info("orderDetail::::::::::::::: {}", orderDetail);
+
+            int userId = SecurityUtils.getUserId();
+            addAddressForUserIfNotExists(userId ,addressLine1, postalCode);
+
+
+            int newAddressId = orderService.getAddressIdUsingAddressLine1AndPostalCode(addressLine1, postalCode, userId);
+            log.info("addressId::::::::::::::: {}", newAddressId);
+
+
+
+            // create order now
+            OrderDTO orderDTO = OrderDTO.builder()
+                    .userId(userId)
+                    .addressId(newAddressId)
+                    .totalPrice(totalPrice)
+                    .orderStatus(1)
+                    .build();
+
+            int orderId = orderService.insertNewOrder(orderDTO);
+            log.info("orderId just made::::::::::::::: {}", orderId);
+
+            // TODO: add impUid to payment table
+            addImpUid(impUid, totalPrice, orderId);
+
+
+            List<Map<String, Object>> batchInsertList = new ArrayList<>();
+
+            for (Map<String, Object> stringObjectMap : orderDetail) {
+                Map<String, Object> paramMap = new HashMap<>();
+                paramMap.put("orderId", orderId);
+                paramMap.put("productId", stringObjectMap.get("productId"));
+                paramMap.put("sizeCode", stringObjectMap.get("sizeCode"));
+                paramMap.put("price", stringObjectMap.get("finalPrice"));
+                paramMap.put("quantity", stringObjectMap.get("quantity"));
+                paramMap.put("couponId", stringObjectMap.get("couponId"));
+                couponService.markCouponAsUsed(userId, (Integer) stringObjectMap.get("couponId"), orderId);
+                batchInsertList.add(paramMap);
+            }
+            log.info("batchInsertList::::::::::::::: {}", batchInsertList);
+            userOrderDetailService.addOrderDetailToOrder(batchInsertList);
+
+            return ResponseEntity.ok(orderDTO);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error processing order: " + e.getMessage());
+        }
+    }
+
+    private void addImpUid(String impUid, int totalPrice, int orderId) {
+        PaymentDTO paymentDTO = PaymentDTO.builder()
+                .transactionId(impUid)
+                .paymentMethod(1)
+                .paymentStatus(1)
+                .amount(totalPrice)
+                .orderId(orderId)
+                .build();
+        orderService.addPayment(paymentDTO);
+    }
+
+    private void addAddressForUserIfNotExists(int userId, String addressLine1, String postalCode) {
+        if (orderService.checkIfAddressExistsForUser(userId ,addressLine1, postalCode)) {
+            log.info("address already exists for user");
+        } else {
+            log.info("address does not exists for user, creating address information");
+            AddressDTO addressDTO = AddressDTO.builder()
+                    .addressLine1(addressLine1)
+                    .postalCode(postalCode)
+                    .build();
+            orderService.addNonDefaultAddressForUser(userId, addressDTO);
+        }
     }
 }
