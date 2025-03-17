@@ -40,8 +40,6 @@ public class UserDTO {
     private String profileImage;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    // 추가
     private int roleId;
-//    private UserRole roleId;
 
 }

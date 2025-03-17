@@ -2,13 +2,13 @@ package kr.co.fitzcode.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.Arrays;
 
 @Getter
 @AllArgsConstructor
 public enum InquiryCategory {
+    UNKNOWN(0, "알 수 없음"),
     GENERAL(1, "일반문의"),
     PRODUCT(2, "상품문의"),
     REFUND(3, "환불문의"),
@@ -19,10 +19,9 @@ public enum InquiryCategory {
     private final String description;
 
     public static InquiryCategory fromCode(int code) {
-        return Arrays.stream(InquiryCategory.values())
-                .filter(category -> category.getCode() == code)
+        return Arrays.stream(values())
+                .filter(category -> category.code == code)
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 문의 카테고리 코드: " + code));
+                .orElse(UNKNOWN);
     }
-
 }

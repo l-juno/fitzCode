@@ -46,7 +46,7 @@
     position: absolute;
     top: 50%;
     background: none;
-    color: black;
+    color: #2f2f32;
     border: none;
     padding: 10px;
     cursor: pointer;
@@ -202,8 +202,8 @@
 
 .buy-button:hover, .sell-button:hover {
     background-color: #ffffff;
-    color: black;
-    border: 2px solid black;
+    color: #2f2f32;
+    border: 2px solid #2f2f32;
 }
 
 .buy-info, .sell-info {
@@ -431,7 +431,7 @@
 .cart-button:hover {
     background-color: #ffffff;
     color: #151515;
-    border-color: black;
+    border-color: #2f2f32;
 }
 
 

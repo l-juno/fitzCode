@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.fitzcode.admin.mapper.SearchRankingMapper">
+
+    <!-- 상위 10개 검색어 조회 -->
+    <select id="selectTopSearchKeywords" resultType="kr.co.fitzcode.common.dto.SearchRankingDTO">
+        SELECT sl.search_keyword AS keyword, COUNT(*) AS todaySearchCount
+        FROM search_log sl
+        WHERE DATE(sl.search_time) = CURDATE()
+        GROUP BY sl.search_keyword
+        ORDER BY todaySearchCount DESC
+        LIMIT 10
+    </select>
+
+    <!-- search_ranking_history에 삽입/갱신 -->
+    <insert id="insertOrUpdateSearchRanking">
+        INSERT INTO search_ranking_history (search_keyword, ranking, date)
+        VALUES (#{keyword}, #{ranking}, #{date})
+        ON DUPLICATE KEY UPDATE ranking = #{ranking}
+    </insert>
+
+</mapper>

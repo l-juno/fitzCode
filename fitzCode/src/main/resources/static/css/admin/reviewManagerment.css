@@ -26,7 +26,7 @@ body {
 }
 h1 {
     color: #2c3e50;
-    border-bottom: 2px solid #496b9a;
+    border-bottom: 2px solid #2f2f32;
     padding-bottom: 10px;
     font-size: 31px;
 }
@@ -35,7 +35,7 @@ h1 {
     gap: 10px;
 }
 .order-btn {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     padding: 8px 16px;
     border-radius: 4px;
@@ -61,7 +61,7 @@ th, td {
     font-size: 0.8em;
 }
 th {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
 }
 tr:nth-child(even) {
@@ -148,7 +148,7 @@ th.delete, td.delete {
     padding: 8px 12px;
     margin: 0 5px;
     text-decoration: none;
-    color: black;
+    color: #2f2f32;
     border: none;
     border-radius: 5px;
     transition: background-color 0.3s ease;
@@ -156,6 +156,6 @@ th.delete, td.delete {
 
 }
 .pagination a.active {
-    color: #496b9a;
+    color: #2f2f32;
     border: none;
 }

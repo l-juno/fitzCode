@@ -5,7 +5,6 @@
 
 <mapper namespace="kr.co.fitzcode.admin.mapper.AdminInquiryMapper">
 
-    <!-- 결과 매핑 -->
     <resultMap id="InquiryResultMap" type="InquiryDTO">
         <id property="inquiryId" column="inquiry_id"/>
         <result property="userId" column="user_id"/>
