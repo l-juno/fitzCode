@@ -3,6 +3,7 @@ package kr.co.fitzcode.inquiry.service;
 import kr.co.fitzcode.common.dto.InquiryDTO;
 import kr.co.fitzcode.common.dto.InquiryImageDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
+import kr.co.fitzcode.common.service.NotificationService;
 import kr.co.fitzcode.common.service.S3Service;
 import kr.co.fitzcode.inquiry.mapper.InquiryMapper;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class InquiryServiceImpl implements InquiryService {
     private final InquiryMapper inquiryMapper;
     private final S3Service s3Service;
+    private final NotificationService notificationService;
 
     // 사용자 조회
     @Override
@@ -35,6 +37,11 @@ public class InquiryServiceImpl implements InquiryService {
             List<String> inquiryImageUrls = saveImages(inquiryDTO.getInquiryId(), nonEmptyFiles);
             inquiryDTO.setImageUrls(inquiryImageUrls);
         }
+
+        // 관리자에게만 알림 저장
+        log.info("관리자 알림 발송 시작 - 문의 ID: {}", inquiryDTO.getInquiryId());
+        notificationService.sendNotificationToAllAdmins("INQUIRY_CREATED", inquiryDTO);
+        log.info("관리자 알림 발송 완료");
     }
 
     // 개인별 문의 내역 불러오기
@@ -50,7 +57,7 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     // 상품 찾기
-    @Override // -> 여기도 List 어케 처리할건지
+    @Override
     public List<ProductDTO> searchProduct(String userInputProductName) {
         return inquiryMapper.searchProduct(userInputProductName);
     }
@@ -67,7 +74,6 @@ public class InquiryServiceImpl implements InquiryService {
         return inquiryMapper.getInquiryImageList(inquiryId);
     }
 
-
     // 주문 내역 불러오기
     @Override
     public List<ProductDTO> getOrderList(int userId) {
@@ -82,7 +88,7 @@ public class InquiryServiceImpl implements InquiryService {
             // S3에 저장되어있는 이미지 삭제
             List<InquiryImageDTO> imageUrls = inquiryMapper.getInquiryImageList(inquiryDTO.getInquiryId());
             if (!imageUrls.isEmpty()) {
-                for (InquiryImageDTO fileUrls : imageUrls){
+                for (InquiryImageDTO fileUrls : imageUrls) {
                     s3Service.deleteFile(fileUrls.getImageUrl());
                     log.info(">>>>>> S3 이미지 url 삭제 : {}", fileUrls.getImageUrl());
                 }
@@ -93,7 +99,6 @@ public class InquiryServiceImpl implements InquiryService {
             List<String> inquiryImageUrls = saveImages(inquiryDTO.getInquiryId(), nonEmptyFiles);
             inquiryDTO.setImageUrls(inquiryImageUrls);
         }
-
     }
 
     // 문의 삭제
@@ -103,7 +108,7 @@ public class InquiryServiceImpl implements InquiryService {
         inquiryMapper.deleteInquiryImages(inquiryId); // DB 에서 문의 이미지 삭제
         List<InquiryImageDTO> imageUrls = inquiryMapper.getInquiryImageList(inquiryId);
         if (!imageUrls.isEmpty()) {
-            for (InquiryImageDTO fileUrls : imageUrls){
+            for (InquiryImageDTO fileUrls : imageUrls) {
                 s3Service.deleteFile(fileUrls.getImageUrl());
                 log.info(">>>>>> S3 이미지 url 삭제 : {}", fileUrls.getImageUrl());
             }
@@ -123,9 +128,4 @@ public class InquiryServiceImpl implements InquiryService {
         }
         return inquiryImageUrls;
     }
-
-
-
-
-
 }

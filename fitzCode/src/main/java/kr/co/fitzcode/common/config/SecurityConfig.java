@@ -15,11 +15,15 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
@@ -51,6 +55,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .securityContext(securityContext ->
@@ -63,6 +72,7 @@ public class SecurityConfig {
                                     "/css/**",
                                     "/js/**",
                                     "/img/**",
+                                    "/favicon.ico",
                                     "/access-denied",
                                     "/404-error",
                                     "/something",
@@ -80,16 +90,23 @@ public class SecurityConfig {
                                     "/resetPwSuccess",
                                     "/inquiry/searchProduct",
                                     "/inquiry/searchOrderList",
-                                    "/inquiry/selectedProduct"
+                                    "/inquiry/selectedProduct",
+                                    "/admin/notice/subscribe",
+                                    "/api/notifications",
+                                    "/products",
+                                    "/styles",
+                                    "/notice",
+                                    "/notice/**",
+                                    "/api/cart/**",
+                                    "/api/user/check",
+                                    "/admin/notice/subscribe",
+                                    "/search",
+                                    "/search/result"
                             ).permitAll()
-
-                            // 관리자 전용 페이지
+                            // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-
-                            // 특정 권한이 필요한 페이지
                             .requestMatchers("/admin/dashboard")
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_INQUIRY")
-
                             .requestMatchers(
                                     "/admin/products",
                                     "/admin/products/*",
@@ -102,20 +119,15 @@ public class SecurityConfig {
                                     "/admin/shipping",
                                     "/admin/shipping/*"
                             ).hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
-
                             .requestMatchers(
                                     "/admin/inquiries",
                                     "/admin/inquiries/*",
                                     "/admin/products/qna/{productId}"
                             ).hasAnyAuthority("ROLE_ADMIN", "ROLE_INQUIRY")
-
                             .requestMatchers("/admin/notice", "/admin/notice/*")
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
-
                             .requestMatchers("/admin/products/{productId}", "/admin/products/{productId}/**")
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
-
-                            .requestMatchers("/api/cart/**").hasAuthority("ROLE_USER")
                             .anyRequest().authenticated();
                 })
                 .formLogin(formLogin -> {
@@ -131,11 +143,42 @@ public class SecurityConfig {
                 .logout(logout -> {
                     logout
                             .logoutUrl("/logout")
-                            .logoutSuccessUrl("/login")
+                            .logoutSuccessUrl("/")
                             .invalidateHttpSession(true)
                             .clearAuthentication(true)
                             .deleteCookies("JSESSIONID")
                             .permitAll();
+                })
+                .sessionManagement(session -> {
+                    session
+                            .sessionFixation().migrateSession()
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(true)
+                            .expiredUrl("/login?expired");
+                })
+                .exceptionHandling(exceptionHandling -> {
+                    exceptionHandling
+                            .authenticationEntryPoint((request, response, authException) -> {
+                                String requestUri = request.getRequestURI();
+                                // permitAll() 경로면 리디렉션 안함
+                                if (requestUri.equals("/") || requestUri.equals("/login") || requestUri.equals("/logout") ||
+                                        requestUri.startsWith("/css/") || requestUri.startsWith("/js/") ||
+                                        requestUri.startsWith("/img/") ||
+                                        requestUri.startsWith("/product/list/") || requestUri.startsWith("/product/detail/") ||
+                                        requestUri.startsWith("/api/product/") || requestUri.equals("/joinForm") ||
+                                        requestUri.equals("/joinSuccess") || requestUri.equals("/pwEmail") ||
+                                        requestUri.equals("/findEmail") || requestUri.equals("/findEmailSuccess") ||
+                                        requestUri.equals("/resetPw") || requestUri.equals("/resetPwSuccess") ||
+                                        requestUri.equals("/inquiry/searchProduct") || requestUri.equals("/inquiry/searchOrderList") ||
+                                        requestUri.equals("/inquiry/selectedProduct") || requestUri.equals("/admin/notice/subscribe") ||
+                                        requestUri.equals("/api/notifications") || requestUri.equals("/products") ||
+                                        requestUri.equals("/styles") || requestUri.equals("/notice") ||
+                                        requestUri.startsWith("/api/cart/") || requestUri.equals("/search") ||
+                                        requestUri.equals("/search/result")) {
+                                    return;
+                                }
+                                response.sendRedirect("/login");
+                            });
                 })
                 .csrf(auth -> auth.disable());
 

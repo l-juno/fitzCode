@@ -2,174 +2,74 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Sales Status</title>
+    <title>fitzCode</title>
     <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
+    <link rel="stylesheet" th:href="@{/css/admin/salesStatus.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        .main-content {
-            position: absolute;
-            top: 0;
-            left: 350px;
-            width: calc(100% - 350px);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .chart-container {
-            width: 1030px;
-            height: 500px;
-            margin-bottom: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-        }
-        .content-row {
-            display: flex;
-            justify-content: space-between;
-            width: 1060px;
-            gap: 30px;
-        }
-        .ranking-container {
-            width: 500px;
-            margin-top: 10px;
-            margin-left: 0;
-        }
-        .sales-ranking {
-            width: 500px;
-            height: 455px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            font-size: 14px;
-            border: 1px solid #ddd;
-        }
-        .sales-ranking h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .sales-ranking table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .sales-ranking th, .sales-ranking td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .sales-ranking thead {
-            background-color: #f8f9fa;
-        }
-        .sales-ranking th {
-            font-weight: bold;
-        }
-        .sales-ranking th:nth-child(3) {
-            text-align: center;
-        }
-        .sales-ranking td.rank {
-            font-weight: bold;
-            text-align: center;
-        }
-        .sales-ranking td img {
-            width: 40px;
-            height: 40px;
-            border-radius: 5px;
-            object-fit: cover;
-            margin-right: 10px;
-            vertical-align: middle;
-        }
-        .sales-ranking .product {
-            display: flex;
-            align-items: center;
-        }
-        .sales-ranking td.sales, .sales-ranking td.quantity {
-            text-align: right;
-            font-weight: bold;
-        }
-        .sales-ranking td.quantity {
-            text-align: center;
-        }
-        .additional-content {
-            width: 530px;
-            height: 455px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 15px;
-            border: 1px solid #ddd;
-        }
-        .additional-content h3 {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-align: left;
-        }
-        .additional-content table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .additional-content th, .additional-content td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-        .additional-content thead {
-            background-color: #f8f9fa;
-        }
-        .additional-content th {
-            font-weight: bold;
-        }
-        .additional-content td.rank {
-            font-weight: bold;
-            text-align: center;
-        }
-        .additional-content td.quantity {
-            text-align: center;
-            font-weight: bold;
-            color: red;
-        }
-        @media screen and (max-width: 900px) {
-            .content-row {
-                flex-direction: column;
-                width: 100%;
-                align-items: center;
-            }
-            .ranking-container {
-                width: 100%;
-                overflow-x: auto;
-                margin-left: 0;
-            }
-            .additional-content {
-                width: 500px;
-                margin-top: 20px;
-            }
-        }
-        @media screen and (max-width: 768px) {
-            .main-content {
-                margin-left: 200px;
-            }
-            .ranking-container {
-                margin-left: 0;
-            }
-            .chart-container {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
 <div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+<div class="top-container">
+    <!-- 헤더 -->
+    <div class="top-container">
+        <div class="user-nav">
+            <div class="timer-section">
+                <span id="session-timer" class="session-timer">30:00</span>
+                <button id="extend-session-btn" class="extend-btn">시간 연장</button>
+            </div>
+            <button class="notification" id="adminNotificationBell">
+                <div class="bell-container">
+                    <div class="bell"></div>
+                </div>
+            </button>
+            <div class="notification-dropdown" id="adminNotificationDropdown" style="display: none;">
+                <!-- 알림 목록은 JavaScript로 동적으로 추가 -->
+            </div>
+            <div class="user-info">
+                <img src="/img/default-profile.png" alt="User Profile" class="user-image" />
+                <span class="user-name" th:text="${loggedUserName}"></span>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="main-content">
+    <div class="total-box-container">
+        <div class="total-box">
+            <div class="total-box__left">
+                <div class="header-container">
+                    <h3 class="section-header">이번달 매출</h3>
+                    <svg class="up-arrow" width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="42" height="42" rx="8" fill="#F6F7F9"/>
+                        <path d="M27.0702 18.57L21.0002 12.5L14.9302 18.57" stroke="#7FB519" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M21 29.5V12.67" stroke="#7FB519" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(totalIncome, 3, 'COMMA')}">
+                    <span class="price-currency">(원)</span>
+                </h1>
+                <p>
+                <span class="percentage-increase">
+                    <span th:text="${#numbers.formatInteger(incomeGrowthRate, 0)} + '%'" class="percentage-value"></span>
+                    <span style="color: #90A3BF;"> increase compared to last month</span>
+                </span>
+                </p>
+            </div>
+            <div class="total-box__right">
+                <div class="header-container">
+                    <h3 class="section-header">이번달 예상 매출</h3>
+                </div>
+                <h1 class="price" th:text="'₩' + ${#numbers.formatInteger(predictedIncome, 3, 'COMMA')}">
+                    <span class="price-currency">(원)</span>
+                </h1>
+                <p style="color: #90A3BF;">현재까지 매출을 기반으로 한 예상치입니다</p>
+            </div>
+        </div>
+    </div>
+
     <!-- 차트 -->
     <div class="chart-container">
         <canvas id="salesRevenueChart" width="400" height="200"></canvas>
@@ -242,12 +142,16 @@
         </script>
     </div>
 
-    <!-- 판매 순위 및 추가 콘텐츠 -->
     <div class="content-row">
-        <!-- 판매 순위 (왼쪽) -->
         <div class="ranking-container">
             <div class="sales-ranking">
-                <h3>판매 상품 순위 (최근 14일)</h3>
+                <div class="header-container">
+                    <h3>판매 상품 순위 (최근 14일)</h3>
+                    <div class="pagination" id="pagination">
+                        <button id="prevPage" onclick="changePage(-1)" disabled><</button>
+                        <button id="nextPage" onclick="changePage(1)">></button>
+                    </div>
+                </div>
                 <table id="ranking-table">
                     <thead>
                     <tr>
@@ -269,10 +173,6 @@
                     </tr>
                     </tbody>
                 </table>
-                <div class="pagination" id="pagination">
-                    <button id="prevPage" onclick="changePage(-1)" disabled><</button>
-                    <button id="nextPage" onclick="changePage(1)">></button>
-                </div>
             </div>
             <script th:inline="javascript">
                 let currentPage = 1;
@@ -288,8 +188,8 @@
                         headers: { 'Accept': 'application/json' }
                     })
                         .then(response => response.json())
-                        .then(total => {
-                            totalCount = total;
+                        .then(full => {
+                            totalCount = full;
                             totalPages = Math.min(Math.ceil(totalCount / 5), 2);
                             prevButton.disabled = currentPage === 1;
                             nextButton.disabled = currentPage === totalPages || totalCount <= 5;
@@ -339,26 +239,83 @@
         </div>
 
         <!-- 검색어 순위 -->
-        <div class="additional-content" style="margin-top: 10px; margin-left: 20px;">
-            <h3>인기 검색어</h3>
+        <div class="additional-content" style="margin-top: 10px; margin-left: 20px; height: 486px;">
+            <h3 class="search2" style="margin-top: 8px; margin-bottom: 10px;">인기 검색어</h3>
             <table id="search-ranking-table">
                 <thead>
                 <tr>
                     <th>순위</th>
                     <th>검색어</th>
-                    <th>오늘 검색</th>
+                    <th>검색량</th>
                 </tr>
                 </thead>
                 <tbody id="search-ranking-body">
                 <tr th:each="item, iter : ${searchRanking}" th:if="${iter.count <= 10}">
-                    <td class="rank" th:text="${item.currentRanking} + '(' + ${item.rankingChange} + ')'"></td>
-                    <td th:text="${item.keyword}"></td>
+                    <td class="rank">
+                        <span th:text="${item.currentRanking}"></span>
+                        <span th:text="' (' + ${item.rankingChange} + ')'">
+                            <span th:switch="${item.rankingChange}">
+                                <span th:case="'+'" class="increase"></span>
+                                <span th:case="'-'" class="no-change"></span>
+                                <span th:default class="decrease"></span>
+                            </span>
+                        </span>
+                    </td>
+                    <td class="keyword" th:text="${item.keyword}"></td>
                     <td class="quantity" th:text="${item.todaySearchCount}"></td>
                 </tr>
                 </tbody>
             </table>
+            <script th:inline="javascript">
+                document.addEventListener('DOMContentLoaded', function() {
+                    fetch('/admin/sales/search-ranking', {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok ' + response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            console.log('search ranking data:', data);
+                            const tbody = document.getElementById('search-ranking-body');
+                            tbody.innerHTML = '';
+                            if (data.length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="3">검색어 데이터가 없습니다.</td></tr>';
+                                return;
+                            }
+                            data.forEach((item, index) => {
+                                const tr = document.createElement('tr');
+                                let changeClass = 'no-change';
+                                if (item.rankingChange && item.rankingChange.startsWith('+')) {
+                                    changeClass = 'increase';
+                                } else if (item.rankingChange && item.rankingChange.startsWith('-') && item.rankingChange !== '-') {
+                                    changeClass = 'decrease';
+                                }
+                                tr.innerHTML = `
+                                <td class="rank">${item.currentRanking}<span class="${changeClass}"> (${item.rankingChange || '-'})</span></td>
+                                <td class="keyword">${item.keyword}</td>
+                                <td class="quantity">${item.todaySearchCount}</td>
+                            `;
+                                tbody.appendChild(tr);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching search ranking:', error);
+                            const tbody = document.getElementById('search-ranking-body');
+                            tbody.innerHTML = '<tr><td colspan="3">데이터를 불러오는 데 실패했습니다.</td></tr>';
+                        });
+                });
+            </script>
         </div>
     </div>
 </div>
+<script th:src="@{/js/admin/adminHeader.js}"></script>
+<script th:src="@{/js/admin/adminNotifications.js}"></script>
 </body>
 </html>

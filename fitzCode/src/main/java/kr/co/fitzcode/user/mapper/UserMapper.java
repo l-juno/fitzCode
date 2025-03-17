@@ -23,4 +23,6 @@ public interface UserMapper {
     UserDTO findByUserKakaoId(String kakaoId);
     String findEmailByNameAndPhoneNumber(@Param("userName") String userName, @Param("phoneNumber") String phoneNumber);
 
+    // 역할 이름을 문자열 리스트로 리턴
+    List<String> findRolesInStringByUserId(@Param("userId") int userId);
 }
