@@ -1,8 +1,10 @@
 package kr.co.fitzcode.common.controller;
 
+import jakarta.servlet.http.HttpSession;
+import kr.co.fitzcode.admin.service.ProductService;
 import kr.co.fitzcode.admin.service.SearchLogService;
 import kr.co.fitzcode.common.dto.CustomOAuth2User;
-import jakarta.servlet.http.HttpSession;
+import kr.co.fitzcode.common.dto.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -10,12 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -24,6 +24,7 @@ import java.util.Map;
 public class FitzCodeController {
 
     private final SearchLogService searchLogService;
+    private final ProductService productService;
 
     @GetMapping("/")
     public String mainPage() {
@@ -36,7 +37,7 @@ public class FitzCodeController {
         Map<String, Object> response = new HashMap<>();
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Integer userId = null; // 비로그인 시 null
+            Integer userId = null;
             if (authentication != null && authentication.getPrincipal() instanceof CustomOAuth2User) {
                 userId = ((CustomOAuth2User) authentication.getPrincipal()).getUserId();
             }
@@ -60,11 +61,32 @@ public class FitzCodeController {
         return "searchResult";
     }
 
+    @GetMapping("/api/product/search")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> searchProducts(
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "page", defaultValue = "1") int page) {
+        Map<String, Object> response = new HashMap<>();
+        try {
+            // 상품 검색 로직
+            List<ProductDTO> products = productService.searchProducts(keyword, page, 20);
+            int totalLength = productService.countAllProducts(keyword);
+
+            response.put("list", products);
+            response.put("totalLength", totalLength);
+            response.put("currentPage", page);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("상품 검색 중 오류 발생: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new HashMap<>());
+        }
+    }
+
     @PostMapping("/admin/extend-session")
     @ResponseBody
     public ResponseEntity<String> extendSession(HttpSession session) {
         try {
-            session.setMaxInactiveInterval(1800); // 30분 (1800초)
+            session.setMaxInactiveInterval(1800);
             return ResponseEntity.ok("Session extended successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to extend session");

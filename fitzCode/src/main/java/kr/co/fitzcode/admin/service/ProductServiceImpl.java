@@ -286,4 +286,17 @@ public class ProductServiceImpl implements ProductService {
     private boolean isNumericCell(Cell cell) {
         return cell != null && cell.getCellType() == CellType.NUMERIC;
     }
+
+    // 상품 검색 조회
+    @Override
+    public List<ProductDTO> searchProducts(String keyword, int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return productMapper.getAllProducts(offset, pageSize, "default", keyword); // 정렬은 기본값 사용
+    }
+
+    // 검색어 상품 개수 조회
+    @Override
+    public int countSearchProducts(String keyword) {
+        return productMapper.countAllProducts(keyword);
+    }
 }

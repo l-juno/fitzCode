@@ -32,7 +32,7 @@
     </div>
 
     <div class="product-grid" id="product-grid">
-        <!-- 상품 목록은 JavaScript 렌더링 -->
+        <!-- 상품 목록은 JavaScript 로딩 -->
     </div>
 </div>
 
@@ -64,44 +64,36 @@
 
     $(document).ready(function () {
         // 필터 버튼
-        console.log("Document ready, binding filter button events...");
         if ($(".filter-button").length) {
-            console.log("Filter button found, binding click event");
             $(".filter-button").click(function(e) {
                 e.stopPropagation();
-                console.log("Filter button clicked");
                 $(".filter-dropdown").toggleClass("active");
                 const arrow = $(".filter-arrow");
                 const dropdown = $(".filter-dropdown");
                 if (dropdown.hasClass("active")) {
-                    console.log("Filter dropdown opened");
                     arrow.text("▲");
                 } else {
-                    console.log("Filter dropdown closed");
                     arrow.text("▼");
                 }
             });
-        } else {
-            console.error("Filter button not found in DOM");
         }
 
-        // 외부 클릭 시 드롭다운 닫기
+        // 바깥부분 클릭하면 드롭다운 닫기
         $(document).click(function(event) {
             if (!$(event.target).closest(".filter-wrapper").length) {
-                console.log("Clicked outside filter wrapper");
                 $(".filter-dropdown").removeClass("active");
                 $(".filter-arrow").text("▼");
             }
         });
 
-        // 카테고리 데이터 로드
+        // 카테고리 데이터
         console.log("Loading categories...");
         $.ajax({
             url: "/api/product/category",
             method: "GET",
             dataType: "json",
             success: function(data) {
-                console.log("Categories loaded successfully:", data);
+                // console.log("Categories loaded successfully:", data);
                 const categoriesContainer = $("#categories-container");
                 const categoryMap = {};
 
@@ -141,7 +133,7 @@
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error fetching categories:", error);
+                // console.error("Error fetching categories:", error);
             }
         });
 
@@ -151,7 +143,7 @@
         // 초기화 버튼 이벤트
         $("#reset-filters").click(function(e) {
             e.preventDefault();
-            console.log("Reset button clicked");
+            // console.log("Reset button clicked");
             $("input[type='checkbox']").prop("checked", false);
             loadProducts();
         });
@@ -159,7 +151,7 @@
         // 필터 적용 버튼 이벤트
         $(".apply-button").click(function(event) {
             event.preventDefault();
-            console.log("Apply button clicked");
+            // console.log("Apply button clicked");
             currentPage = 1;
             loadProducts();
             hasMoreProducts = true;
@@ -190,7 +182,6 @@
     function getProductsByFilter(pageNum) {
         let formData = $("#filter-form").serialize();
         formData += `&page=${pageNum}`;
-        console.log(`Fetching page ${pageNum} with data:`, formData);
 
         $.ajax({
             url: "/api/product/getProductsByFilter",
@@ -198,21 +189,20 @@
             data: formData,
             dataType: "json",
             success: function(data) {
-                console.log("AJAX success - Data:", data);
+                // console.log("AJAX 성공 - Data:", data);
                 if (data && data.list) {
-                    console.log(`Appending ${data.list.length} products.`);
+                    // console.log(`Appending ${data.list.length} products.`);
                     renderProducts(data.list, pageNum);
                     currentPage += 1;
                     isLoading = false;
                 } else {
-                    console.log("No more products to load.");
+                    // console.log("No more products to load.");
                     hasMoreProducts = false;
                     isLoading = false;
                 }
                 $('#loadingSpinner').hide();
             },
             error: function(xhr, status, error) {
-                console.error("Error fetching products - Status:", status, "Error:", error, "Response:", xhr.responseText);
                 isLoading = false;
                 $('#loadingSpinner').hide();
             }
@@ -222,7 +212,7 @@
     function renderProducts(products, pageNum) {
         let productContainer = $("#product-grid");
         if (pageNum === 1) {
-            console.log("Clearing product grid");
+            // console.log("Clearing product grid");
             productContainer.empty();
         }
 
