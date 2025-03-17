@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>fitzCode</title>
+    <link rel="stylesheet" th:href="@{/css/user/account.css}"/>
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<br><br><br><br>
+<div class="mypageContainer">
+    <!-- navi -->
+    <div th:replace="~{fragments/mypageNavi}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="mypageContent">
+        <h2>계좌관리</h2>
+        <div id="hr"></div>
+        <div class="accountInfo">
+            <form th:action="@{/mypage/updateAccount}" method="post">
+            <div class="accountData">
+                <p class="subTitle">예금주 | </p>
+                <p th:text="${dto.accountHolder}" style="margin-left: 10px; font-size: 15px;"></p>
+            </div>
+            <div id="subBox">
+                <div class="accountData" id="selectionBox">
+                    <select name="bankName" id="bankSelection">
+                        <option th:value="${dto.bankName}" th:text="${dto.bankName}"></option>
+                        <option value="우리은행" th:if="${dto.bankName != '우리은행'}" type="hidden">우리은행</option>
+                        <option value="국민은행" th:if="${dto.bankName != '국민은행'}" type="hidden">국민은행</option>
+                        <option value="신한은행" th:if="${dto.bankName != '신한은행'}" type="hidden">신한은행</option>
+                        <option value="농협은행" th:if="${dto.bankName != '농협은행'}" type="hidden">농협은행</option>
+                        <option value="토스뱅크" th:if="${dto.bankName != '토스뱅크'}" type="hidden">토스뱅크</option>
+                        <option value="카카오뱅크" th:if="${dto.bankName != '카카오뱅크'}" type="hidden">카카오뱅크</option>
+                    </select>
+                    <div class="accountData">
+                        <input type="text" name="accountNumber" th:value="${dto.accountNumber}">
+                    </div>
+                </div>
+                <input type="hidden" name="accountHolder" th:value="${dto.accountHolder}">
+                <input type="hidden" name="userId" th:value="${dto.userId}">
+                <input type="hidden" name="accountId" th:value="${dto.accountId}">
+                <button type="submit" style="color: darkgray;">계좌정보 저장</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+</body>
+<script th:src="@{/js/user/joinForm.js}"></script>
+</html>

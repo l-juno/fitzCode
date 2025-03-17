@@ -93,7 +93,7 @@ public class InquiryServiceImpl implements InquiryService {
                     log.info(">>>>>> S3 이미지 url 삭제 : {}", fileUrls.getImageUrl());
                 }
             }
-            // 저장되어 있던 문의 이미지 삭제 후
+            // 저장되어 있던 문의 이미지 삭제 후 (3장에서 2장이 될 수 있으므로)
             inquiryMapper.deleteInquiryImages(inquiryDTO.getInquiryId());
             // 다시 저장하기
             List<String> inquiryImageUrls = saveImages(inquiryDTO.getInquiryId(), nonEmptyFiles);
