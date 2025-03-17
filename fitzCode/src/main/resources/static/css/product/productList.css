@@ -2,6 +2,7 @@
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 20px;
+    font-family: 'Apple SD Gothic Neo', sans-serif;
 }
 
 .product-grid {
@@ -14,11 +15,9 @@
 .product-single {
     background: #fff;
     border-radius: 8px;
-    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
     overflow: hidden;
     text-align: left;
     transition: transform 0.2s;
-    font-family: 'Heveltica Neue', 'Helvetica', 'FV', 'SpoqaHanSans', Noto Sans KR, sans-serif;
 }
 
 .product-single a {
@@ -43,11 +42,16 @@
 .brand {
     font-weight: 600;
     font-size: 16px;
+    margin-top: 0px !important;
+    margin-bottom: 15px !important;
 }
 
 .product-name {
-    font-weight: 300;
-    font-size: 16px;
+    height: 42px;
+    font-weight: 600;
+    font-size: 13px;
+    margin-top: 0px !important;
+    color: #222222;
 }
 
 .price {
@@ -114,14 +118,14 @@
 }
 
 .original-price {
-    color: red;
+    color: #f15746;
     text-decoration: line-through;
     margin: 0px;
     font-size: smaller;
 }
 
 .percent {
-    color: red;
+    color: #f15746;
     font-weight: bold;
     font-size: 16px;
     margin-top: 0px;

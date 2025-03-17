@@ -241,7 +241,7 @@ function addNotificationItem(notificationId, message) {
     const item = $(`<div class="notification-item" data-id="${notificationId}"><span>${message}</span><button class="close-btn" data-id="${notificationId}">X</button></div>`);
     item.click(function (e) {
         if (!$(e.target).hasClass('close-btn')) {
-            window.location.href = '/notice/list';
+            window.location.href = '/notice';
         }
     });
     dropdown.prepend(item);

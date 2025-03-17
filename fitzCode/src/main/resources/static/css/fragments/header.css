@@ -8,6 +8,7 @@
     z-index: 1000;
     display: flex;
     align-items: center;
+    font-family: 'Apple SD Gothic Neo', sans-serif;
 }
 
 .header-container {

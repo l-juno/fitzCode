@@ -258,14 +258,14 @@ function loadNotifications() {
     });
 }
 
-// headerNotification.js와 통합을 위한 함수
+// headerNotification.js와 통합
 function addNotificationItem(notificationId, message) {
     const dropdown = $('#notificationDropdown');
     dropdown.find('.notification-actions').remove();
     const item = $(`<div class="notification-item" data-id="${notificationId}"><span>${message}</span><button class="close-btn" data-id="${notificationId}">X</button></div>`);
     item.click(function (e) {
         if (!$(e.target).hasClass('close-btn')) {
-            window.location.href = '/notice/list';
+            window.location.href = '/notice';
         }
     });
     dropdown.prepend(item);

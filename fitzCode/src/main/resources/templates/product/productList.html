@@ -5,11 +5,9 @@
     <th:block th:replace="~{fragments/header :: header-head}"></th:block>
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
     <th:block th:replace="~{product/filter :: filter-css}"></th:block>
-    <th:block th:replace="~{product/searchBox :: searchBox-css}"></th:block>
     <link rel="stylesheet" th:href="@{/css/product/productList.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/pretendard.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <meta charset="UTF-8">
     <title>fitzCode</title>
@@ -22,55 +20,11 @@
 
     <div class="row">
         <button class="filter-button">Filter</button>
-        <th:block th:replace="~{product/searchBox}"></th:block>
     </div>
-
-
-    <p>Current user: <span th:text="${#authentication.name}"></span></p>
-    <p>User roles: <span th:text="${#authentication.authorities}"></span></p>
-    <p sec:authorize="isAuthenticated()">Current userId: <span th:text="${#authentication.principal.userId}"></span></p>
-
-
-
-
-
-
     <div class="product-grid" id="product-grid">
-<!--        <th:block th:each="product : ${productList}">-->
-<!--            <div class="product-single">-->
-<!--                <a href="#" th:href="@{/product/detail/{productId}(productId=${product.productId})}">-->
-<!--                    <div class="product-image">-->
-<!--                        <img th:src="${product.imageUrl}" th:alt="${product.productName}">-->
-<!--                    </div>-->
-<!--                    <div class="product-details">-->
-<!--                        <h6 class="brand" th:text="${product.brand}"></h6>-->
-<!--                        <h5 class="product-name" th:text="${product.productName}">Product Name</h5>-->
-<!--                        <p class="price" th:text="${product.formattedPrice} + '원'"></p>-->
-<!--                    </div>-->
-<!--                </a>-->
-<!--            </div>-->
-<!--        </th:block>-->
+        <!-- 상품 목록은 JavaScript 렌더링 -->
     </div>
-
-
-
-    <div class="pagination-container">
-<!--        <nav>-->
-<!--            <ul class="pagination">-->
-<!--                <th:block th:each="pageNum : ${#numbers.sequence(firstPage, lastPage)}">-->
-<!--                    <li class="pageBox">-->
-<!--                        <a class="pageNum" th:href="@{/product/list/{pageNum}(pageNum=${pageNum})}" th:text="${pageNum}"></a>-->
-<!--                    </li>-->
-<!--                </th:block>-->
-<!--            </ul>-->
-<!--        </nav>-->
-
-    </div>
-
 </div>
-
-
-
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
@@ -81,9 +35,7 @@
     let isLoading = false;
     let hasMoreProducts = true;
 
-
     $(document).ready(function () {
-
         getProductsByFilter(currentPage);
 
         $(window).on("scroll", function () {
@@ -97,7 +49,6 @@
         });
     });
 
-
     $(".apply-button").click(function(event) {
         event.preventDefault();
         currentPage = 1;
@@ -105,20 +56,9 @@
         hasMoreProducts = true;
     });
 
-    $(document).ready(function () {
-        $(".form").on("submit", function (event) {
-            event.preventDefault();
-            currentPage = 1;
-            getProductsByFilter(currentPage);
-            hasMoreProducts = true;
-        });
-    });
-
-
     function getProductsByFilter(pageNum) {
-        let searchText = $("#search-text").val();
         let formData = $("#filter-form").serialize();
-        formData += `&page=${pageNum}&searchText=${searchText}`;
+        formData += `&page=${pageNum}`;
         console.log(`Fetching page ${pageNum} with data:`, formData);
 
         $.ajax({
@@ -127,7 +67,6 @@
             data: formData,
             dataType: "json",
             success: function (data) {
-
                 if (data && data.list) {
                     console.log(`Appending ${data.list.length} products.`);
                     renderProducts(data.list, pageNum);
@@ -148,7 +87,7 @@
     function renderProducts(products, pageNum) {
         let productContainer = $("#product-grid");
         if (pageNum === 1) {
-            console.log("pagenum is 1")
+            console.log("pagenum is 1");
             productContainer.empty();
         }
 
@@ -162,8 +101,8 @@
                     <div class="product-details">
                         <h6 class="brand">${product.brand}</h6>
                         <h5 class="product-name">${product.productName}</h5>
-                        `;
-            if(product.price != product.discountedPrice) {
+            `;
+            if (product.price != product.discountedPrice) {
                 productHTML += `
                     <div class="row">
                         <p class="percent">${product.formattedDiscountPercentage}%</p>
@@ -177,12 +116,13 @@
                     </div>
                 </a>
             </div>
-        `;
+            `;
 
             productContainer.append(productHTML);
         });
     }
-
-
 </script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
+</body>
 </html>
