@@ -1,6 +1,5 @@
 package kr.co.fitzcode.common.config;
 
-import jakarta.servlet.http.HttpServletResponse;
 import kr.co.fitzcode.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,8 +16,6 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 @Configuration
 @EnableWebSecurity
@@ -107,6 +104,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                            .requestMatchers("/admin/coupon/**").hasAuthority("ROLE_ADMIN")
                             .requestMatchers("/admin/dashboard")
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_INQUIRY")
                             .requestMatchers(

@@ -1,0 +1,140 @@
+.content-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+.main-content {
+    flex-grow: 1;
+    padding-left: 20px;
+    max-width: 1200px;
+}
+.coupon-container {
+    padding: 20px;
+    font-family: 'Apple SD Gothic Neo', sans-serif;
+    margin-left: 20px;
+}
+.coupon-title {
+    font-size: 24px;
+    display: inline-block;
+    margin-bottom: 20px;
+    position: relative;
+}
+.coupon-title::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 2px;
+    background-color: #000;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+th {
+    background-color: #2f2f32;
+    text-align: center;
+    color: white;
+}
+td {
+    text-align: left;
+}
+td:nth-child(1), td:nth-child(4), td:nth-child(5), td:nth-child(6), td:nth-child(7), td:nth-child(8), td:nth-child(9), td:nth-child(10), td:nth-child(11) {
+    text-align: center;
+}
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+.pagination a {
+    margin: 0 5px;
+    text-decoration: none;
+    color: #333;
+}
+.form-container {
+    margin-bottom: 20px;
+}
+button[type="submit"], button[type="button"] {
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 4px 16px;
+}
+button.update-btn {
+    background-color: #000;
+    color: #fff;
+}
+button.delete-btn {
+    background-color: #808080;
+    color: #fff;
+}
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    overflow: auto;
+}
+.modal-content {
+    background-color: #fff;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border: 1px solid #888;
+    width: 400px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-form {
+    display: flex;
+    flex-direction: column;
+}
+.modal-form label {
+    display: block;
+    margin-top: 10px;
+}
+.modal-form input,
+.modal-form select {
+    width: 392px;
+    padding: 5px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+.modal-form .button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+.modal-form button {
+    background-color: #000;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}

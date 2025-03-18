@@ -1,8 +1,11 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.common.enums.InquiryCategory;
 import kr.co.fitzcode.common.enums.InquiryStatus;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,39 +13,69 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Schema(description = "문의 정보")
 public class InquiryDTO {
-    private int inquiryId;           // 문의 ID
-    private int userId;              // 문의한 사용자 ID
-    private String userName;         // 사용자 이름
-    private String phoneNumber;      // 사용자 핸드폰 번호
-    private Integer orderId;         // 관련 주문 ID (없을 수도 있어서 Integer)
+    @Schema(description = "문의 ID")
+    private int inquiryId;
 
+    @Schema(description = "문의한 사용자 ID")
+    private int userId;
 
-    private String subject;          // 문의 제목
-    private String content;          // 문의 내용
+    @Schema(description = "사용자 이름")
+    private String userName;
 
-    private Integer categoryCode;        // 문의 카테고리 코드 (1 - 일반, 2 - 상품, 3 - 환불)
-    private int statusCode;          // 문의 상태 코드 (1: PENDING, 2: ANSWERED, 3: CLOSED)
-    private String reply;            // 관리자 답변 내용
+    @Schema(description = "사용자 핸드폰 번호")
+    private String phoneNumber;
 
-    private LocalDateTime createdAt; // 문의 작성 날짜
-    private LocalDateTime updatedAt; // 문의 수정 날짜
+    @Schema(description = "관련 주문 ID")
+    private Integer orderId;
 
-    private Integer productId;       // 관련 상품 ID (없을 수도 있어서 Integer)
-    private String productName;      // 상품 이름
-    private String productImgUrl;    // 상품 대표 이미지 URL (이미지 한개)
-    private String brand;            // 상품 브랜드
-    private String description;      // 상품 상세설명
-    private String price;            // 개별 상품 가격
+    @Schema(description = "문의 제목")
+    private String subject;
 
-    private List<String> imageUrls;  // 문의 시 사용자가 첨부한 이미지 (최대 5개 제한)
+    @Schema(description = "문의 내용")
+    private String content;
 
-    // 문의 상태 코드(int) → InquiryStatus Enum 변환
+    @Schema(description = "문의 카테고리 코드")
+    private Integer categoryCode;
+
+    @Schema(description = "문의 상태 코드")
+    private int statusCode;
+
+    @Schema(description = "관리자 답변 내용")
+    private String reply;
+
+    @Schema(description = "문의 작성 날짜")
+    private LocalDateTime createdAt;
+
+    @Schema(description = "문의 수정 날짜")
+    private LocalDateTime updatedAt;
+
+    @Schema(description = "관련 상품 ID")
+    private Integer productId;
+
+    @Schema(description = "상품 이름")
+    private String productName;
+
+    @Schema(description = "상품 대표 이미지 URL")
+    private String productImgUrl;
+
+    @Schema(description = "상품 브랜드")
+    private String brand;
+
+    @Schema(description = "상품 상세설명")
+    private String description;
+
+    @Schema(description = "개별 상품 가격")
+    private String price;
+
+    @Schema(description = "문의 시 첨부한 이미지")
+    private List<String> imageUrls;
+
     public InquiryStatus getStatus() {
         return InquiryStatus.fromCode(statusCode);
     }
 
-    // 문의 카테고리 코드(int) → InquiryCategory Enum 변환
     public InquiryCategory getCategory() {
         return InquiryCategory.fromCode(categoryCode);
     }

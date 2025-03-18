@@ -1,5 +1,8 @@
 package kr.co.fitzcode.admin.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.fitzcode.admin.service.AdminRefundService;
 import kr.co.fitzcode.common.dto.RefundDTO;
 import kr.co.fitzcode.common.enums.RefundStatus;
@@ -20,6 +23,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/products/refund/api")
 @RequiredArgsConstructor
+@Tag(name = "Refund API", description = "관리자 환불 처리 API 제공, 환불 상태 업데이트 및 결제 취소 요청")
 public class AdminRefundRestController {
 
     private final AdminRefundService refundService;
@@ -30,12 +34,13 @@ public class AdminRefundRestController {
     @Value("${portone.imp_secret}")
     private String impSecret;
 
+    @Operation(summary = "환불 처리", description = "환불 ID로 환불 요청을 처리하고 상태를 업데이트")
     @PostMapping("/{refundId}/process")
     public ResponseEntity<Map<String, Object>> processRefund(
-            @PathVariable Long refundId,
-            @RequestParam(value = "customRefundAmount", required = false) Integer customRefundAmount,
-            @RequestParam("status") Integer status,
-            @RequestParam Map<String, String> allParams) {
+            @Parameter @PathVariable Long refundId,
+            @Parameter @RequestParam(value = "customRefundAmount", required = false) Integer customRefundAmount,
+            @Parameter @RequestParam("status") Integer status,
+            @Parameter(hidden = true) @RequestParam Map<String, String> allParams) {
 
         Map<String, Object> response = new HashMap<>();
         RefundDTO refund = refundService.getRefundDetail(refundId);
@@ -52,7 +57,7 @@ public class AdminRefundRestController {
                 .filter(entry -> entry.getKey().startsWith("item_"))
                 .mapToInt(entry -> {
                     try {
-                        Long orderDetailId = Long.valueOf(entry.getValue()); // 직접 Long으로 변환
+                        Long orderDetailId = Long.valueOf(entry.getValue());
                         selectedItems.put(orderDetailId, 1);
                         for (RefundDTO.OrderDetailDTO item : refund.getRequestedItems()) {
                             if (item.getOrderDetailId().equals(orderDetailId)) {

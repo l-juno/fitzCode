@@ -5,12 +5,14 @@ import kr.co.fitzcode.common.dto.OrderDTO;
 import kr.co.fitzcode.common.dto.PaymentDTO;
 import kr.co.fitzcode.order.mapper.UserOrderMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImple implements OrderService {
 
     private final UserOrderMapper userOrderMapper;

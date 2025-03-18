@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en"
-      xmlns:sec="http://www.springframework.org/schema/security">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:sec="http://www.springframework.org/schema/security">
 <head>
     <th:block th:replace="~{fragments/header :: header-head}"></th:block>
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
@@ -21,21 +20,42 @@
             <span class="filter-arrow">▼</span>
         </button>
         <div class="filter-dropdown">
-            <h3>Filters</h3>
+            <h3>카테고리</h3>
             <form action="/product/filterList" method="GET" id="filter-form">
                 <div id="categories-container" class="categories-container"></div>
-                <input type="submit" value="Apply" class="apply-button">
+                <div class="filter-buttons">
+                    <button type="button" id="reset-filters" class="reset-button">초기화</button>
+                    <input type="submit" value="적용" class="apply-button">
+                </div>
             </form>
         </div>
     </div>
 
     <div class="product-grid" id="product-grid">
-        <!-- 상품 목록은 JavaScript 렌더링 -->
+        <!-- 상품 목록은 JavaScript 로딩 -->
     </div>
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-</body>
+
+<button id="scrollToTopBtn" class="scroll-to-top">
+    <i class="fa fa-arrow-up"></i>
+</button>
+
+<div id="loadingSpinner" class="spinner center">
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+</div>
 
 <script>
     let currentPage = 1;
@@ -43,46 +63,37 @@
     let hasMoreProducts = true;
 
     $(document).ready(function () {
-        // 필터 버튼 이벤트 바인딩
-        console.log("Document ready, binding filter button events...");
+        // 필터 버튼
         if ($(".filter-button").length) {
-            console.log("Filter button found, binding click event");
             $(".filter-button").click(function(e) {
                 e.stopPropagation();
-                console.log("Filter button clicked");
                 $(".filter-dropdown").toggleClass("active");
                 const arrow = $(".filter-arrow");
                 const dropdown = $(".filter-dropdown");
                 if (dropdown.hasClass("active")) {
-                    console.log("Filter dropdown opened");
                     arrow.text("▲");
-                    // 상품 리스트를 아래로 밀지 않음
                 } else {
-                    console.log("Filter dropdown closed");
                     arrow.text("▼");
                 }
             });
-        } else {
-            console.error("Filter button not found in DOM");
         }
 
-        // 외부 클릭 시 드롭다운 닫기
+        // 바깥부분 클릭하면 드롭다운 닫기
         $(document).click(function(event) {
             if (!$(event.target).closest(".filter-wrapper").length) {
-                console.log("Clicked outside filter wrapper");
                 $(".filter-dropdown").removeClass("active");
                 $(".filter-arrow").text("▼");
             }
         });
 
-        // 카테고리 데이터 로드
+        // 카테고리 데이터
         console.log("Loading categories...");
         $.ajax({
             url: "/api/product/category",
             method: "GET",
             dataType: "json",
             success: function(data) {
-                console.log("Categories loaded successfully:", data);
+                // console.log("Categories loaded successfully:", data);
                 const categoriesContainer = $("#categories-container");
                 const categoryMap = {};
 
@@ -94,7 +105,6 @@
                 });
 
                 if (categoryMap[0]) {
-                    // 상위 카테고리를 가로로 1열로 나열
                     const topCategories = $('<div class="top-categories"></div>');
                     categoryMap[0].forEach(parentCategory => {
                         const categorySection = $(`
@@ -107,7 +117,6 @@
                     });
                     categoriesContainer.append(topCategories);
 
-                    // 하위 카테고리 추가
                     categoryMap[0].forEach(parentCategory => {
                         if (categoryMap[parentCategory.categoryId]) {
                             const subcategories = $(`#category-${parentCategory.categoryId}`);
@@ -124,31 +133,55 @@
                 }
             },
             error: function(xhr, status, error) {
-                console.error("Error fetching categories:", error);
+                // console.error("Error fetching categories:", error);
             }
         });
 
         // 초기 상품 로드
         loadProducts();
+
+        // 초기화 버튼 이벤트
+        $("#reset-filters").click(function(e) {
+            e.preventDefault();
+            // console.log("Reset button clicked");
+            $("input[type='checkbox']").prop("checked", false);
+            loadProducts();
+        });
+
+        // 필터 적용 버튼 이벤트
+        $(".apply-button").click(function(event) {
+            event.preventDefault();
+            // console.log("Apply button clicked");
+            currentPage = 1;
+            loadProducts();
+            hasMoreProducts = true;
+            $(".filter-dropdown").removeClass("active");
+            $(".filter-arrow").text("▼");
+        });
+
+        $('#scrollToTopBtn').click(function() {
+            $('html, body').animate({ scrollTop: 0 }, 500);
+            return false;
+        });
+
+        // 스크롤 위치에 따라 버튼
+        $(window).on('scroll', function () {
+            if ($(window).scrollTop() > 200) {
+                $('#scrollToTopBtn').addClass('visible');
+            } else {
+                $('#scrollToTopBtn').removeClass('visible');
+            }
+        });
     });
 
-    // 상품 로드 함수
+    // 상품 로드
     function loadProducts() {
         getProductsByFilter(currentPage);
     }
 
-    $(".apply-button").click(function(event) {
-        event.preventDefault();
-        console.log("Apply button clicked");
-        currentPage = 1;
-        loadProducts();
-        hasMoreProducts = true;
-    });
-
     function getProductsByFilter(pageNum) {
         let formData = $("#filter-form").serialize();
         formData += `&page=${pageNum}`;
-        console.log(`Fetching page ${pageNum} with data:`, formData);
 
         $.ajax({
             url: "/api/product/getProductsByFilter",
@@ -156,20 +189,22 @@
             data: formData,
             dataType: "json",
             success: function(data) {
-                console.log("AJAX success - Data:", data);
+                // console.log("AJAX 성공 - Data:", data);
                 if (data && data.list) {
-                    console.log(`Appending ${data.list.length} products.`);
+                    // console.log(`Appending ${data.list.length} products.`);
                     renderProducts(data.list, pageNum);
                     currentPage += 1;
                     isLoading = false;
                 } else {
-                    console.log("No more products to load.");
+                    // console.log("No more products to load.");
                     hasMoreProducts = false;
+                    isLoading = false;
                 }
+                $('#loadingSpinner').hide();
             },
             error: function(xhr, status, error) {
-                console.error("Error fetching products - Status:", status, "Error:", error, "Response:", xhr.responseText);
                 isLoading = false;
+                $('#loadingSpinner').hide();
             }
         });
     }
@@ -177,7 +212,7 @@
     function renderProducts(products, pageNum) {
         let productContainer = $("#product-grid");
         if (pageNum === 1) {
-            console.log("Clearing product grid");
+            // console.log("Clearing product grid");
             productContainer.empty();
         }
 
@@ -218,7 +253,10 @@
             if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
                 console.log("Triggering infinite scroll...");
                 isLoading = true;
-                getProductsByFilter(currentPage);
+                $('#loadingSpinner').show();
+                setTimeout(function() {
+                    getProductsByFilter(currentPage);
+                }, 500);
             }
         }
     });

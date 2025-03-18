@@ -1,15 +1,17 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.user.service.OAuth2Response;
 
 import java.util.Map;
 import java.util.Random;
 
 
+@Schema(description = "Naver OAuth2 응답 정보")
 public class NaverResponse implements OAuth2Response {
 
+    @Schema(description = "Naver 응답 속성 맵")
     private final Map<String, Object> attributes;
-
     public NaverResponse(Map<String, Object> attributes) {
         this.attributes = (Map<String, Object>) attributes.get("response");
     }

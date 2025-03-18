@@ -1,38 +1,54 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.common.enums.OrderStatus;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.text.NumberFormat;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
-import java.util.Locale;
 
 @Getter
 @Setter
-@ToString
+@Schema(description = "주문 정보")
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class OrderDTO {
-    private int orderId;             // 주문번호
-    private int userId;
+    @Schema(description = "주문번호")
+    private int orderId;
+
+    @Schema(description = "주문일")
+    private LocalDateTime createdAt;
+
+    @Schema(description = "주문 상태 코드")
+    private int orderStatus;
+
     private int addressId;
-    private int totalPrice;
-    private int orderStatus;         // 주문 상태 코드
-    private LocalDateTime createdAt; // 주문일
-    private LocalDateTime updatedAt;
 
-    public String getOrderStatusTranslated() {
-        return OrderStatus.fromCode(orderStatus).getDescription();
-    }
+    @Schema(description = "사용자 아이디")
+    private int userId;
 
+    @Schema(description = "총 주문 금액")
+    private Integer totalPrice;
+
+    @Schema(description = "운송장 번호")
+    private String trackingNumber;
+
+    @Schema(description = "배송 상태")
+    private int deliveryStatus;
+
+    @Schema(description = "발송 날짜")
+    private LocalDateTime shippedAt;
+
+    @Schema(description = "배송 완료 날짜")
+    private LocalDateTime deliveryAt;
 
     public String getFormattedTotalPrice() {
-        return NumberFormat.getNumberInstance(Locale.KOREA).format(totalPrice);
+        DecimalFormat df = new DecimalFormat("#,###원");
+        return df.format(totalPrice);
     }
 
-
-
-
-
+    public OrderStatus getStatus() {
+        return OrderStatus.fromCode(orderStatus);
+    }
 }

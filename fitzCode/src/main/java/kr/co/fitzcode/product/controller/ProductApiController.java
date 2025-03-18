@@ -1,5 +1,8 @@
 package kr.co.fitzcode.product.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.fitzcode.common.dto.CategoryDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
 import kr.co.fitzcode.common.dto.ProductResponseDTO;
@@ -20,38 +23,40 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
+@Tag(name = "Product API", description = "제품 관련 API 제공, 제품 목록 조회, 필터링, 사이즈 정보")
 public class ProductApiController {
 
     private final ProductService productService;
     private final CategoryService categoryService;
 
+    @Operation(summary = "제품 목록 조회", description = "페이지 번호로 제품 목록 조회")
     @GetMapping(value = "/list/{pageNum}")
-    public ResponseEntity<List<ProductDTO>> list(@PathVariable Integer pageNum) {
+    public ResponseEntity<List<ProductDTO>> list(
+            @Parameter(description = "페이지 번호") @PathVariable Integer pageNum) {
         List<ProductDTO> list = productService.getProductsByPage(pageNum);
         return ResponseEntity.ok().body(list);
     }
 
+    @Operation(summary = "카테고리 목록 조회", description = "모든 카테고리 목록 조회")
     @GetMapping("/category")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         List<CategoryDTO> list = categoryService.getAllCategories();
         return ResponseEntity.ok().body(list);
     }
 
+    @Operation(summary = "필터링된 제품 조회", description = "카테고리 코드와 검색어로 제품 필터링 및 페이지 조회")
     @PostMapping("/getProductsByFilter")
-    public ResponseEntity<ProductResponseDTO> getProductsByFilter(@RequestParam MultiValueMap<String, String> filters, Model model) {
-
-        // Extract the category codes into a list
+    public ResponseEntity<ProductResponseDTO> getProductsByFilter(@Parameter @RequestParam MultiValueMap<String, String> filters, Model model) {
         List<String> codes = filters.keySet().stream()
                 .filter(key -> !key.equals("page") && !key.equals("searchText"))
                 .collect(Collectors.toList());
 
         log.info("codes type: {}", codes.getClass().getName());
 
-        // Extract the search text (single value)
         String searchText = filters.getFirst("searchText");
         String currentPageString = filters.getFirst("page");
         int currentPage = Integer.parseInt(currentPageString);
-        log.info("searchText: {}, currentPageString: {}, int page: {}", searchText, currentPageString,currentPage);
+        log.info("searchText: {}, currentPageString: {}, int page: {}", searchText, currentPageString, currentPage);
         log.info("codes: {}", codes);
 
         List<ProductDTO> filteredProducts;
@@ -59,7 +64,6 @@ public class ProductApiController {
         if ((codes == null || codes.isEmpty()) && (searchText == null || searchText.isEmpty())) {
             filteredProducts = productService.getProductsByPage(currentPage);
             totalLength = productService.getCountOfAllProducts();
-
         } else {
             filteredProducts = productService.getProductsByFilterAndPage(codes, searchText, currentPage);
             totalLength = productService.getProductsCountByFilter(codes, searchText);
@@ -73,15 +77,11 @@ public class ProductApiController {
         return ResponseEntity.ok().body(productResponseDTO);
     }
 
-
+    @Operation(summary = "제품 사이즈 조회", description = "제품 ID로 해당 제품의 모든 사이즈 조회")
     @PostMapping("/getProductSizes")
-    public ResponseEntity<List<ProductSizeDTO>> getProductSizes(@RequestParam int productId) {
+    public ResponseEntity<List<ProductSizeDTO>> getProductSizes(
+            @Parameter(description = "제품 ID") @RequestParam int productId) {
         List<ProductSizeDTO> listSize = productService.getAllSizeOfProduct(productId);
         return ResponseEntity.ok().body(listSize);
     }
-
-
-
-
-
 }

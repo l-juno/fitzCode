@@ -8,6 +8,8 @@ import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.user.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,11 @@ public class MypageController {
     // 내 프로필
     @GetMapping("/myInfo")
     public String mypage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return "redirect:/login";
+        }
+
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
         List<OrderDTO> orderDTO = mypageService.getOrderList(userId);
@@ -63,11 +70,9 @@ public class MypageController {
     // 수정된 계좌 정보 저장
     @PostMapping("/updateAccount")
     public String updateAccount(@ModelAttribute AccountDTO accountDTO) {
-//        log.info("?>>>>>>> accountDTO : {}", accountDTO.getAccountId());
         mypageService.updateAccountData(accountDTO);
         return "redirect:/mypage/account";
     }
-
 
     // 회원정보 수정 폼으로 이동
     @GetMapping("/updateInfo")
@@ -81,9 +86,8 @@ public class MypageController {
     // 수정된 회원 정보 저장
     @PostMapping("/updateInfo")
     public String updateInfo(@ModelAttribute UserDTO userDTO) {
-//        log.info(">>>>>>>>>>> updateInfo : {}", userDTO.getPassword() );
         mypageService.updateUserInfo(userDTO);
-        return "redirect:user/mypage/updateInfo";
+        return "redirect:/mypage/updateInfo";
     }
 
     // 사용자 쿠폰
