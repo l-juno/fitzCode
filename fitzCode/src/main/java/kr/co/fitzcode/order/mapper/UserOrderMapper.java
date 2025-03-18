@@ -22,5 +22,9 @@ public interface UserOrderMapper {
     int insertNewOrder(OrderDTO orderDTO);
 
     void addPayment(@Param("paymentDTO") PaymentDTO paymentDTO);
+
+    OrderDTO getOrderByOrderId(int orderId);
+
+    AddressDTO getUserAddressByAddressId(int addressId);
 }
 

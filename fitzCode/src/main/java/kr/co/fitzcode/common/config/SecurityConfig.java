@@ -73,7 +73,9 @@ public class SecurityConfig {
                                     "/joinSuccess",
                                     "/pwEmail",
                                     "/resetPw",
-                                    "/resetPwSuccess"
+                                    "/resetPwSuccess",
+                                    "/order/**",
+                                    "/api/order/**"
                             ).permitAll()
                             .requestMatchers("/admin/dashboard")
                             .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")

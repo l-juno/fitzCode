@@ -18,4 +18,8 @@ public interface OrderService {
     int insertNewOrder(OrderDTO orderDTO);
 
     void addPayment(PaymentDTO paymentDTO);
+
+    OrderDTO getOrderByOrderId(int orderId);
+
+    AddressDTO getUserAddressByAddressId(int addressId);
 }

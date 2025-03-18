@@ -46,4 +46,14 @@ public class OrderServiceImple implements OrderService {
     public void addPayment(PaymentDTO paymentDTO) {
         userOrderMapper.addPayment(paymentDTO);
     }
+
+    @Override
+    public OrderDTO getOrderByOrderId(int orderId) {
+        return userOrderMapper.getOrderByOrderId(orderId);
+    }
+
+    @Override
+    public AddressDTO getUserAddressByAddressId(int addressId) {
+        return userOrderMapper.getUserAddressByAddressId(addressId);
+    }
 }

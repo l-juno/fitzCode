@@ -4,6 +4,7 @@ import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.order.service.PriceService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,39 +23,15 @@ import java.util.UUID;
 public class PaymentController {
 
     private final PriceService priceService;
-
-    @PostMapping("/getPostOneInformation")
-    public ResponseEntity<Map<String, Object>> getPostOneInformation(@RequestParam int productId,
-                                                                     @RequestParam int sizeCode,
-                                                                     @RequestParam("finalPrice") int finalPrice) {
-        Map<String, Object> response = new HashMap<>();
-
-        //TODO use japsyt to encrypt storeId and channelKey
-        response.put("storeId", "store-bdc48a9e-8830-47a5-a533-d720a26b1237");
-        response.put("channelKey", "channel-key-de5c26f0-b9a4-4b9e-a433-78a2fdf6ba13");
-
-        int userId = SecurityUtils.getUserId();
-        String date = LocalDate.now().toString();
-        String orderInformation = userId + "-" + date;
-
-        // TODO add payment id to payment table
-        String paymentId = orderInformation + "-" +UUID.randomUUID().toString();
-
-        response.put("paymentId", paymentId);
-        response.put("orderName", orderInformation);
-        response.put("totalAmount", finalPrice);
-
-        response.put("currency", "CURRENCY_KRW");
-        response.put("payMethod", "CARD");
-        return ResponseEntity.ok(response);
-    }
+    @Value("${portone.channel_key}")
+    private String channelKey;
 
 
     @PostMapping("/getPostOneInfo")
     public ResponseEntity<Map<String, Object>> getPostOneInfo(@RequestParam("totalPrice") int totalPrice) {
         Map<String, Object> response = new HashMap<>();
         // TODO encrypt channel key
-        response.put("channelKey", "channel-key-de5c26f0-b9a4-4b9e-a433-78a2fdf6ba13");
+        response.put("channelKey", channelKey);
         response.put("payMethod", "card");
 
         int userId = SecurityUtils.getUserId();

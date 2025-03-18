@@ -1,5 +1,6 @@
 package kr.co.fitzcode.order.service;
 
+import kr.co.fitzcode.common.dto.UserOrderDetailDTO;
 import kr.co.fitzcode.order.mapper.UserOrderDetailMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,15 @@ public class UserOrderDetailServiceImple implements UserOrderDetailService {
     public void addOrderDetailToOrder(List<Map<String, Object>> batchInsertList) {
 
         userOrderDetailMapper.batchInsertOrderDetails(batchInsertList);
+    }
+
+    @Override
+    public List<UserOrderDetailDTO> getOrderDetailByOrderId(int orderId) {
+        return userOrderDetailMapper.getOrderDetailByOrderId(orderId);
+    }
+
+    @Override
+    public List<UserOrderDetailDTO> getOrderDetailByUserId(int userId) {
+        return userOrderDetailMapper.getOrderDetailByUserId(userId);
     }
 }

@@ -577,6 +577,7 @@
     }
     
     function requestPayment(paymentInfo) {
+        // TODO group as one transaction, if it fails request for refund
         // call portOne
         IMP.request_pay(
             {
@@ -607,8 +608,9 @@
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(data),
-                    success: function (response) {
-                        console.log("Order created successfully:", response);
+                    success: function (successOrder) {
+                        console.log("Order created successfully:", successOrder);
+                        window.location.href = `/order/${successOrder.orderId}`;
                         
                     },
                     error: function (xhr, status, error) {

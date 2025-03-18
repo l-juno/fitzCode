@@ -32,6 +32,12 @@ public class OrderApiController {
         return ResponseEntity.ok(addressList);
     }
 
+    @GetMapping("/getUserAddressByAddressId")
+    public ResponseEntity<AddressDTO> getUserAddressByAddressId(@RequestParam("addressId") int addressId) {
+        AddressDTO address = orderService.getUserAddressByAddressId(addressId);
+        return ResponseEntity.ok(address);
+    }
+
     @PostMapping("/createOrderFromDetailPage")
     public ResponseEntity<OrderDTO> order(@RequestParam("productId") int productId,
                                           @RequestParam("addressLine1") String addressLine1,
