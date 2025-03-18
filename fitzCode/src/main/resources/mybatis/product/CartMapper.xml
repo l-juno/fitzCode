@@ -15,10 +15,17 @@
         WHERE user_id = #{userId}
     </select>
 
-    <select id="getCartCount" parameterType="int" resultType="int">
-        SELECT COALESCE(SUM(quantity), 0)
-        FROM CART
-        WHERE user_id = #{userId}
+    <select id="getCartInformationByUserId">
+        select c.cart_id, c.user_id, c.product_id, c.quantity, c.created_at, ps.size_code, ps.stock,
+        p.product_name, p.description, p.price, p.discounted_price, p.image_url
+        from CART c
+        JOIN PRODUCT p on c.product_id = p.product_id
+        JOIN PRODUCT_SIZE ps on c.product_size_id = ps.product_size_id
+        where c.user_id = #{userId}
+        ORDER BY created_at desc
     </select>
+
+
+
 
 </mapper>

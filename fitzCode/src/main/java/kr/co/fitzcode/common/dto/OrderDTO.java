@@ -2,6 +2,7 @@ package kr.co.fitzcode.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.common.enums.OrderStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Schema(description = "주문 정보")
+@Builder
 public class OrderDTO {
     @Schema(description = "주문번호")
     private int orderId;
@@ -20,6 +22,8 @@ public class OrderDTO {
 
     @Schema(description = "주문 상태 코드")
     private int orderStatus;
+
+    private int addressId;
 
     @Schema(description = "사용자 아이디")
     private int userId;

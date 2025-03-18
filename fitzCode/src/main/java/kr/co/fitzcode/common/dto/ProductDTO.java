@@ -66,8 +66,10 @@ public class ProductDTO {
     }
 
     public String getFormattedDiscountedPrice() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(discountedPrice);
+        if (this.discountedPrice != null && this.discountedPrice instanceof Number) {
+            return new DecimalFormat("#,###").format(this.discountedPrice);
+        }
+        return "N/A"; // or handle this case differently
     }
 
     public String getFormattedDiscountPercentage() {
