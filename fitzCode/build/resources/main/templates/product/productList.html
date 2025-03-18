@@ -4,114 +4,150 @@
 <head>
     <th:block th:replace="~{fragments/header :: header-head}"></th:block>
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
-    <th:block th:replace="~{product/filter :: filter-css}"></th:block>
-    <th:block th:replace="~{product/searchBox :: searchBox-css}"></th:block>
     <link rel="stylesheet" th:href="@{/css/product/productList.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/pretendard.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <meta charset="UTF-8">
-    <title>product list page</title>
+    <title>fitzCode</title>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container">
-    <div th:replace="~{product/filter :: filter-body}"></div>
-    
-    <div class="row">
-        <button class="filter-button">Filter</button>
-        <th:block th:replace="~{product/searchBox}"></th:block>
+    <div class="filter-wrapper">
+        <button class="filter-button">
+            <img src="/img/filter.png?v=1" alt="Filter Icon" class="filter-icon">
+            <span class="filter-arrow">▼</span>
+        </button>
+        <div class="filter-dropdown">
+            <h3>Filters</h3>
+            <form action="/product/filterList" method="GET" id="filter-form">
+                <div id="categories-container" class="categories-container"></div>
+                <input type="submit" value="Apply" class="apply-button">
+            </form>
+        </div>
     </div>
-    
-    
-    
-    
-    
+
     <div class="product-grid" id="product-grid">
-<!--        <th:block th:each="product : ${productList}">-->
-<!--            <div class="product-single">-->
-<!--                <a href="#" th:href="@{/product/detail/{productId}(productId=${product.productId})}">-->
-<!--                    <div class="product-image">-->
-<!--                        <img th:src="${product.imageUrl}" th:alt="${product.productName}">-->
-<!--                    </div>-->
-<!--                    <div class="product-details">-->
-<!--                        <h6 class="brand" th:text="${product.brand}"></h6>-->
-<!--                        <h5 class="product-name" th:text="${product.productName}">Product Name</h5>-->
-<!--                        <p class="price" th:text="${product.formattedPrice} + '원'"></p>-->
-<!--                    </div>-->
-<!--                </a>-->
-<!--            </div>-->
-<!--        </th:block>-->
+        <!-- 상품 목록은 JavaScript 렌더링 -->
     </div>
-    
-    
-    
-    <div class="pagination-container">
-<!--        <nav>-->
-<!--            <ul class="pagination">-->
-<!--                <th:block th:each="pageNum : ${#numbers.sequence(firstPage, lastPage)}">-->
-<!--                    <li class="pageBox">-->
-<!--                        <a class="pageNum" th:href="@{/product/list/{pageNum}(pageNum=${pageNum})}" th:text="${pageNum}"></a>-->
-<!--                    </li>-->
-<!--                </th:block>-->
-<!--            </ul>-->
-<!--        </nav>-->
-    
-    </div>
-
 </div>
-
-
-
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 
-<script th:replace="~{product/filter :: filter-script}"></script>
 <script>
     let currentPage = 1;
     let isLoading = false;
     let hasMoreProducts = true;
 
-
     $(document).ready(function () {
-        
-        getProductsByFilter(currentPage);
-
-        $(window).on("scroll", function () {
-            if (!isLoading && hasMoreProducts) {
-                if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
-                    console.log("Fetching more products...");
-                    isLoading = true;
-                    getProductsByFilter(currentPage);
+        // 필터 버튼 이벤트 바인딩
+        console.log("Document ready, binding filter button events...");
+        if ($(".filter-button").length) {
+            console.log("Filter button found, binding click event");
+            $(".filter-button").click(function(e) {
+                e.stopPropagation();
+                console.log("Filter button clicked");
+                $(".filter-dropdown").toggleClass("active");
+                const arrow = $(".filter-arrow");
+                const dropdown = $(".filter-dropdown");
+                if (dropdown.hasClass("active")) {
+                    console.log("Filter dropdown opened");
+                    arrow.text("▲");
+                    // 상품 리스트를 아래로 밀지 않음
+                } else {
+                    console.log("Filter dropdown closed");
+                    arrow.text("▼");
                 }
+            });
+        } else {
+            console.error("Filter button not found in DOM");
+        }
+
+        // 외부 클릭 시 드롭다운 닫기
+        $(document).click(function(event) {
+            if (!$(event.target).closest(".filter-wrapper").length) {
+                console.log("Clicked outside filter wrapper");
+                $(".filter-dropdown").removeClass("active");
+                $(".filter-arrow").text("▼");
             }
         });
+
+        // 카테고리 데이터 로드
+        console.log("Loading categories...");
+        $.ajax({
+            url: "/api/product/category",
+            method: "GET",
+            dataType: "json",
+            success: function(data) {
+                console.log("Categories loaded successfully:", data);
+                const categoriesContainer = $("#categories-container");
+                const categoryMap = {};
+
+                data.forEach(category => {
+                    if (!categoryMap[category.parentId]) {
+                        categoryMap[category.parentId] = [];
+                    }
+                    categoryMap[category.parentId].push(category);
+                });
+
+                if (categoryMap[0]) {
+                    // 상위 카테고리를 가로로 1열로 나열
+                    const topCategories = $('<div class="top-categories"></div>');
+                    categoryMap[0].forEach(parentCategory => {
+                        const categorySection = $(`
+                            <div class="category-section">
+                                <span>${parentCategory.name}</span>
+                                <div class="subcategories" id="category-${parentCategory.categoryId}"></div>
+                            </div>
+                        `);
+                        topCategories.append(categorySection);
+                    });
+                    categoriesContainer.append(topCategories);
+
+                    // 하위 카테고리 추가
+                    categoryMap[0].forEach(parentCategory => {
+                        if (categoryMap[parentCategory.categoryId]) {
+                            const subcategories = $(`#category-${parentCategory.categoryId}`);
+                            categoryMap[parentCategory.categoryId].forEach(subCategory => {
+                                subcategories.append(`
+                                    <div class="category-item">
+                                        <input type="checkbox" name="${subCategory.code}" id="${subCategory.code}">
+                                        <label for="${subCategory.code}">${subCategory.name}</label>
+                                    </div>
+                                `);
+                            });
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching categories:", error);
+            }
+        });
+
+        // 초기 상품 로드
+        loadProducts();
     });
 
+    // 상품 로드 함수
+    function loadProducts() {
+        getProductsByFilter(currentPage);
+    }
 
     $(".apply-button").click(function(event) {
         event.preventDefault();
+        console.log("Apply button clicked");
         currentPage = 1;
-        getProductsByFilter(currentPage);
+        loadProducts();
         hasMoreProducts = true;
     });
 
-    $(document).ready(function () {
-        $(".form").on("submit", function (event) {
-            event.preventDefault();
-            currentPage = 1;
-            getProductsByFilter(currentPage);
-            hasMoreProducts = true;
-        });
-    });
-    
-
     function getProductsByFilter(pageNum) {
-        let searchText = $("#search-text").val();
         let formData = $("#filter-form").serialize();
-        formData += `&page=${pageNum}&searchText=${searchText}`;
+        formData += `&page=${pageNum}`;
         console.log(`Fetching page ${pageNum} with data:`, formData);
 
         $.ajax({
@@ -119,8 +155,8 @@
             method: "POST",
             data: formData,
             dataType: "json",
-            success: function (data) {
-
+            success: function(data) {
+                console.log("AJAX success - Data:", data);
                 if (data && data.list) {
                     console.log(`Appending ${data.list.length} products.`);
                     renderProducts(data.list, pageNum);
@@ -131,8 +167,8 @@
                     hasMoreProducts = false;
                 }
             },
-            error: function (xhr, status, error) {
-                console.error("Error fetching products:", error);
+            error: function(xhr, status, error) {
+                console.error("Error fetching products - Status:", status, "Error:", error, "Response:", xhr.responseText);
                 isLoading = false;
             }
         });
@@ -141,7 +177,7 @@
     function renderProducts(products, pageNum) {
         let productContainer = $("#product-grid");
         if (pageNum === 1) {
-            console.log("pagenum is 1")
+            console.log("Clearing product grid");
             productContainer.empty();
         }
 
@@ -155,8 +191,8 @@
                     <div class="product-details">
                         <h6 class="brand">${product.brand}</h6>
                         <h5 class="product-name">${product.productName}</h5>
-                        `;
-            if(product.price != product.discountedPrice) {
+            `;
+            if (product.price != product.discountedPrice) {
                 productHTML += `
                     <div class="row">
                         <p class="percent">${product.formattedDiscountPercentage}%</p>
@@ -164,18 +200,30 @@
                     </div>
                 `;
             }
-            
+
             productHTML += `
                         <p class="price">${product.formattedDiscountedPrice}원</p>
                     </div>
                 </a>
             </div>
-        `;
+            `;
 
             productContainer.append(productHTML);
         });
     }
 
-
+    // 무한 스크롤
+    $(window).on("scroll", function () {
+        if (!isLoading && hasMoreProducts) {
+            if ($(window).scrollTop() + $(window).height() >= $(document).height() - 100) {
+                console.log("Triggering infinite scroll...");
+                isLoading = true;
+                getProductsByFilter(currentPage);
+            }
+        }
+    });
 </script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
+</body>
 </html>

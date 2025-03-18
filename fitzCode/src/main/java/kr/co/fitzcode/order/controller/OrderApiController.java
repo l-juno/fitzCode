@@ -29,6 +29,7 @@ public class OrderApiController {
     public ResponseEntity<List<AddressDTO>> order() {
         int userId = SecurityUtils.getUserId();
         List<AddressDTO> addressList = orderService.getUserAddress(userId);
+        log.info("addressList: {}", addressList);
         return ResponseEntity.ok(addressList);
     }
 

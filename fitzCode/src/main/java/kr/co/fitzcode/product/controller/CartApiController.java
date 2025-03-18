@@ -1,6 +1,7 @@
 package kr.co.fitzcode.product.controller;
 
 import kr.co.fitzcode.common.dto.CartDTO;
+import kr.co.fitzcode.common.dto.CartProductDTO;
 import kr.co.fitzcode.common.service.CustomUserDetails;
 import kr.co.fitzcode.common.service.UserService;
 import kr.co.fitzcode.common.util.SecurityUtils;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -62,6 +64,17 @@ public class CartApiController {
                 .build();
         cartService.addProductToCart(cartDTO);
 
+    }
+
+    @GetMapping("/getCartItems")
+    public ResponseEntity<List<CartProductDTO>> getCartItems() {
+        int userid = SecurityUtils.getUserId();
+        List<CartProductDTO> list =cartService.getCartInformationByUserId(userid);
+        log.info("list : {}", list);
+        for (CartProductDTO cartProductDTO : list) {
+            cartProductDTO.setProductSizes(productService.getAllSizeOfProduct(cartProductDTO.getProductId()));
+        }
+        return ResponseEntity.ok().body(list);
     }
 
 
