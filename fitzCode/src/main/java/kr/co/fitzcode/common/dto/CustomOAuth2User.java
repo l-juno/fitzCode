@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.user.service.OAuth2Response;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,10 +9,16 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Schema(description = "OAuth2 인증 사용자 정보")
 public class CustomOAuth2User implements OAuth2User, AuthenticatedUser {
 
+    @Schema(description = "OAuth2 응답 객체")
     private final OAuth2Response oAuth2Response;
+
+    @Schema(description = "사용자 역할 목록")
     private final List<String> roles;
+
+    @Schema(description = "사용자 ID")
     private final int userId;
 
     // 생성자: OAuth2 응답, 역할, 사용자 ID를 받아 초기화

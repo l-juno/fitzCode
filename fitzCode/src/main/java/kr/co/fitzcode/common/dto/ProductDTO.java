@@ -1,6 +1,6 @@
 package kr.co.fitzcode.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,21 +16,48 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "상품 정보")
 public class ProductDTO {
+    @Schema(description = "상품 ID")
     private Long productId;
-    private String productName;
-    private String description;
-    private String brand;
-    private Integer price;
-    private Integer stock; // 총 재고 (PRODUCT_SIZE의 합계로 계산 가능)
-    private Long categoryId;
-    private String imageUrl; // 메인 이미지 URL
-    private List<String> additionalImages; // 추가 이미지
-    private ProductStatus status; // Enum으로 상태 관리
-    private Timestamp createdAt;
-    private List<ProductSizeDTO> productSizes; // 사이즈별 재고
-    private Integer discountedPrice; // 할인가
 
+    @Schema(description = "상품명")
+    private String productName;
+
+    @Schema(description = "설명")
+    private String description;
+
+    @Schema(description = "브랜드")
+    private String brand;
+
+    @Schema(description = "가격")
+    private Integer price;
+
+    @Schema(description = "총 재고")
+    private Integer stock;
+
+    @Schema(description = "카테고리 ID")
+    private Long categoryId;
+
+    @Schema(description = "메인 이미지 URL")
+    private String imageUrl;
+
+    @Schema(description = "추가 이미지")
+    private List<String> additionalImages;
+
+    @Schema(description = "상태")
+    private ProductStatus status;
+
+    @Schema(description = "생성 날짜")
+    private Timestamp createdAt;
+
+    @Schema(description = "사이즈별 재고")
+    private List<ProductSizeDTO> productSizes;
+
+    @Schema(description = "할인가")
+    private Integer discountedPrice;
+
+    @Schema(description = "주문 ID")
     private Integer orderId;
 
     public String getFormattedPrice() {
@@ -39,8 +66,10 @@ public class ProductDTO {
     }
 
     public String getFormattedDiscountedPrice() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(discountedPrice);
+        if (this.discountedPrice != null && this.discountedPrice instanceof Number) {
+            return new DecimalFormat("#,###").format(this.discountedPrice);
+        }
+        return "N/A"; // or handle this case differently
     }
 
     public String getFormattedDiscountPercentage() {

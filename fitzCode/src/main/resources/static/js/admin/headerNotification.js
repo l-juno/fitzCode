@@ -20,7 +20,18 @@ function checkAuthenticated(callback) {
     });
 }
 
-$(document).ready(function () {
+    // 헤더 액티브
+    $(document).ready(function () {
+        const currentPath = window.location.pathname.split('?')[0].replace(/\/$/, '');
+        $('.nav-link').each(function () {
+            const linkPath = $(this).data('path').replace(/\/$/, '');
+            if (currentPath === linkPath) {
+                $(this).addClass('active');
+            } else {
+                $(this).removeClass('active');
+            }
+        });
+
     // 검색 입력창 Enter 키 (비로그인 포함)
     $('.input').on('keypress', function (e) {
         if (e.which === 13) {

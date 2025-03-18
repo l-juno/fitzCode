@@ -225,7 +225,7 @@ a {
     .user-nav {
         width: 100%;
         justify-content: space-between;
-        gap: 30px; /* 모바일에서도 간격 유지 */
+        gap: 30px;
     }
 
     .user-name {

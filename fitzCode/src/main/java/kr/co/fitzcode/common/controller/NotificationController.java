@@ -1,10 +1,13 @@
 package kr.co.fitzcode.common.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import kr.co.fitzcode.common.dto.CustomOAuth2User;
 import kr.co.fitzcode.common.dto.NotificationDTO;
+import kr.co.fitzcode.common.enums.UserRole;
 import kr.co.fitzcode.common.service.CustomUserDetails;
 import kr.co.fitzcode.common.service.NotificationService;
-import kr.co.fitzcode.common.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +23,12 @@ import java.util.Map;
 @RequestMapping("/api")
 @Slf4j
 @RequiredArgsConstructor
+@Tag(name = "Notification API", description = "알림 관련 API 제공, 알림 생성, 조회, 삭제, 읽음 처리")
 public class NotificationController {
 
     private final NotificationService notificationService;
 
+    @Operation(summary = "알림 생성", description = "새로운 알림 생성")
     @PostMapping("/notifications")
     public ResponseEntity<String> createNotification(@RequestBody NotificationDTO notificationDTO, Principal principal) {
         log.info("POST /api/notifications 요청 처리");
@@ -35,11 +40,11 @@ public class NotificationController {
         int userId = extractUserId(principal);
         notificationDTO.setUserId(userId);
 
-        // 관리자 알림이면 userId를 관리자 ID로 설정 (필요 시)
         notificationService.createNotification(notificationDTO);
         return ResponseEntity.ok("알림 생성 완료");
     }
 
+    @Operation(summary = "알림 조회", description = "사용자 ID로 알림 목록 조회")
     @GetMapping("/notifications")
     public ResponseEntity<?> getNotifications(Principal principal) {
         log.info("GET /api/notifications 요청 처리");
@@ -54,8 +59,9 @@ public class NotificationController {
         return ResponseEntity.ok(notificationService.getNotificationsByUserId(userId));
     }
 
+    @Operation(summary = "알림 삭제", description = "특정 알림 삭제")
     @DeleteMapping("/notifications/{id}")
-    public ResponseEntity<String> deleteNotification(@PathVariable int id, Principal principal) {
+    public ResponseEntity<String> deleteNotification(@Parameter(description = "알림 ID", example = "1") @PathVariable int id, Principal principal) {
         log.info("DELETE /api/notifications/{} 요청 처리", id);
         if (principal == null) {
             return ResponseEntity.status(401).body("Unauthorized");
@@ -64,6 +70,7 @@ public class NotificationController {
         return ResponseEntity.ok("알림 삭제 완료");
     }
 
+    @Operation(summary = "모든 알림 삭제", description = "사용자 모든 알림 삭제")
     @DeleteMapping("/notifications")
     public ResponseEntity<String> deleteAllNotifications(Principal principal) {
         log.info("DELETE /api/notifications 요청 처리");
@@ -76,6 +83,7 @@ public class NotificationController {
         return ResponseEntity.ok("모든 알림 삭제 완료");
     }
 
+    @Operation(summary = "모든 알림 읽음 처리", description = "사용자 모든 알림 읽음 상태로 변경")
     @PostMapping("/notifications/read")
     public ResponseEntity<String> markAllAsRead(Principal principal) {
         log.info("POST /api/notifications/read 요청 처리");
@@ -88,16 +96,15 @@ public class NotificationController {
         return ResponseEntity.ok("모든 알림 읽음 처리 완료");
     }
 
-    // 인증 상태 확인 엔드포인트
+    @Operation(summary = "인증 상태 확인", description = "현재 사용자 인증 상태 확인")
     @GetMapping("/user/check")
     public ResponseEntity<Map<String, Boolean>> checkAuthenticated(Principal principal) {
         log.info("GET /api/user/check 요청 처리");
         Map<String, Boolean> response = new HashMap<>();
-        response.put("authenticated", principal != null); // Principal이 null이 아니면 인증됨
+        response.put("authenticated", principal != null);
         return ResponseEntity.ok(response);
     }
 
-    // Principal에서 userId를 추출하는 헬퍼 메서드
     private int extractUserId(Principal principal) {
         Object principalObj = principal;
 
@@ -117,7 +124,6 @@ public class NotificationController {
         }
     }
 
-    // 관리자 역할 확인
     private boolean isAdmin(Principal principal) {
         Object principalObj = principal;
         if (principalObj instanceof OAuth2AuthenticationToken) {

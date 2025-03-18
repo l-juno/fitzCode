@@ -1,34 +1,61 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Schema(description = "쿠폰 정보")
 public class CouponDTO {
-    private int couponId;                   // 쿠폰 아이디
-    private String couponCode;              // 쿠폰 코드
-    private String description;             // 쿠폰 설명
-    private int discountAmount;             // 할인 금액
-    private int discountPercentage;         // 할인 비율
-    private Integer minimumOrderAmount;         // 최소주문 금액
+    @Schema(description = "쿠폰 아이디")
+    private int couponId;
 
+    @Schema(description = "쿠폰 코드")
+    private String couponCode;
 
-    private Timestamp validUntil; // 사용가능 기한 (사용자 쿠폰)
+    @Schema(description = "쿠폰 설명")
+    private String description;
 
-    // 최소주문금액 포맷팅
+    @Schema(description = "할인 금액")
+    private int discountAmount;
+
+    @Schema(description = "할인 비율")
+    private int discountPercentage;
+
+    @Schema(description = "최소주문 금액")
+    private Integer minimumOrderAmount;
+
+    @Schema(description = "사용가능 기한")
+    private Timestamp validUntil;
+
+    @Schema(description = "쿠폰 유형")
+    private int couponType;
+
+    @Schema(description = "만료 날짜")
+    private Timestamp expiryDate;
+
+    @Schema(description = "쿠폰 활성화 여부")
+    private Boolean isActive;
+
+    @Schema(description = "생성 날짜")
+    private Timestamp createdAt;
+
+    // 최소주문금액 -> JSON 직렬화에서 제외
+    @JsonIgnore
     public String getFormattedMinimumOrderAmount() {
         DecimalFormat df = new DecimalFormat("#,###원");
-        return df.format(minimumOrderAmount);
+        return minimumOrderAmount != null ? df.format(minimumOrderAmount) : null;
     }
 
-    // 사용가능기한 포맷팅
-    public String getFormattedValidUnitl() {
+    // 사용가능기한
+    @JsonIgnore
+    public String getFormattedValidUntil() {
         if (validUntil != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
             return sdf.format(validUntil);
@@ -36,4 +63,23 @@ public class CouponDTO {
         return "";
     }
 
+    // 만료 날짜
+    @JsonIgnore
+    public String getFormattedExpiryDate() {
+        if (expiryDate != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            return sdf.format(expiryDate);
+        }
+        return "";
+    }
+
+    // 생성 날짜
+    @JsonIgnore
+    public String getFormattedCreatedAt() {
+        if (createdAt != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            return sdf.format(createdAt);
+        }
+        return "";
+    }
 }

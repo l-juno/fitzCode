@@ -1,11 +1,14 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.user.service.OAuth2Response;
 
 import java.util.Map;
 import java.util.Random;
 
+@Schema(description = "Kakao OAuth2 응답 정보")
 public class KakaoResponse implements OAuth2Response {
+    @Schema(description = "Kakao 응답 속성 맵")
     private final Map<String, Object> attributes;
 
     public KakaoResponse(Map<String, Object> attributes) {

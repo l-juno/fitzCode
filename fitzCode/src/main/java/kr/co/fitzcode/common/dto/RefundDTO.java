@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.common.enums.OrderStatus;
 import kr.co.fitzcode.common.enums.RefundStatus;
 import lombok.Data;
@@ -10,29 +11,71 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Schema(description = "환불 정보")
 public class RefundDTO {
     private static final Logger log = LoggerFactory.getLogger(RefundDTO.class);
 
+    @Schema(description = "환불 ID")
     private Long refundId;
+
+    @Schema(description = "주문 ID")
     private Long orderId;
+
+    @Schema(description = "주문 상세 ID")
     private Long orderDetailId;
+
+    @Schema(description = "결제 ID")
     private Long paymentId;
+
+    @Schema(description = "환불 사유")
     private String refundReason;
+
+    @Schema(description = "환불 상태")
     private RefundStatus refundStatus;
+
+    @Schema(description = "환불 금액")
     private Integer refundAmount;
+
+    @Schema(description = "남은 환불 가능 금액")
     private Integer remainingRefundAmount;
+
+    @Schema(description = "환불 방법")
     private Integer refundMethod;
+
+    @Schema(description = "요청 날짜")
     private LocalDateTime requestedAt;
+
+    @Schema(description = "처리 날짜")
     private LocalDateTime processedAt;
+
+    @Schema(description = "완료 날짜")
     private LocalDateTime completedAt;
+
+    @Schema(description = "사용자 이름")
     private String userName;
+
+    @Schema(description = "거래 ID")
     private String transactionId;
+
+    @Schema(description = "결제 금액")
     private Integer paymentAmount;
+
+    @Schema(description = "사용자 ID")
     private Long userId;
+
+    @Schema(description = "요청된 항목")
     private List<OrderDetailDTO> requestedItems;
+
+    @Schema(description = "계좌주")
     private String accountHolder;
+
+    @Schema(description = "은행명")
     private String bankName;
+
+    @Schema(description = "계좌 번호")
     private String accountNumber;
+
+    @Schema(description = "환불 상태 코드")
     private Integer refundStatusCode;
 
     public Integer getCalculatedRefundAmount() {
@@ -91,21 +134,47 @@ public class RefundDTO {
     }
 
     @Data
+    @Schema(description = "환불 주문 상세 정보")
     public static class OrderDetailDTO {
         private static final Logger log = LoggerFactory.getLogger(OrderDetailDTO.class);
 
+        @Schema(description = "주문 ID")
         private Long orderId;
+
+        @Schema(description = "주문 날짜")
         private LocalDateTime orderDate;
+
+        @Schema(description = "사용자 이름")
         private String userName;
+
+        @Schema(description = "수량")
         private Integer quantity;
+
+        @Schema(description = "총 금액")
         private Integer totalAmount;
+
+        @Schema(description = "주문 상태")
         private OrderStatus orderStatus;
+
+        @Schema(description = "주문 상세 ID")
         private Long orderDetailId;
+
+        @Schema(description = "상품 ID")
         private Long productId;
+
+        @Schema(description = "상품명")
         private String productName;
+
+        @Schema(description = "가격")
         private Integer price;
+
+        @Schema(description = "환불 상태")
         private RefundStatus refundStatus;
+
+        @Schema(description = "환불 금액")
         private Integer refundAmount;
+
+        @Schema(description = "환불 상태 코드")
         private Integer refundStatusCode;
 
         public Integer getOrderStatusCode() {

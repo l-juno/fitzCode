@@ -42,4 +42,8 @@ public interface ProductService {
 
     // 엑셀 업로드
     void uploadExcel(MultipartFile excelFile, List<MultipartFile> imageFiles) throws Exception;
+
+    // 상품 조회 검색(사용자페이지)
+    List<ProductDTO> searchProducts(String keyword, int page, int pageSize);
+    int countSearchProducts(String keyword);
 }
