@@ -101,4 +101,14 @@
         profile_image = #{userDTO.profileImage}
         WHERE user_id = #{userDTO.userId};
     </update>
+
+    <!-- 사용자 인증 -->
+    <select id="verifyUser" parameterType="UserDTO" resultType="UserDTO">
+        SELECT
+            email,
+            password,
+            phone_number
+        FROM USER
+        WHERE email = #{userDTO.email} AND password = #{userDTO.password}
+    </select>
 </mapper>

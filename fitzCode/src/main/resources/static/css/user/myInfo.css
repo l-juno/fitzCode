@@ -1,17 +1,4 @@
-.mypageContainer {
-    display: flex;
-}
 
-.mypageContent {
-    width: 800px;
-}
-
-#hr{
-    width: 100%;
-    background: #2f2f32;
-    height: 3px;
-    border-radius: 10px;
-}
 
 .myInfo {
     display: flex;
@@ -37,12 +24,14 @@
     display: flex
 ;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
 }
 #profileImage img{
-width: 100px;
-height: 100px;
-border-radius: 70px;
+    width: 80px;
+    height: 80px;
+    border-radius: 70px;
+    padding: 0px;
 }
 
 #profileInfo{

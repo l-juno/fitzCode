@@ -73,4 +73,10 @@ public class MypageServiceImpl implements MypageService {
         userDTO.setProfileImage(profileImageUrl);
         mypageMapper.updateProfile(userDTO); // DB 저장
     }
+
+    // 회원 인증
+    @Override
+    public UserDTO verifyUser(UserDTO userDTO) {
+        return mypageMapper.verifyUser(userDTO);
+    }
 }

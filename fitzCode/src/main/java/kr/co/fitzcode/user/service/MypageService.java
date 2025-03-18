@@ -28,4 +28,7 @@ public interface MypageService {
 
     // 프로필 수정
     void updateProfile(UserDTO userDTO, MultipartFile profileImage);
+
+    // 회원 인증
+    UserDTO verifyUser(UserDTO userDTO);
 }

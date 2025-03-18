@@ -1,17 +1,17 @@
-.mypageContainer {
-    display: flex;
-}
+/*.mypageContainer {*/
+/*    display: flex;*/
+/*}*/
 
-.mypageContent {
-    width: 800px;
-}
+/*.mypageContent {*/
+/*    width: 800px;*/
+/*}*/
 
-#hr{
-    width: 100%;
-    background: #2f2f32;
-    height: 3px;
-    border-radius: 10px;
-}
+/*#hr{*/
+/*    width: 100%;*/
+/*    background: #2f2f32;*/
+/*    height: 3px;*/
+/*    border-radius: 10px;*/
+/*}*/
 
 .accountInfo {
     display: flex;

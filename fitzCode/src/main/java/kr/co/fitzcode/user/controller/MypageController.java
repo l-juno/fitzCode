@@ -8,6 +8,8 @@ import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.user.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +28,11 @@ public class MypageController {
     // 내 프로필
     @GetMapping("/myInfo")
     public String mypage(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return "redirect:/login";
+        }
+
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
         List<OrderDTO> orderDTO = mypageService.getOrderList(userId);
@@ -68,13 +75,22 @@ public class MypageController {
         return "redirect:/mypage/account";
     }
 
-
-    // 회원정보 수정 폼으로 이동
-    @GetMapping("/updateInfo")
-    public String updateInfo(Model model) {
+    // 회원정보 수정 전 인증 페이지
+    @GetMapping("/verifyIdentity")
+    public String verifyIdentity(Model model) {
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
-        model.addAttribute("dto", userDTO);
+        if (userDTO.getPassword() != null){
+            model.addAttribute("dto", userDTO);
+        }
+        return "user/mypage/verifyIdentity";
+    }
+
+    // 회원정보 수정 전 인증확인 -> 회원정보 수정 폼으로 이동
+    @PostMapping("/verifyIdentity")
+    public String verifyIdentity(@ModelAttribute UserDTO userDTO, Model model) {
+        UserDTO dto = mypageService.verifyUser(userDTO);
+        model.addAttribute("dto", dto);
         return "user/mypage/updateInfo";
     }
 
@@ -94,4 +110,5 @@ public class MypageController {
         model.addAttribute("list", userCouponList);
         return "user/mypage/mycoupon";
     }
+
 }

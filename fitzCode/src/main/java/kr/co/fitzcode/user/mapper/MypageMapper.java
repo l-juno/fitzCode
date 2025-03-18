@@ -35,4 +35,6 @@ public interface MypageMapper {
     // 사용자 프로필 이미지 가져오기
     String getProfileUrl(@Param("userId") int userId);
 
+    // 사용자 인증
+    UserDTO verifyUser(@Param("userDTO") UserDTO userDTO);
 }
