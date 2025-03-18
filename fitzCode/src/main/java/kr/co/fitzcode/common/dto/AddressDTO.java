@@ -27,13 +27,13 @@ public class AddressDTO {
     private String postalCode;
 
     @Schema(description = "기본 배송지 주소1")
-    private String defaultAddressLine1;
+    private String AddressLine1;
 
     @Schema(description = "기본 배송지 주소2")
-    private String defaultAddressLine2;
+    private String AddressLine2;
 
     @Schema(description = "기본 배송지 우편번호")
-    private String defaultPostalCode;
+    private String PostalCode;
 
     @Schema(description = "기본 배송지 여부")
     private Boolean isDefault;
