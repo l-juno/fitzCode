@@ -26,15 +26,6 @@ public class AddressDTO {
     @Schema(description = "우편번호")
     private String postalCode;
 
-//    @Schema(description = "기본 배송지 주소1")
-//    private String AddressLine1;
-//
-//    @Schema(description = "기본 배송지 주소2")
-//    private String AddressLine2;
-//
-//    @Schema(description = "기본 배송지 우편번호")
-//    private String PostalCode;
-
     @Schema(description = "기본 배송지 여부")
     private Boolean isDefault;
 
