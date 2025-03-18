@@ -1,42 +1,42 @@
 package kr.co.fitzcode.common.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import kr.co.fitzcode.common.enums.ProductStatus;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-public class ProductDTO {
-    private Long productId;
+@NoArgsConstructor
+@Builder
+public class CartProductDTO {
+    // information from cart table
+    private int cartId;
+    private int userId;
+    private int productId;
+    private int quantity;
+    private Timestamp createdAt;
+    private int sizeCode;
+    private int stock;
+
+    // information from product table
     private String productName;
     private String description;
-    private String brand;
-    private Integer price;
-    private Integer stock; // 총 재고 (PRODUCT_SIZE의 합계로 계산 가능)
-    private Long categoryId;
-    private String imageUrl; // 메인 이미지 URL
-    private List<String> additionalImages; // 추가 이미지
-    private ProductStatus status; // Enum으로 상태 관리
-    private Timestamp createdAt;
+    private int price;
+    private Integer discountedPrice;
+    private String imageUrl;
+
+    // sizes
     private List<ProductSizeDTO> productSizes; // 사이즈별 재고
-    private Integer discountedPrice; // 할인가
 
-    private Integer orderId;
 
-    public String getFormattedPrice() {
-        DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(price);
-    }
+
 
     public String getFormattedDiscountedPrice() {
         if (this.discountedPrice != null && this.discountedPrice instanceof Number) {

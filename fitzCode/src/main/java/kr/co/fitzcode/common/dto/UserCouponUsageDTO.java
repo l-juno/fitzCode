@@ -11,14 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartDTO {
-    private int cartId;
-    private int userId;
-    private int productId;
-    private int quantity;
-    private LocalDateTime createdAt;
-    private int productSizeId;
-
-
-
+public class UserCouponUsageDTO {
+    private int usageId;
+    private int userCouponId;
+    private int orderId;
+    private LocalDateTime usedAt;
 }
