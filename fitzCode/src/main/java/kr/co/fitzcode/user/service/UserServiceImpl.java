@@ -83,12 +83,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDTO findByUsername(String username) {
-        return userMapper.findByUsername(username);
+    public UserDTO findByUserNaverId(String naverId) {
+        return userMapper.findByUserNaverId(naverId);
     }
 
     @Override
-    public void updateUser(UserDTO user) {
-        userMapper.updateUser(user);
+    public UserDTO findBykakaoId(String kakaoId) {
+        return userMapper.findByUserKakaoId(kakaoId);
+    }
+
+    @Override
+    public void updateUserNaver(UserDTO user) {
+        userMapper.updateUserNaver(user);
+    }
+
+    @Override
+    public String findEmailByNameAndPhoneNumber(String userName, String phoneNumber) {
+        return userMapper.findEmailByNameAndPhoneNumber(userName, phoneNumber);
     }
 }

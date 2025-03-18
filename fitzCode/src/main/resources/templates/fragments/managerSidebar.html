@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>관리자 사이드바</title>
+  <title>fitzCode</title>
   <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
 </head>
 <body>
@@ -38,17 +38,13 @@
              th:classappend="${currentUri == '/admin/sales'} ? 'active'">
             판매 현황
           </a>
-          <a th:href="@{/admin/products/rank}"
-             th:classappend="${currentUri == '/admin/products/rank'} ? 'active'">
-            반품 및 교환
-          </a>
-          <a th:href="@{/admin/products/analysis}"
-             th:classappend="${currentUri == '/admin/products/analysis'} ? 'active'">
+          <a th:href="@{/admin/products/refund}"
+             th:classappend="${currentUri == '/admin/products/refund'} ? 'active'">
             환불
           </a>
-          <a th:href="@{/admin/shipping}"
-             th:classappend="${currentUri == '/admin/shipping'} ? 'active'">
-            배송 관리
+          <a th:href="@{/admin/orders}"
+             th:classappend="${currentUri == '/admin/orders'} ? 'active'">
+            주문 및 배송
           </a>
         </div>
       </div>

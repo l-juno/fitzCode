@@ -3,229 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <title>fitzCode</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/inquiry/inquiryForm.css}"/>
 </head>
-<style>
-    /*모달관련*/
-    #searchProduct,
-    #searchOrderList {
-        background-color: white;
-        border: #ddd 1px solid;
-        padding: 5px 8px;
-        border-radius: 15px;
-        color: gray;
-        margin: 3px;
-    }
+<body>
 
-    #searchProductModalContainer,
-    #orderListModalContainer {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: rgba(0, 0, 0, 0.5);
-    }
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
 
-    #searchProductModalContainer.hidden,
-    #orderListModalContainer.hidden {
-        display: none;
-    }
+<br><br><br><br>
+<div class="mypageContainer">
+    <!-- navi -->
+    <div th:replace="~{fragments/mypageNavi}"></div>
 
-    #searchProductModalContent,
-    #orderListModalContent {
-        background-color: #ffffff;
-        width: 500px;
-        height: 450px;
-        padding: 15px;
-        margin-top: 100px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        position: relative;
-        max-height: calc(100vh - 200px);
-        overflow-y: auto;
-    }
-
-    .searchProductModalCloseBtn,
-    .orderListModalCloseBtn {
-        position: absolute;
-        top: 10px;
-        cursor: pointer;
-        right: 16px;
-        background: transparent;
-        font-size: 20px;
-    }
-
-    #userInputProductName {
-        width: 87%;
-        margin: 20px;
-        height: 30px;
-        align-items: center;
-        border: 1px gray solid;
-        border-radius: 20px;
-        padding-left: 10px;
-    }
-
-    img {
-        height: 120px;
-        width: 120px;
-        padding: 0px;
-    }
-
-    table {
-        font-size: 13.3px;
-        cursor: pointer;
-        margin-left: 10px;
-    }
-
-    h2 {
-        margin-left: 10px;
-    }
+    <!-- 메인 콘텐츠 -->
+    <div class="mypageContent">
+        <h2>1:1 문의 등록</h2>
+        <div id="hr"></div>
+        <div class="inquiryContainer">
+            <form th:action="@{/inquiry/inquiryForm}" method="post" enctype="multipart/form-data">
+                <div class="inquiryContent">
+                    <select id="categoryFilter" name="categoryCode" required>
+                        <option value="">문의 유형을 선택해주세요</option>
+                        <option value="1">일반문의</option>
+                        <option value="2">상품문의</option>
+                        <option value="3">환불문의</option>
+                        <option value="4">결제문의</option>
+                        <option value="5">반품문의</option>
+                    </select>
+                    <div style="width: 100%; height: 1px; background: lightgray; margin: 7px 0px 17px 0px;"></div>
 
 
-    /* 컨테이너 */
-    .inquiryContainer {
-        display: flex;
-        align-content: center;
-        justify-content: center;
-        align-items: center;
-    }
+                    <div class="inquiryData">
 
-    .inquiryContainer hr {
-        border: 2px black solid;
+                        <input type="text" id="subject" name="subject" placeholder="제목">
+                        <br>
+                        <span th:text="'작성자 : ' + ${userDTO.userName} + ' | 연락처 : ' + ${userDTO.phoneNumber}"
+                              id="userInfo"></span>
+                        <textarea id="content" name="content" placeholder="문의사항" rows="6" cols="58"></textarea>
+                        <div class="buttons">
+                            <span>문의할 상품 선택하기 >>></span>
+                            <span>
+                                <button type="button" class="btn btn-outline-secondary"
+                                        id="searchProduct">상품검색해서 찾기</button>
+                                <button type="button" class="btn btn-outline-secondary" id="searchOrderList"
+                                        th:data-user-id="${userDTO.userId}">주문내역에서 찾기</button>
+                             </span>
+                        </div>
+                        <table id="searchedData">
+                        </table>
+                        <div class="imageContainer">
+                            <div>
+                                <label for="images"><img src="https://cdn-icons-png.flaticon.com/512/305/305086.png"/>
+                                    사진 첨부</label>
+                                <button id="addImage">사진 추가하기</button>
+                            </div>
+                            <br>
+                            <!--                <label for="images" class="uploadFile"><img src="https://cdn-icons-png.flaticon.com/512/992/992651.png"></label>-->
+                            <input type="file" id="images" name="files">
+                        </div>
+                    </div>
+                    <input type="hidden" name="userId" th:value="${userDTO.userId}">
+                    <input type="hidden" name="userName" th:value="${userDTO.userName}">
+                    <input type="hidden" name="phoneNumber" th:value="${userDTO.phoneNumber}">
+                    <input type="hidden" name="statusCode" value="1">
+                </div>
+                <div class="finalButtons">
+                    <a th:href="@{inquiryList}">목록으로</a>
+                    <button type="submit" class="registerBtn">등록하기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<br>
 
-    }
+<!-- 상품 검색 모달 -->
+<div class="hidden" id="searchProductModalContainer">
+    <div id="searchProductModalContent">
+        <div class="searchProductModalCloseBtn">&times;</div>
+        <div>
+            <input type="text" placeholder="상품명으로 검색하기" name="productName" id="userInputProductName">
+        </div>
+        <table class="table" id="productData">
+        </table>
+    </div>
+</div>
 
-    .inquiryContent {
-        width: 500px;
-    }
+<!-- 주문 내역 모달 -->
+<div class="hidden" id="orderListModalContainer">
+    <div id="orderListModalContent">
+        <div class="orderListModalCloseBtn">&times;</div>
+        <h2>주문내역</h2>
+        <table class="table" id="orderList">
+        </table>
+    </div>
+</div>
 
-    #categoryFilter {
-        border: 0px;
-        height: 39px;
-    }
 
-    .buttons {
-        display: flex;
-        flex-direction: row;
-        margin-top: 10px;
-        justify-content: space-between;
-        padding: 0px 5px;
+<br>
+<br>
+<br>
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
 
-    }
 
-    .buttons span {
-        align-self: center;
-        font-size: 13.3px;
-    }
-
-    .inquiryData {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 0px 5px;
-    }
-
-    .inquiryContainer input {
-        width: 450px;
-        height: 40px;
-    }
-
-    #subject {
-        border: 0px;
-        padding-left: 10px;
-        border-bottom: lightgray 1px solid;
-        width: 98%;
-    }
-
-    #subject:hover {
-        border-bottom: gray 1px solid;
-    }
-
-    #userInfo {
-        font-size: 13.3px;
-        align-self: self-end;
-        color: gray;
-    }
-
-    .registerBtn {
-        display: block;
-        align-self: flex-end;
-        margin-top: 10px;
-        padding: 10px 13px;
-        border-radius: 20px;
-        border: 1px black solid;
-        background: white;
-        cursor: pointer;
-    }
-
-    .registerBtn:hover {
-        background: black;
-        color: white;
-    }
-
-    .finalButtons {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 100%;
-        align-items: flex-end;
-        font-size: 13.3px;
-    }
-
-    .finalButtons a {
-        color: gray;
-    }
-
-    .imageContainer {
-        margin: 15px 0px;
-        border: 1px lightgray solid;
-        border-radius: 13px;
-        padding: 14px;
-        width: 96%;
-    }
-
-    .imageContainer label {
-        font-size: 13.3px;
-    }
-
-    .imageContainer img {
-        height: 12px;
-        width: 12px;
-    }
-
-    .imageContainer div {
-        display: flex;
-        justify-content: space-between;
-        padding: 5px 5px;
-
-    }
-
-    #images {
-        margin-top: 10px;
-    }
-
-    #addImage {
-        text-decoration: underline;
-        color: gray;
-    }
-
-    .uploadFile img{
-        height: 50px;
-        width: 50px;
-    }
-
-    #content{
-        border: 1px lightgray solid;
-        margin-top: 13px;
-        border-radius: 10px;
-        padding: 10px;
-        width: 97%;
-    }
-</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script>
     $(() => {
         const searchProductModal = $("#searchProductModalContainer")
@@ -255,21 +138,21 @@
                     console.log(data)
                     let productData = "";
                     $.each(data, function (key, value) {
-                        productData += ("<tr class='selectProduct' data-product-id='" + value.product_id + "'>");
+                        productData += ("<tr class='selectProduct' data-product-id='" + value.productId + "'>");
                         productData += ("<td rowspan='4' style='height: 120px; width: 120px;'>");
-                        productData += ("<img src='" + value.image_url + "' alt='" + value.product_name + "'>");
+                        productData += ("<img src='" + value.imageUrl + "' alt='" + value.productName + "'>");
                         productData += ("</td>");
                         productData += ("</tr>")
 
-                        productData += ("<tr class='selectProduct'data-product-id='" + value.product_id + "'>");
+                        productData += ("<tr class='selectProduct' data-product-id='" + value.productId + "'>");
                         productData += ("<td style='font-weight: bold;' >" + value.brand + "</td>");
                         productData += ("</tr>")
 
-                        productData += ("<tr class='selectProduct' data-product-id='" + value.product_id + "'>");
-                        productData += ("<td>" + value.product_name + "</td>");
+                        productData += ("<tr class='selectProduct' data-product-id='" + value.productId + "'>");
+                        productData += ("<td>" + value.productName + "</td>");
                         productData += ("</tr>")
 
-                        productData += ("<tr style='border-bottom: #888888 1px solid' class='selectProduct' data-product-id='" + value.product_id + "'>");
+                        productData += ("<tr style='border-bottom: #888888 1px solid' class='selectProduct' data-product-id='" + value.productId + "'>");
                         productData += ("<td style='color: lightgray'>" + value.description + "</td>");
                         productData += ("</tr>")
                     })
@@ -277,6 +160,8 @@
                 },
                 error: function (xhr, status, error) {
                     console.log("AJAX 요청 실패!", xhr, status, error);
+                    console.log("상태 코드:", xhr.status);  // HTTP 상태 코드 (예: 404, 500 등)
+                    console.log("응답 텍스트:", xhr.responseText);  // 서버에서 반환한 오류 메시지
                 }
             });
         })
@@ -289,7 +174,6 @@
             searchOrderListModal.removeClass("hidden");
             document.body.style.overflow = 'hidden';
             let userId = [[${userDTO.userId}]]
-            console.log(userId);
             $.ajax({
                 type: "GET",
                 url: "http://localhost:8080/inquiry/searchOrderList",
@@ -301,26 +185,22 @@
                     console.log(data)
                     let orderList = '';
                     $.each(data, function (key, value) {
-                        orderList += ("<tr data-product-id='" + value.product_id + "' class='orderedProduct'>");
-                        orderList += ("<td rowspan='5' class='selectOrderList'>" + value.order_id + "</td>");
-                        orderList += ("</tr>");
-
-                        orderList += ("<tr data-product-id='" + value.product_id + "' class='orderedProduct'>");
+                        orderList += ("<tr data-product-id='" + value.productId + "' class='orderedProduct'>");
                         orderList += ("<td rowspan='4' style='height: 120px; width: 120px;' class='selectOrderList'>");
-                        orderList += ("<input type='hidden' class='productId' value='" + value.product_id + "'>");
-                        orderList += ("<img src='" + value.image_url + "' alt='" + value.product_name + "'>");
+                        orderList += ("<input type='hidden' class='productId' value='" + value.productId + "'>");
+                        orderList += ("<img src='" + value.imageUrl + "' alt='" + value.productName + "'>");
                         orderList += ("</td>");
                         orderList += ("</tr>");
 
-                        orderList += ("<tr data-product-id='" + value.product_id + "' class='orderedProduct'>");
+                        orderList += ("<tr data-product-id='" + value.productId + "' class='orderedProduct'>");
                         orderList += ("<td style='font-weight: bold;' class='selectOrderList'>" + value.brand + "</td>");
                         orderList += ("</tr>");
 
-                        orderList += ("<tr data-product-id='" + value.product_id + "' class='orderedProduct'>");
-                        orderList += ("<td class='selectProduct'>" + value.product_name + "</td>");
+                        orderList += ("<tr data-product-id='" + value.productId + "' class='orderedProduct'>");
+                        orderList += ("<td class='selectProduct'>" + value.productName + "</td>");
                         orderList += ("</tr>");
 
-                        orderList += ("<tr style='border-bottom: #888888 1px solid' class='orderedProduct' data-product-id='" + value.product_id + "'>");
+                        orderList += ("<tr style='border-bottom: #888888 1px solid' class='orderedProduct' data-product-id='" + value.productId + "'>");
                         orderList += ("<td style='color: lightgray' class='selectOrderList'>" + value.description + "</td>");
                         orderList += ("</tr>");
                     });
@@ -351,7 +231,7 @@
                     console.log(data);
                     searchedData += ("<tr>");
                     searchedData += ("<td rowspan='4' style='height: 120px; width: 120px;'>");
-                    searchedData += ("<img src='" + data.image_url + "' alt='" + data.product_name + "'>");
+                    searchedData += ("<img src='" + data.imageUrl + "' alt='" + data.productName + "'>");
                     searchedData += ("</td>");
                     searchedData += ("</tr>")
 
@@ -360,7 +240,7 @@
                     searchedData += ("</tr>")
 
                     searchedData += ("<tr>");
-                    searchedData += ("<td>" + data.product_name + "</td>");
+                    searchedData += ("<td>" + data.productName + "</td>");
                     searchedData += ("</tr>")
 
                     searchedData += ("<tr>");
@@ -369,9 +249,9 @@
 
                     searchedData += ("<tr>");
                     searchedData += ("<td>");
-                    searchedData += ("<input type='hidden' value='" + data.product_id + "' name='productId'>");
-                    if (data.order_id != null) {
-                        searchedData += ("<input type='hidden' value='" + data.order_id + "' name='orderId'>");
+                    searchedData += ("<input type='hidden' value='" + data.productId + "' name='productId'>");
+                    if (data.orderId != null) {
+                        searchedData += ("<input type='hidden' value='" + data.orderId + "' name='orderId'>");
                     }
                     searchedData += ("</td>");
                     searchedData += ("</tr>")
@@ -395,115 +275,19 @@
         let cnt = 0
         $("#addImage").on("click", (e) => {
             e.preventDefault();
-            let tag = "<input type='file' id='images' name='images'>";
+            let tag = "<input type='file' id='images' name='files'>";
             $(".imageContainer").append(tag);
             cnt++
             console.log(cnt);
             if (cnt > 3) {
                 let alert = "<p style='color : red;'>사진 첨부는 최대 5장까지 할 수 있습니다.</p>"
                 $("#addImage").prop("disabled", true);
-                $("#imageContainer").append(alert);
+                $(".imageContainer").append(alert);
             }
 
         })
 
     });
-
-
 </script>
-<body>
-<!-- header -->
-<div th:replace="~{fragments/header}"></div>
-
-<!-- 메인 콘텐츠 -->
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<div class="inquiryContainer">
-    <form action="inquiryForm" method="post" enctype="multipart/form-data" class="inquiryContent">
-        <br>
-        <h2>문의 하기</h2>
-        <hr>
-        <br>
-        <select id="categoryFilter" name="category">
-            <option selected>문의 유형을 선택해주세요</option>
-            <option value="1">일반문의</option>
-            <option value="2">상품문의</option>
-            <option value="3">환불문의</option>
-            <option value="4">결제문의</option>
-            <option value="5">반품문의</option>
-        </select>
-        <div style="width: 100%; height: 1px; background: lightgray; margin: 7px 0px 17px 0px; " ></div>
-        <div class="buttons">
-            <span>문의할 상품</span>
-            <span>
-                    <button type="button" class="btn btn-outline-secondary" id="searchProduct">상품검색해서 찾기</button>
-                    <button type="button" class="btn btn-outline-secondary" id="searchOrderList">주문내역에서 찾기</button>
-                </span>
-        </div>
-        <table id="searchedData">
-        </table>
-
-        <div class="inquiryData">
-
-            <input type="text" id="subject" name="subject" placeholder="제목">
-            <br>
-            <span th:text="'작성자 : ' + ${userDTO.username} + ' | 연락처 : ' + ${userDTO.phonenumber}" id="userInfo"/>
-            <textarea id="content" name="content" placeholder="문의사항" rows="6" cols="58"></textarea>
-
-            <div class="imageContainer">
-                <div>
-                    <label for="images"><img src="https://cdn-icons-png.flaticon.com/512/305/305086.png"/> 사진 첨부</label>
-                    <label id="addImage">사진 추가하기</label>
-                </div>
-                <br>
-<!--                <label for="images" class="uploadFile"><img src="https://cdn-icons-png.flaticon.com/512/992/992651.png"></label>-->
-                <input type="file" id="images" name="images">
-            </div>
-        </div>
-        <div class="finalButtons">
-            <a th:href="@{inquiryList}">목록으로</a>
-            <button type="submit" class="registerBtn">등록하기</button>
-        </div>
-        <input type="hidden" name="userId" th:value="${userDTO.userId}">
-        <input type="hidden" name="username" th:value="${userDTO.username}">
-        <input type="hidden" name="phonenumber" th:value="${userDTO.phonenumber}">
-
-    </form>
-
-</div>
-<br>
-<br>
-<br>
-
-<!-- 상품 검색 모달 -->
-<div class="hidden" id="searchProductModalContainer">
-    <div id="searchProductModalContent">
-        <div class="searchProductModalCloseBtn">&times;</div>
-        <div>
-            <input type="text" placeholder="상품명으로 검색하기" name="productName" id="userInputProductName">
-        </div>
-        <table class="table" id="productData">
-        </table>
-    </div>
-</div>
-
-<!-- 주문 내역 모달 -->
-<div class="hidden" id="orderListModalContainer">
-    <div id="orderListModalContent">
-        <div class="orderListModalCloseBtn">&times;</div>
-        <h2>주문내역</h2>
-        <table class="table" id="orderList">
-        </table>
-    </div>
-</div>
-<br>
-<br>
-<!-- footer -->
-<div th:replace="~{fragments/footer}"></div>
-
 </body>
 </html>

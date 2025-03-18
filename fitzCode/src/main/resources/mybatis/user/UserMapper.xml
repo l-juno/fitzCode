@@ -41,19 +41,59 @@
         SELECT * FROM USER WHERE email = #{email}
     </select>
 
+    <!-- 수정: USER_ROLE_MAPPING에서 role_id 조회 -->
     <select id="getUserRolesByUserId" parameterType="int" resultType="int">
-        SELECT role_id FROM USER WHERE user_id = #{userId}
+        SELECT role_id
+        FROM USER_ROLE_MAPPING
+        WHERE user_id = #{userId}
     </select>
 
-    <select id="findByUsername" resultType="UserDTO">
+    <select id="findByUserNaverId" resultType="UserDTO">
         SELECT * FROM USER
-        WHERE user_name = #{userName}
+        WHERE naver_id = #{naverId}
     </select>
 
+    <select id="findByUserKakaoId" resultType="UserDTO">
+        SELECT * FROM USER
+        WHERE kakao_id = #{kakaoId}
+    </select>
+
+    <!-- 추가: updateUser 쿼리 -->
     <update id="updateUser" parameterType="UserDTO">
         UPDATE USER
         SET email = #{email}
         WHERE naver_id = #{naverId}
     </update>
 
+    <!-- 통합: updateUserNaver와 updateUserKakao -->
+    <update id="updateUserNaver" parameterType="UserDTO">
+        UPDATE USER
+        SET email = #{email}
+        WHERE naver_id = #{naverId}
+    </update>
+
+    <update id="updateUserKakao" parameterType="UserDTO">
+        UPDATE USER
+        SET email = #{email}
+        WHERE kakao_id = #{kakaoId}
+    </update>
+
+    <select id="findEmailByNameAndPhoneNumber" resultType="String">
+        SELECT email FROM USER
+        WHERE user_name = #{userName}
+        AND phone_number = #{phoneNumber}
+    </select>
+
+    <select id="findAllUsers" resultType="UserDTO">
+        SELECT user_id, user_name, nickname, email, password, phone_number, birth_date, kakao_id, naver_id, profile_image, role_id
+        FROM USER
+    </select>
+
+    <!-- 역할 이름 문자열 리스트로 리턴 -->
+    <select id="findRolesInStringByUserId" parameterType="int" resultType="string">
+        SELECT ur2.role_name
+        FROM USER_ROLE_MAPPING ur
+        JOIN USER_ROLE ur2 ON ur.role_id = ur2.role_id
+        WHERE ur.user_id = #{userId}
+    </select>
 </mapper>

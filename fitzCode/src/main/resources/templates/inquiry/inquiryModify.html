@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>fitzCode</title>
+    <link rel="stylesheet" th:href="@{/css/inquiry/inquiryModify.css}"/>
+</head>
+<body>
+
+<!-- header -->
+<div th:replace="~{fragments/header}"></div>
+
+<br><br><br><br>
+<div class="mypageContainer">
+    <!-- navi -->
+    <div th:replace="~{fragments/mypageNavi}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="mypageContent">
+        <h2>1:1 문의 등록</h2>
+        <div id="hr"></div>
+        <div class="inquiryContainer">
+            <form th:action="@{/inquiry/modify}" method="post" enctype="multipart/form-data">
+                <div class="inquiryContent">
+                    <span id="subject" th:text="${inquiryDTO.subject}"></span>
+                    <div th:text="'문의 유형 : ' + ${inquiryDTO.category.description}" style="display: flex; flex-direction: row-reverse;"></div>
+                    <div class="inquiryData">
+                        <br>
+                        <span th:text="'작성자 : ' + ${userDTO.getUserName()} + ' | 연락처 : ' + ${userDTO.phoneNumber}"
+                              id="userInfo"></span>
+                        <textarea id="content" name="content" placeholder="문의사항" rows="6" cols="58"></textarea>
+                        <div class="buttons">
+                            <span>문의할 상품 선택하기 >>></span>
+                            <span>
+                                <button type="button" class="btn btn-outline-secondary"
+                                        id="searchProduct">상품검색해서 찾기</button>
+                                <button type="button" class="btn btn-outline-secondary" id="searchOrderList"
+                                        th:data-user-id="${userDTO.userId}">주문내역에서 찾기</button>
+                             </span>
+                        </div>
+                        <table id="searchedData">
+                        </table>
+                        <div class="imageContainer">
+                            <div>
+                                <label for="images"><img src="https://cdn-icons-png.flaticon.com/512/305/305086.png"/>
+                                    사진 첨부</label>
+                                <button id="addImage">사진 추가하기</button>
+                            </div>
+                            <br>
+                            <!--                <label for="images" class="uploadFile"><img src="https://cdn-icons-png.flaticon.com/512/992/992651.png"></label>-->
+                            <input type="file" id="images" name="files">
+                        </div>
+                    </div>
+                    <input type="hidden" name="categoryCode" th:value="${inquiryDTO.categoryCode}">
+                    <input type="hidden" name="statusCode" value="1">
+                    <input type="hidden" name="subject" th:value="${inquiryDTO.subject}">
+                    <input type="hidden" name="inquiryId" th:value="${inquiryDTO.inquiryId}">
+                </div>
+                <div class="finalButtons">
+                    <a th:href="@{inquiryList}">목록으로</a>
+                    <button type="submit" class="registerBtn">등록하기</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+<!-- 상품 검색 모달 -->
+<div class="hidden" id="searchProductModalContainer">
+    <div id="searchProductModalContent">
+        <div class="searchProductModalCloseBtn">&times;</div>
+        <div>
+            <input type="text" placeholder="상품명으로 검색하기" name="productName" id="userInputProductName">
+        </div>
+        <table class="table" id="productData">
+        </table>
+    </div>
+</div>
+
+<!-- 주문 내역 모달 -->
+<div class="hidden" id="orderListModalContainer">
+    <div id="orderListModalContent">
+        <div class="orderListModalCloseBtn">&times;</div>
+        <h2>주문내역</h2>
+        <table class="table" id="orderList">
+        </table>
+    </div>
+</div>
+
+
+<br>
+<br>
+<br>
+<!-- footer -->
+<div th:replace="~{fragments/footer}"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(() => {
+        const searchProductModal = $("#searchProductModalContainer")
+        // 상품 검색 모달 열기
+        $("#searchProduct").on("click", () => {
+            console.log("버튼 눌림")
+            searchProductModal.removeClass("hidden");
+            document.body.style.overflow = 'hidden';
+        });
+        $(".searchProductModalCloseBtn").on("click", () => {
+            searchProductModal.addClass("hidden");
+            document.body.style.overflow = "auto";
+
+        });
+
+        $("#userInputProductName").on("input", () => {
+            let userInputProductName = $("#userInputProductName").val();
+            $.ajax({
+                type: "GET",
+                // controller 에 해당 url로 요청 보내기
+                url: "http://localhost:8080/inquiry/searchProduct",
+                data: {
+                    userInputProductName: userInputProductName
+                },
+                success: function (data) {
+                    console.log("AJAX 요청 성공");
+                    console.log(data)
+                    let productData = "";
+                    $.each(data, function (key, value) {
+                        productData += ("<tr class='selectProduct' data-product-id='" + value.productId + "'>");
+                        productData += ("<td rowspan='4' style='height: 120px; width: 120px;'>");
+                        productData += ("<img src='" + value.imageUrl + "' alt='" + value.productName + "'>");
+                        productData += ("</td>");
+                        productData += ("</tr>")
+
+                        productData += ("<tr class='selectProduct' data-product-id='" + value.productId + "'>");
+                        productData += ("<td style='font-weight: bold;' >" + value.brand + "</td>");
+                        productData += ("</tr>")
+
+                        productData += ("<tr class='selectProduct' data-product-id='" + value.productId + "'>");
+                        productData += ("<td>" + value.productName + "</td>");
+                        productData += ("</tr>")
+
+                        productData += ("<tr style='border-bottom: #888888 1px solid' class='selectProduct' data-product-id='" + value.productId + "'>");
+                        productData += ("<td style='color: lightgray'>" + value.description + "</td>");
+                        productData += ("</tr>")
+                    })
+                    $("#productData").html(productData);
+                },
+                error: function (xhr, status, error) {
+                    console.log("AJAX 요청 실패!", xhr, status, error);
+                    console.log("상태 코드:", xhr.status);  // HTTP 상태 코드 (예: 404, 500 등)
+                    console.log("응답 텍스트:", xhr.responseText);  // 서버에서 반환한 오류 메시지
+                }
+            });
+        })
+
+        // 주문 내역 불러오기
+        const searchOrderListModal = $("#orderListModalContainer")
+        // 상품 검색 모달 열기
+        $("#searchOrderList").on("click", () => {
+            console.log("버튼 눌림")
+            searchOrderListModal.removeClass("hidden");
+            document.body.style.overflow = 'hidden';
+            let userId = [[${userDTO.userId}]]
+            $.ajax({
+                type: "GET",
+                url: "http://localhost:8080/inquiry/searchOrderList",
+                data: {
+                    userId: userId
+                },
+                success: function (data) {
+                    console.log("AJAX 요청 성공");
+                    console.log(data)
+                    let orderList = '';
+                    $.each(data, function (key, value) {
+                        orderList += ("<tr data-product-id='" + value.productId + "' class='orderedProduct'>");
+                        orderList += ("<td rowspan='4' style='height: 120px; width: 120px;' class='selectOrderList'>");
+                        orderList += ("<input type='hidden' class='productId' value='" + value.productId + "'>");
+                        orderList += ("<img src='" + value.imageUrl + "' alt='" + value.productName + "'>");
+                        orderList += ("</td>");
+                        orderList += ("</tr>");
+
+                        orderList += ("<tr data-product-id='" + value.productId + "' class='orderedProduct'>");
+                        orderList += ("<td style='font-weight: bold;' class='selectOrderList'>" + value.brand + "</td>");
+                        orderList += ("</tr>");
+
+                        orderList += ("<tr data-product-id='" + value.productId + "' class='orderedProduct'>");
+                        orderList += ("<td class='selectProduct'>" + value.productName + "</td>");
+                        orderList += ("</tr>");
+
+                        orderList += ("<tr style='border-bottom: #888888 1px solid' class='orderedProduct' data-product-id='" + value.productId + "'>");
+                        orderList += ("<td style='color: lightgray' class='selectOrderList'>" + value.description + "</td>");
+                        orderList += ("</tr>");
+                    });
+                    $("#orderList").html(orderList);
+
+                }
+            })
+        });
+
+        $(".orderListModalCloseBtn").on("click", () => {
+            searchOrderListModal.addClass("hidden");
+            document.body.style.overflow = "auto";
+        });
+
+        // 상품 검색 및 주문 내역에서 상품 form 에 띄우기
+        $(document).on("click", ".selectProduct, .orderedProduct", function () {
+            let productId = $(this).data("product-id");
+            console.log(productId);
+            $.ajax({
+                type: "GET",
+                // controller 에 해당 url로 요청 보내기
+                url: "http://localhost:8080/inquiry/selectedProduct",
+                data: {
+                    productId: productId
+                },
+                success: function (data) {
+                    let searchedData = '';
+                    console.log(data);
+                    searchedData += ("<tr>");
+                    searchedData += ("<td rowspan='4' style='height: 120px; width: 120px;'>");
+                    searchedData += ("<img src='" + data.imageUrl + "' alt='" + data.productName + "'>");
+                    searchedData += ("</td>");
+                    searchedData += ("</tr>")
+
+                    searchedData += ("<tr>");
+                    searchedData += ("<td style='font-weight: bold;' >" + data.brand + "</td>");
+                    searchedData += ("</tr>")
+
+                    searchedData += ("<tr>");
+                    searchedData += ("<td>" + data.productName + "</td>");
+                    searchedData += ("</tr>")
+
+                    searchedData += ("<tr>");
+                    searchedData += ("<td style='color: lightgray'>" + data.description + "</td>");
+                    searchedData += ("</tr>")
+
+                    searchedData += ("<tr>");
+                    searchedData += ("<td>");
+                    searchedData += ("<input type='hidden' value='" + data.productId + "' name='productId'>");
+                    if (data.orderId != null) {
+                        searchedData += ("<input type='hidden' value='" + data.orderId + "' name='orderId'>");
+                    }
+                    searchedData += ("</td>");
+                    searchedData += ("</tr>")
+
+                    $("#searchedData").html(searchedData);
+
+                }
+            })
+            if ($(this).hasClass("selectProduct")) {
+                searchProductModal.addClass("hidden");
+                document.body.style.overflow = "auto";
+
+            } else if ($(this).hasClass("orderedProduct")) {
+                searchOrderListModal.addClass("hidden");
+                document.body.style.overflow = "auto";
+            }
+
+        })
+
+        // 사진 추가
+        let cnt = 0
+        $("#addImage").on("click", (e) => {
+            e.preventDefault();
+            let tag = "<input type='file' id='images' name='files'>";
+            $(".imageContainer").append(tag);
+            cnt++
+            console.log(cnt);
+            if (cnt > 3) {
+                let alert = "<p style='color : red;'>사진 첨부는 최대 5장까지 할 수 있습니다.</p>"
+                $("#addImage").prop("disabled", true);
+                $(".imageContainer").append(alert);
+            }
+
+        })
+
+    });
+</script>
+</body>
+</html>

@@ -8,10 +8,12 @@ import kr.co.fitzcode.product.service.CartService;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -24,19 +26,34 @@ public class CartApiController {
     private final UserService userService;
     private final SecurityUtils securityUtils;
 
+    @GetMapping("/count")
+    public ResponseEntity<Map<String, Integer>> getCartCount(Principal principal) {
+        log.info("GET /api/cart/count 요청 처리");
+        if (principal == null) {
+            log.warn("Principal이 null입니다 - 인증되지 않은 접근");
+            Map<String, Integer> response = new HashMap<>();
+            response.put("count", 0); // 비인증 사용자는 0 return
+            return ResponseEntity.ok(response);
+        }
+
+        // TODO 여기서 실제 카트 수량을 계산하는 로직추가해줘야함
+        int cartCount = 0;
+        Map<String, Integer> response = new HashMap<>();
+        response.put("count", cartCount);
+        return ResponseEntity.ok(response);
+    }
+
     @PostMapping("/addToCart")
     public void addToCart(@RequestParam int productId, @RequestParam int sizeCode) {
         // get userid
         int userId = securityUtils.getUserId();
         int productSizeId = productService.getProductSizeIdByProductSizeAndCode(productId, sizeCode);
-        log.info("--------------------------called addToCart---------------");
         log.info("productId>>>>>>>>>>>>>>>>>>>>: {}", productId);
         log.info("sizeCode>>>>>>>>>>>>>>>>>>>>: {}", sizeCode);
         log.info("productSizeId>>>>>>>>>>>>>>>>>>>>>: {}", productSizeId);
         log.info("userId>>>>>>>>>>>>>>>>>>>>>>>>>: {}", userId);
 
 
-        // Create CartDTO and add to cart using the user's id
         CartDTO cartDTO = CartDTO.builder()
                 .userId(userId)
                 .productId(productId)

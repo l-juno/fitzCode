@@ -14,12 +14,15 @@ public interface UserMapper {
     int nicknameDuplicate(@Param("nickname") String nickname);
     int phoneNumberDuplicate(@Param("phoneNumber") String phoneNumber);
     void updatePw(UserDTO dto);
-
     UserDTO findByEmail(String email);
     // CommonUserController 에서 사용
     UserDTO getUserByEmail(String email);
-    List<Integer> getUserRolesByUserId(int userId);
-    UserDTO findByUsername(String username);
+    List<Integer> getUserRolesByUserId(@Param("userId") int userId);
+    UserDTO findByUserNaverId(String naverId);
+    void updateUserNaver(UserDTO user);
+    UserDTO findByUserKakaoId(String kakaoId);
+    String findEmailByNameAndPhoneNumber(@Param("userName") String userName, @Param("phoneNumber") String phoneNumber);
 
-    void updateUser(UserDTO user);
+    // 역할 이름을 문자열 리스트로 리턴
+    List<String> findRolesInStringByUserId(@Param("userId") int userId);
 }

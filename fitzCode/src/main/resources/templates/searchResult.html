@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>fitzCode</title>
+  <link rel="stylesheet" th:href="@{/css/fragments/header.css}"/>
+  <link rel="stylesheet" th:href="@{/css/fragments/footer.css}"/>
+  <style>
+    .search-result-container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      text-align: center;
+    }
+    .keyword {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+<!-- 헤더 -->
+<div th:replace="~{fragments/header}"></div>
+
+<!-- 검색 결과 -->
+<div class="search-result-container">
+  <br><br><br><br><br><br>
+  <h3>검색 결과</h3>
+  <p>검색어: <span class="keyword" th:text="${param.keyword}"></span></p>
+  <!-- 여기에 검색 결과 목록 추가 가능 -->
+  <p th:if="${param.keyword != null}">"<span th:text="${param.keyword}"></span>"에 대한 결과를 표시합니다.</p>
+  <p th:if="${param.keyword == null}">검색어가 없습니다.</p>
+</div>
+
+<!-- 푸터 -->
+<div th:replace="~{fragments/footer}"></div>
+</body>
+</html>

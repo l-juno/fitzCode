@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <title>fitzCode</title>
     <style>
-        /* 기본 스타일 */
+            /* 기본 스타일 */
         .bodycontainer {
-            font-family: Arial, sans-serif;
             background-color: #ffffff;
             margin: 0;
             padding: 0 10px; /* 기존 padding-top 제거 */
@@ -135,7 +134,7 @@
             height: 12%;
         }
 
-        .kakao-icon:hover{
+        .kakao-icon:hover {
             cursor: pointer;
         }
 
@@ -144,7 +143,7 @@
             height: 12%;
         }
 
-        .naver-icon:hover{
+        .naver-icon:hover {
             cursor: pointer;
         }
 
@@ -153,66 +152,61 @@
             height: 12%;
         }
 
-        .google-icon:hover{
+        .google-icon:hover {
             cursor: pointer;
         }
     </style>
 </head>
 <body>
 <div class="bodycontainer">
-<!-- header -->
-<div th:replace="~{fragments/header}"></div>
-<!-- 로그인 폼 -->
-<div class="container">
-    <h2>로그인</h2>
-    <form action="/login" method="post">
-        <br><br>
-        <!-- 이메일 입력 -->
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-            <span th:text="${emailErrorMessage}" style="color: red; font-size: 12px;"></span>
-        </div>
-        <br><br>
-        <!-- 비밀번호 입력 -->
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-            <span th:text="${pwErrorMessage}" style="color: red; font-size: 12px;"></span>
-        </div>
+    <!-- header -->
+    <div th:replace="~{fragments/header}"></div>
+    <!-- 로그인 폼 -->
+    <div class="container">
+        <h2>로그인</h2>
+        <form id="loginForm" action="/login" method="post">
+            <br><br>
+            <!-- 이메일 입력 -->
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <span th:text="${emailErrorMessage}" style="color: red; font-size: 12px;"></span>
+            </div>
+            <br><br>
+            <!-- 비밀번호 입력 -->
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <span th:text="${pwErrorMessage}" style="color: red; font-size: 12px;"></span>
+            </div>
 
-        <!-- 로그인 버튼 -->
-        <button type="submit" class="btn">로그인</button>
-        <br>
-        <!-- 이메일, 비밀번호 찾기 링크 -->
-        <div class="links1">
-            <a href="/findEmail">이메일 찾기</a> |
-            <a href="/pwEmail">비밀번호 찾기</a>
-        </div>
+            <!-- 로그인 버튼 -->
+            <button type="submit" class="btn">로그인</button>
+            <br>
+            <!-- 이메일, 비밀번호 찾기 링크 -->
+            <div class="links1">
+                <a href="/findEmail">이메일 찾기</a>
+                <a href="/pwEmail">비밀번호 찾기</a>
+            </div>
 
-        <!-- 회원가입 링크 -->
-        <div class="links2">
-            <p>아직 계정이 없으신가요? <a th:href="@{/joinForm}">회원가입하러가기</a></p>
-        </div>
+            <!-- 회원가입 링크 -->
+            <div class="links2">
+                <p>아직 계정이 없으신가요? <a th:href="@{/joinForm}">회원가입하러가기</a></p>
+            </div>
 
-        <br>
-        <div class="line"></div>
-        <!-- 간편 로그인 바 -->
+            <br>
+            <div class="line"></div>
+            <!-- 간편 로그인 바 -->
 
-        <div class="social-login">
-            <a href="/oauth2/authorization/kakao"><img class="kakao-icon" src="/img/kakao_icon.png" alt="Kakao Logo"></a>
-            <a href="/oauth2/authorization/google"><img class="google-icon" src="/img/google_icon.png" alt="Google Logo"></a>
-            &nbsp;<a href="/oauth2/authorization/naver"><img class="naver-icon" src="/img/naver_icon.png" alt="Naver Logo"></a>
-
-        </div>
-    </form>
-</div>
+            <div class="social-login">
+                <a href="/oauth2/authorization/kakao"><img class="kakao-icon" src="/img/kakao_icon.png" alt="Kakao Logo"></a>
+                <a href="/oauth2/authorization/google"><img class="google-icon" src="/img/google_icon.png" alt="Google Logo"></a>
+                <a href="/oauth2/authorization/naver"><img class="naver-icon" src="/img/naver_icon.png" alt="Naver Logo"></a>
+            </div>
+        </form>
+    </div>
 </div>
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
-
 </body>
-<script th:if="${ErrorMessage}">
-    alert("[[${ErrorMessage}]]");
-</script>
 </html>

@@ -12,13 +12,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
@@ -30,9 +35,7 @@ public class SecurityConfig {
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
-        return (request, response, accessDeniedException) -> {
-            response.sendRedirect("/access-denied");
-        };
+        return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 
     @Bean
@@ -52,8 +55,16 @@ public class SecurityConfig {
     }
 
     @Bean
+    public HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .securityContext(securityContext ->
+                        securityContext.securityContextRepository(new HttpSessionSecurityContextRepository())
+                )
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests
                             .requestMatchers(
@@ -61,22 +72,43 @@ public class SecurityConfig {
                                     "/css/**",
                                     "/js/**",
                                     "/img/**",
+                                    "/favicon.ico",
                                     "/access-denied",
                                     "/404-error",
                                     "/something",
                                     "/product/list/**",
                                     "/product/detail/**",
                                     "/api/product/**",
-                                    "/login",
+                                    "/login/**",
                                     "/logout",
                                     "/joinForm",
                                     "/joinSuccess",
                                     "/pwEmail",
+                                    "/findEmail",
+                                    "/findEmailSuccess",
                                     "/resetPw",
-                                    "/resetPwSuccess"
+                                    "/resetPwSuccess",
+                                    "/inquiry/searchProduct",
+                                    "/inquiry/searchOrderList",
+                                    "/inquiry/selectedProduct",
+                                    "/admin/notice/subscribe",
+                                    "/api/notifications",
+                                    "/products",
+                                    "/styles",
+                                    "/notice",
+                                    "/notice/**",
+                                    "/api/cart/**",
+                                    "/api/user/check",
+                                    "/admin/notice/subscribe",
+                                    "/search",
+                                    "/search/result",
+                                    "/mypage/**",
+                                    "/inquiry/**"
                             ).permitAll()
+                            // 권한별 경로
+                            .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                             .requestMatchers("/admin/dashboard")
-                            .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS", "ROLE_INQUIRY")
                             .requestMatchers(
                                     "/admin/products",
                                     "/admin/products/*",
@@ -88,18 +120,16 @@ public class SecurityConfig {
                                     "/admin/products/refund/*",
                                     "/admin/shipping",
                                     "/admin/shipping/*"
-                            ).hasRole("LOGISTICS")
+                            ).hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
                             .requestMatchers(
                                     "/admin/inquiries",
                                     "/admin/inquiries/*",
                                     "/admin/products/qna/{productId}"
-                            ).hasRole("INQUIRY")
+                            ).hasAnyAuthority("ROLE_ADMIN", "ROLE_INQUIRY")
                             .requestMatchers("/admin/notice", "/admin/notice/*")
-                            .hasAnyRole("ADMIN", "LOGISTICS")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
                             .requestMatchers("/admin/products/{productId}", "/admin/products/{productId}/**")
-                            .hasAnyRole("ADMIN", "LOGISTICS")
-                            .requestMatchers("/admin/**").hasRole("ADMIN")
-                            .requestMatchers("/api/cart/**").hasRole("USER")
+                            .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
                             .anyRequest().authenticated();
                 })
                 .formLogin(formLogin -> {
@@ -112,26 +142,55 @@ public class SecurityConfig {
                             .failureHandler(failureHandler())
                             .permitAll();
                 })
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling.accessDeniedHandler(accessDeniedHandler())
-                )
                 .logout(logout -> {
                     logout
                             .logoutUrl("/logout")
-                            .logoutSuccessUrl("/login")
+                            .logoutSuccessUrl("/")
                             .invalidateHttpSession(true)
                             .clearAuthentication(true)
                             .deleteCookies("JSESSIONID")
                             .permitAll();
                 })
+                .sessionManagement(session -> {
+                    session
+                            .sessionFixation().migrateSession()
+                            .maximumSessions(1)
+                            .maxSessionsPreventsLogin(true)
+                            .expiredUrl("/login?expired");
+                })
+                .exceptionHandling(exceptionHandling -> {
+                    exceptionHandling
+                            .authenticationEntryPoint((request, response, authException) -> {
+                                String requestUri = request.getRequestURI();
+                                // permitAll() 경로면 리디렉션 안함
+                                if (requestUri.equals("/") || requestUri.equals("/login") || requestUri.equals("/logout") ||
+                                        requestUri.startsWith("/css/") || requestUri.startsWith("/js/") ||
+                                        requestUri.startsWith("/img/") ||
+                                        requestUri.startsWith("/product/list/") || requestUri.startsWith("/product/detail/") ||
+                                        requestUri.startsWith("/api/product/") || requestUri.equals("/joinForm") ||
+                                        requestUri.equals("/joinSuccess") || requestUri.equals("/pwEmail") ||
+                                        requestUri.equals("/findEmail") || requestUri.equals("/findEmailSuccess") ||
+                                        requestUri.equals("/resetPw") || requestUri.equals("/resetPwSuccess") ||
+                                        requestUri.equals("/inquiry/searchProduct") || requestUri.equals("/inquiry/searchOrderList") ||
+                                        requestUri.equals("/inquiry/selectedProduct") || requestUri.equals("/admin/notice/subscribe") ||
+                                        requestUri.equals("/api/notifications") || requestUri.equals("/products") ||
+                                        requestUri.equals("/styles") || requestUri.equals("/notice") ||
+                                        requestUri.startsWith("/api/cart/") || requestUri.equals("/search") ||
+                                        requestUri.equals("/search/result")) {
+                                    return;
+                                }
+                                response.sendRedirect("/login");
+                            });
+                })
                 .csrf(auth -> auth.disable());
+
         http
-            .oauth2Login(oauth2 ->
-                    oauth2.loginPage("/login")
-                            .defaultSuccessUrl("/", true)
-                            .userInfoEndpoint(userInfoEndpointConfig ->
-                                    userInfoEndpointConfig.userService(customOAuth2UserService))
-            );
+                .oauth2Login(oauth2 ->
+                        oauth2.loginPage("/login")
+                                .defaultSuccessUrl("/", true)
+                                .userInfoEndpoint(userInfoEndpointConfig ->
+                                        userInfoEndpointConfig.userService(customOAuth2UserService))
+                );
 
         return http.build();
     }

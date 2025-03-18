@@ -3,16 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 대시보드</title>
+    <title>fitzCode</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
     <link rel="stylesheet" th:href="@{/css/admin/dashboard.css}"/>
     <link rel="stylesheet" th:href="@{/css/admin/managerSidebar.css}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="dashboard-container">
     <!-- 사이드바 -->
     <div th:replace="~{fragments/managerSidebar :: sidebar}"></div>
+
+    <!-- 헤더 -->
+    <div class="top-container">
+        <div class="user-nav">
+            <div class="timer-section">
+                <span id="session-timer" class="session-timer">30:00</span>
+                <button id="extend-session-btn" class="extend-btn">시간 연장</button>
+            </div>
+            <button class="notification" id="adminNotificationBell">
+                <div class="bell-container">
+                    <div class="bell"></div>
+                </div>
+            </button>
+            <div class="notification-dropdown" id="adminNotificationDropdown" style="display: none;">
+            </div>
+            <div class="user-info">
+                <img src="/img/default-profile.png" alt="User Profile" class="user-image" />
+                <span class="user-name" th:text="${loggedUserName}"></span>
+            </div>
+        </div>
+    </div>
 
     <!-- 콘텐츠 영역 -->
     <div class="content-container">
@@ -40,5 +64,7 @@
         </div>
     </div>
 </div>
+<script th:src="@{/js/admin/adminHeader.js}"></script>
+<script th:src="@{/js/admin/adminNotifications.js}"></script>
 </body>
 </html>
