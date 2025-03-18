@@ -15,4 +15,10 @@
         WHERE user_id = #{userId}
     </select>
 
+    <select id="getCartCount" parameterType="int" resultType="int">
+        SELECT COALESCE(SUM(quantity), 0)
+        FROM CART
+        WHERE user_id = #{userId}
+    </select>
+
 </mapper>

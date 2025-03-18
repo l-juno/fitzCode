@@ -6,6 +6,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
+
 @Service
 public class SecurityUtils {
 
@@ -24,6 +26,23 @@ public class SecurityUtils {
             return ((CustomOAuth2User) principal).getUserId(); // OAuth2 로그인 사용자
         } else {
             throw new RuntimeException("Unknown user type");
+        }
+    }
+
+    public int getUserIdFromPrincipal(Principal principal) {
+        if (principal == null) {
+            throw new RuntimeException("Principal is null");
+        }
+
+        Authentication authentication = (Authentication) principal;
+        Object authPrincipal = authentication.getPrincipal();
+
+        if (authPrincipal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) authPrincipal).getUserId();
+        } else if (authPrincipal instanceof CustomOAuth2User) {
+            return ((CustomOAuth2User) authPrincipal).getUserId();
+        } else {
+            throw new RuntimeException("Unknown user Principal");
         }
     }
 }

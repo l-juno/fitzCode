@@ -21,4 +21,9 @@ public class CartServiceImple implements CartService {
     public List<CartDTO> getCartProductsByUserId(int userId) {
         return cartMapper.getCartProductsByUserId(userId);
     }
+
+    @Override
+    public int getCartCount(int userId) {
+        return cartMapper.getCartCount(userId);
+    }
 }

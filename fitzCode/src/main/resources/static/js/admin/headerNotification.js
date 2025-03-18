@@ -5,7 +5,7 @@ function checkAuthenticated(callback) {
     $.ajax({
         url: '/api/user/check',
         type: 'GET',
-        success: function(response) {
+        success: function (response) {
             console.log("인증 상태 체크 응답:", response);
             if (response.authenticated) {
                 callback(true);
@@ -13,24 +13,24 @@ function checkAuthenticated(callback) {
                 callback(false);
             }
         },
-        error: function(xhr, status, error) {
+        error: function (xhr, status, error) {
             console.error("인증 상태 체크 오류:", error, "상태:", xhr.status, "응답:", xhr.responseText);
             callback(false);
         }
     });
 }
 
-    // 헤더 액티브
-    $(document).ready(function () {
-        const currentPath = window.location.pathname.split('?')[0].replace(/\/$/, '');
-        $('.nav-link').each(function () {
-            const linkPath = $(this).data('path').replace(/\/$/, '');
-            if (currentPath === linkPath) {
-                $(this).addClass('active');
-            } else {
-                $(this).removeClass('active');
-            }
-        });
+// 헤더 액티브
+$(document).ready(function () {
+    const currentPath = window.location.pathname.split('?')[0].replace(/\/$/, '');
+    $('.nav-link').each(function () {
+        const linkPath = $(this).data('path').replace(/\/$/, '');
+        if (currentPath === linkPath) {
+            $(this).addClass('active');
+        } else {
+            $(this).removeClass('active');
+        }
+    });
 
     // 검색 입력창 Enter 키 (비로그인 포함)
     $('.input').on('keypress', function (e) {
@@ -44,7 +44,7 @@ function checkAuthenticated(callback) {
     });
 
     // 로그인 여부에 따른 추가 기능 활성화
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("비로그인 사용자: 알림 및 카트 비활성화");
             $('#ex4 .p1').attr('data-count', '0');
@@ -99,7 +99,9 @@ function checkAuthenticated(callback) {
 
         // 가상 상품 추가 이벤트
         $('#addToCartButton').on('click', function () {
-            addToCart();
+            const productId = $(this).data('product-id') || 1; // 상품 페이지에서 동적으로 가져오기
+            const sizeCode = $(this).data('size-code') || 1;   // 상품 페이지에서 동적으로 가져오기
+            addToCart(productId, sizeCode);
         });
 
         // 알림 구독 시작
@@ -109,7 +111,7 @@ function checkAuthenticated(callback) {
 
 // 알림 구독 시작
 function subscribeToNotifications() {
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 알림 구독 비활성화");
             return;
@@ -155,7 +157,7 @@ function search(keyword) {
     $.ajax({
         url: '/search',
         type: 'POST',
-        data: { keyword: keyword },
+        data: {keyword: keyword},
         dataType: 'json',
         success: function (result) {
             if (result.success) {
@@ -176,17 +178,13 @@ function updateNotificationBadge() {
     const notification = $('.notification');
     if (notification.length > 0) {
         notification.attr('data-count', window.notificationCount);
-        if (window.notificationCount > 0) {
-            notification.css('display', 'flex');
-        } else {
-            notification.css('display', 'flex');
-        }
+        notification.css('display', 'flex'); // 항상 표시 (디자인에 따라 조정 가능)
     }
 }
 
 // 카트 수량 업데이트
 function updateCartCount() {
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 카트 수량 업데이트 중단");
             $('#ex4 .p1').attr('data-count', '0');
@@ -197,7 +195,7 @@ function updateCartCount() {
             url: '/api/cart/count',
             type: 'GET',
             dataType: 'json',
-            xhrFields: { withCredentials: true },
+            xhrFields: {withCredentials: true},
             success: function (data) {
                 if (data && data.count !== undefined) {
                     const cartCount = data.count || 0;
@@ -217,8 +215,8 @@ function updateCartCount() {
 }
 
 // 상품을 카트에 추가
-function addToCart() {
-    checkAuthenticated(function(isAuthenticated) {
+function addToCart(productId, sizeCode) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 카트 추가를 중단");
             return;
@@ -227,19 +225,21 @@ function addToCart() {
         $.ajax({
             url: '/api/cart/add',
             type: 'POST',
-            data: { productId: 1 },
+            data: {productId: productId, sizeCode: sizeCode},
             dataType: 'json',
-            xhrFields: { withCredentials: true },
+            xhrFields: {withCredentials: true},
             success: function (response) {
                 if (response.success) {
                     console.log('상품 추가 성공, 카트 수량 갱신');
-                    updateCartCount();
+                    updateCartCount(); // 즉시 갱신
                 } else {
-                    console.error('상품 추가 실패:', response.message);
+                    console.error('상품 추가 실패:', response.message || 'Unknown error');
+                    alert('상품 추가에 실패했습니다.');
                 }
             },
             error: function (xhr, status, error) {
                 console.error('상품 추가 오류:', error);
+                alert('장바구니 추가 중 오류가 발생했습니다.');
             }
         });
     });
@@ -270,7 +270,7 @@ function addNotificationActions() {
 
 // 알림 목록 로드
 function loadNotifications() {
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 알림 로드 중단");
             $('#notificationDropdown').empty();
@@ -283,7 +283,7 @@ function loadNotifications() {
             url: '/api/notifications',
             type: 'GET',
             dataType: 'json',
-            xhrFields: { withCredentials: true },
+            xhrFields: {withCredentials: true},
             success: function (data) {
                 console.log("알림 목록 데이터 수신:", data);
                 $('#notificationDropdown').empty();
@@ -315,7 +315,7 @@ function loadNotifications() {
 
 // 개별 알림 삭제
 function deleteNotification(notificationId) {
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 알림 삭제 중단");
             return;
@@ -324,7 +324,7 @@ function deleteNotification(notificationId) {
         $.ajax({
             url: '/api/notifications/' + notificationId,
             type: 'DELETE',
-            xhrFields: { withCredentials: true },
+            xhrFields: {withCredentials: true},
             success: function () {
                 console.log('알림 삭제 성공:', notificationId);
                 window.notificationCount--;
@@ -341,7 +341,7 @@ function deleteNotification(notificationId) {
 
 // 모든 알림 삭제
 function deleteAllNotifications() {
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 모든 알림 삭제를 중단");
             return;
@@ -350,7 +350,7 @@ function deleteAllNotifications() {
         $.ajax({
             url: '/api/notifications',
             type: 'DELETE',
-            xhrFields: { withCredentials: true },
+            xhrFields: {withCredentials: true},
             success: function () {
                 console.log('모든 알림 삭제 성공');
                 window.notificationCount = 0;
@@ -367,7 +367,7 @@ function deleteAllNotifications() {
 
 // 모든 알림 읽음 처리
 function updateNotificationsReadStatus() {
-    checkAuthenticated(function(isAuthenticated) {
+    checkAuthenticated(function (isAuthenticated) {
         if (!isAuthenticated) {
             console.log("로그인하지 않은 사용자 : 알림 읽음 처리 중단");
             return;
@@ -376,7 +376,7 @@ function updateNotificationsReadStatus() {
         $.ajax({
             url: '/api/notifications/read',
             type: 'POST',
-            xhrFields: { withCredentials: true },
+            xhrFields: {withCredentials: true},
             success: function () {
                 console.log('모든 알림 읽음 처리 성공');
                 $('.notification-item').addClass('read').find('.close-btn').show();
@@ -388,7 +388,7 @@ function updateNotificationsReadStatus() {
     });
 }
 
-// 알림 메시지를 화면에 추가
+
 function addNotification(message) {
     const div = document.createElement("div");
     div.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
