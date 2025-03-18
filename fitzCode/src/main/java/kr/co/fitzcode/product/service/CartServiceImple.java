@@ -28,5 +28,8 @@ public class CartServiceImple implements CartService {
         return cartMapper.getCartInformationByUserId(userId);
     }
 
-
+    @Override
+    public int getCartCount(int userId) {
+        return cartMapper.getCartCount(userId);
+    }
 }

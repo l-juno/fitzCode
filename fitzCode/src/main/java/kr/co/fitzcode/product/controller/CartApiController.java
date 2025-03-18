@@ -1,8 +1,8 @@
 package kr.co.fitzcode.product.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import kr.co.fitzcode.common.dto.CartDTO;
 import kr.co.fitzcode.common.dto.CartProductDTO;
-import kr.co.fitzcode.common.service.CustomUserDetails;
 import kr.co.fitzcode.common.service.UserService;
 import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.product.service.CartService;
@@ -28,6 +28,7 @@ public class CartApiController {
     private final UserService userService;
     private final SecurityUtils securityUtils;
 
+    @Operation(summary = "장바구니 수량 조회", description = "현재 사용자의 장바구니 상품 수량 조회")
     @GetMapping("/count")
     public ResponseEntity<Map<String, Integer>> getCartCount(Principal principal) {
         log.info("GET /api/cart/count 요청 처리");
@@ -38,13 +39,14 @@ public class CartApiController {
             return ResponseEntity.ok(response);
         }
 
-        // TODO 여기서 실제 카트 수량을 계산하는 로직추가해줘야함
-        int cartCount = 0;
+        int userId = securityUtils.getUserId(); // 인증된 사용자 ID 가져오기
+        int cartCount = cartService.getCartCount(userId); // 장바구니 수량 계산
         Map<String, Integer> response = new HashMap<>();
         response.put("count", cartCount);
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "장바구니에 상품 추가", description = "제품 ID와 사이즈 코드로 장바구니에 상품 추가")
     @PostMapping("/addToCart")
     public void addToCart(@RequestParam int productId, @RequestParam int sizeCode) {
         // get userid
@@ -55,7 +57,6 @@ public class CartApiController {
         log.info("productSizeId>>>>>>>>>>>>>>>>>>>>>: {}", productSizeId);
         log.info("userId>>>>>>>>>>>>>>>>>>>>>>>>>: {}", userId);
 
-
         CartDTO cartDTO = CartDTO.builder()
                 .userId(userId)
                 .productId(productId)
@@ -63,19 +64,17 @@ public class CartApiController {
                 .productSizeId(productSizeId)
                 .build();
         cartService.addProductToCart(cartDTO);
-
     }
 
+    @Operation(summary = "장바구니 상품 목록 조회", description = "현재 사용자의 장바구니 상품 목록 조회")
     @GetMapping("/getCartItems")
     public ResponseEntity<List<CartProductDTO>> getCartItems() {
-        int userid = SecurityUtils.getUserId();
-        List<CartProductDTO> list =cartService.getCartInformationByUserId(userid);
+        int userId = SecurityUtils.getUserId();
+        List<CartProductDTO> list = cartService.getCartInformationByUserId(userId);
         log.info("list : {}", list);
         for (CartProductDTO cartProductDTO : list) {
             cartProductDTO.setProductSizes(productService.getAllSizeOfProduct(cartProductDTO.getProductId()));
         }
         return ResponseEntity.ok().body(list);
     }
-
-
 }
