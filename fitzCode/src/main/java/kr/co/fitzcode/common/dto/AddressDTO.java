@@ -1,11 +1,14 @@
 package kr.co.fitzcode.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "주소 정보")
 public class AddressDTO {
     @Schema(description = "사용자 ID")
