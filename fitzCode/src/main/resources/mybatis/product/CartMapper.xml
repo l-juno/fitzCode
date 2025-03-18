@@ -22,6 +22,7 @@
         JOIN PRODUCT p on c.product_id = p.product_id
         JOIN PRODUCT_SIZE ps on c.product_size_id = ps.product_size_id
         where c.user_id = #{userId}
+        ORDER BY created_at desc
     </select>
 
 
