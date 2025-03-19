@@ -1,6 +1,7 @@
 package kr.co.fitzcode.admin.mapper;
 
 
+import kr.co.fitzcode.common.dto.PickProductDTO;
 import kr.co.fitzcode.common.dto.ProductCategoryDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -70,4 +71,9 @@ public interface AdminProductMapper {
 
     // 카테고리 검증
     int countCategoryById(Long categoryId);
+
+    List<PickProductDTO> selectPickProducts();
+    void deleteAllPickProducts();
+    void insertPickProduct(PickProductDTO dto);
+    List<ProductDTO> selectTopDiscountedProducts(@Param("limit") int limit);
 }

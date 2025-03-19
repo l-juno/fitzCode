@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.admin.service.ProductService;
 import kr.co.fitzcode.admin.service.SearchLogService;
 import kr.co.fitzcode.common.dto.CustomOAuth2User;
+import kr.co.fitzcode.common.dto.PickProductDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +26,7 @@ import java.util.Map;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "FitzCode Core API", description = "FitzCode 핵심 API 제공. 검색, 세션 관리, 관리자 기능 포함")
+@Tag(name = "FitzCode Core API", description = "FitzCode 핵심 API 제공. 검색, 세션 관리, 슬라이더 데이터 포함")
 public class FitzCodeController {
 
     private final SearchLogService searchLogService;
@@ -35,7 +34,11 @@ public class FitzCodeController {
 
     @Operation(summary = "메인 페이지 리다이렉션", description = "애플리케이션의 메인 페이지로 이동")
     @GetMapping("/")
-    public String mainPage() {
+    public String mainPage(Model model) {
+        List<PickProductDTO> pickProducts = productService.getPickProducts();
+        List<ProductDTO> discountProducts = productService.getTopDiscountedProducts(10);
+        model.addAttribute("pickProducts", pickProducts);
+        model.addAttribute("discountProducts", discountProducts);
         return "fitzCode";
     }
 
@@ -81,7 +84,6 @@ public class FitzCodeController {
             @RequestParam(value = "page", defaultValue = "1") int page) {
         Map<String, Object> response = new HashMap<>();
         try {
-            // 상품 검색 로직
             List<ProductDTO> products = productService.searchProducts(keyword, page, 20);
             int totalLength = productService.countAllProducts(keyword);
 
@@ -121,5 +123,30 @@ public class FitzCodeController {
         response.put("creationTime", creationTime);
         response.put("timeLeft", Math.max(timeLeft, 0));
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "주목받는 상품 데이터 조회", description = "메인 페이지 슬라이더용 주목받는 상품 데이터 반환")
+    @GetMapping("/api/pick-products")
+    @ResponseBody
+    public List<PickProductDTO> getPickProductsApi() {
+        return productService.getPickProducts();
+    }
+
+    @Operation(summary = "할인 상품 데이터 조회", description = "메인 페이지 슬라이더용 할인 상품 데이터 반환")
+    @GetMapping("/api/discount-products")
+    @ResponseBody
+    public List<ProductDTO> getDiscountProductsApi() {
+        List<ProductDTO> discountProducts = productService.getTopDiscountedProducts(10);
+        log.debug("Discount products: {}", discountProducts); // 디버깅용 로그
+        for (ProductDTO product : discountProducts) {
+            if (product.getDiscountedPrice() != null && product.getPrice() != null && product.getPrice() > 0) {
+                product.calculateDiscountPercentage(); // 명시적 호출
+                log.debug("Product: {}, DiscountPercentage: {}", product.getProductName(), product.getDiscountPercentage());
+            } else {
+                log.debug("Product: {}, No discount calculated (discountedPrice: {}, price: {})",
+                        product.getProductName(), product.getDiscountedPrice(), product.getPrice());
+            }
+        }
+        return discountProducts;
     }
 }

@@ -1,3 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    font-family: 'Apple SD Gothic Neo', sans-serif;
+}
+
 .adminSidebarWrap {
     position: relative;
     width: 250px;
@@ -44,6 +53,7 @@
     font-weight: 500;
     padding-left: 30px;
     transition: color 0.3s ease;
+    cursor: pointer; /* 클릭 가능 표시 */
 }
 
 .sidebar-section h3:hover {
@@ -62,6 +72,19 @@
 
 .sidebar-section-dashboard h3 a:hover {
     color: #666;
+}
+
+.submenu {
+    display: none; /* 기본적으로 숨김 */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.submenu.active {
+    display: block;
+    max-height: 500px; /* 충분한 높이 */
+    transition: max-height 0.3s ease-in;
 }
 
 .submenu a {
