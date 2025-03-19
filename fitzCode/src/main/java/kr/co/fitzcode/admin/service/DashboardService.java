@@ -30,4 +30,7 @@ public interface DashboardService {
 
     // 등급별 회원 수 조회
     Map<Integer, Integer> getMemberTierCounts();
+
+    // 세션 갱신 (현재 접속자수)
+    void updateUserActivity(String sessionId);
 }
