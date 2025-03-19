@@ -1,13 +1,13 @@
 package kr.co.fitzcode.common.config;
 
 import kr.co.fitzcode.user.service.CustomOAuth2UserService;
+import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -24,11 +24,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
@@ -37,16 +34,13 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return (request, response, authentication) -> {
-            System.out.println("Login successful: " + authentication.getName());
-            response.sendRedirect("/");
-        };
+        return new CustomAuthenticationSuccessHandler(userService);
     }
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
         return (request, response, exception) -> {
-            System.out.println("Login failed: " + exception.getMessage());
+            System.out.println("Login 실패: " + exception.getMessage());
             response.sendRedirect("/login?error=true");
         };
     }
