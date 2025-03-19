@@ -97,10 +97,10 @@ $(document).ready(function () {
         updateCartCount();
         cartUpdateInterval = setInterval(updateCartCount, 10000);
 
-        // 가상 상품 추가 이벤트
+        // 상품 추가 이벤트
         $('#addToCartButton').on('click', function () {
-            const productId = $(this).data('product-id') || 1; // 상품 페이지에서 동적으로 가져오기
-            const sizeCode = $(this).data('size-code') || 1;   // 상품 페이지에서 동적으로 가져오기
+            const productId = $(this).data('product-id') || 1;
+            const sizeCode = $(this).data('size-code') || 1;
             addToCart(productId, sizeCode);
         });
 
@@ -178,7 +178,7 @@ function updateNotificationBadge() {
     const notification = $('.notification');
     if (notification.length > 0) {
         notification.attr('data-count', window.notificationCount);
-        notification.css('display', 'flex'); // 항상 표시 (디자인에 따라 조정 가능)
+        notification.css('display', 'flex');
     }
 }
 
@@ -246,13 +246,19 @@ function addToCart(productId, sizeCode) {
 }
 
 // 알림 항목 추가
-function addNotificationItem(notificationId, message) {
+function addNotificationItem(notificationId, message, type, relatedId) {
     const dropdown = $('#notificationDropdown');
     dropdown.find('.notification-actions').remove();
-    const item = $(`<div class="notification-item" data-id="${notificationId}"><span>${message}</span><button class="close-btn" data-id="${notificationId}">X</button></div>`);
+    const item = $(`<div class="notification-item" data-id="${notificationId}" data-type="${type}" data-related-id="${relatedId}"><span>${message}</span><button class="close-btn" data-id="${notificationId}">X</button></div>`);
     item.click(function (e) {
         if (!$(e.target).hasClass('close-btn')) {
-            window.location.href = '/notice';
+            const notificationType = $(this).data('type');
+            const relatedId = $(this).data('related-id');
+            let redirectUrl = '/admin/notice'; // 공지사항
+            if (notificationType === 'INQUIRY_RESPONSE') {
+                redirectUrl = `/admin/inquiries/${relatedId}`; // 1대1 문의 알림
+            }
+            window.location.href = redirectUrl;
         }
     });
     dropdown.prepend(item);
@@ -297,7 +303,9 @@ function loadNotifications() {
                         data.forEach(notification => {
                             console.log("알림 항목:", notification);
                             const message = notification.message || '새로운 공지사항이 있습니다.';
-                            addNotificationItem(notification.notificationId, message);
+                            const type = notification.type || 'NOTICE'; // type 필드 추가
+                            const relatedId = notification.relatedId || ''; // relatedId 추가
+                            addNotificationItem(notification.notificationId, message, type, relatedId);
                         });
                     }
                 } else {
@@ -388,9 +396,37 @@ function updateNotificationsReadStatus() {
     });
 }
 
-
 function addNotification(message) {
     const div = document.createElement("div");
     div.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
     document.getElementById("notificationDropdown").appendChild(div);
+}
+
+function saveNotificationForInquiry(inquiry) {
+    checkAuthenticated(function (isAuthenticated) {
+        if (!isAuthenticated) {
+            console.log("로그인하지 않은 사용자 : 알림 저장 중단");
+            return;
+        }
+
+        const notificationDTO = {
+            message: "1대1 문의에 대한 답변 도착: " + inquiry.subject,
+            type: "INQUIRY_RESPONSE",
+            relatedId: inquiry.inquiryId
+        };
+
+        $.ajax({
+            url: '/api/notifications',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(notificationDTO),
+            xhrFields: {withCredentials: true},
+            success: function (response) {
+                console.log('알림 저장 성공:', response);
+            },
+            error: function (xhr, status, error) {
+                console.error('알림 저장 실패:', error, '상태:', xhr.status, '응답:', xhr.responseText);
+            }
+        });
+    });
 }

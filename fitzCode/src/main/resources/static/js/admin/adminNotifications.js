@@ -1,7 +1,7 @@
 window.adminNotificationCount = 0;
 let eventSource = null; // SSE 연결 객체 저장
 
-// 인증 상태 체크 함수
+// 인증 상태 체크 함수 (관리자용)
 function checkAuthenticated(callback) {
     $.ajax({
         url: '/api/user/check',
@@ -103,11 +103,10 @@ function adminSubscribeToNotifications() {
             console.error("관리자 알림 연결 오류 발생: " + new Date().toLocaleTimeString(), error);
             eventSource.close();
             eventSource = null;
-            // 재연결 시도
+            // 재연결
             setTimeout(() => {
-                console.log("SSE 재연결 시도...");
                 adminSubscribeToNotifications();
-            }, 3000); // 3초 후 재연결
+            }, 3000);
         };
     });
 }
@@ -293,9 +292,8 @@ function adminUpdateNotificationsReadStatus() {
             xhrFields: { withCredentials: true },
             success: function() {
                 console.log('모든 관리자 알림 읽음 처리 성공');
-                // UI에서 읽음 표시 (필요 시 추가 스타일 적용)
                 $('.notification-item').addClass('read').find('.close-btn').show();
-                adminLoadNotifications(); // 갱신
+                adminLoadNotifications();
             },
             error: function(xhr, status, error) {
             }
