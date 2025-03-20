@@ -1,13 +1,13 @@
 package kr.co.fitzcode.common.config;
 
 import kr.co.fitzcode.user.service.CustomOAuth2UserService;
+import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -24,11 +24,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
@@ -37,16 +34,13 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     @Bean
     public AuthenticationSuccessHandler successHandler() {
-        return (request, response, authentication) -> {
-            System.out.println("Login successful: " + authentication.getName());
-            response.sendRedirect("/");
-        };
+        return new CustomAuthenticationSuccessHandler(userService);
     }
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
         return (request, response, exception) -> {
-            System.out.println("Login failed: " + exception.getMessage());
+            System.out.println("Login 실패: " + exception.getMessage());
             response.sendRedirect("/login?error=true");
         };
     }
@@ -65,42 +59,43 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .authorizeHttpRequests(authorizeRequests -> {
                     authorizeRequests
                             .requestMatchers(
-                                    "/",
-                                    "/css/**",
-                                    "/js/**",
-                                    "/img/**",
-                                    "/favicon.ico",
-                                    "/access-denied",
-                                    "/404-error",
-                                    "/something",
-                                    "/product/list/**",
-                                    "/product/detail/**",
-                                    "/api/product/**",
-                                    "/login/**",
-                                    "/logout",
-                                    "/joinForm",
-                                    "/joinSuccess",
-                                    "/pwEmail",
-                                    "/findEmail",
-                                    "/findEmailSuccess",
-                                    "/resetPw",
-                                    "/resetPwSuccess",
-                                    "/inquiry/searchProduct",
-                                    "/inquiry/searchOrderList",
-                                    "/inquiry/selectedProduct",
-                                    "/admin/notice/subscribe",
-                                    "/api/notifications",
-                                    "/products",
-                                    "/styles",
-                                    "/notice",
-                                    "/notice/**",
-                                    "/api/cart/**",
-                                    "/api/user/check",
-                                    "/admin/notice/subscribe",
-                                    "/search",
-                                    "/search/result",
-                                    "/mypage/**",
-                                    "/inquiry/**"
+                                    "/",                            // 메인 페이지
+                                    "/css/**",                      // CSS 정적 리소스
+                                    "/js/**",                       // JS 정적 리소스
+                                    "/img/**",                      // 이미지 정적 리소스
+                                    "/favicon.ico",                 // 파비콘
+                                    "/access-denied",               // 접근 거부 페이지
+                                    "/404-error",                   // 404 페이지
+                                    "/something",                   // 기타 페이지
+                                    "/product/list/**",             // 상품 목록
+                                    "/product/detail/**",           // 상품 상세
+                                    "/api/product/**",              // 상품 API
+                                    "/api/reviews",                 // 리뷰 조회 API (GET 요청 허용)
+                                    "/login/**",                    // 로그인 관련
+                                    "/logout",                      // 로그아웃
+                                    "/joinForm",                    // 회원가입 폼
+                                    "/joinSuccess",                 // 회원가입 성공
+                                    "/pwEmail",                     // 비밀번호 이메일
+                                    "/findEmail",                   // 이메일 찾기
+                                    "/findEmailSuccess",            // 이메일 찾기 성공
+                                    "/resetPw",                     // 비밀번호 재설정
+                                    "/resetPwSuccess",              // 비밀번호 재설정 성공
+                                    "/inquiry/searchProduct",       // 문의 상품 검색
+                                    "/inquiry/searchOrderList",     // 문의 주문 검색
+                                    "/inquiry/selectedProduct",     // 문의 선택 상품
+                                    "/admin/notice/subscribe",      // 공지사항 구독
+                                    "/api/notifications",           // 알림 API
+                                    "/products",                    // 상품 페이지
+                                    "/styles",                      // 스타일 페이지
+                                    "/notice",                      // 공지사항
+                                    "/notice/**",                   // 공지사항 하위 경로
+                                    "/api/cart/**",                 // 카트 API
+                                    "/api/user/check",              // 사용자 인증 체크
+                                    "/search",                      // 검색
+                                    "/search/result",               // 검색 결과
+                                    "/inquiry/**",                  // 문의 관련
+                                    "/api/pick-products",           // 주목받는 상품 API
+                                    "/api/discount-products"        // 할인 상품 API
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
@@ -165,16 +160,17 @@ public class SecurityConfig implements WebMvcConfigurer {
                                         requestUri.startsWith("/css/") || requestUri.startsWith("/js/") ||
                                         requestUri.startsWith("/img/") ||
                                         requestUri.startsWith("/product/list/") || requestUri.startsWith("/product/detail/") ||
-                                        requestUri.startsWith("/api/product/") || requestUri.equals("/joinForm") ||
-                                        requestUri.equals("/joinSuccess") || requestUri.equals("/pwEmail") ||
-                                        requestUri.equals("/findEmail") || requestUri.equals("/findEmailSuccess") ||
-                                        requestUri.equals("/resetPw") || requestUri.equals("/resetPwSuccess") ||
-                                        requestUri.equals("/inquiry/searchProduct") || requestUri.equals("/inquiry/searchOrderList") ||
-                                        requestUri.equals("/inquiry/selectedProduct") || requestUri.equals("/admin/notice/subscribe") ||
-                                        requestUri.equals("/api/notifications") || requestUri.equals("/products") ||
-                                        requestUri.equals("/styles") || requestUri.equals("/notice") ||
-                                        requestUri.startsWith("/api/cart/") || requestUri.equals("/search") ||
-                                        requestUri.equals("/search/result")) {
+                                        requestUri.startsWith("/api/product/") || requestUri.startsWith("/api/reviews") ||
+                                        requestUri.equals("/joinForm") || requestUri.equals("/joinSuccess") ||
+                                        requestUri.equals("/pwEmail") || requestUri.equals("/findEmail") ||
+                                        requestUri.equals("/findEmailSuccess") || requestUri.equals("/resetPw") ||
+                                        requestUri.equals("/resetPwSuccess") || requestUri.equals("/inquiry/searchProduct") ||
+                                        requestUri.equals("/inquiry/searchOrderList") || requestUri.equals("/inquiry/selectedProduct") ||
+                                        requestUri.equals("/admin/notice/subscribe") || requestUri.equals("/api/notifications") ||
+                                        requestUri.equals("/products") || requestUri.equals("/styles") ||
+                                        requestUri.equals("/notice") || requestUri.startsWith("/api/cart/") ||
+                                        requestUri.equals("/search") || requestUri.equals("/search/result") ||
+                                        requestUri.equals("/api/pick-products") || requestUri.equals("/api/discount-products")) {
                                     return;
                                 }
                                 response.sendRedirect("/login");

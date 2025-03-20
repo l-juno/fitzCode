@@ -32,6 +32,17 @@ public class UserController {
         return "user/login";
     }
 
+    @PostMapping("/login")
+    public String login(@RequestParam String email, @RequestParam String password,
+                        HttpSession session, RedirectAttributes redirectAttributes) {
+        UserDTO user = userService.authenticate(email, password);
+        if (user != null) {
+            session.setAttribute("dto", user); // 세션에 dto 저장
+            return "redirect:/";
+        }
+        redirectAttributes.addFlashAttribute("error", "입력한 이메일 또는 비밀번호가 잘못되었습니다.");
+        return "redirect:/login";
+    }
     // 로그아웃 (Spring Security가 처리하므로 별도 구현 불필요)
     // @GetMapping("/logout") -> 제거, Spring Security의 /logout 사용
     // public String logout(HttpSession session) {

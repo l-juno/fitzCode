@@ -35,4 +35,7 @@ public class ReviewDTO {
 
     @Schema(description = "이미지 URL 목록")
     private List<String> imageUrls;
+
+    @Schema(description = "포맷팅된 생성 날짜 (yy.MM.dd)")
+    private String createdAtStr;
 }

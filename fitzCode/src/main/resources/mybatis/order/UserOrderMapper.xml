@@ -50,8 +50,15 @@
         select * from ORDERS where order_id = #{orderId}
     </select>
 
-
-
+    <!-- 사용자가 특정 제품을 구매했는지 확인 -->
+    <select id="countOrdersByUserAndProduct" resultType="int">
+        SELECT COUNT(*)
+        FROM ORDERS o
+        JOIN ORDER_DETAIL od ON o.order_id = od.order_id
+        WHERE o.user_id = #{userId}
+        AND od.product_id = #{productId}
+        AND o.order_status != 'CANCELLED'
+    </select>
 
 
 

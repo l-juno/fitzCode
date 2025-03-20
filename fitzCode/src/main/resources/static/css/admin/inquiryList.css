@@ -42,7 +42,8 @@ th, td {
 }
 
 th {
-    background-color: #f4f4f4;
+    background-color: #2f2f32;
+    color: white;
 }
 
 .status-pending {
