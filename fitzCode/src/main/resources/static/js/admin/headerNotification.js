@@ -214,36 +214,6 @@ function updateCartCount() {
     });
 }
 
-// 상품을 카트에 추가
-function addToCart(productId, sizeCode) {
-    checkAuthenticated(function (isAuthenticated) {
-        if (!isAuthenticated) {
-            console.log("로그인하지 않은 사용자 : 카트 추가를 중단");
-            return;
-        }
-
-        $.ajax({
-            url: '/api/cart/add',
-            type: 'POST',
-            data: {productId: productId, sizeCode: sizeCode},
-            dataType: 'json',
-            xhrFields: {withCredentials: true},
-            success: function (response) {
-                if (response.success) {
-                    console.log('상품 추가 성공, 카트 수량 갱신');
-                    updateCartCount(); // 즉시 갱신
-                } else {
-                    console.error('상품 추가 실패:', response.message || 'Unknown error');
-                    alert('상품 추가에 실패했습니다.');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('상품 추가 오류:', error);
-                alert('장바구니 추가 중 오류가 발생했습니다.');
-            }
-        });
-    });
-}
 
 // 알림 항목 추가
 function addNotificationItem(notificationId, message, type, relatedId) {
