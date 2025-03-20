@@ -32,4 +32,9 @@ public class UserOrderDetailServiceImple implements UserOrderDetailService {
     public List<UserOrderDetailDTO> getOrderDetailByUserId(int userId) {
         return userOrderDetailMapper.getOrderDetailByUserId(userId);
     }
+
+    @Override
+    public void updateRequestRefundStatus(int orderDetailId) {
+        userOrderDetailMapper.updateRequestRefundStatus(orderDetailId);
+    }
 }

@@ -26,12 +26,16 @@
 
     <select id="getOrderDetailByUserId" resultType="kr.co.fitzcode.common.dto.UserOrderDetailDTO">
         SELECT od.order_detail_id, od.order_id, od.product_id, od.quantity, od.price,
-        od.coupon_id, od.refund_status, od.size_code, p.image_url, p.product_name
+        od.coupon_id, od.refund_status, od.size_code, p.image_url, p.product_name, o.created_at
         FROM ORDER_DETAIL od
         JOIN PRODUCT p ON od.product_id = p.product_id
         JOIN ORDERS o ON o.order_id = od.order_id
         WHERE o.user_id = #{userId}
     </select>
+
+    <update id="updateRequestRefundStatus">
+        update ORDER_DETAIL set refund_status = 1 where order_detail_id = #{orderDetailId}
+    </update>
 
 
 

@@ -16,4 +16,6 @@ public interface UserOrderDetailMapper {
     List<UserOrderDetailDTO> getOrderDetailByOrderId(int orderId);
 
     List<UserOrderDetailDTO> getOrderDetailByUserId(int userId);
+
+    void updateRequestRefundStatus(int orderDetailId);
 }

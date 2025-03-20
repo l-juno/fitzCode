@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -21,7 +22,7 @@ public class CartProductDTO {
     private int userId;
     private int productId;
     private int quantity;
-    private Timestamp createdAt;
+    private LocalDateTime createdAt;
     private int sizeCode;
     private int stock;
 
@@ -54,11 +55,13 @@ public class CartProductDTO {
         return "0";
     }
 
+
     public String getFormattedCreatedAt() {
         if (createdAt != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            return sdf.format(createdAt);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return createdAt.format(formatter);
         }
         return "";
     }
+
 }

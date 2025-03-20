@@ -3,6 +3,7 @@ package kr.co.fitzcode.order.service;
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
 import kr.co.fitzcode.common.dto.PaymentDTO;
+import kr.co.fitzcode.common.dto.UserOrderDTO;
 import kr.co.fitzcode.order.mapper.UserOrderMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,7 +51,7 @@ public class OrderServiceImple implements OrderService {
     }
 
     @Override
-    public OrderDTO getOrderByOrderId(int orderId) {
+    public UserOrderDTO getOrderByOrderId(int orderId) {
         return userOrderMapper.getOrderByOrderId(orderId);
     }
 

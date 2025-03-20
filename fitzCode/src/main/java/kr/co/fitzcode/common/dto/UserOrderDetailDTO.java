@@ -2,12 +2,16 @@ package kr.co.fitzcode.common.dto;
 
 import kr.co.fitzcode.common.enums.OrderStatus;
 import kr.co.fitzcode.common.enums.ProductSize;
+import kr.co.fitzcode.common.enums.RefundStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Data
@@ -26,9 +30,10 @@ public class UserOrderDetailDTO {
     private int sizeCode;
     private String imageUrl;
     private String productName;
+    private LocalDateTime createdAt;
 
     public String getFormattedRefundStatus() {
-        return OrderStatus.fromCode(refundStatus).getDescription();
+        return RefundStatus.fromCode(refundStatus).getDescription();
     }
 
     public String getFormattedSizeCode() {
@@ -37,6 +42,16 @@ public class UserOrderDetailDTO {
 
     public String getFormattedPrice() {
         return NumberFormat.getNumberInstance(Locale.KOREA).format(price);
+    }
+
+
+
+    public String getFormattedCreatedAt() {
+        if (createdAt != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return createdAt.format(formatter);
+        }
+        return "";
     }
 
 }

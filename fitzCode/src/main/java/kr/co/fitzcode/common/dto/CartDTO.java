@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
@@ -31,4 +33,14 @@ public class CartDTO {
 
     @Schema(description = "상품 사이즈 ID")
     private int productSizeId;
+
+
+    public String getFormattedCreatedAt() {
+        if (createdAt != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return createdAt.format(formatter);
+        }
+        return "";
+    }
+
 }

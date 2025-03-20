@@ -69,8 +69,9 @@ public class CartApiController {
     @GetMapping("/getCartItems")
     public ResponseEntity<List<CartProductDTO>> getCartItems() {
         int userid = SecurityUtils.getUserId();
-        List<CartProductDTO> list =cartService.getCartInformationByUserId(userid);
-        log.info("list : {}", list);
+        List<CartProductDTO> list = cartService.getCartInformationByUserId(userid);
+        log.info("cart list : {}", list);
+
         for (CartProductDTO cartProductDTO : list) {
             cartProductDTO.setProductSizes(productService.getAllSizeOfProduct(cartProductDTO.getProductId()));
         }

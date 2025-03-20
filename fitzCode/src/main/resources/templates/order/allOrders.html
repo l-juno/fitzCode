@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.springframework.org/schema/security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="~{fragments/header :: header-head}"></th:block>
+    <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f8f8;
+        padding: 0;
+        margin-top: 140px;
+    }
+
+    .container {
+
+        width: 80%;
+        max-width: 900px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+        text-align: center;
+        color: #333;
+    }
+
+    .order-summary {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .order-summary p {
+        font-size: 16px;
+        margin: 5px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background: #333;
+        color: white;
+    }
+
+    img {
+        max-width: 80px;
+        border-radius: 5px;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    tbody tr:hover {
+        background: #eaeaea;
+        transition: 0.3s;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px; /* Space between buttons */
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center; /* Center buttons in the cell */
+        align-items: center;
+    }
+
+    .action-buttons a {
+        text-decoration: none; /* Remove underline */
+    }
+
+    .action-buttons button {
+        padding: 8px 12px;
+        font-size: 14px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .review-button {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .review-button:hover {
+        background-color: #0056b3;
+    }
+
+    .refund-button {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .refund-button:hover {
+        background-color: #a71d2a;
+    }
+
+    .refund-button.disabled {
+        background-color: #d3d3d3; /* Light gray */
+        color: #666; /* Dark gray text */
+        cursor: not-allowed;
+    }
+
+
+
+</style>
+
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+
+<div class="container">
+    <div th:each="entry : ${groupedOrders}">
+        <div th:with="orderDetails=${entry.value}, firstItem=${orderDetails[0]}">
+            <p><strong>Ordered At:</strong> <span th:text="${firstItem.formattedCreatedAt}"></span></p>
+            
+            <table border="1">
+                <thead>
+                <tr>
+                    <th>Product Image</th>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Size</th>
+                    <th>Review</th>
+                    <th>Refund</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="detail : ${orderDetails}">
+                    <td><img th:src="${detail.imageUrl}" alt="Product Image" width="100"></td>
+                    <td th:text="${detail.productName}"></td>
+                    <td th:text="${detail.quantity}"></td>
+                    <td th:text="${detail.formattedPrice}"></td>
+                    <td th:text="${detail.formattedSizeCode}"></td>
+                    <td>
+                        <div class="action-buttons">
+                            <a th:href="@{/review/new/{orderDetailId}(orderDetailId=${detail.orderDetailId})}">
+                                <button type="button" class="review-button">Write Review</button>
+                            </a>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <th:block th:if="${detail.refundStatus == 0}">
+                                <button type="button" class="refund-button"
+                                        th:data-order-detail-id="${detail.orderDetailId}"
+                                        onclick="requestRefund(this)">
+                                    Request Refund
+                                </button>
+                            </th:block>
+                            <th:block th:if="${detail.refundStatus == 1}">
+                                <button type="button" class="refund-button disabled" disabled>
+                                    Refund Requested
+                                </button>
+                            </th:block>
+                            <th:block th:if="${detail.refundStatus == 2}">
+                                <button type="button" class="refund-button disabled" disabled>
+                                    Refund Processing
+                                </button>
+                            </th:block>
+                            <th:block th:if="${detail.refundStatus == 3}">
+                                <button type="button" class="refund-button disabled" disabled>
+                                    Refund Completed
+                                </button>
+                            </th:block>
+                            <th:block th:if="${detail.refundStatus == 4}">
+                                <button type="button" class="refund-button disabled" disabled>
+                                    Refund Denied
+                                </button>
+                            </th:block>
+                        
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+
+
+<script>
+    function requestRefund(button) {
+        let orderDetailId = $(button).attr("data-order-detail-id");
+        console.log("refund requested");
+        console.log(orderDetailId);
+
+        $.ajax({
+            url: "/api/order/refund",
+            type: "POST",
+            data: { orderDetailId: orderDetailId },
+            success: function(response) {
+                alert("Refund request successful!");
+                $(button).prop("disabled", true).text("Refund Requested").addClass("disabled");
+            },
+            error: function(xhr) {
+                alert("Refund request failed: " + xhr.responseText);
+            }
+        });
+    }
+</script>
+</html>

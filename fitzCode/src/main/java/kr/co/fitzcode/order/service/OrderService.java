@@ -3,6 +3,7 @@ package kr.co.fitzcode.order.service;
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
 import kr.co.fitzcode.common.dto.PaymentDTO;
+import kr.co.fitzcode.common.dto.UserOrderDTO;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface OrderService {
 
     void addPayment(PaymentDTO paymentDTO);
 
-    OrderDTO getOrderByOrderId(int orderId);
+    UserOrderDTO getOrderByOrderId(int orderId);
 
     AddressDTO getUserAddressByAddressId(int addressId);
 }

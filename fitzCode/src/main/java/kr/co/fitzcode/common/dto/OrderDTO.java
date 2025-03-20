@@ -17,19 +17,24 @@ public class OrderDTO {
     @Schema(description = "주문번호")
     private int orderId;
 
-    @Schema(description = "주문일")
-    private LocalDateTime createdAt;
+    @Schema(description = "사용자 아이디")
+    private int userId;
+
+    private int addressId;
+
+    @Schema(description = "총 주문 금액")
+    private Integer totalPrice;
 
     @Schema(description = "주문 상태 코드")
     private int orderStatus;
 
-    private int addressId;
 
-    @Schema(description = "사용자 아이디")
-    private int userId;
+    @Schema(description = "주문일")
+    private LocalDateTime createdAt;
 
-    @Schema(description = "총 주문 금액")
-    private Integer totalPrice;
+    private LocalDateTime updatedAt;
+
+
 
     @Schema(description = "운송장 번호")
     private String trackingNumber;

@@ -7,6 +7,7 @@
     <th:block th:replace="~{fragments/header :: header-head}"></th:block>
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <style>
@@ -14,7 +15,7 @@
         font-family: Arial, sans-serif;
         background-color: #f8f8f8;
         padding: 0;
-        margin-top: 100px;
+        margin-top: 140px;
     }
 
     .container {
@@ -150,4 +151,6 @@
     }
     
 </script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

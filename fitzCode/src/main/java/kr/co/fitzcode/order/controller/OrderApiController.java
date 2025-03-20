@@ -188,4 +188,14 @@ public class OrderApiController {
             orderService.addNonDefaultAddressForUser(userId, addressDTO);
         }
     }
+
+
+
+
+    @PostMapping("/refund")
+    public ResponseEntity<String> orderRefund(@RequestParam("orderDetailId") int orderDetailId) {
+        log.info("orderDetailId::::: {}", orderDetailId);
+        userOrderDetailService.updateRequestRefundStatus(orderDetailId);
+        return ResponseEntity.ok("Order refunded successfully");
+    }
 }

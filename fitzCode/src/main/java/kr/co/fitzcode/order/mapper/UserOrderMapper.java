@@ -3,6 +3,7 @@ package kr.co.fitzcode.order.mapper;
 import kr.co.fitzcode.common.dto.AddressDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
 import kr.co.fitzcode.common.dto.PaymentDTO;
+import kr.co.fitzcode.common.dto.UserOrderDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -23,7 +24,7 @@ public interface UserOrderMapper {
 
     void addPayment(@Param("paymentDTO") PaymentDTO paymentDTO);
 
-    OrderDTO getOrderByOrderId(int orderId);
+    UserOrderDTO getOrderByOrderId(int orderId);
 
     AddressDTO getUserAddressByAddressId(int addressId);
 }

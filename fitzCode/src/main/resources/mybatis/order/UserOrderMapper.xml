@@ -12,7 +12,7 @@
     </select>
 
     <select id="getUserAddressByAddressId" parameterType="int" resultType="AddressDTO">
-        SELECT address_id, address_line1, address_line2, postal_code FROM
+        SELECT address_id, address_line1, address_line2, postal_code, is_default FROM
         ADDRESS where address_id = #{addressId}
     </select>
 
