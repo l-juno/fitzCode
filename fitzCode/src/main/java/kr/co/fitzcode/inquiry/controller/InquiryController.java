@@ -128,10 +128,10 @@ public class InquiryController {
                 .filter(file -> !file.isEmpty())
                 .collect(Collectors.toList());
         inquiryService.updateInquiryData(inquiryDTO, nonEmptyFiles);
-        return "redirect:/inquiry/inquiryL제st";
+        return "redirect:/inquiry/inquiryList";
     }
 
-    // 문의 삭
+    // 문의 삭제
     @GetMapping("/delete/{inquiryId}")
     public String delete(@PathVariable("inquiryId") int inquiryId) {
         inquiryService.deleteInquiryData(inquiryId);
