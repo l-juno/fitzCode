@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -30,22 +31,48 @@ public class MypageServiceImpl implements MypageService {
 
     // 구매내역 & 운송장 정보
     @Override
-    public List<OrderDTO> getOrderList(int userId) {
-        return mypageMapper.getOrderList(userId);
+    public List<OrderDTO> getMypageOrderList(int userId) {
+        List<OrderDTO> orderDTOList = mypageMapper.getMypageOrderList(userId);
+        for (OrderDTO orderDTO1 : orderDTOList) {
+            log.info(">>>>>>>>>>>>>> getOrderId : {} ", orderDTO1.getOrderId());
+            log.info(">>>>>>>>>>>>>> getShippedAt : {} ", orderDTO1.getShippedAt());
+            log.info(">>>>>>>>>>>>>> getOrderStatus : {} ", orderDTO1.getOrderStatus());
+            log.info(">>>>>>>>>>>>>> getTotalPrice : {} ", orderDTO1.getTotalPrice());
+            log.info(">>>>>>>>>>>>>> getTrackingNumber : {} ", orderDTO1.getTrackingNumber());
+            log.info(">>>>>>>>>>>>>> getDeliveryStatus : {} ", orderDTO1.getDeliveryStatus());
+            log.info(">>>>>>>>>>>>>> getDeliveredAt : {} ", orderDTO1.getDeliveredAt());
+            log.info(">>>>>>>>>>>>>> getFormattedTotalPrice : {} ", orderDTO1.getFormattedTotalPrice());
+        }
+        return orderDTOList;
+//        return mypageMapper.getOrderList(userId);
     }
 
     // 사용자 계좌 정보
     @Override
-    public AccountDTO getUserAccount(int userId) {
+    public List<AccountDTO> getUserAccount(int userId) {
         return mypageMapper.getUserAccount(userId);
     }
 
-    // 계좌 정보 변경
+    // 계좌 추가
     @Override
-    public void updateAccountData(AccountDTO accountDTO) {
-        mypageMapper.updateAccountData(accountDTO);
-
+    public void insertAccountData(AccountDTO accountDTO) {
+        mypageMapper.insertAccountData(accountDTO);
     }
+
+    // 계좌 삭제
+    @Override
+    public void deleteAccount(int accountId) {
+        mypageMapper.deleteAccount(accountId);
+    }
+
+    // 일반계좌 -> 기본계좌
+    @Transactional
+    @Override
+    public void toDefaultAccount(int accountId, int userId) {
+        mypageMapper.toUserAccount(userId);                   // 기본계좌 -> 일반 계좌
+        mypageMapper.toDefaultAccount(accountId);                       // 일반계좌 -> 기본 계좌
+    }
+
 
     // 사용자 쿠폰 정보
     @Override
@@ -79,4 +106,7 @@ public class MypageServiceImpl implements MypageService {
     public UserDTO verifyUser(UserDTO userDTO) {
         return mypageMapper.verifyUser(userDTO);
     }
+
+
+
 }

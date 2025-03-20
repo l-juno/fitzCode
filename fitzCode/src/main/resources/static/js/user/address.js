@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // 새 주소 추가 모달 여닫기
     const addAddressModal = document.getElementById("add-address-modalContainer");
     const insertBtn = document.getElementById("insert-btn");
-    const addAddressModalCloseButton = document.getElementById("add-address-modalCloseButton");
 
     insertBtn.addEventListener("click", (event) => {
         event.preventDefault();  // 폼 제출 방지
@@ -74,6 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("saveBtn").addEventListener("click", () => {
         let addressLine2 = document.getElementById("input-detailAddress").value;
         let data = {};
+        console.log(postalCode);
+        console.log(addressLine1);
+        console.log(addressLine2);
 
         if (!check) {
             data = {
@@ -84,12 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
             };
         } else {
             data = {
-                defaultAddressLine1: addressLine1,
-                defaultAddressLine2: addressLine2,
-                defaultPostalCode: postalCode,
+                addressLine1: addressLine1,
+                addressLine2: addressLine2,
+                postalCode: postalCode,
                 isDefault: true
             };
         }
+
 
         fetch("http://localhost:8080/mypage/insertAddress", {
             method: "POST",

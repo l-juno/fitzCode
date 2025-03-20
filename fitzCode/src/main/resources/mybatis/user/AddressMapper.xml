@@ -3,21 +3,9 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.fitzcode.user.mapper.AddressMapper">
-    <resultMap id="AddressMap" type="AddressDTO">
-        <result property="userId" column="user_id"/>
-        <result property="addressId" column="address_id"/>
-        <result property="addressLine1" column="address_line1"/>
-        <result property="addressLine2" column="address_line2"/>
-        <result property="postalCode" column="postal_code"/>
-        <result property="isDefault" column="is_default"/>
-        <result property="defaultAddressLine1" column="default_address_line1"/>
-        <result property="defaultAddressLine2" column="default_address_line2"/>
-        <result property="defaultPostalCode" column="default_postal_code"/>
-
-    </resultMap>
 
     <!-- 사용자 주소록 가져오기 -->
-    <select id="getUserAddress" parameterType="int" resultMap="AddressMap">
+    <select id="getUserAddress" parameterType="int" resultType="AddressDTO">
         SELECT
         user_id,
         address_id,
@@ -43,7 +31,7 @@
         VALUES (#{userId},
         <choose>
             <when test="addressDTO.isDefault == true">
-                #{addressDTO.defaultAddressLine1}, #{addressDTO.defaultAddressLine2}, #{addressDTO.defaultPostalCode}, true);
+                #{addressDTO.addressLine1}, #{addressDTO.addressLine2}, #{addressDTO.postalCode}, true);
             </when>
             <otherwise>
                 #{addressDTO.addressLine1}, #{addressDTO.addressLine2}, #{addressDTO.postalCode}, false);

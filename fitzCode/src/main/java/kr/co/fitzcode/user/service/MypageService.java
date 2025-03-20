@@ -12,13 +12,10 @@ public interface MypageService {
     // 사용자 정보
     UserDTO getMyInfo(int userId);
     // 구매내역 & 운송장 정보
-    List<OrderDTO> getOrderList(int userId);
+    List<OrderDTO> getMypageOrderList(int userId);
 
     // 사용자 계좌 정보
-    AccountDTO getUserAccount(int userId);
-
-    // 계좌 정보 변경(수정)
-    void updateAccountData(AccountDTO accountDTO);
+    List<AccountDTO> getUserAccount(int userId);
 
     // 사용자 쿠폰 정보
     List<CouponDTO> getUserCoupon(int userId);
@@ -31,4 +28,13 @@ public interface MypageService {
 
     // 회원 인증
     UserDTO verifyUser(UserDTO userDTO);
+
+    // 계좌 추가
+    void insertAccountData(AccountDTO accountDTO);
+
+    // 계좌 삭제
+    void deleteAccount(int accountId);
+
+    // 일반계좌 -> 기본계좌
+    void toDefaultAccount(int accountId, int userId);
 }

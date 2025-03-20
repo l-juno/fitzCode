@@ -237,7 +237,6 @@ input[type="text"]:focus {
     background: #2f2f32;
 }
 #deleteBtn{
-    margin-left: 750px;
     border: 0px;
     background: inherit;
     cursor: pointer;

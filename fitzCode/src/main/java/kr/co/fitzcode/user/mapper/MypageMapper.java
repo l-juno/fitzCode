@@ -15,16 +15,14 @@ public interface MypageMapper {
     UserDTO getMyInfo(@Param("userId") int userId);
 
     // 구매내역 & 운송장 정보
-    List<OrderDTO> getOrderList(@Param("userId") int userId);
+    List<OrderDTO> getMypageOrderList(@Param("userId") int userId);
 
     // 사용자 계좌 정보
-    AccountDTO getUserAccount(@Param("userId") int userId);
+    List<AccountDTO> getUserAccount(@Param("userId") int userId);
 
     // 사용자 쿠폰 정보
     List<CouponDTO> getUserCoupon(@Param("userId") int userId);
 
-    // 사용자 계좌 정보 변경(수정)
-    void updateAccountData(@Param("AccountDTO") AccountDTO accountDTO);
 
     // 회원정보 업데이트
     void updateUserInfo(@Param("userDTO") UserDTO userDTO);
@@ -37,4 +35,16 @@ public interface MypageMapper {
 
     // 사용자 인증
     UserDTO verifyUser(@Param("userDTO") UserDTO userDTO);
+
+    // 계좌 추가
+    void insertAccountData(@Param("accountDTO") AccountDTO accountDTO);
+
+    // 계좌 삭제
+    void deleteAccount(@Param("accountId") int accountId);
+
+    // 기본 계좌 -> 일반 계좌
+    void toUserAccount(@Param("userId") int userId);
+
+    // 일반계좌 -> 기본계좌
+    void toDefaultAccount(@Param("accountId") int accountId);
 }

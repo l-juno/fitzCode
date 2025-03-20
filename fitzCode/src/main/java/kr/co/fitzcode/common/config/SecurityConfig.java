@@ -99,8 +99,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/admin/notice/subscribe",
                                     "/search",
                                     "/search/result",
-                                    "/mypage/**",
-                                    "/inquiry/**"
+                                    "/mypage/insertAccount",
+                                    "/mypage/insertAddress",
+                                    "/inquiry/searchProduct",
+                                    "/inquiry/searchOrderList",
+                                    "/inquiry/selectedProduct"
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")

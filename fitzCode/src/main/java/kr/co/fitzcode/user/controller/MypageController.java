@@ -1,15 +1,10 @@
 package kr.co.fitzcode.user.controller;
 
-import kr.co.fitzcode.common.dto.AccountDTO;
-import kr.co.fitzcode.common.dto.CouponDTO;
-import kr.co.fitzcode.common.dto.OrderDTO;
-import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.user.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -28,14 +23,13 @@ public class MypageController {
     // 내 프로필
     @GetMapping("/myInfo")
     public String mypage(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
-            return "redirect:/login";
-        }
 
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
-        List<OrderDTO> orderDTO = mypageService.getOrderList(userId);
+        List<OrderDTO> orderDTO = mypageService.getMypageOrderList(userId);
+
+        // 권한가져오기
+
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("orderDTO", orderDTO);
         return "user/mypage/myInfo";
@@ -44,6 +38,7 @@ public class MypageController {
     // 프로필 수정 폼으로 이동
     @GetMapping("/updateProfile")
     public String updateProfile(Model model) {
+
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
         model.addAttribute("dto", userDTO);
@@ -62,16 +57,45 @@ public class MypageController {
     @GetMapping("/account")
     public String account(Model model) {
         int userId = securityUtils.getUserId();
-        AccountDTO accountDTO = mypageService.getUserAccount(userId);
-        model.addAttribute("dto", accountDTO);
+        List<AccountDTO> accountDTO = mypageService.getUserAccount(userId);
+        if (accountDTO.isEmpty()) { // 처음 등록하면 계좌 등록 페이지로 이동
+            model.addAttribute("userId", userId);
+            return "user/mypage/insertAccount";
+        } else {
+            AccountDTO defaultAccount = accountDTO.stream().filter(AccountDTO::isDefault).findFirst().orElse(null);
+            AccountDTO userAccount = accountDTO.stream().filter(account -> !account.isDefault()).findFirst().orElse(null);
+            model.addAttribute("default", defaultAccount);
+            model.addAttribute("account", userAccount);
+        }
         return "user/mypage/account";
     }
 
-    // 수정된 계좌 정보 저장
-    @PostMapping("/updateAccount")
-    public String updateAccount(@ModelAttribute AccountDTO accountDTO) {
-//        log.info("?>>>>>>> accountDTO : {}", accountDTO.getAccountId());
-        mypageService.updateAccountData(accountDTO);
+    // 계좌 초기등록
+    @PostMapping("/insertDefaultAccount")
+    public String insertDefaultAccount(@ModelAttribute AccountDTO accountDTO) {
+        mypageService.insertAccountData(accountDTO);
+        return "redirect:/mypage/account";
+    }
+
+    // 계좌 추가
+    @PostMapping("/insertAccount")
+    public String insertAccount(@RequestBody AccountDTO accountDTO) {
+        mypageService.insertAccountData(accountDTO);
+        return "redirect:/mypage/account";
+    }
+
+    // 계좌 삭제
+    @GetMapping("/deleteAccount/{accountId}")
+    public String deleteAccount(@PathVariable("accountId") int accountId) {
+        mypageService.deleteAccount(accountId);
+        return "redirect:/mypage/account";
+    }
+
+    // 일반계좌 -> 기본계좌
+    @GetMapping("/toDefaultAccount{accountId}")
+    public String toDefaultAccount(@PathVariable("accountId") int accountId) {
+        int userId = securityUtils.getUserId();
+        mypageService.toDefaultAccount(accountId, userId);
         return "redirect:/mypage/account";
     }
 
@@ -80,15 +104,13 @@ public class MypageController {
     public String verifyIdentity(Model model) {
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
-        if (userDTO.getPassword() != null){
-            model.addAttribute("dto", userDTO);
-        }
+        model.addAttribute("dto", userDTO);
         return "user/mypage/verifyIdentity";
     }
 
     // 회원정보 수정 전 인증확인 -> 회원정보 수정 폼으로 이동
-    @PostMapping("/verifyIdentity")
-    public String verifyIdentity(@ModelAttribute UserDTO userDTO, Model model) {
+    @PostMapping("/verifyUser")
+    public String verifyUser(@ModelAttribute UserDTO userDTO, Model model) {
         UserDTO dto = mypageService.verifyUser(userDTO);
         model.addAttribute("dto", dto);
         return "user/mypage/updateInfo";

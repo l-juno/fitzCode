@@ -52,10 +52,10 @@
                                 <th></th>
                             </tr>
                             <tr th:each="dto : ${orderDTO}">
-                                <td th:text="${dto.orderId}"></td>
-                                <td th:text="${dto.formattedTotalPrice}"></td>
-                                <td th:text="${dto.getStatus().description}"></td>
-                                <th:block th:if="${dto.trackingNumber != null}">
+                                <td th:text="${dto.orderId}"></td> <!-- 주문 번호 -->
+<!--                                <td th:text="${dto.formattedTotalPrice}"></td> &lt;!&ndash; 총 금액 &ndash;&gt;-->
+                                <td th:text="${dto.getStatus().description}"></td> <!-- 배송 상태 -->
+                                <th:block th:if="${dto.trackingNumber != null}"> <!-- 운송장 번호 -->
                                     <td style="padding: 0px">
                                         <button class="searchTracking">배송조회</button>
                                         <input type="hidden" id="trackingNumber" th:value="${dto.trackingNumber}">
