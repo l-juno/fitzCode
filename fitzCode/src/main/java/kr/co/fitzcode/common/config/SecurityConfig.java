@@ -70,6 +70,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/product/list/**",             // 상품 목록
                                     "/product/detail/**",           // 상품 상세
                                     "/api/product/**",              // 상품 API
+                                    "/api/reviews",                 // 리뷰 조회 API (GET 요청 허용)
                                     "/login/**",                    // 로그인 관련
                                     "/logout",                      // 로그아웃
                                     "/joinForm",                    // 회원가입 폼
@@ -159,17 +160,17 @@ public class SecurityConfig implements WebMvcConfigurer {
                                         requestUri.startsWith("/css/") || requestUri.startsWith("/js/") ||
                                         requestUri.startsWith("/img/") ||
                                         requestUri.startsWith("/product/list/") || requestUri.startsWith("/product/detail/") ||
-                                        requestUri.startsWith("/api/product/") || requestUri.equals("/joinForm") ||
-                                        requestUri.equals("/joinSuccess") || requestUri.equals("/pwEmail") ||
-                                        requestUri.equals("/findEmail") || requestUri.equals("/findEmailSuccess") ||
-                                        requestUri.equals("/resetPw") || requestUri.equals("/resetPwSuccess") ||
-                                        requestUri.equals("/inquiry/searchProduct") || requestUri.equals("/inquiry/searchOrderList") ||
-                                        requestUri.equals("/inquiry/selectedProduct") || requestUri.equals("/admin/notice/subscribe") ||
-                                        requestUri.equals("/api/notifications") || requestUri.equals("/products") ||
-                                        requestUri.equals("/styles") || requestUri.equals("/notice") ||
-                                        requestUri.startsWith("/api/cart/") || requestUri.equals("/search") ||
-                                        requestUri.equals("/search/result") || requestUri.equals("/api/pick-products") ||
-                                        requestUri.equals("/api/discount-products")) {
+                                        requestUri.startsWith("/api/product/") || requestUri.startsWith("/api/reviews") ||
+                                        requestUri.equals("/joinForm") || requestUri.equals("/joinSuccess") ||
+                                        requestUri.equals("/pwEmail") || requestUri.equals("/findEmail") ||
+                                        requestUri.equals("/findEmailSuccess") || requestUri.equals("/resetPw") ||
+                                        requestUri.equals("/resetPwSuccess") || requestUri.equals("/inquiry/searchProduct") ||
+                                        requestUri.equals("/inquiry/searchOrderList") || requestUri.equals("/inquiry/selectedProduct") ||
+                                        requestUri.equals("/admin/notice/subscribe") || requestUri.equals("/api/notifications") ||
+                                        requestUri.equals("/products") || requestUri.equals("/styles") ||
+                                        requestUri.equals("/notice") || requestUri.startsWith("/api/cart/") ||
+                                        requestUri.equals("/search") || requestUri.equals("/search/result") ||
+                                        requestUri.equals("/api/pick-products") || requestUri.equals("/api/discount-products")) {
                                     return;
                                 }
                                 response.sendRedirect("/login");
