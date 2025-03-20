@@ -12,6 +12,7 @@
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
+<body>
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="container">
@@ -97,7 +98,7 @@
             <div class="choose-size">
                 <div class="size-option-container">
                     <select id="size-options">
-                        <option value="">SIZE 선택</option>
+                        <option value="">사이즈 선택</option>
                     </select>
                 </div>
             </div>
@@ -118,7 +119,7 @@
                 <div class="review-tabs">
                     <button class="tab-button active" data-tab="view">상품후기 보기</button>
                     <button class="tab-button" data-tab="write">상품후기 쓰기</button>
-                    <button class="tab-button" data-tab="my-reviews">내가 작성한 리뷰</button>
+                    <button class="tab-button" data-tab="my-reviews">내가 쓴 리뷰 보기</button>
                     <div class="review-filter">
                         <select id="review-filter">
                             <option value="all">모두 보기</option>
@@ -226,6 +227,19 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
+
+<!-- check if user exists -->
+<script th:if="${#authentication.principal == 'anonymousUser'}">
+    var isAuthenticated = false;
+</script>
+<script th:unless="${#authentication.principal == 'anonymousUser'}">
+    var isAuthenticated = true;
+</script>
+
+<script th:src="@{/js/product/productDetail.js}"></script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
+</body>
 
 <!-- check if user exists -->
 <script th:if="${#authentication.principal == 'anonymousUser'}">
@@ -653,7 +667,7 @@
 
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
-        defaultOption.textContent = "SIZE 선택";
+        defaultOption.textContent = "사이즈 선택";
         newSelect.appendChild(defaultOption);
 
         sizes.forEach(size => {
@@ -906,7 +920,7 @@
             });
         }
 
-        // 페이지네이션
+        // 페이지네이션 렌더링
         renderPagination(tabId);
     }
 
@@ -943,6 +957,14 @@
 
     // 페이지네이션
     function renderPagination(tabId) {
+        const reviewList = tabId === 'view' ? document.getElementById('review-list') : document.getElementById('my-review-list');
+
+        // 기존 페이지네이션 제거
+        const existingPagination = reviewList.parentElement.querySelector('.pagination');
+        if (existingPagination) {
+            existingPagination.remove();
+        }
+
         const paginationContainer = document.createElement('div');
         paginationContainer.classList.add('pagination');
 
@@ -1002,7 +1024,6 @@
         });
         paginationContainer.appendChild(nextButton);
 
-        const reviewList = tabId === 'view' ? document.getElementById('review-list') : document.getElementById('my-review-list');
         reviewList.insertAdjacentElement('afterend', paginationContainer);
     }
 
