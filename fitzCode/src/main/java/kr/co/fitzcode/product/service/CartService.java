@@ -11,5 +11,6 @@ public interface CartService {
 
     List<CartProductDTO> getCartInformationByUserId(int userId);
 
+    int getCartCount(int userId);
 
 }

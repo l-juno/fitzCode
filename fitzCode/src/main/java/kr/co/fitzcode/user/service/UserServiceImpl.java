@@ -101,4 +101,13 @@ public class UserServiceImpl implements UserService {
     public String findEmailByNameAndPhoneNumber(String userName, String phoneNumber) {
         return userMapper.findEmailByNameAndPhoneNumber(userName, phoneNumber);
     }
+
+    @Override
+    public UserDTO authenticate(String email, String password) {
+        UserDTO user = userMapper.findByEmail(email);
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return user;
+        }
+        return null;
+    }
 }

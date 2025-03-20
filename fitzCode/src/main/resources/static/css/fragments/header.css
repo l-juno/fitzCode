@@ -28,7 +28,8 @@
 }
 
 .header-logo img {
-    height: 40px;
+    width: 173px !important;
+    height: 32px !important;
     object-fit: contain;
 }
 

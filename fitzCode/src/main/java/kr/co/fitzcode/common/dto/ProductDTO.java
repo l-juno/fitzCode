@@ -60,6 +60,9 @@ public class ProductDTO {
     @Schema(description = "주문 ID")
     private Integer orderId;
 
+    @Schema(description = "할인율 (%)")
+    private String discountPercentage;
+
     public String getFormattedPrice() {
         DecimalFormat df = new DecimalFormat("#,###");
         return df.format(price);
@@ -69,7 +72,7 @@ public class ProductDTO {
         if (this.discountedPrice != null && this.discountedPrice instanceof Number) {
             return new DecimalFormat("#,###").format(this.discountedPrice);
         }
-        return "N/A"; // or handle this case differently
+        return "N/A";
     }
 
     public String getFormattedDiscountPercentage() {
@@ -87,5 +90,16 @@ public class ProductDTO {
             return sdf.format(createdAt);
         }
         return "";
+    }
+
+    // 할인율 계산 및 discountPercentage 설정
+    public void calculateDiscountPercentage() {
+        if (price != null && discountedPrice != null && price > 0) {
+            double discount = ((double)(price - discountedPrice) / price) * 100;
+            DecimalFormat df = new DecimalFormat("#");
+            this.discountPercentage = df.format(discount);
+        } else {
+            this.discountPercentage = "0";
+        }
     }
 }

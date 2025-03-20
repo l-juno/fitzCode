@@ -4,8 +4,7 @@ import kr.co.fitzcode.admin.mapper.DashboardMapper;
 import kr.co.fitzcode.common.dto.VisitorDTO;
 import kr.co.fitzcode.common.enums.InquiryStatus;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,13 +13,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DashboardServiceImpl implements DashboardService {
 
-    private static final Logger log = LoggerFactory.getLogger(DashboardServiceImpl.class);
     private final DashboardMapper dashboardMapper;
+    private static final Map<String, Long> activeSessions = new ConcurrentHashMap<>(); // 메모리 내 세션 저장
 
     // 1대1 문의 현황
     @Override
@@ -125,10 +126,22 @@ public class DashboardServiceImpl implements DashboardService {
         return sales != null ? sales : 0;
     }
 
-    // 현재 접속자 수 (임시 기본값 0으로 유지)
+    // 현재 접속자 수 (메모리 세션으로)
     @Override
     public int getCurrentVisitors() {
-        return 0; // 기본값 0 나중에 WebSocket으로 수정
+        long threshold = System.currentTimeMillis() - (5 * 60 * 1000); // 5분 이내 활동
+        int activeCount = (int) activeSessions.entrySet().stream()
+                .filter(entry -> entry.getValue() > threshold)
+                .count();
+        log.debug("현재 접속자 수: {}", activeCount);
+        return activeCount;
+    }
+
+    // 세션 갱신하는 메서드 -> 현재 접속자수
+    @Override
+    public void updateUserActivity(String sessionId) {
+        activeSessions.put(sessionId, System.currentTimeMillis());
+        log.debug("세션 활동 갱신: sessionId={}", sessionId);
     }
 
     // 24시간 동안의 취소/반품 요청 수

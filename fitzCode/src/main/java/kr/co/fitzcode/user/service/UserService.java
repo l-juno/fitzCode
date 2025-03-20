@@ -19,4 +19,6 @@ public interface UserService {
     UserDTO findBykakaoId(String kakaoId);
     void updateUserNaver(UserDTO user);
     String findEmailByNameAndPhoneNumber(String userName, String phoneNumber);
+
+    UserDTO authenticate(String email, String password);
 }
