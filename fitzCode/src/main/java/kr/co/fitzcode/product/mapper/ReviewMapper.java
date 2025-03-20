@@ -15,4 +15,8 @@ public interface ReviewMapper {
     ReviewDTO findById(@Param("id") Long id);
     void insertReview(ReviewDTO reviewDTO);
     void insertReviewImage(@Param("reviewId") Long reviewId, @Param("imageUrl") String imageUrl);
+    int countReviewsByUserAndProduct(@Param("userId") Long userId, @Param("productId") Long productId);
+    List<ReviewDTO> findByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
+    void deleteReview(@Param("reviewId") Long reviewId);
+    void deleteReviewImages(@Param("reviewId") Long reviewId);
 }

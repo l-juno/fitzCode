@@ -69,4 +69,31 @@
         INSERT INTO REVIEW_IMAGE (review_id, image_url, uploaded_at)
         VALUES (#{reviewId}, #{imageUrl}, NOW())
     </insert>
+
+    <select id="countReviewsByUserAndProduct" resultType="int">
+        SELECT COUNT(*)
+        FROM REVIEW
+        WHERE user_id = #{userId}
+        AND product_id = #{productId}
+    </select>
+
+    <select id="findByUserIdAndProductId" resultMap="ReviewDTOMap">
+        SELECT r.review_id, r.product_id, r.user_id, u.user_name, r.rating, r.content, r.created_at, r.updated_at, ri.image_url
+        FROM REVIEW r
+        JOIN USER u ON r.user_id = u.user_id
+        LEFT JOIN REVIEW_IMAGE ri ON r.review_id = ri.review_id
+        WHERE r.user_id = #{userId}
+        AND r.product_id = #{productId}
+    </select>
+
+    <delete id="deleteReviewImages">
+        DELETE FROM REVIEW_IMAGE
+        WHERE review_id = #{reviewId}
+    </delete>
+
+    <delete id="deleteReview">
+        DELETE FROM REVIEW
+        WHERE review_id = #{reviewId}
+    </delete>
+
 </mapper>

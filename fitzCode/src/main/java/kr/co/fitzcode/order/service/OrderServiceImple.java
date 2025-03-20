@@ -18,7 +18,6 @@ public class OrderServiceImple implements OrderService {
 
     private final UserOrderMapper userOrderMapper;
 
-
     @Override
     public List<AddressDTO> getUserAddress(int userId) {
         return userOrderMapper.getUserAddressByUserId(userId);
@@ -58,5 +57,11 @@ public class OrderServiceImple implements OrderService {
     @Override
     public AddressDTO getUserAddressByAddressId(int addressId) {
         return userOrderMapper.getUserAddressByAddressId(addressId);
+    }
+
+    @Override
+    public boolean hasPurchasedProduct(int userId, Long productId) {
+        int count = userOrderMapper.countOrdersByUserAndProduct(userId, productId);
+        return count > 0;
     }
 }

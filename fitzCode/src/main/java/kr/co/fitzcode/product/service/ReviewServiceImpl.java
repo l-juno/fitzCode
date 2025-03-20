@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.text.SimpleDateFormat;
@@ -95,5 +96,68 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         return savedReview;
+    }
+
+    @Override
+    public boolean hasUserReviewedProduct(Long userId, Long productId) {
+        int count = reviewMapper.countReviewsByUserAndProduct(userId, productId);
+        return count > 0;
+    }
+
+    @Override
+    public List<ReviewDTO> getUserReviews(Long userId, Long productId) {
+        List<ReviewDTO> reviews = reviewMapper.findByUserIdAndProductId(userId, productId);
+        // 날짜 포맷팅
+        SimpleDateFormat formatter = new SimpleDateFormat("yy.MM.dd");
+        reviews.forEach(review -> {
+            if (review.getCreatedAt() != null) {
+                review.setCreatedAtStr(formatter.format(review.getCreatedAt()));
+            }
+        });
+        return reviews;
+    }
+
+    @Override
+    public ReviewDTO getReviewById(Long reviewId) {
+        return reviewMapper.findById(reviewId);
+    }
+
+    @Override
+    public void deleteReview(Long reviewId) {
+        // 리뷰와 관련된 이미지 URL 조회
+        ReviewDTO review = reviewMapper.findById(reviewId);
+        if (review != null && review.getImageUrls() != null && !review.getImageUrls().isEmpty()) {
+            for (String imageUrl : review.getImageUrls()) {
+                try {
+                    // S3에서 이미지 삭제
+                    String key = extractS3KeyFromUrl(imageUrl);
+                    DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(key)
+                            .build();
+                    s3Client.deleteObject(deleteObjectRequest);
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to delete image from S3: " + imageUrl, e);
+                }
+            }
+        }
+
+        // 리뷰 이미지 삭제
+        reviewMapper.deleteReviewImages(reviewId);
+        // 리뷰 삭제
+        reviewMapper.deleteReview(reviewId);
+    }
+
+    // S3 URL에서 키 추출
+    private String extractS3KeyFromUrl(String imageUrl) {
+        String[] parts = imageUrl.split("/");
+        StringBuilder key = new StringBuilder();
+        for (int i = 3; i < parts.length; i++) { // 버킷 이름과 지역 정보 다음꺼
+            if (i > 3) {
+                key.append("/");
+            }
+            key.append(parts[i]);
+        }
+        return key.toString();
     }
 }

@@ -23,4 +23,7 @@ public interface OrderService {
     UserOrderDTO getOrderByOrderId(int orderId);
 
     AddressDTO getUserAddressByAddressId(int addressId);
+
+    // 사용자가 특정 제품을 구매했는지 확인
+    boolean hasPurchasedProduct(int userId, Long productId);
 }

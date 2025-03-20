@@ -373,6 +373,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    position: relative;
 }
 
 .review-author {
@@ -525,7 +526,8 @@
     border-radius: 5px;
 }
 
-#review-loading {
+#review-loading,
+#my-review-loading {
     text-align: center;
     font-size: 14px;
     color: #666;
@@ -561,6 +563,23 @@
 .pagination-button.active {
     color: #2f2f2f;
     font-weight: bold;
+}
+
+/* 리뷰 삭제 버튼 스타일 */
+.delete-review-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #888;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.delete-review-btn:hover {
+    color: #ff0000;
 }
 
 @media screen and (max-width: 768px) {
