@@ -42,7 +42,7 @@
     </div>
 
     <div class="product-detail-container">
-        <!-- 왼쪽: 상품 이미지 -->
+        <!-- 상품 이미지 -->
         <div class="product-image-section">
             <div class="product-image">
                 <img th:src="${product.imageUrl}" th:alt="${product.productName}">
@@ -55,7 +55,6 @@
             <button class="prev-btn"><</button>
         </div>
 
-        <!-- 가운데 구분선 -->
         <div class="divider"></div>
 
         <!-- 오른쪽: 상품 정보 -->
@@ -78,19 +77,19 @@
             <dl class="product-details">
                 <div class="detail">
                     <div class="text">모델번호</div>
-                    <span th:text="${product.productId}">12345</span>
+                    <span th:text="${product.productId}"></span>
                 </div>
                 <div class="detail">
                     <div class="text">출시일</div>
-                    <span th:text="${product.formattedCreatedAt}">2025-03-01</span>
+                    <span th:text="${product.formattedCreatedAt}"></span>
                 </div>
                 <div class="detail">
                     <div class="text">발매가</div>
-                    <span th:text="${product.formattedPrice}">250,000원</span>
+                    <span th:text="${product.formattedPrice}"></span>
                 </div>
                 <div class="detail">
                     <div class="text">재고</div>
-                    <span th:text="${product.stock}">0</span>
+                    <span th:text="${product.stock}"></span>
                 </div>
             </dl>
 
@@ -111,6 +110,24 @@
                 <div class="buy-button">
                     <div class="buy-text">구매</div>
                 </div>
+            </div>
+
+            <!-- 사이즈 정보 섹션 -->
+            <div class="size-info-section">
+                <h2 class="size-info-title">사이즈 정보</h2>
+                <div class="size-tabs">
+                    <button class="size-tab-button active" data-tab="clothing">의류</button>
+                    <button class="size-tab-button" data-tab="shoes">신발</button>
+                </div>
+                <div class="size-table-container">
+                    <div class="size-tab-content active" id="size-clothing">
+                        <!-- 의류 사이즈 표는 AJAX -->
+                    </div>
+                    <div class="size-tab-content" id="size-shoes">
+                        <!-- 신발 사이즈 표는 AJAX -->
+                    </div>
+                </div>
+                <p class="size-info-note">- 인터내셔널 사이즈 표입니다. 참고하시기 바랍니다.</p>
             </div>
 
             <!-- 상품후기 섹션 -->
@@ -134,7 +151,7 @@
                     <div id="review-view" class="tab-content active">
                         <div id="review-loading" style="display: none;">로딩 중...</div>
                         <div id="review-list">
-                            <!-- 상품후기는 AJAX로 동적 로딩 -->
+                            <!-- 상품후기는 AJAX로 -->
                         </div>
                     </div>
                     <!-- 상품후기 쓰기 탭 -->
@@ -171,7 +188,7 @@
                     <div id="review-my-reviews" class="tab-content">
                         <div id="my-review-loading" style="display: none;">로딩 중...</div>
                         <div id="my-review-list">
-                            <!-- 사용자가 작성한 상품후기는 AJAX로 동적 로딩 -->
+                            <!-- 사용자가 작성한 상품후기는 AJAX -->
                         </div>
                     </div>
                 </div>
@@ -228,13 +245,6 @@
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
-<!-- check if user exists -->
-<script th:if="${#authentication.principal == 'anonymousUser'}">
-    var isAuthenticated = false;
-</script>
-<script th:unless="${#authentication.principal == 'anonymousUser'}">
-    var isAuthenticated = true;
-</script>
 </body>
 
 <!-- check if user exists -->
@@ -245,11 +255,13 @@
     var isAuthenticated = true;
 </script>
 
-<script th:src="@{/js/product/productDetail.js}"></script>
-<script th:src="@{/js/admin/notifications.js}"></script>
-<script th:src="@{/js/admin/headerNotification.js}"></script>
-
 <script>
+    // 사용자 인증 여부 확인
+    var isAuthenticated = false;
+    if ("${#authentication.principal}" !== "anonymousUser") {
+        isAuthenticated = true;
+    }
+
     const productId = [[${product?.productId ?: 0}]];
     const retailPrice = [[${product?.discountedPrice ?: 0}]];
     let finalPrice = [[${product?.discountedPrice ?: 0}]];
@@ -266,6 +278,9 @@
     let currentPage = 1; // 현재 페이지
     let totalReviews = 0; // 전체 상품후기 수
     let allReviews = []; // 모든 상품후기 데이터를 저장
+
+    // 사이즈 정보를 저장할 변수
+    let productSizes = [];
 
     // productId가 유효한지 확인
     if (!productId || productId === 0) {
@@ -286,9 +301,9 @@
                 stickyBar.style.display = "none";
             }
         });
-        fetchAvailableSizes();
+        fetchAvailableSizes(); // 사이즈 정보 로드
         setupReviewTabs();
-        loadReviews(); // 초기 상품후기 로드
+        loadReviews(); // 페이지 로드 시 리뷰를 바로 로드
     });
 
     function displayModal() {
@@ -345,8 +360,8 @@
         const selectedOption = sizeSelect ? sizeSelect.selectedOptions[0] : null;
 
         if (!selectedOption || !selectedOption.value) {
-            console.log("Please select a size before adding to cart");
-            alert("Please select a size before adding to cart");
+            console.log("사이즈를 먼저 선택해주세요");
+            alert("사이즈를 먼저 선택해주세요");
             return;
         }
 
@@ -354,7 +369,7 @@
         const selectedStock = selectedOption.dataset.stock;
         if (selectedStock <= 0) {
             console.log("No product of this size is available");
-            alert("No product of this size is available");
+            alert("해당 사이즈의 재고가 없습니다.");
             return;
         }
         if (command === 1) {
@@ -647,11 +662,14 @@
             success: function (data) {
                 console.log("success");
                 console.log(data);
+                productSizes = data; // 사이즈 정보를 전역 변수에 저장
                 updateSizeOptions(data);
+                setupSizeTabs(); // 사이즈 정보를 받아온 후 탭 설정
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching products:", error);
                 isLoading = false;
+                setupSizeTabs(); // 에러 발생 시에도 탭 설정 진행 (기본 탭으로 설정됨)
             }
         });
     }
@@ -668,9 +686,9 @@
 
         sizes.forEach(size => {
             const option = document.createElement("option");
-            option.value = size.sizeCode; // Store sizeCode as the value
+            option.value = size.sizeCode;
             option.textContent = `SIZE: ${size.sizeName} - 재고: ${size.stock}`;
-            option.dataset.stock = size.stock; // Store stock as a data attribute
+            option.dataset.stock = size.stock;
             newSelect.appendChild(option);
         });
 
@@ -699,18 +717,18 @@
         updateImagePosition();
     });
 
-    // 결제하기 버튼 이벤트 리스너 추가
+    // 결제하기 버튼
     document.getElementById("paymentBtn").addEventListener("click", () => {
         closeModal();
         loadPortOne();
     });
 
-    // 변경 버튼 이벤트 리스너 추가
+    // 변경 버튼
     document.getElementById("changeAddressBtn").addEventListener("click", () => {
         changeAddress();
     });
 
-    // 닫기 버튼 이벤트 리스너 추가
+    // 닫기 버튼
     document.querySelector(".close").addEventListener("click", () => {
         closeModal();
     });
@@ -724,7 +742,7 @@
             button.addEventListener('click', () => {
                 const tabId = button.getAttribute('data-tab');
 
-                // 로그인 여부 확인 (write와 my-reviews 탭에서 필요)
+                // 로그인 여부 확인
                 if ((tabId === 'write' || tabId === 'my-reviews') && !isAuthenticated) {
                     window.location.href = '/login';
                     return;
@@ -747,7 +765,7 @@
             });
         });
 
-        // 상품후기 필터링 드롭다운 이벤트
+        // 상품후기 필터링 드롭다운
         const filterSelect = document.getElementById('review-filter');
         filterSelect.addEventListener('change', () => {
             loadReviews(filterSelect.value);
@@ -763,7 +781,7 @@
         // 이미지 미리보기 이벤트
         document.getElementById('review-image').addEventListener('change', function (event) {
             const preview = document.getElementById('image-preview');
-            preview.innerHTML = ''; // 이전 미리보기 제거
+            preview.innerHTML = '';
 
             const file = event.target.files[0];
             if (file) {
@@ -776,6 +794,12 @@
                 reader.readAsDataURL(file);
             }
         });
+
+        // 페이지 로드 시 "상품후기 보기" 탭이 활성화된 상태로 리뷰 로드
+        const defaultTab = document.querySelector('.tab-button[data-tab="view"]');
+        defaultTab.classList.add('active');
+        document.getElementById('review-view').classList.add('active');
+        loadReviews(); // 페이지 로드 시 리뷰를 바로 로드
     }
 
     // 상품후기 로드
@@ -864,49 +888,49 @@
             const reviewElement = document.createElement('div');
             reviewElement.classList.add('review');
 
-            // 이름, 작성일, 별점, 삭제 버튼 (my-reviews 탭에서만 표시)
+            // 이름, 작성일, 별점, 삭제 버튼
             let reviewHTML = `
-        <div class="review-meta">
-            <span class="review-author">${review.userName}</span>
-            <span class="review-date">${review.createdAtStr}</span>
-        `;
+    <div class="review-meta">
+        <span class="review-author">${review.userName}</span>
+        <span class="review-date">${review.createdAtStr}</span>
+    `;
             if (tabId === 'my-reviews') {
                 reviewHTML += `
-            <button class="delete-review-btn" data-review-id="${review.reviewId}" title="리뷰 삭제">×</button>
-            `;
+        <button class="delete-review-btn" data-review-id="${review.reviewId}" title="리뷰 삭제">×</button>
+        `;
             }
             reviewHTML += `
-            <div class="review-rating">
-        `;
+        <div class="review-rating">
+    `;
 
             // 별점
             for (let i = 5; i >= 1; i--) {
                 reviewHTML += `
-            <input type="radio" id="star${i}-${review.reviewId}" name="rate-${review.reviewId}" value="${i}" ${i === review.rating ? 'checked' : ''} disabled />
-            <label for="star${i}-${review.reviewId}" title="${i} stars" class="${i <= review.rating ? 'filled' : ''}"></label>
-        `;
+        <input type="radio" id="star${i}-${review.reviewId}" name="rate-${review.reviewId}" value="${i}" ${i === review.rating ? 'checked' : ''} disabled />
+        <label for="star${i}-${review.reviewId}" title="${i} stars" class="${i <= review.rating ? 'filled' : ''}"></label>
+    `;
             }
             reviewHTML += '</div></div>';
 
             // 이미지가 있으면 이미지 표시
             if (review.imageUrls && review.imageUrls.length > 0) {
                 reviewHTML += `
-            <div class="review-image">
-                <img src="${review.imageUrls[0]}" alt="Review Image">
-            </div>
-        `;
+        <div class="review-image">
+            <img src="${review.imageUrls[0]}" alt="Review Image">
+        </div>
+    `;
             }
 
             // 텍스트
             reviewHTML += `
-        <div class="review-content">${review.content}</div>
-    `;
+    <div class="review-content">${review.content}</div>
+`;
 
             reviewElement.innerHTML = reviewHTML;
             reviewList.appendChild(reviewElement);
         });
 
-        // 삭제 버튼 이벤트 리스너 추가 (my-reviews 탭에서만)
+        // 삭제 버튼 이벤트
         if (tabId === 'my-reviews') {
             document.querySelectorAll('.delete-review-btn').forEach(button => {
                 button.addEventListener('click', () => {
@@ -1087,7 +1111,7 @@
                         errorMessage = "상품후기 등록 권한이 없습니다.";
                     }
                 } else if (xhr.status === 400) {
-                    errorMessage = "입력값이 유효하지 않습니다. 평점(1~5)과 내용을 확인해주세요.";
+                    errorMessage = "입력값이 유효하지 않습니다. 평점과 내용을 확인해주세요.";
                 } else if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage += " " + xhr.responseJSON.message;
                 }
@@ -1098,6 +1122,277 @@
                 submitButton.disabled = false;
             }
         });
+    }
+
+    // 사이즈 탭 설정
+    function setupSizeTabs() {
+        const sizeTabButtons = document.querySelectorAll('.size-tab-button');
+        const sizeTabContents = document.querySelectorAll('.size-tab-content');
+
+        sizeTabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+
+                // 모든 탭 버튼과 콘텐츠 비활성화
+                sizeTabButtons.forEach(btn => btn.classList.remove('active'));
+                sizeTabContents.forEach(content => {
+                    content.classList.remove('active');
+                    content.innerHTML = ''; // 초기화
+                });
+
+                // 선택한 탭 활성화
+                button.classList.add('active');
+                const activeContent = document.getElementById(`size-${tabId}`);
+                activeContent.classList.add('active');
+
+                loadSizeTable(tabId, activeContent);
+            });
+        });
+
+        // 사이즈에 220~260이 포함되어 있는지 확인해서 포함되어있으면 신발탭 활성화
+        let isShoes = false;
+        if (productSizes && productSizes.length > 0) {
+            for (let size of productSizes) {
+                const sizeNumber = parseFloat(size.sizeName);
+                if (!isNaN(sizeNumber) && sizeNumber >= 220 && sizeNumber <= 260) {
+                    isShoes = true;
+                    break;
+                }
+            }
+        }
+
+        // 기본 탭 설정
+        let defaultTab;
+        if (isShoes) {
+            defaultTab = document.querySelector('.size-tab-button[data-tab="shoes"]');
+        } else {
+            defaultTab = document.querySelector('.size-tab-button[data-tab="clothing"]');
+        }
+        defaultTab.click();
+    }
+
+    // 사이즈 표
+    function loadSizeTable(tabId, container) {
+        container.innerHTML = '<p>로딩 중...</p>';
+
+        // 의류 탭
+        const clothingData = `
+        <table class="size-table">
+            <thead>
+                <tr>
+                    <th>구분</th>
+                    <th>한국</th>
+                    <th colspan="2">미국</th>
+                    <th>영국</th>
+                    <th colspan="2">일본</th>
+                    <th>프랑스</th>
+                    <th>유럽</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>XS</td>
+                    <td>85</td>
+                    <td>85-90</td>
+                    <td>14</td>
+                    <td>0</td>
+                    <td>S</td>
+                    <td>36</td>
+                    <td>36</td>
+                    <td>40</td>
+                </tr>
+                <tr>
+                    <td>S</td>
+                    <td>90</td>
+                    <td>90-95</td>
+                    <td>15</td>
+                    <td>1</td>
+                    <td>M</td>
+                    <td>38</td>
+                    <td>38</td>
+                    <td>42, 44</td>
+                </tr>
+                <tr>
+                    <td>M</td>
+                    <td>95</td>
+                    <td>95-100</td>
+                    <td>15.5-16</td>
+                    <td>2</td>
+                    <td>L</td>
+                    <td>40</td>
+                    <td>40</td>
+                    <td>46, 48</td>
+                </tr>
+                <tr>
+                    <td>L</td>
+                    <td>100</td>
+                    <td>100-105</td>
+                    <td>16.5</td>
+                    <td>3</td>
+                    <td>LL, XL</td>
+                    <td>42</td>
+                    <td>42</td>
+                    <td>50, 52</td>
+                </tr>
+                <tr>
+                    <td>XL</td>
+                    <td>105</td>
+                    <td>105-110</td>
+                    <td>17.5</td>
+                    <td>4</td>
+                    <td>-</td>
+                    <td>44</td>
+                    <td>44</td>
+                    <td>54, 56, 58</td>
+                </tr>
+                <tr>
+                    <td>XXL</td>
+                    <td>110</td>
+                    <td>110-</td>
+                    <td>-</td>
+                    <td>5</td>
+                    <td>-</td>
+                    <td>46</td>
+                    <td>46</td>
+                    <td>60, 62</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+
+        // 신발 탭
+        const shoesData = `
+        <table class="size-table">
+            <thead>
+                <tr>
+                    <th>한국(mm)</th>
+                    <th>일본(cm)</th>
+                    <th colspan="2">국제 사이즈</th>
+                    <th colspan="2">미국</th>
+                    <th colspan="2">영국</th>
+                    <th colspan="2">유럽</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>220</td>
+                    <td>22</td>
+                    <td>남</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>5</td>
+                    <td>-</td>
+                    <td>3</td>
+                    <td>-</td>
+                    <td>36</td>
+                </tr>
+                <tr>
+                    <td>225</td>
+                    <td>22.5</td>
+                    <td>여</td>
+                    <td>XXXS</td>
+                    <td>-</td>
+                    <td>5.5</td>
+                    <td>-</td>
+                    <td>3.5</td>
+                    <td>-</td>
+                    <td>36.5</td>
+                </tr>
+                <tr>
+                    <td>230</td>
+                    <td>23</td>
+                    <td>남</td>
+                    <td>XXXS</td>
+                    <td>-</td>
+                    <td>6</td>
+                    <td>-</td>
+                    <td>4</td>
+                    <td>-</td>
+                    <td>37</td>
+                </tr>
+                <tr>
+                    <td>235</td>
+                    <td>23.5</td>
+                    <td>여</td>
+                    <td>XXS</td>
+                    <td>-</td>
+                    <td>6.5</td>
+                    <td>-</td>
+                    <td>4.5</td>
+                    <td>-</td>
+                    <td>37.5</td>
+                </tr>
+                <tr>
+                    <td>240</td>
+                    <td>24</td>
+                    <td>남</td>
+                    <td>XS</td>
+                    <td>6</td>
+                    <td>7</td>
+                    <td>5</td>
+                    <td>-</td>
+                    <td>38</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>245</td>
+                    <td>24.5</td>
+                    <td>여</td>
+                    <td>XS</td>
+                    <td>6.5</td>
+                    <td>7.5</td>
+                    <td>-</td>
+                    <td>5.5</td>
+                    <td>38.5</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>250</td>
+                    <td>25</td>
+                    <td>남</td>
+                    <td>S</td>
+                    <td>7</td>
+                    <td>8</td>
+                    <td>6</td>
+                    <td>-</td>
+                    <td>39</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>255</td>
+                    <td>25.5</td>
+                    <td>여</td>
+                    <td>-</td>
+                    <td>7.5</td>
+                    <td>8.5</td>
+                    <td>6.5</td>
+                    <td>-</td>
+                    <td>39.5</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>260</td>
+                    <td>26</td>
+                    <td>남</td>
+                    <td>-</td>
+                    <td>8</td>
+                    <td>9</td>
+                    <td>7</td>
+                    <td>-</td>
+                    <td>40</td>
+                    <td>-</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+
+        setTimeout(() => {
+            if (tabId === 'clothing') {
+                container.innerHTML = clothingData;
+            } else if (tabId === 'shoes') {
+                container.innerHTML = shoesData;
+            }
+        }, 10);
     }
 </script>
 <script th:src="@{/js/admin/notifications.js}"></script>
