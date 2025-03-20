@@ -79,7 +79,9 @@ public class SecurityConfig {
                                     "/inquiry/selectedProduct",
                                     "/community/list/**",
                                     "community/form/**",
-                                    "community/detail/**"
+                                    "community/detail/**",
+                                    "/api/community/search-products",
+                                    "community/modify/**"
                             ).permitAll()
                             .requestMatchers("/admin/dashboard")
                             .hasAnyRole("ADMIN", "LOGISTICS", "INQUIRY")

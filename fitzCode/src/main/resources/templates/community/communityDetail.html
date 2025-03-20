@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>communityDetail</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>communityDetail2</title>
     <style>
         * {
             margin: 0;
@@ -14,174 +13,961 @@
         }
 
         body {
-            background-color: #f9f9f9;
-            color: #333;
+            background-color: #ffffff;
+            color: #ffffff;
             font-size: 16px;
         }
 
-        /*.header_container {*/
-        /*    max-width: 1200px;*/
-        /*    height: 30px;*/
-        /*    margin: 20px auto;*/
-        /*    padding: 20px;*/
-        /*}*/
-
-        .header_container {
-            max-width: 1200px;
-            height: 50px;
-            margin: 10px auto;
-            padding: 10px; /* 패딩 제거 */
-            display: flex;
-            align-items: center; /* 세로 중앙 정렬 */
-            justify-content: center; /* 가로 중앙 정렬 */
-        }
-
-        .header_container img{
-            margin-right: auto;
-            width: 50px;
-            height: 50px;
-        }
-
-        .content-container {
-            max-width: 1200px;
+        main {
+            max-width: 700px;
             margin: 20px auto;
-            /*padding: 20px;*/
+            padding: 20px;
         }
 
-        .detail-card {
+
+        .style-container {
             background: white;
             border-radius: 7px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            max-width: 600px;
-            /*max-height: inherit;*/
-            margin: 0 auto;
-        }
-
-        .card-header {
-            position: relative;
-            height: 400px;
-        }
-
-        .card-header img {
-            width: 100%;
-            height: 100%;
-            /*object-fit: cover;*/
-            object-fit: contain; /* 원본 비율 유지하면서 카드 헤더 안에 맞춤 */
-        }
-
-        .card-header .title {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            font-size: 32px;
-            color: white;
-            font-weight: bold;
-            padding: 10px;
-        }
-
-        .card-content {
             padding: 20px;
-            background: #fff;
+            margin-bottom: 40px;
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
         }
 
-        .card-content-profile {
+        .profile-img {
             width: 60px;
             height: 60px;
-            border: 1px solid #ddd;
             border-radius: 50%;
-            overflow: hidden;
             margin-right: 15px;
         }
 
-        .card-content-profile img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .card-content span {
+        .user-info strong {
             font-size: 18px;
             font-weight: bold;
             color: #333;
         }
 
-        .card-footer {
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
-        }
-
-        .card-footer p {
-            font-size: 16px;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .card-footer .category {
+        .user-info p {
             font-size: 14px;
             color: #777;
-            margin-bottom: 10px;
         }
 
-        .button-container {
-            margin-top: 20px;
-        }
-
-        .button {
-            display: inline-block;
+        .edit-btn {
+            margin-left: auto;
             padding: 10px 20px;
-            background-color: #E3474F;
-            color: white;
-            text-decoration: none;
+            background-color: #ffffff;
+            border: 1px solid #cfcfcf;
+            color: #4a4a4a;
             border-radius: 5px;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        .button:hover {
-            background-color: #c33738;
+        .edit-btn:hover {
+            background-color: #ededed;
+        }
+
+        .style-content {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .slider {
+            display: flex;
+            width: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            width: 100%;
+        }
+
+        .style-img {
+            width: 100%;
+            max-height: 500px;
+            border-radius: 7px;
+            object-fit: contain;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease;
+        }
+
+        .slider-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .slider-btn:hover {
+            opacity: 0.8;
+        }
+
+        .prev-btn {
+            left: 10px;
+        }
+
+        .next-btn {
+            right: 10px;
+        }
+
+        .style-content h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .style-content p {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .community-action {
+            min-height: 60px; /* 최소 높이 설정으로 높이 넓힘 */
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* 콘텐츠를 오른쪽 정렬 */
+            padding: 15px 0; /* 상하 패딩 추가 */
+            margin-bottom: 10px;
+            border-top: 1px solid #eee; /* 상단 경계선 추가 */
+            border-bottom: 1px solid #eee; /* 하단 경계선 추가 */
+            gap: 20px;
+        }
+
+        .product-tags h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .product-list {
+            display: flex;
+            gap: 10px;
+        }
+
+        .product-item {
+            background: #f9f9f9;
+            border-radius: 7px;
+            padding: 5px;
+            text-align: center;
+            width: 25%;
+        }
+
+        .product-img {
+            width: 100%;
+            height: auto;
+            border-radius: 7px;
+            margin-bottom: 5px;
+        }
+
+        .product-item p {
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .product-item span {
+            font-size: 10px;
+            color: #777;
+        }
+
+        .other-styles {
+            margin-top: 40px;
+        }
+
+        .other-styles h3 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .style-list {
+            display: flex;
+            gap: 20px;
+        }
+
+        .style-thumbnail {
+            width: 100%;
+            height: auto;
+            border-radius: 7px;
+        }
+
+
+        /* From Uiverse.io by Galahhad */
+        .ui-bookmark {
+            --icon-size: 24px;
+            --icon-secondary-color: rgb(77, 77, 77);
+            --icon-hover-color: rgb(97, 97, 97);
+            --icon-primary-color: gold;
+            --icon-circle-border: 1px solid var(--icon-primary-color);
+            --icon-circle-size: 35px;
+            --icon-anmt-duration: 0.3s;
+        }
+
+        .ui-bookmark input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: none;
+        }
+
+        .ui-bookmark .bookmark {
+            width: var(--icon-size);
+            height: auto;
+            fill: var(--icon-secondary-color);
+            cursor: pointer;
+            -webkit-transition: 0.2s;
+            -o-transition: 0.2s;
+            transition: 0.2s;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            position: relative;
+            -webkit-transform-origin: top;
+            -ms-transform-origin: top;
+            transform-origin: top;
+        }
+
+        .bookmark::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            -webkit-box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+            30px 0 0 -4px var(--icon-primary-color),
+            0 -30px 0 -4px var(--icon-primary-color),
+            -30px 0 0 -4px var(--icon-primary-color),
+            -22px 22px 0 -4px var(--icon-primary-color),
+            -22px -22px 0 -4px var(--icon-primary-color),
+            22px -22px 0 -4px var(--icon-primary-color),
+            22px 22px 0 -4px var(--icon-primary-color);
+            box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+            30px 0 0 -4px var(--icon-primary-color),
+            0 -30px 0 -4px var(--icon-primary-color),
+            -30px 0 0 -4px var(--icon-primary-color),
+            -22px 22px 0 -4px var(--icon-primary-color),
+            -22px -22px 0 -4px var(--icon-primary-color),
+            22px -22px 0 -4px var(--icon-primary-color),
+            22px 22px 0 -4px var(--icon-primary-color);
+            border-radius: 50%;
+            -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+            transform: scale(0);
+        }
+
+        .bookmark::before {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: var(--icon-circle-border);
+            opacity: 0;
+        }
+
+        /* actions */
+
+        .ui-bookmark:hover .bookmark {
+            fill: var(--icon-hover-color);
+        }
+
+        .ui-bookmark input:checked + .bookmark::after {
+            -webkit-animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            -webkit-animation-delay: var(--icon-anmt-duration);
+            animation-delay: var(--icon-anmt-duration);
+        }
+
+        .ui-bookmark input:checked + .bookmark {
+            fill: var(--icon-primary-color);
+            -webkit-animation: bookmark var(--icon-anmt-duration) forwards;
+            animation: bookmark var(--icon-anmt-duration) forwards;
+            -webkit-transition-delay: 0.3s;
+            -o-transition-delay: 0.3s;
+            transition-delay: 0.3s;
+        }
+
+        .ui-bookmark input:checked + .bookmark::before {
+            -webkit-animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            -webkit-animation-delay: var(--icon-anmt-duration);
+            animation-delay: var(--icon-anmt-duration);
+        }
+
+        @-webkit-keyframes bookmark {
+            50% {
+                -webkit-transform: scaleY(0.6);
+                transform: scaleY(0.6);
+            }
+
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes bookmark {
+            50% {
+                -webkit-transform: scaleY(0.6);
+                transform: scaleY(0.6);
+            }
+
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
+
+        @-webkit-keyframes circle {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            90% {
+                width: var(--icon-circle-size);
+                height: var(--icon-circle-size);
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes circle {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            90% {
+                width: var(--icon-circle-size);
+                height: var(--icon-circle-size);
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @-webkit-keyframes circles {
+            from {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            to {
+                -webkit-transform: scale(0.8);
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes circles {
+            from {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            to {
+                -webkit-transform: scale(0.8);
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        /* 좋아요 스타일 */
+        /* From Uiverse.io by Tsiangana */
+        .ui-bookmark2 {
+            --icon-size: 24px;
+            --icon-secondary-color: rgb(77, 77, 77);
+            --icon-hover-color: rgb(97, 97, 97);
+            --icon-primary-color: rgb(252, 54, 54);
+            --icon-circle-border: 1px solid var(--icon-primary-color);
+            --icon-circle-size: 35px;
+            --icon-anmt-duration: 0.3s;
+        }
+
+        .ui-bookmark2 input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: none;
+        }
+
+        .ui-bookmark2 .bookmark {
+            width: var(--icon-size);
+            height: auto;
+            fill: var(--icon-secondary-color);
+            cursor: pointer;
+            -webkit-transition: 0.2s;
+            -o-transition: 0.2s;
+            transition: 0.2s;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            position: relative;
+            -webkit-transform-origin: top;
+            -ms-transform-origin: top;
+            transform-origin: top;
+        }
+
+        .bookmark::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            -webkit-box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+            30px 0 0 -4px var(--icon-primary-color),
+            0 -30px 0 -4px var(--icon-primary-color),
+            -30px 0 0 -4px var(--icon-primary-color),
+            -22px 22px 0 -4px var(--icon-primary-color),
+            -22px -22px 0 -4px var(--icon-primary-color),
+            22px -22px 0 -4px var(--icon-primary-color),
+            22px 22px 0 -4px var(--icon-primary-color);
+            box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+            30px 0 0 -4px var(--icon-primary-color),
+            0 -30px 0 -4px var(--icon-primary-color),
+            -30px 0 0 -4px var(--icon-primary-color),
+            -22px 22px 0 -4px var(--icon-primary-color),
+            -22px -22px 0 -4px var(--icon-primary-color),
+            22px -22px 0 -4px var(--icon-primary-color),
+            22px 22px 0 -4px var(--icon-primary-color);
+            border-radius: 50%;
+            -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+            transform: scale(0);
+            padding: 1px;
+        }
+
+        .bookmark::before {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: var(--icon-circle-border);
+            opacity: 0;
+        }
+
+        /* actions */
+
+        .ui-bookmark2:hover .bookmark {
+            fill: var(--icon-hover-color);
+        }
+
+        .ui-bookmark2 input:checked + .bookmark::after {
+            -webkit-animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            -webkit-animation-delay: var(--icon-anmt-duration);
+            animation-delay: var(--icon-anmt-duration);
+        }
+
+        .ui-bookmark2 input:checked + .bookmark {
+            fill: var(--icon-primary-color);
+            -webkit-animation: bookmark var(--icon-anmt-duration) forwards;
+            animation: bookmark var(--icon-anmt-duration) forwards;
+            -webkit-transition-delay: 0.3s;
+            -o-transition-delay: 0.3s;
+            transition-delay: 0.3s;
+        }
+
+        .ui-bookmark2 input:checked + .bookmark::before {
+            -webkit-animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            -webkit-animation-delay: var(--icon-anmt-duration);
+            animation-delay: var(--icon-anmt-duration);
+        }
+
+        @-webkit-keyframes bookmark {
+            50% {
+                -webkit-transform: scaleY(0.6);
+                transform: scaleY(0.6);
+            }
+
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes bookmark {
+            50% {
+                -webkit-transform: scaleY(0.6);
+                transform: scaleY(0.6);
+            }
+
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
+
+        @-webkit-keyframes circle {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            90% {
+                width: var(--icon-circle-size);
+                height: var(--icon-circle-size);
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes circle {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            90% {
+                width: var(--icon-circle-size);
+                height: var(--icon-circle-size);
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @-webkit-keyframes circles {
+            from {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            to {
+                -webkit-transform: scale(0.8);
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes circles {
+            from {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            to {
+                -webkit-transform: scale(0.8);
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        /* 댓글 스타일 */
+        /* From Uiverse.io by Tsiangana */
+        .ui-bookmark3 {
+            --icon-size: 24px;
+            --icon-secondary-color: rgb(77, 77, 77);
+            --icon-hover-color: rgb(97, 97, 97);
+            --icon-primary-color: rgb(101, 101, 101);
+            --icon-circle-border: 1px solid var(--icon-primary-color);
+            --icon-circle-size: 35px;
+            --icon-anmt-duration: 0.3s;
+        }
+
+        .ui-bookmark3 input {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: none;
+        }
+
+        .ui-bookmark3 .bookmark {
+            width: var(--icon-size);
+            height: auto;
+            fill: var(--icon-secondary-color);
+            cursor: pointer;
+            -webkit-transition: 0.2s;
+            -o-transition: 0.2s;
+            transition: 0.2s;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            position: relative;
+            -webkit-transform-origin: top;
+            -ms-transform-origin: top;
+            transform-origin: top;
+        }
+
+        .bookmark::after {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            -webkit-box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+            30px 0 0 -4px var(--icon-primary-color),
+            0 -30px 0 -4px var(--icon-primary-color),
+            -30px 0 0 -4px var(--icon-primary-color),
+            -22px 22px 0 -4px var(--icon-primary-color),
+            -22px -22px 0 -4px var(--icon-primary-color),
+            22px -22px 0 -4px var(--icon-primary-color),
+            22px 22px 0 -4px var(--icon-primary-color);
+            box-shadow: 0 30px 0 -4px var(--icon-primary-color),
+            30px 0 0 -4px var(--icon-primary-color),
+            0 -30px 0 -4px var(--icon-primary-color),
+            -30px 0 0 -4px var(--icon-primary-color),
+            -22px 22px 0 -4px var(--icon-primary-color),
+            -22px -22px 0 -4px var(--icon-primary-color),
+            22px -22px 0 -4px var(--icon-primary-color),
+            22px 22px 0 -4px var(--icon-primary-color);
+            border-radius: 50%;
+            -webkit-transform: scale(0);
+            -ms-transform: scale(0);
+            transform: scale(0);
+            padding: 1px;
+        }
+
+        .bookmark::before {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: var(--icon-circle-border);
+            opacity: 0;
+        }
+
+        /* actions */
+
+        .ui-bookmark3:hover .bookmark {
+            fill: var(--icon-hover-color);
+        }
+
+        .ui-bookmark3 input:checked + .bookmark::after {
+            -webkit-animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: circles var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            -webkit-animation-delay: var(--icon-anmt-duration);
+            animation-delay: var(--icon-anmt-duration);
+        }
+
+        .ui-bookmark3 input:checked + .bookmark {
+            fill: var(--icon-primary-color);
+            -webkit-animation: bookmark var(--icon-anmt-duration) forwards;
+            animation: bookmark var(--icon-anmt-duration) forwards;
+            -webkit-transition-delay: 0.3s;
+            -o-transition-delay: 0.3s;
+            transition-delay: 0.3s;
+        }
+
+        .ui-bookmark3 input:checked + .bookmark::before {
+            -webkit-animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation: circle var(--icon-anmt-duration) cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            -webkit-animation-delay: var(--icon-anmt-duration);
+            animation-delay: var(--icon-anmt-duration);
+        }
+
+        @-webkit-keyframes bookmark {
+            50% {
+                -webkit-transform: scaleY(0.6);
+                transform: scaleY(0.6);
+            }
+
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
+
+        @keyframes bookmark {
+            50% {
+                -webkit-transform: scaleY(0.6);
+                transform: scaleY(0.6);
+            }
+
+            100% {
+                -webkit-transform: scaleY(1);
+                transform: scaleY(1);
+            }
+        }
+
+        @-webkit-keyframes circle {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            90% {
+                width: var(--icon-circle-size);
+                height: var(--icon-circle-size);
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @keyframes circle {
+            from {
+                width: 0;
+                height: 0;
+                opacity: 0;
+            }
+
+            90% {
+                width: var(--icon-circle-size);
+                height: var(--icon-circle-size);
+                opacity: 1;
+            }
+
+            to {
+                opacity: 0;
+            }
+        }
+
+        @-webkit-keyframes circles {
+            from {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            to {
+                -webkit-transform: scale(0.8);
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        @keyframes circles {
+            from {
+                -webkit-transform: scale(0);
+                transform: scale(0);
+            }
+
+            40% {
+                opacity: 1;
+            }
+
+            to {
+                -webkit-transform: scale(0.8);
+                transform: scale(0.8);
+                opacity: 0;
+            }
         }
 
     </style>
 </head>
 <body>
-
 <!-- header -->
 <div th:replace="~{fragments/header}"></div>
-<!-- 상단 네비게이션, 뒤로가기 버튼 -->
-<div class="header_container">
-    <img src="/img/goback.png" alt="">
-</div>
-
-<!-- 게시글 상세 내용 -->
-<div class="content-container">
-    <div class="detail-card">
-        <div class="card-header">
-            <img src="/img/communityEx.jpg" alt="스타일 이미지">
-            <div class="title">스타일 테스트입니다 - 제목</div>
-        </div>
-        <div class="card-content">
-            <div class="card-content-profile">
-                <img src="/img/shirt1.jpg" alt="admin 프로필">
+<main>
+    <div class="style-header">
+        <div class="user-info">
+            <img th:src="${profileImage != null ? profileImage : '/img/default-profile.jpg'}" alt="사용자 프로필"
+                 class="profile-img">
+            <div>
+                <strong th:text="${username}">사용자:</strong>
+                <p th:text="'작성일: ' + ${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">작성일:</p>
             </div>
-            <span>admin</span>
+            <button class="edit-btn" th:if="${currentUser.userId == post.userId}"
+                    th:onclick="|location.href='/community/modify/${post.postId}'|">스타일 수정하기
+            </button>
         </div>
-        <div class="card-footer">
-            <p>이곳은 게시글 내용이 들어갈 부분입니다. 스타일 테스트라는 주제로 다양한 아이디어와 스타일을 공유하는 곳입니다. 다양한 패션 스타일을 접하고 서로의 생각을 나누는 공간입니다.</p>
-            <span class="category">Category: Casual</span>
-            <div class="button-container">
-<!--                <a href="/community/edit" class="button">수정하기</a>-->
+    </div>
+    <div class="style-container">
+        <div class="style-content">
+            <div th:if="${postImages != null and not #lists.isEmpty(postImages)}">
+                <div class="slider-container">
+                    <div class="slider" id="imageSlider">
+                        <div class="slide" th:each="image : ${postImages}">
+                            <img th:src="@{${image != null && image.getPostImageUrl() != null ? image.postImageUrl : '/img/default-style.jpg'}}"
+                                 alt="게시물 이미지" class="style-img">
+                            <img src="/img/default-style.jpg" class="style-img" alt="">
+                        </div>
+                    </div>
+                    <button class="slider-btn prev-btn" id="prevBtn"><img src="/img/arrow-left.png" alt="Previous">
+                    </button>
+                    <button class="slider-btn next-btn" id="nextBtn"><img src="/img/arrow-right.png" alt="Next">
+                    </button>
+                </div>
+            </div>
+            <div th:unless="${postImages != null and not #lists.isEmpty(postImages)}">
+                <img th:src="@{/img/default-style.jpg}" alt="기본 이미지" class="style-img">
+            </div>
+            <h2 th:text="${post.title}">스타일 테스트입니다-제목-</h2>
+            <p th:text="${post.content}">스타일 테스트입니다-내용-</p>
+        </div>
+
+        <div class="community-action">
+
+
+            <!-- 댓글 -->
+            <label class="ui-bookmark3">
+                <input type="checkbox">
+                <div class="bookmark">
+                    <img src="/img/chat-bubble.png" alt="" style="width: 27px; height: 27px;">
+                </div>
+            </label>
+
+
+            <!-- From Uiverse.io by Tsiangana -->
+            <label class="ui-bookmark2">
+                <input type="checkbox"/>
+                <div class="bookmark">
+                    <svg
+                            viewBox="0 0 16 16"
+                            style="margin-top:4px"
+                            class="bi bi-heart-fill"
+                            height="25"
+                            width="25"
+                            xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                                fill-rule="evenodd"
+                        ></path>
+                    </svg>
+                </div>
+            </label>
+
+            <!-- From Uiverse.io by Galahhad -->
+            <label class="ui-bookmark">
+                <input type="checkbox">
+                <div class="bookmark">
+                    <svg viewBox="0 0 32 32">
+                        <g>
+                            <path d="M27 4v27a1 1 0 0 1-1.625.781L16 24.281l-9.375 7.5A1 1 0 0 1 5 31V4a4 4 0 0 1 4-4h14a4 4 0 0 1 4 4z"></path>
+                        </g>
+                    </svg>
+                </div>
+            </label>
+
+
+        </div>
+
+        <div class="product-tags">
+            <h3 th:text="'상품태그 ' + ${#lists.size(productTags)} + '개'">상품태그 2개</h3>
+            <div class="product-list">
+                <div class="product-item" th:each="product : ${productTags}">
+                    <img th:src="${product.imageUrl != null ? product.imageUrl : '/img/default-product.jpg'}"
+                         alt="상품 이미지" class="product-img">
+                    <p th:text="${product.productName}">상품이름:</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <section class="other-styles">
+        <h3 th:text="'@' + ${username} + '님의 다른 스타일'">@username님의 다른 스타일</h3>
+        <div class="style-list">
+            <th:block th:each="style : ${otherStyles}">
+                <img th:src="@{${style.thumbnailImageUrl != null ? style.thumbnailImageUrl : '/img/default-style.jpg'}}"
+                     alt="다른 스타일" class="style-thumbnail">
+            </th:block>
+        </div>
+    </section>
+</main>
 
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
+<script>
+    // 슬라이더 기능 구현
+    document.addEventListener('DOMContentLoaded', function () {
+        const slider = document.getElementById('imageSlider');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slides = slider.getElementsByClassName('slide'); // slide 클래스로 변경
+        let currentIndex = 0;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        prevBtn.addEventListener('click', function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlider();
+            }
+        });
+
+        nextBtn.addEventListener('click', function () {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlider();
+            }
+        });
+
+        // 초기 슬라이더 위치 설정
+        updateSlider();
+    });
+</script>
 </body>
 </html>

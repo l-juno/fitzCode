@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JELLY 스타일 페이지</title>
+    <title>communityList</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -24,14 +24,12 @@
             padding: 10px;
         }
 
-
         /* 필터 스타일 */
         .filter-container {
             display: flex;
             gap: 40px;
             margin: 20px 0;
             border-bottom: 1px solid #ddd;
-            /*padding-bottom: 10px;*/
         }
 
         .filter-btn {
@@ -40,18 +38,17 @@
             font-size: 16px;
             cursor: pointer;
             color: #777;
-            padding-bottom: 8px; /* 버튼 하단 여백 */
-            margin-bottom: 8px; /* 밑줄과 글씨 간격 조절 */
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
 
         .filter-btn.active {
             font-weight: bold;
             color: #000;
-            border-bottom: 3px solid #000; /* 밑줄 추가 */
-            margin-bottom: 6px; /* 활성화된 버튼의 밑줄과 글씨 간격 조절 */
+            border-bottom: 3px solid #000;
+            margin-bottom: 6px;
         }
 
-        /* 스타일 카드 컨테이너 */
         .style-grid {
             display: flex;
             gap: 20px;
@@ -59,8 +56,7 @@
         }
 
         .card {
-            width: calc(33.333% - 100px);
-            height: 70%;
+            width: calc(25% - 15px); /* 한 줄에 4개씩 표시 */
             border: 1px solid #ddd;
             border-radius: 5px;
             overflow: hidden;
@@ -68,59 +64,59 @@
             cursor: pointer;
         }
 
-        .card-header{
+        .card-header {
             width: 100%;
             height: 300px;
             position: relative;
         }
 
-        .card-header img{
+        .card-header img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 이미지가 비율에 맞게 잘리도록 */
+            object-fit: cover;
         }
 
         .card-header p {
-            position: absolute; /* 이미지 위에 고정 */
-            bottom: 10px; /* 이미지 하단에서 10px 떨어지게 위치 */
+            position: absolute;
+            bottom: 10px;
             margin-left: 80%;
         }
 
         .card-content {
             padding: 5px;
             display: flex;
-            align-items: center; /* 세로 중앙 정렬 */
+            align-items: center;
         }
 
         .card-content-profile {
             width: 40px;
             height: 40px;
-            border: 1px solid #ddd;
+            /*border: 1px solid #ddd;*/
             padding: 1px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-right: 10px; /* 프로필 이미지와 이름 사이 간격 */
+            margin-right: 10px;
         }
 
         .card-content-profile img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            object-fit: cover; /* 이미지가 비율에 맞게 잘리도록 */
+            object-fit: cover;
         }
 
         .card-content span {
             font-size: 14px;
             font-weight: bolder;
-            margin-top: 0; /* 위쪽 간격 제거 */
+            margin-top: 0;
         }
 
         .card-footer {
             display: flex;
-            flex-direction: column; /* 세로 정렬 */
-            align-items: flex-start; /* 왼쪽 정렬 */
+            flex-direction: column;
+            align-items: flex-start;
             font-size: 14px;
             padding: 10px 10px;
             border-top: 1px solid #ddd;
@@ -129,15 +125,13 @@
 
         .card-footer span {
             font-size: 14px;
-            margin-top: 5px; /* 제목 위에 간격 */
-            /*margin-bottom: 5px; !* 이름과 제목 사이에 간격 *!*/
+            margin-top: 5px;
         }
 
         .card-footer p {
             font-size: 14px;
-            margin-top: 5px; /* 제목 위에 간격 */
+            margin-top: 5px;
         }
-
 
         /* From Uiverse.io by andrew-demchenk0 */
         .button {
@@ -199,15 +193,12 @@
             border: 1px solid #2f2f32;
         }
 
-
-        /* From Uiverse.io by andrew-demchenk0 */
         .label_container input {
             position: absolute;
             opacity: 0;
             cursor: pointer;
             height: 0;
             width: 0;
-
         }
 
         .label_container {
@@ -215,7 +206,7 @@
             position: absolute;
             cursor: pointer;
             user-select: none;
-            bottom: 10px; /* 이미지 하단에서 10px 떨어지게 위치 */
+            bottom: 10px;
             margin-left: 85%;
         }
 
@@ -237,8 +228,9 @@
             fill: #E3474F;
         }
 
-        a{
+        a {
             text-decoration: none;
+            color: inherit;
         }
 
         a:hover,
@@ -247,14 +239,11 @@
             color: inherit;
             text-decoration: none;
         }
-
     </style>
 </head>
 <body>
-
 <!-- header -->
 <div th:replace="~{fragments/header}"></div>
-
 
 <div class="container">
     <div class="filter-container">
@@ -267,39 +256,46 @@
         <a href="/community/form" style="text-decoration: none; margin-left: auto">
             <button type="button" class="button">
                 <span class="button__text">POST</span>
-                <span class="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" height="24" fill="none" class="svg"><line y2="19" y1="5" x2="12" x1="12"></line><line y2="12" y1="12" x2="19" x1="5"></line></svg></span>
+                <span class="button__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" height="24" fill="none" class="svg">
+                        <line y2="19" y1="5" x2="12" x1="12"></line>
+                        <line y2="12" y1="12" x2="19" x1="5"></line>
+                    </svg>
+                </span>
             </button>
         </a>
-
     </div>
-    <a href="/community/detail">
+
     <div class="style-grid">
-        <div class="card">
-            <div class="card-header">
-                <img src="/img/communityEx.jpg" alt="스타일1">
-                <!-- From Uiverse.io by andrew-demchenk0 -->
-                <label class="label_container">
-                    <input type="checkbox">
-                    <svg id="Layer_1" version="1.0" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M16.4,4C14.6,4,13,4.9,12,6.3C11,4.9,9.4,4,7.6,4C4.5,4,2,6.5,2,9.6C2,14,12,22,12,22s10-8,10-12.4C22,6.5,19.5,4,16.4,4z"></path></svg>
-                </label>
-            </div>
-            <div class="card-content">
-                <span class="card-content-profile"><img src="/img/shirt1.jpg" alt=""></span>
-                <span style="font-size: 14px; font-weight: bolder; margin-top: 10px; margin-bottom: 10px;">admin</span>
-            </div>
-            <div class="card-footer">
-                <p>스타일 테스트입니다 - 제목</p>
-            </div>
+        <div class="card" th:each="post : ${posts}">
+            <a th:href="@{/community/detail/{postId}(postId=${post.postId})}">
+                <div class="card-header">
+                    <img th:src="${post.thumbnailImageUrl != null} ? ${post.thumbnailImageUrl} : '/img/default-style.jpg'"
+                         th:alt="'스타일 이미지 - ' + ${post.title}"
+                         th:onerror="'this.src=\'/img/default-style.jpg\''"/>
+                    <label class="label_container">
+                        <input type="checkbox">
+                        <svg id="Layer_1" version="1.0" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <path d="M16.4,4C14.6,4,13,4.9,12,6.3C11,4.9,9.4,4,7.6,4C4.5,4,2,6.5,2,9.6C2,14,12,22,12,22s10-8,10-12.4C22,6.5,19.5,4,16.4,4z"></path>
+                        </svg>
+                    </label>
+                </div>
+                <div class="card-content">
+                    <span class="card-content-profile">
+                        <img th:src="${profileImage}" alt="프로필 이미지">
+                    </span>
+                    <span th:text="${username}"></span>
+                </div>
+                <div class="card-footer">
+                    <p th:text="${post.title}">스타일 테스트입니다 - 제목</p>
+                </div>
+            </a>
         </div>
     </div>
-    </a>
 </div>
 
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
-
-
-</body>
 
 <script>
     document.querySelectorAll('.filter-btn').forEach(button => {
@@ -309,4 +305,5 @@
         });
     });
 </script>
+</body>
 </html>

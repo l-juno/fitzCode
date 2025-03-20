@@ -1,18 +1,21 @@
 package kr.co.fitzcode.community.controller;
 
-import kr.co.fitzcode.common.dto.ProductDTO;
+import jakarta.servlet.http.HttpSession;
+import kr.co.fitzcode.common.dto.PostDTO;
+import kr.co.fitzcode.common.dto.ProductTag;
+import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.common.enums.StyleCategory;
 import kr.co.fitzcode.community.service.CommunityService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/community")
 @RequiredArgsConstructor
@@ -20,13 +23,10 @@ public class CommunityApiController {
 
     private final CommunityService communityService;
 
-    // 상품 이름으로 검색하여 상품 리스트 반환
     @GetMapping("/search-products")
-    public List<ProductDTO> searchProductsByName(
-            @RequestParam String productName,
-            @RequestParam(defaultValue = "0") int offset) {
-        List<ProductDTO> products = communityService.searchProductsByName(productName, offset);
-        return products != null ? products : Collections.emptyList();
+    public ResponseEntity<List<ProductTag>> searchProductsByName(@RequestParam String productName) {
+        List<ProductTag> products = communityService.searchProductsByName(productName);
+        return ResponseEntity.ok(products);
     }
 
 }
