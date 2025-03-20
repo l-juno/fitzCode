@@ -17,14 +17,15 @@
             </a>
         </div>
         <nav class="header-utils">
-            <!-- 고객센터, 마이페이지, 로그인 -->
+            <!-- 고객센터, 관리자 페이지, 마이페이지, 로그인 -->
             <div class="header-utils-top">
-                <a href="/notice">고객센터</a>
-                <a href="/mypage/myInfo">마이페이지</a>
-<!--                <a th:if="${session.dto == null}" href="/login">마이페이지</a>-->
-<!--                <a th:if="${session.dto != null}" href="/mypage/myInfo">마이페이지</a>-->
-                <a th:if="${session.dto == null}" href="/login">로그인</a>
-                <a th:if="${session.dto != null}" href="/logout">
+                <!-- 관리자 페이지 링크 (roleId가 2, 3, 4인 경우에만 표시) -->
+                <a th:if="${session.dto != null and (session.dto.getRoleId() == 2 or session.dto.getRoleId() == 3 or session.dto.getRoleId() == 4)}"
+                   th:href="@{/admin/dashboard}">관리자 대시보드</a>
+                <a th:href="@{/notice}">고객센터</a>
+                <a th:href="@{/mypage/myInfo}">마이페이지</a>
+                <a th:if="${session.dto == null}" th:href="@{/login}">로그인</a>
+                <a th:if="${session.dto != null}" th:href="@{/logout}">
                     <span th:text="${session.dto.getUserName()} + ' 님'" style="font-weight: bold;"></span>
                     로그아웃
                 </a>
