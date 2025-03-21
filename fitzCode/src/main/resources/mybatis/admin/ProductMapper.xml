@@ -132,7 +132,7 @@
         </where>
     </select>
 
-    <!-- 상위 카테고리 상품 개수 조회 + 검색-->
+    <!-- 상위 카테고리 상품 개수 조회 + 검색 -->
     <select id="countProductsByParentCategory" resultType="int">
         SELECT COUNT(*)
         FROM PRODUCT p
@@ -220,6 +220,55 @@
         WHERE discounted_price IS NOT NULL AND price > discounted_price
         ORDER BY (price - discounted_price) / price DESC
         LIMIT #{limit}
+    </select>
+
+    <!-- 상품 검색 필터 적용 조회 -->
+    <select id="getProductsByFilter" resultType="ProductDTO">
+        SELECT p.*
+        FROM PRODUCT p
+        JOIN CATEGORY c ON p.category_id = c.category_id
+        <where>
+            <if test="codes != null and codes.size() > 0">
+                AND c.CODE IN
+                <foreach item="code" collection="codes" open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+            <if test="searchText != null and searchText != ''">
+                AND (
+                p.brand LIKE CONCAT('%', #{searchText}, '%')
+                OR p.description LIKE CONCAT('%', #{searchText}, '%')
+                OR p.product_name LIKE CONCAT('%', #{searchText}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY p.product_id
+        LIMIT #{pageSize} OFFSET #{offset}
+    </select>
+
+    <!-- 상품 검색 필터 적용 개수 조회 -->
+    <select id="getProductsCountByFilter" resultType="int">
+        SELECT COUNT(*)
+        FROM PRODUCT p
+        JOIN CATEGORY c ON p.category_id = c.category_id
+        <where>
+            <if test="codes != null and codes.size() > 0">
+                c.CODE IN
+                <foreach item="code" collection="codes" open="(" separator="," close=")">
+                    #{code}
+                </foreach>
+            </if>
+            <if test="searchText != null and searchText != ''">
+                <if test="codes != null and codes.size() > 0">
+                    AND
+                </if>
+                (
+                p.brand LIKE CONCAT('%', #{searchText}, '%')
+                OR p.description LIKE CONCAT('%', #{searchText}, '%')
+                OR p.product_name LIKE CONCAT('%', #{searchText}, '%')
+                )
+            </if>
+        </where>
     </select>
 
 </mapper>

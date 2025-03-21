@@ -78,14 +78,16 @@ public class FitzCodeController {
     @GetMapping("/api/product/search")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> searchProducts(
-            @Parameter(description = "검색 키워드", required = true, example = "shoes")
+            @Parameter(description = "검색 키워드", required = true, example = "Nike")
             @RequestParam("keyword") String keyword,
             @Parameter(description = "페이지 번호", example = "1")
             @RequestParam(value = "page", defaultValue = "1") int page) {
         Map<String, Object> response = new HashMap<>();
         try {
+            log.info("Searching products with keyword: {}, page: {}", keyword, page);
             List<ProductDTO> products = productService.searchProducts(keyword, page, 20);
             int totalLength = productService.countAllProducts(keyword);
+            log.info("Found {} products for keyword: {}", products.size(), keyword);
 
             response.put("list", products);
             response.put("totalLength", totalLength);
@@ -137,10 +139,10 @@ public class FitzCodeController {
     @ResponseBody
     public List<ProductDTO> getDiscountProductsApi() {
         List<ProductDTO> discountProducts = productService.getTopDiscountedProducts(10);
-        log.debug("Discount products: {}", discountProducts); // 디버깅용 로그
+        log.debug("Discount products: {}", discountProducts);
         for (ProductDTO product : discountProducts) {
             if (product.getDiscountedPrice() != null && product.getPrice() != null && product.getPrice() > 0) {
-                product.calculateDiscountPercentage(); // 명시적 호출
+                product.calculateDiscountPercentage();
                 log.debug("Product: {}, DiscountPercentage: {}", product.getProductName(), product.getDiscountPercentage());
             } else {
                 log.debug("Product: {}, No discount calculated (discountedPrice: {}, price: {})",
