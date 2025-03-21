@@ -27,13 +27,12 @@ public class CouponController {
 
     @GetMapping("/getUsersCoupons")
     public ResponseEntity<List<CouponDTO>> getUsersCoupons() {
-        // get valid couponId from user_coupon table then get the coupons by the id
-
         int userId = SecurityUtils.getUserId();
         List<CouponDTO> coupons = couponService.getUsersValidCoupon(userId);
-        log.info("getUsersCoupons: {}", coupons);
-
-
+        log.info("getUsersCoupons for userId: {}", userId);
+        for (CouponDTO coupon : coupons) {
+            log.info("Coupon ID: {}, applicableCategories: {}", coupon.getCouponId(), coupon.getApplicableCategories());
+        }
         return ResponseEntity.ok(coupons);
     }
 

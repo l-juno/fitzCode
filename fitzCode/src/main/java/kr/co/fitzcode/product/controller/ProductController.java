@@ -33,8 +33,12 @@ public class ProductController {
         List<ProductImageDTO> productImageList = productService.getProductImagesByProductId(productId);
         model.addAttribute("productImageList", productImageList);
 
-        // categoryId가 제대로 전달되는지 로그로 확인
-        log.info("Product ID: {}, Category ID: {}", product.getProductId(), product.getCategoryId());
+        // categoryId와 parentCategoryId 로그로 확인
+        Long categoryId = product.getCategoryId();
+        Long parentCategoryId = productService.getParentCategoryId(categoryId);
+        log.info("Product ID: {}, Category ID: {}, Parent Category ID: {}", product.getProductId(), categoryId, parentCategoryId);
+
+        model.addAttribute("parentCategoryId", parentCategoryId);
 
         return "product/productDetail";
     }

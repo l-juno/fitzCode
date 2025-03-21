@@ -32,4 +32,6 @@ public interface ProductService {
     int getPriceOfProductByProductId(int productId);
 
     int getPriceOfProductWithCoupon(int productId, int couponId);
+
+    Long getParentCategoryId(Long categoryId);
 }

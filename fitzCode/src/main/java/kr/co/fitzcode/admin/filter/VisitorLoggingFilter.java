@@ -36,7 +36,7 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
 
     public VisitorLoggingFilter(DashboardMapper dashboardMapper) {
         this.dashboardMapper = dashboardMapper;
-        log.info("VisitorLoggingFilter 초기화 - dashboardMapper: {}", dashboardMapper);
+//        log.info("VisitorLoggingFilter 초기화 - dashboardMapper: {}", dashboardMapper);
     }
 
     @Override
@@ -44,14 +44,14 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             if (dashboardMapper == null) {
-                log.error("DashboardMapper가 null입니다. 방문자 로그 삽입 불가.");
+//                log.error("DashboardMapper가 null입니다. 방문자 로그 삽입 불가.");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             String pageUrl = request.getRequestURI();
             if (isExcludedResource(pageUrl)) {
-                log.debug("제외된 리소스 요청: {}", pageUrl);
+//                log.debug("제외된 리소스 요청: {}", pageUrl);
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -60,7 +60,7 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
             if (visitorId == null) {
                 visitorId = UUID.randomUUID().toString();
                 setVisitorIdCookie(response, visitorId);
-                log.debug("새로운 visitorId 생성: {}", visitorId);
+//                log.debug("새로운 visitorId 생성: {}", visitorId);
             }
 
             Long userId = null;
@@ -72,14 +72,14 @@ public class VisitorLoggingFilter extends OncePerRequestFilter {
             String processedReferrerUrl = processReferrerUrl(referrerUrl);
 
             VisitorDTO recentLog = dashboardMapper.findRecentVisitLogByVisitorId(visitorId);
-            log.debug("최근 로그 조회 - visitorId: {}, recentLog: {}", visitorId, recentLog);
+//            log.debug("최근 로그 조회 - visitorId: {}, recentLog: {}", visitorId, recentLog);
 
             if (recentLog == null || (System.currentTimeMillis() - recentLog.getVisitTime().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()) > DUPLICATE_CHECK_INTERVAL) {
-                log.debug("로그 삽입 시도 - visitorId: {}, pageUrl: {}, visitTime: {}", visitorId, pageUrl, visitTime);
+//                log.debug("로그 삽입 시도 - visitorId: {}, pageUrl: {}, visitTime: {}", visitorId, pageUrl, visitTime);
                 dashboardMapper.insertVisitLog(userId, visitorId, visitTime, pageUrl, processedReferrerUrl, userAgent, deviceType, ipAddress);
-                log.info("방문자 로그 삽입 완료 - visitorId: {}", visitorId);
+//                log.info("방문자 로그 삽입 완료 - visitorId: {}", visitorId);
             } else {
-                log.debug("중복 방문 건너뜀 - visitorId: {}", visitorId);
+//                log.debug("중복 방문 건너뜀 - visitorId: {}", visitorId);
             }
 
             filterChain.doFilter(request, response);

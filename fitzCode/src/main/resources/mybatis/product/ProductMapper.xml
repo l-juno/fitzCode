@@ -173,8 +173,10 @@
         WHERE p.product_id = #{productId}
     </select>
 
-
-
-
+    <select id="getParentCategoryId" parameterType="long" resultType="long">
+        SELECT parent_id
+        FROM CATEGORY
+        WHERE category_id = #{categoryId}
+    </select>
 
 </mapper>
