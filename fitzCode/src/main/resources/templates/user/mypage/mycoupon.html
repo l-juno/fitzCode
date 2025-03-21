@@ -42,13 +42,13 @@
                                         <div th:text="${dto.formattedMinimumOrderAmount}"></div>
                                     </td>
                                 </tr>
-                                <tr th:else="${dto.minimumOrderAmount != 0}">
+                                <tr th:unless="${dto.minimumOrderAmount != 0}">
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <p>사용가능기한</p>
-                                        <div th:text="${dto.formattedValidUnitl}"></div>
+                                        <div th:text="${dto.formattedValidUntil}"></div>
                                     </td>
                                 </tr>
                             </table>
@@ -70,5 +70,4 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 </body>
-<script th:src="@{/js/user/joinForm.js}"></script>
 </html>
