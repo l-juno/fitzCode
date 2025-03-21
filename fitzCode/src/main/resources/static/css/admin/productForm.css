@@ -64,6 +64,10 @@
     font-size: 14px;
 }
 
+#excelFile {
+    width: 473px;
+}
+
 .form-group input,
 .form-group select,
 .form-group textarea {

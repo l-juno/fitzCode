@@ -37,7 +37,6 @@ public class SearchRankingBatchConfig {
     // 검색 순위 배치 작업 설정
     @Bean
     public Job searchRankingJob() {
-        log.debug("Building searchRankingJob");
         return new JobBuilder("searchRankingJob", jobRepository)
                 .start(searchRankingStep())
                 .build();
@@ -46,7 +45,6 @@ public class SearchRankingBatchConfig {
     // 검색 순위 처리 단계
     @Bean
     public Step searchRankingStep() {
-        log.debug("Building searchRankingStep");
         return new StepBuilder("searchRankingStep", jobRepository)
                 .<SearchRankingDTO, SearchRankingDTO>chunk(10, transactionManager)
                 .reader(searchRankingReader())

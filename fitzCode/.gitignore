@@ -280,3 +280,4 @@ build/
 
 # IntelliJ IDEA files
 .idea/
+.idea/**

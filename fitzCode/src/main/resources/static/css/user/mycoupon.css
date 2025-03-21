@@ -1,0 +1,46 @@
+
+.mycouponInfo {
+    display: flex;
+    flex-direction: row;
+    font-size: 13.3px;
+    margin: 30px 20px;
+    flex-wrap: wrap;
+}
+
+/*여기까지 공통*/
+
+#couponOne {
+    display: flex;
+    padding: 26px 18px 26px 5px;
+    border-bottom: 1px solid lightgray;
+    height: 58px;
+}
+
+#couponData {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.couponList {
+    border: 1.4px solid #bababa;
+    border-radius: 30px;
+    width: calc(45% - 10px);
+    padding: 10px;
+    margin: 13px;
+    background: #f9f9f9;
+}
+
+td {
+    display: flex;
+    align-items: flex-end;
+}
+
+td p {
+    font-weight: bold;
+    margin: 5px 11px 0px 0px;
+}
+
+td div {
+    color: #838181;
+}
