@@ -341,19 +341,19 @@
     });
 
     buyBtn.addEventListener('click', () => {
-        if (isAuthenticated) {
-            checkIfSizeSelected(1);
-        } else {
+        if (!isAuthenticated) {
             window.location.href = '/login';
+            return;
         }
+        checkIfSizeSelected(1);
     });
 
-    stickyCartBtn.addEventListener('click', () => {
-        if (isAuthenticated) {
-            checkIfSizeSelected();
-        } else {
+    stickyBuyBtn.addEventListener('click', () => {
+        if (!isAuthenticated) {
             window.location.href = '/login';
+            return;
         }
+        checkIfSizeSelected(1);
     });
 
     stickyBuyBtn.addEventListener('click', () => {
