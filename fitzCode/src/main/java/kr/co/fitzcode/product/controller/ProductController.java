@@ -1,10 +1,10 @@
 package kr.co.fitzcode.product.controller;
 
-import groovy.util.logging.Slf4j;
 import kr.co.fitzcode.common.dto.ProductDTO;
 import kr.co.fitzcode.common.dto.ProductImageDTO;
 import kr.co.fitzcode.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,41 +20,21 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
-    @GetMapping(value = { "/list", "/list/{pageNum}"})
+    @GetMapping(value = { "/list", "/list/{pageNum}" })
     public String list(@PathVariable(required = false) Integer pageNum, Model model) {
-//        // paging
-//        int currentPage = pageNum == null ? 1 : pageNum;
-//        int firstPage = 1;
-//        int lastPage = productService.getNumberOfPages();
-//        Logger logger = (Logger) LoggerFactory.getLogger(this.getClass());
-//        logger.info("Last page number: {}", lastPage);
-//        if (currentPage <= 3) {
-//            lastPage = 5;
-//        } else if (currentPage + 2 >= lastPage) {
-//            firstPage = lastPage - 4;
-//        } else {
-//            firstPage = currentPage - 2;
-//            lastPage = currentPage + 2;
-//        }
-//        model.addAttribute("firstPage", firstPage);
-//        model.addAttribute("lastPage", lastPage);
-//        model.addAttribute("currentPage", currentPage);
-//
-//        // getting list
-//        List<ProductDTO> list = productService.getProductsByPage(currentPage);
-//        model.addAttribute("productList", list);
         return "product/productList";
     }
-
 
     @GetMapping("/detail/{productId}")
     public String detail(@PathVariable int productId, Model model) {
         ProductDTO product = productService.getProductById(productId);
         model.addAttribute("product", product);
 
-
         List<ProductImageDTO> productImageList = productService.getProductImagesByProductId(productId);
         model.addAttribute("productImageList", productImageList);
+
+        // categoryId가 제대로 전달되는지 로그로 확인
+        log.info("Product ID: {}, Category ID: {}", product.getProductId(), product.getCategoryId());
 
         return "product/productDetail";
     }
@@ -63,6 +43,4 @@ public class ProductController {
     public String filter(Model model) {
         return "product/filter";
     }
-
-
 }
