@@ -61,7 +61,7 @@ function checkEmail() {
     }
 
     // 이메일이 비어있지 않으면 중복 체크
-    fetch(`checkEmail?email=${email}`)
+    fetch(`/checkEmail?email=${email}`)
         .then(response => response.text())
         .then(data => {
             messageElement.textContent = data;
@@ -84,7 +84,7 @@ function checkNickname() {
     }
 
     // 닉네임이 비어있지 않으면 중복 체크
-    fetch(`checkNickname?nickname=${nickname}`)
+    fetch(`/checkNickname?nickname=${nickname}`)
         .then(response => response.text())
         .then(data => {
             messageElement.textContent = data;
