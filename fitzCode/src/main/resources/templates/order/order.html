@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.springframework.org/schema/security">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:replace="~{fragments/header :: header-head}"></th:block>
+    <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f8f8f8;
+        padding: 0;
+        margin-top: 140px;
+    }
+
+    .container {
+        
+        width: 80%;
+        max-width: 900px;
+        margin: 20px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+        text-align: center;
+        color: #333;
+    }
+
+    .order-summary {
+        background: #f4f4f4;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .order-summary p {
+        font-size: 16px;
+        margin: 5px 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+    }
+
+    table, th, td {
+        border: 1px solid #ddd;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background: #333;
+        color: white;
+    }
+
+    img {
+        max-width: 80px;
+        border-radius: 5px;
+    }
+
+    tbody tr:nth-child(even) {
+        background: #f9f9f9;
+    }
+
+    tbody tr:hover {
+        background: #eaeaea;
+        transition: 0.3s;
+    }
+
+</style>
+
+
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container">
+    <h2>Order Details</h2>
+    
+    <div class="order-summary">
+        <p><strong>Order ID:</strong> <span th:text="${orderDTO.orderId}"></span></p>
+        <p><strong>Address:</strong> <span id="addressInfo" th:text="${orderDTO.addressId}"></span></p>
+        <p><strong>Total Price:</strong> <span th:text="${orderDTO.formattedTotalPrice}"></span></p>
+        <p><strong>Order Status:</strong> <span th:text="${orderDTO.orderStatusTranslated}"></span></p>
+        <p><strong>Ordered At:</strong> <span th:text="${orderDTO.createdAt}"></span></p>
+    </div>
+    
+    <h3>Order Items</h3>
+    <table border="1">
+        <thead>
+        <tr>
+            <th>Product Image</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Size</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="detail : ${orderDetailList}">
+            <td><img th:src="${detail.imageUrl}" alt="Product Image" width="100"></td>
+            <td th:text="${detail.productName}"></td>
+            <td th:text="${detail.quantity}"></td>
+            <td th:text="${detail.formattedPrice}"></td>
+            <td th:text="${detail.formattedSizeCode}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+<script>
+    let addressId = [[${orderDTO.addressId}]];
+    console.log(addressId);
+
+    document.addEventListener("DOMContentLoaded", function () {
+        getUserAddressByAddressId();
+    });
+    
+    
+    function getUserAddressByAddressId() {
+        console.log("getting user address");
+        $.ajax({
+            url: "/api/order/getUserAddressByAddressId",
+            type: "GET",
+            dataType: "json",
+            data: {addressId: addressId},
+            success: function (response) {
+                $("#addressInfo").html(response.addressLine1 + " " + response.postalCode);
+            },
+            error: function () {
+                $("#addressInfo").html("<p>주소를 불러올 수 없습니다.</p>");
+            }
+        });
+    }
+    
+</script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
+</html>

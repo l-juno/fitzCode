@@ -2,11 +2,10 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>공지사항 수정</title>
+  <title>fitzCode</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
   <style>
     body {
       margin: 0;
@@ -37,7 +36,7 @@
       font-weight: 600;
       color: #2c3e50;
       margin: 0;
-      border-bottom: 2px solid #496b9a;
+      border-bottom: 2px solid #2f2f32;
       padding-bottom: 5px;
       display: inline-block;
       margin-left: 18px;
@@ -72,8 +71,8 @@
     }
 
     .note-btn {
-      background-color: #496b9a !important;
-      border-color: #496b9a !important;
+      background-color: #2f2f32 !important;
+      border-color: #2f2f32 !important;
       color: white !important;
     }
 
@@ -84,7 +83,7 @@
     button[type="submit"] {
       display: inline-block;
       padding: 10px 20px;
-      background-color: #496b9a;
+      background-color: #2f2f32;
       color: white;
       text-decoration: none;
       border: none;
@@ -112,11 +111,11 @@
     .current-image img {
       max-width: 200px;
       border-radius: 5px;
-      display: block; /* 이미지와 버튼 간 간격 제거 */
+      display: block;
     }
 
     .current-attachment a {
-      color: #496b9a;
+      color: #2f2f32;
       text-decoration: none;
     }
 
@@ -126,8 +125,8 @@
 
     .delete-btn {
       position: absolute;
-      top: -10px; /* 이미지 위로 올라가도록 조정 */
-      right: -10px; /* 이미지의 우상단에 위치하도록 조정 */
+      top: -10px;
+      right: -10px;
       background-color: #e74c3c;
       color: white;
       border: none;
@@ -140,7 +139,7 @@
       cursor: pointer;
       font-size: 14px;
       transition: background-color 0.3s ease;
-      z-index: 1; /* 버튼이 이미지 위에 겹치도록 설정 */
+      z-index: 1;
     }
 
     .delete-btn:hover {

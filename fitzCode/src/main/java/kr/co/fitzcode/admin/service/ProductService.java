@@ -1,6 +1,7 @@
 package kr.co.fitzcode.admin.service;
 
 
+import kr.co.fitzcode.common.dto.PickProductDTO;
 import kr.co.fitzcode.common.dto.ProductCategoryDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,4 +43,18 @@ public interface ProductService {
 
     // 엑셀 업로드
     void uploadExcel(MultipartFile excelFile, List<MultipartFile> imageFiles) throws Exception;
+
+    // 상품 조회 검색(사용자페이지)
+    List<ProductDTO> searchProducts(String keyword, int page, int pageSize);
+
+    int countSearchProducts(String keyword);
+
+    // 주목받는 상품 조회
+    List<PickProductDTO> getPickProducts();
+
+    // 주목받는 상품 업데이트
+    void updatePickProducts(List<PickProductDTO> pickProducts);
+
+    // 할인율 높은 상품 조회
+    List<ProductDTO> getTopDiscountedProducts(int limit);
 }

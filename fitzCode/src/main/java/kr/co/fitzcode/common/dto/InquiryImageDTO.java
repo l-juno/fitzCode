@@ -1,10 +1,10 @@
 package kr.co.fitzcode.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,20 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "문의 이미지 정보")
 public class InquiryImageDTO {
+    @Schema(description = "이미지 ID")
     private int imageId;
+
+    @Schema(description = "문의 ID")
     private int inquiryId;
-    private String imageUrl;            // 이미지 Url 또는 경로
-    private int imageOrder;             // 이미지 순서
-    private LocalDateTime createdAt;    // 이미지 생성날짜
+
+    @Schema(description = "이미지 URL")
+    private String imageUrl;
+
+    @Schema(description = "이미지 순서")
+    private int imageOrder;
+
+    @Schema(description = "이미지 생성날짜")
+    private LocalDateTime createdAt;
 }

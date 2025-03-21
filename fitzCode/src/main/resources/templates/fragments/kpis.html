@@ -2,7 +2,22 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>kpis</title>
+    <title>fitzCode</title>
+    <script>
+        function updateCurrentVisitors() {
+            fetch('/admin/dashboard/current-visitors')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('current-visitors').innerText = data + '명';
+                })
+                .catch(error => console.error('Error updating current visitors:', error));
+        }
+
+        window.onload = function() {
+            updateCurrentVisitors();
+            setInterval(updateCurrentVisitors, 10000); // 10초마다 갱신
+        };
+    </script>
 </head>
 <body>
 <div th:fragment="kpiCards" class="kpi-container">
@@ -30,7 +45,7 @@
                 <img src="/img/returns_icon.png" alt="취소/반품" class="kpi-icon">
                 <div class="kpi-text">
                     <h3 th:text="${cancelReturnsCount ?: 0}+건"></h3>
-                    <span>취소/반품</span>
+                    <span>취소/환불</span>
                 </div>
             </div>
         </div>
@@ -38,7 +53,7 @@
             <div class="kpi-content">
                 <img src="/img/visitors_icon.png" alt="현재 접속자" class="kpi-icon">
                 <div class="kpi-text">
-                    <h3 th:text="${currentVisitors ?: 0}+명"></h3>
+                    <h3 id="current-visitors" th:text="${currentVisitors ?: 0}+명"></h3>
                     <span>현재 접속자</span>
                 </div>
             </div>

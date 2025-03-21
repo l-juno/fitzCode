@@ -1,5 +1,6 @@
 package kr.co.fitzcode.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.EmailMessageDTO;
 import kr.co.fitzcode.common.dto.UserDTO;
@@ -25,13 +26,36 @@ public class UserController {
 
     // 로그인 페이지 이동
     @GetMapping("/login")
-    public String loginPage(Model model) {
+    public String loginPage(Model model, HttpServletRequest request) {
         if (model.containsAttribute("error")) {
             model.addAttribute("ErrorMessage", "입력한 이메일 또는 비밀번호가 잘못되었습니다.");
         }
+
+        // 사용자가 로그인 페이지로 이동하기 전의 페이지 URL 저장 ("Referer" : 이전 페이지 URL 정보)
+        String prevPage = request.getHeader("Referer");
+        log.info(">>> prevPage:{}", prevPage);
+
+        // prevPage 가 없거나 "/login"을 포함하면 기본 홈 페이지로 설정
+        if (prevPage == null || prevPage.contains("/login")) {
+            prevPage = "http://localhost:8080/";
+        }
+        log.info(">>> 최종 prevPage: {}", prevPage);
+        request.getSession().setAttribute("prevPage", prevPage);
+
         return "user/login";
     }
 
+    @PostMapping("/login")
+    public String login(@RequestParam String email, @RequestParam String password,
+                        HttpSession session, RedirectAttributes redirectAttributes) {
+        UserDTO user = userService.authenticate(email, password);
+        if (user != null) {
+            session.setAttribute("dto", user); // 세션에 dto 저장
+            return "redirect:/";
+        }
+        redirectAttributes.addFlashAttribute("error", "입력한 이메일 또는 비밀번호가 잘못되었습니다.");
+        return "redirect:/login";
+    }
     // 로그아웃 (Spring Security가 처리하므로 별도 구현 불필요)
     // @GetMapping("/logout") -> 제거, Spring Security의 /logout 사용
     // public String logout(HttpSession session) {

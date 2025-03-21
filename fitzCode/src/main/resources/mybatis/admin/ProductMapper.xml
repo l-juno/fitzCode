@@ -170,4 +170,56 @@
         SELECT COUNT(*) FROM CATEGORY WHERE category_id = #{categoryId}
     </select>
 
+    <!-- 주목받는 상품 조회 -->
+    <select id="selectPickProducts" resultType="PickProductDTO">
+        SELECT
+        pp.pick_id AS pickId,
+        pp.product_id AS productId,
+        pp.display_order AS displayOrder,
+        p.product_name AS "product.productName",
+        p.description AS "product.description",
+        p.brand AS "product.brand",
+        p.price AS "product.price",
+        p.stock AS "product.stock",
+        p.category_id AS "product.categoryId",
+        p.image_url AS "product.imageUrl",
+        p.status AS "product.status",
+        p.discounted_price AS "product.discountedPrice",
+        p.created_at AS "product.createdAt"
+        FROM PICK_PRODUCT pp
+        JOIN PRODUCT p ON pp.product_id = p.product_id
+        ORDER BY pp.display_order ASC
+    </select>
+
+    <!-- 주목받는 상품 전체 삭제 -->
+    <delete id="deleteAllPickProducts">
+        DELETE FROM PICK_PRODUCT
+    </delete>
+
+    <!-- 주목받는 상품 삽입 -->
+    <insert id="insertPickProduct" parameterType="PickProductDTO">
+        INSERT INTO PICK_PRODUCT (product_id, display_order)
+        VALUES (#{productId}, #{displayOrder})
+    </insert>
+
+    <!-- 할인율 높은 상품 조회 -->
+    <select id="selectTopDiscountedProducts" resultType="ProductDTO">
+        SELECT
+        product_id AS productId,
+        product_name AS productName,
+        description,
+        brand,
+        price,
+        stock,
+        category_id AS categoryId,
+        image_url AS imageUrl,
+        status,
+        discounted_price AS discountedPrice,
+        created_at AS createdAt
+        FROM PRODUCT
+        WHERE discounted_price IS NOT NULL AND price > discounted_price
+        ORDER BY (price - discounted_price) / price DESC
+        LIMIT #{limit}
+    </select>
+
 </mapper>

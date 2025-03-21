@@ -155,6 +155,26 @@
     </select>
 
 
+    <!-- get price of the product-->
+    <select id="getPriceOfProductByProductId" resultType="int">
+        select discounted_price from PRODUCT where product_id = #{productId};
+    </select>
+
+
+    <select id="getPriceOfProductWithCoupon" resultType="int">
+        SELECT
+            CASE
+                WHEN c.coupon_type = 1 THEN GREATEST(p.discounted_price - c.discount_amount, 0)
+                WHEN c.coupon_type = 2 THEN GREATEST(p.discounted_price * (1 - c.discount_percentage / 100.0), 0)
+                ELSE p.discounted_price
+            END AS final_price
+        FROM PRODUCT p
+        JOIN COUPON c ON c.coupon_id = #{couponId}
+        WHERE p.product_id = #{productId}
+    </select>
+
+
+
 
 
 </mapper>

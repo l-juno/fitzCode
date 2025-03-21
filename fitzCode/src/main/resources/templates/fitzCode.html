@@ -3,48 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <title>fitzCode</title>
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .main-banner { width: 100%; height: auto; max-width: 1200px; margin: 0 auto; display: block; }
+        .slider { overflow: hidden; white-space: nowrap; position: relative; z-index: 1; }
+        .slider-container { display: inline-block; transition: transform 0.5s ease; will-change: transform; }
+        .product-item { display: inline-block; width: 300px; margin: 0; vertical-align: top; position: relative; z-index: 1; text-align: center; cursor: pointer; }
+        .product-item img { width: 100%; height: 300px; object-fit: cover; }
+        .product-name { font-size: 14px; margin-top: 5px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+        .product-price { font-size: 14px; margin-top: 5px; color: #666; }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 0;
+            color: #333;
+            text-align: left;
+            padding-left: 10px;
+        }
+
+        /* 섹션 간 간격을 50px 설정 */
+        .product-section {
+            max-width: 1200px;
+            margin: 100px auto 0 auto;
+            text-align: center;
+            position: relative;
+        }
+
+        .product-section:first-child {
+            margin-top: 0;
+        }
+        /* 할인율 (우측 상단) */
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(128, 128, 128, 0.55);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 14px;
+            z-index: 11;
+            font-weight: bold;
+        }
+
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background-color: transparent; color: #ccc; border: none; padding: 10px; cursor: pointer; font-size: 18px; z-index: 10; }
+        .prev-btn { left: 0; }
+        .next-btn { right: 0; }
+        .slider-btn:hover { color: #999; }
+
+        @media (max-width: 768px) {
+            .product-item { width: 225px; }
+            .product-item img { height: 225px; }
+            .slider-btn { padding: 8px; font-size: 16px; }
+            .product-name, .product-price { font-size: 12px; }
+            .discount-badge { font-size: 12px; padding: 3px 8px; }
+        }
+    </style>
 </head>
 <body>
-
-<!-- header -->
 <div th:replace="~{fragments/header}"></div>
 
-<!-- 메인 콘텐츠 -->
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
+<div>
+    <img src="/img/mainbanner.jpg" alt="Main Banner" class="main-banner">
 
-<!-- footer -->
+    <div class="product-section">
+        <h2 class="product-title">가장 주목받는 상품</h2>
+        <button class="slider-btn prev-btn" onclick="moveSlide('pick', -1)"><</button>
+        <button class="slider-btn next-btn" onclick="moveSlide('pick', 1)">></button>
+        <div class="slider">
+            <div class="slider-container" id="pickSliderContainer"></div>
+        </div>
+    </div>
+
+    <div class="product-section">
+        <h2 class="product-title">할인 상품</h2>
+        <button class="slider-btn prev-btn" onclick="moveSlide('discount', -1)"><</button>
+        <button class="slider-btn next-btn" onclick="moveSlide('discount', 1)">></button>
+        <div class="slider">
+            <div class="slider-container" id="discountSliderContainer"></div>
+        </div>
+    </div>
+</div>
+
 <div th:replace="~{fragments/footer}"></div>
 
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}" defer></script>
+<script>
+    const slideWidth = 300;
+    const visibleSlides = 4;
+
+    const sliders = {
+        pick: { index: 0, products: [], total: 0, container: null },
+        discount: { index: 0, products: [], total: 0, container: null }
+    };
+
+    function initSlider(section, containerId, products) {
+        const sliderContainer = document.getElementById(containerId);
+        sliderContainer.innerHTML = '';
+        sliders[section].products = products || [];
+        sliders[section].total = sliders[section].products.length;
+        sliders[section].container = sliderContainer;
+
+        if (sliders[section].total === 0) {
+            sliderContainer.innerHTML = '<p>표시할 상품이 없습니다.</p>';
+            return;
+        }
+
+        const repeatedProducts = [...sliders[section].products];
+        while (repeatedProducts.length < (sliders[section].total + visibleSlides + 1)) {
+            repeatedProducts.push(...sliders[section].products);
+        }
+
+        repeatedProducts.forEach((product, index) => {
+            const slide = document.createElement('div');
+            slide.className = 'product-item';
+            const imgSrc = section === 'pick' ? product.product.imageUrl : product.imageUrl;
+            let name = section === 'pick' ? product.product.productName : product.productName;
+            const price = section === 'pick' ? product.product.price : product.price;
+            const productId = section === 'pick' ? product.productId : product.productId;
+            const discountedPrice = section === 'discount' ? product.discountedPrice : null;
+            const discountPercentage = section === 'discount' ? product.discountPercentage : null;
+
+            // 할인율
+            const discountBadge = section === 'discount' && discountPercentage && discountPercentage !== '0' ?
+                `<span class="discount-badge">${discountPercentage}%</span>` : '';
+
+            if (name.length > 14) {
+                name = name.substring(0, 14);
+            }
+            slide.innerHTML = `
+                <a href="/product/detail/${productId}" style="text-decoration: none; color: inherit;">
+                    <img src="${imgSrc}" alt="${name}">
+                    ${discountBadge}
+                    <div class="product-name">${name}</div>
+                    <div class="product-price">KRW ${section === 'discount' && discountedPrice ? discountedPrice.toLocaleString() : price.toLocaleString()}</div>
+                </a>
+            `;
+            sliderContainer.appendChild(slide);
+        });
+
+        sliderContainer.style.width = `${repeatedProducts.length * slideWidth}px`;
+        sliderContainer.style.transform = `translateX(0px)`;
+    }
+
+    function moveSlide(section, direction) {
+        const slider = sliders[section];
+        const sliderContainer = slider.container;
+        slider.index += direction;
+
+        const maxIndex = slider.total * 2;
+        if (slider.index >= maxIndex) {
+            slider.index = slider.total;
+        } else if (slider.index < 0) {
+            slider.index = maxIndex - visibleSlides - 1;
+        }
+
+        sliderContainer.style.transition = 'transform 0.5s ease';
+        sliderContainer.style.transform = `translateX(-${slider.index * slideWidth}px)`;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/api/pick-products', { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => initSlider('pick', 'pickSliderContainer', data))
+            .catch(() => initSlider('pick', 'pickSliderContainer', []));
+
+        fetch('/api/discount-products', { credentials: 'include' })
+            .then(response => response.json())
+            .then(data => initSlider('discount', 'discountSliderContainer', data))
+            .catch(() => initSlider('discount', 'discountSliderContainer', []));
+    });
+</script>
 </body>
 </html>

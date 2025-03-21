@@ -3,7 +3,22 @@
 
 <mapper namespace="kr.co.fitzcode.admin.mapper.NoticeMapper">
 
-    <!-- 공지사항 목록 조회 -->
+    <!-- 공지사항 목록 조회 (페이징 적용) -->
+    <select id="selectNoticesWithPagination" resultType="NoticeDTO">
+        SELECT notice_id AS noticeId, user_id AS userId, title, content,
+        image_url AS imageUrl, attachment_url AS attachmentUrl, attachment_name AS attachmentName,
+        attachment_size AS attachmentSize, created_at AS createdAt, updated_at AS updatedAt
+        FROM NOTICE
+        ORDER BY created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <!-- 총 공지사항 수 조회 -->
+    <select id="countNotices" resultType="long">
+        SELECT COUNT(*) FROM NOTICE
+    </select>
+
+    <!-- 모든 공지사항 조회 (복원) -->
     <select id="selectAllNotices" resultType="NoticeDTO">
         SELECT notice_id AS noticeId, user_id AS userId, title, content,
         image_url AS imageUrl, attachment_url AS attachmentUrl, attachment_name AS attachmentName,
@@ -40,5 +55,4 @@
     <delete id="deleteNotice" parameterType="int">
         DELETE FROM NOTICE WHERE notice_id = #{noticeId}
     </delete>
-
 </mapper>

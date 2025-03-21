@@ -23,7 +23,7 @@
 .form-container .underline {
     width: 100px;
     height: 3px;
-    background-color: #496b9a;
+    background-color: #2f2f32;
     margin-bottom: 30px;
 }
 
@@ -33,7 +33,7 @@
 }
 
 .header-btn {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     border: none;
     padding: 0;
@@ -59,9 +59,13 @@
 .form-group label {
     display: block;
     font-weight: 600;
-    color: #34495e;
+    color: #2f2f32;
     margin-bottom: 8px;
     font-size: 14px;
+}
+
+#excelFile {
+    width: 473px;
 }
 
 .form-group input,
@@ -78,7 +82,7 @@
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-    border-color: #496b9a;
+    border-color: #2f2f32;
     outline: none;
 }
 
@@ -139,7 +143,7 @@
 }
 
 .add-btn {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     border: none;
     padding: 10px 16px;
@@ -176,7 +180,7 @@
 }
 
 .size-table th {
-    background-color: #34495e;
+    background-color: #2f2f32;
     color: white;
     font-weight: 600;
 }
@@ -196,7 +200,7 @@
 .status-label {
     display: block;
     font-weight: 600;
-    color: #34495e;
+    color: #2f2f32;
     margin-bottom: 8px;
     font-size: 14px;
 }
@@ -210,7 +214,7 @@
 
 .status-btn {
     background-color: #f9fafb;
-    color: #34495e;
+    color: #2f2f32;
     border: 1px solid #dcdcdc;
     padding: 0;
     width: 85px;
@@ -225,9 +229,9 @@
 }
 
 .status-btn.active {
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
-    border-color: #496b9a;
+    border-color: #2f2f32;
 }
 
 .status-btn:hover {
@@ -237,7 +241,7 @@
 .submit-btn {
     width: 200px;
     padding: 14px;
-    background-color: #496b9a;
+    background-color: #2f2f32;
     color: white;
     border: none;
     border-radius: 6px;
@@ -284,7 +288,7 @@
     top: 10px;
     right: 15px;
     font-size: 24px;
-    color: #34495e;
+    color: #2f2f32;
     cursor: pointer;
 }
 

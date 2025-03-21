@@ -1,6 +1,7 @@
 package kr.co.fitzcode.product.service;
 
 import kr.co.fitzcode.common.dto.CartDTO;
+import kr.co.fitzcode.common.dto.CartProductDTO;
 import kr.co.fitzcode.product.mapper.CartMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,15 @@ public class CartServiceImple implements CartService {
     @Override
     public List<CartDTO> getCartProductsByUserId(int userId) {
         return cartMapper.getCartProductsByUserId(userId);
+    }
+
+    @Override
+    public List<CartProductDTO> getCartInformationByUserId(int userId) {
+        return cartMapper.getCartInformationByUserId(userId);
+    }
+
+    @Override
+    public int getCartCount(int userId) {
+        return cartMapper.getCartCount(userId);
     }
 }
