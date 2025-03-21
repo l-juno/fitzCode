@@ -4,6 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import kr.co.fitzcode.common.dto.UserDTO;
+import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -21,30 +23,42 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
+
     private final RequestCache requestCache = new HttpSessionRequestCache();
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final UserService userService;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
         log.info(">>> CustomLoginSuccessHandler 호출");
+
+        // 사용자 이메일로 UserDTO 조회
+        String email = authentication.getName();
+        UserDTO userDTO = userService.findByEmail(email);
+
+        // 세션에 사용자 정보 저장
+        if (userDTO != null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("dto", userDTO);
+            log.info(">>> 세션에 사용자 저장: {}, roleId: {}", userDTO.getUserName(), userDTO.getRoleId());
+        } else {
+            log.warn(">>> 사용자 정보를 찾을 수 없음: {}", email);
+        }
+
+        // 리디렉션 처리
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-        // 접근 권한이 없는 경로로 직접 접근한 경우 (savedRequest != null)
-        // 로그인 폼으로 간 후 로그인 폼으로 가기 전 페이지로 다시 리다이렉트
-        if (savedRequest != null) {
+        if (savedRequest != null) { // 접근 권한이 없는 경로로 직접 접근한 경우
             String targetUrl = savedRequest.getRedirectUrl();
-            log.info(">>> redirectUrl:{}", targetUrl);
+            log.info(">>> redirectUrl: {}", targetUrl);
             redirectStrategy.sendRedirect(request, response, targetUrl);
-        }
-
-        // 로그인 페이지에서 접근한 경우
-        else {
+        } else { // 로그인 페이지에서 접근한 경우
             HttpSession session = request.getSession();
             String prevPage = (String) session.getAttribute("prevPage");
-            redirectStrategy.sendRedirect(request, response, prevPage);
-
+            String redirectUrl = (prevPage != null) ? prevPage : "/"; // prevPage가 null이면 "/"
+            log.info(">>> prevPage redirectUrl: {}", redirectUrl);
+            redirectStrategy.sendRedirect(request, response, redirectUrl);
         }
-
-
     }
 }
