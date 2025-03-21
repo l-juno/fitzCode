@@ -34,12 +34,10 @@ public class SecurityConfig implements WebMvcConfigurer {
         return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 
-//    @Bean
-//    public AuthenticationSuccessHandler successHandler() {
-//        return (request, response, authentication) -> {
-//            System.out.println("Login successful: " + authentication.getName());
-//            response.sendRedirect("/");
-//        };
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return new CustomAuthenticationSuccessHandler(userService);
+        };
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
