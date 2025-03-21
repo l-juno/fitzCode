@@ -46,6 +46,9 @@ public class CouponDTO {
     @Schema(description = "생성 날짜")
     private Timestamp createdAt;
 
+    @Schema(description = "적용 가능한 카테고리 (JSON 문자열)")
+    private String applicableCategories;
+
     // 최소주문금액 -> JSON 직렬화에서 제외
     @JsonIgnore
     public String getFormattedMinimumOrderAmount() {

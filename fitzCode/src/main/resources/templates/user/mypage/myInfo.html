@@ -25,41 +25,45 @@
                     <!-- profileImage가 null이면  기본 이미지 표시 -->
                     <img th:src="${userDTO != null and userDTO.profileImage != null} ? ${userDTO.profileImage} : '/img/default-profile.png'"
                          th:alt="${userDTO != null and userDTO.nickname != null} ? ${userDTO.nickname} + '의 프로필' : '기본 프로필 사진'"
-                         class="profile-image" />
+                         class="profile-image"/>
                 </div>
                 <div id="profileInfo">
                     <div>
-                        <p th:text="${userDTO != null} ? userDTO.nickname : '사용자 정보 없음'" style="font-weight: bold; font-size: 17.5px;"></p>
-                        <p th:text="${userDTO != null and userDTO.tier != null} ? 'Lv.' + userDTO.tier.description : 'Lv. 정보 없음'" class="userTier"></p>
+                        <p th:text="${userDTO != null} ? ${userDTO.nickname} : '사용자 정보 없음'"
+                           style="font-weight: bold; font-size: 17.5px;"></p>
+                        <p th:text="${userDTO != null and userDTO.tier != null} ? 'Lv.' + ${userDTO.tier.description} : 'Lv. 정보 없음'"
+                           class="userTier"></p>
                     </div>
                 </div>
                 <div id="updateProfileLink">
                     <a th:href="@{/mypage/updateProfile}" th:if="${userDTO != null}">프로필 수정</a>
-                    <p th:if="${userDTO == null}">프로필 수정 불가</p>
+<!--                    <p th:if="${userDTO == null}">프로필 수정 불가</p>-->
                 </div>
             </div>
             <div class="userShoppingInfo">
                 <div id="trackingInfo">
                     <h3>주문 내역</h3>
-                    <table>
-                        <tr>
-                            <th>주문 번호</th>
-                            <th>주문 금액</th>
-                            <th>주문 상태</th>
-                            <th></th>
-                        </tr>
-                        <tr th:each="dto : ${orderDTO}">
-                            <td th:text="${dto.orderId}"></td>
-                            <td th:text="${dto.formattedTotalPrice}"></td>
-                            <td th:text="${dto.getStatus().description}"></td>
-                            <th:block th:if="${dto.trackingNumber != null}">
-                                <td style="padding: 0px">
-                                    <button class="searchTracking">배송조회</button>
-                                    <input type="hidden" id="trackingNumber" th:value="${dto.trackingNumber}">
-                                </td>
-                            </th:block>
-                        </tr>
-                    </table>
+                    <th:block th:if="${orderDTO.size() > 0 && orderDTO != null}">
+                        <table>
+                            <tr>
+                                <th>주문 번호</th>
+                                <th>주문 금액</th>
+                                <th>주문 상태</th>
+                                <th></th>
+                            </tr>
+                            <tr th:each="dto : ${orderDTO}">
+                                <td th:text="${dto.orderId}"></td> <!-- 주문 번호 -->
+<!--                                <td th:text="${dto.formattedTotalPrice}"></td> &lt;!&ndash; 총 금액 &ndash;&gt;-->
+                                <td th:text="${dto.getStatus().description}"></td> <!-- 배송 상태 -->
+                                <th:block th:if="${dto.trackingNumber != null}"> <!-- 운송장 번호 -->
+                                    <td style="padding: 0px">
+                                        <button class="searchTracking">배송조회</button>
+                                        <input type="hidden" id="trackingNumber" th:value="${dto.trackingNumber}">
+                                    </td>
+                                </th:block>
+                            </tr>
+                        </table>
+                    </th:block>
                 </div>
             </div>
         </div>
@@ -96,7 +100,9 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script th:src="@{/js/user/delivery.js}"></script>
 </body>
 </html>

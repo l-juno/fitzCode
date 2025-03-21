@@ -27,7 +27,7 @@ public class AddressController {
     public String addresslist(Model model) {
         int userId = securityUtils.getUserId();
         List<AddressDTO> addressList = addressService.getUserAddress(userId);
-        AddressDTO defaultAddress = addressList.stream().filter(AddressDTO::isDefault).findFirst().orElseThrow();
+        AddressDTO defaultAddress = addressList.stream().filter(AddressDTO::isDefault).findFirst().orElse(null);
         List<AddressDTO> addressDTOlist = addressList.stream().filter(address -> !address.isDefault()).collect(Collectors.toUnmodifiableList());
         model.addAttribute("userId", userId);
         model.addAttribute("list", addressDTOlist);

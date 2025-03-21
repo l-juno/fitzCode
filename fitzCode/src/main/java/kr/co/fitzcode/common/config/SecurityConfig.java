@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.config;
 
+import kr.co.fitzcode.admin.handler.CustomLoginSuccessHandler;
 import kr.co.fitzcode.user.service.CustomOAuth2UserService;
 import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +29,17 @@ public class SecurityConfig implements WebMvcConfigurer {
     private final UserDetailsService userDetailsService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 
-    @Bean
-    public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(userService);
-    }
+//    @Bean
+//    public AuthenticationSuccessHandler successHandler() {
+//        return new CustomAuthenticationSuccessHandler(userService);
+//    }
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
@@ -95,9 +97,18 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/api/user/check",              // 사용자 인증 체크
                                     "/search",                      // 검색
                                     "/search/result",               // 검색 결과
-                                    "/inquiry/**",                  // 문의 관련
                                     "/api/pick-products",           // 주목받는 상품 API
-                                    "/api/discount-products"        // 할인 상품 API
+                                    "/api/discount-products",       // 할인 상품 API
+                                    "/mypage/insertAccount",
+                                    "/mypage/insertAddress",
+                                    "/inquiry/searchProduct",
+                                    "/inquiry/searchOrderList",
+                                    "/inquiry/selectedProduct",
+                                    "/community/list/**",
+                                    "community/form/**",
+                                    "community/detail/**",
+                                    "/api/community/search-products",
+                                    "community/modify/**"
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
@@ -136,7 +147,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .loginProcessingUrl("/login")
                             .usernameParameter("email")
                             .passwordParameter("password")
-                            .successHandler(successHandler())
+                            .successHandler(customLoginSuccessHandler) // customLoginSuccessHandler 등록
                             .failureHandler(failureHandler())
                             .permitAll();
                 })
@@ -186,6 +197,7 @@ public class SecurityConfig implements WebMvcConfigurer {
         http
                 .oauth2Login(oauth2 ->
                         oauth2.loginPage("/login")
+                                .successHandler(customLoginSuccessHandler)
                                 .defaultSuccessUrl("/", true)
                                 .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig.userService(customOAuth2UserService))

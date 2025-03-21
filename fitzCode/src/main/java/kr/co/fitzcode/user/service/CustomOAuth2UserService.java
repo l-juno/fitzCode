@@ -70,6 +70,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setRoleId(UserRole.USER.getCode()); // 기본값: USER (roleId = 1)
 
             userMapper.insertUser(newUser);
+            userMapper.insertUserTier(oAuth2Response.getNickname());
             user = userMapper.findByEmail(newUser.getEmail());
             dbUserId = user.getUserId();
             roles = Collections.singletonList(UserRole.USER.getRoleName());
