@@ -32,3 +32,21 @@ a:visited, a:active, a:hover {
     color: #2f2f32;
     font-weight: bold;
 }
+
+
+.mypageContainer {
+    display: flex;
+    margin-top: 60px;
+}
+
+.mypageContent {
+    width: 800px;
+}
+
+
+#hr{
+    width: 100%;
+    background: #2f2f32;
+    height: 3px;
+    border-radius: 10px;
+}

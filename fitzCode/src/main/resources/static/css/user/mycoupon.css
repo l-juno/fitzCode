@@ -1,17 +1,3 @@
-.mypageContainer {
-    display: flex;
-}
-
-.mypageContent {
-    width: 800px;
-}
-
-#hr {
-    width: 100%;
-    background: #2f2f32;
-    height: 3px;
-    border-radius: 10px;
-}
 
 .mycouponInfo {
     display: flex;

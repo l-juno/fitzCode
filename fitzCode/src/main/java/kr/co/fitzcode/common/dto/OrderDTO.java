@@ -2,9 +2,7 @@ package kr.co.fitzcode.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.co.fitzcode.common.enums.OrderStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
@@ -13,6 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 @Schema(description = "주문 정보")
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderDTO {
     @Schema(description = "주문번호")
     private int orderId;
@@ -46,7 +46,7 @@ public class OrderDTO {
     private LocalDateTime shippedAt;
 
     @Schema(description = "배송 완료 날짜")
-    private LocalDateTime deliveryAt;
+    private LocalDateTime deliveredAt;
 
     public String getFormattedTotalPrice() {
         DecimalFormat df = new DecimalFormat("#,###원");

@@ -22,4 +22,10 @@ public class AccountDTO {
 
     @Schema(description = "계좌주")
     private String accountHolder;
+
+    private Boolean isDefault;
+
+    public boolean isDefault() {
+        return isDefault;
+    }
 }

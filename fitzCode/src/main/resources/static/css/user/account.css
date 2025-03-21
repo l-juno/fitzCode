@@ -1,17 +1,3 @@
-.mypageContainer {
-    display: flex;
-}
-
-.mypageContent {
-    width: 800px;
-}
-
-#hr{
-    width: 100%;
-    background: #2f2f32;
-    height: 3px;
-    border-radius: 10px;
-}
 
 .accountInfo {
     display: flex;
@@ -19,55 +5,239 @@
     font-size: 13.3px;
     padding: 10px 20px 20px 20px;
     margin: 30px 20px;
-    border: 1px #2f2f32 solid;
-    border-radius: 10px;
 }
 
 /*여기까지 공통*/
 
 
-
-
-.accountData{
-    display: flex
-;
+.accountData {
+    display: flex;
     align-items: center;
 }
 
-.subTitle{
+.subTitle {
     font-size: 17px;
     font-weight: bold;
+    margin-right: 15px;
 }
 
-#bankSelection{
+.bankSelection {
     padding: 10px;
     border-radius: 10px;
     border: 0px;
 }
 
-#selectionBox{
+#selectionBox, #selectionBox1 {
     border: 1px solid #2f2f32;
     border-radius: 10px;
-    width: 300px;
+    width: 354px;
+    display: flex;
+    align-items: center;
+    margin: 10px 0px;
 }
 
-.accountData input{
+#addAccountNumber {
     margin-left: 12px;
     border: 0px;
     font-size: 13.3px;
+    width: 200px;
 }
 
-#subBox{
-    display: flex
-;
-    align-items: flex-end;
+#subBox, #subBox1 {
+    display: flex;
+    align-items: flex-start;
     justify-content: space-between;
+    flex-direction: column;
 }
 
 button {
-    color: darkgray;
+    color: #2f2f32;
     border: 0px;
     background: white;
-    text-decoration: underline;
     cursor: pointer;
+    text-decoration: underline;
+}
+
+#addAccountHolder {
+    margin-left: 10px;
+    font-size: 13.3px;
+    width: 200px;
+    border: 0px;
+}
+
+#accountHolder:hover {
+    border-bottom: 1px #2f2f32 solid;
+}
+
+.checkBtn {
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.accountList h3 {
+    padding-left: 10px;
+    font-size: 17px;
+}
+
+#accountOne {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    border: 1px solid #b8b8b8;
+    padding: 10px;
+}
+
+#accountData {
+    display: flex;
+    margin-left: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#accountData div {
+    display: flex;
+    align-items: center;
+    height: 30px;
+}
+
+#deleteBtn {
+    border: 0px;
+    background: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    color: #9e9e9e;
+    align-self: flex-end;
+    margin: 20px;
+    font-size: 13.3px;
+}
+
+#checkDefault-btn,
+#delete-btn {
+    padding: 5px;
+    color: #2f2f32;
+}
+
+
+/* 모달 컨테이너 */
+#add-account-modalContainer {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#add-account-modalContainer.hidden{
+    display: none;
+}
+
+/* 모달 내용 */
+.modalContent {
+    background-color: #ffffff;
+    width: 450px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.modalContent .modal-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modalContent h3 {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 35px;
+}
+
+#add-account-modalCloseButton{
+    cursor: pointer;
+    text-decoration: none;
+}
+
+
+#defaultAccount {
+    border: 1px solid #2f2f32;
+    padding: 10px 20px;
+    border-radius: 20px;
+    width: 90%;
+}
+
+#insert-btn {
+    color: #ffffff;
+    border: 0px;
+    background: #2f2f32;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 20px;
+    align-self: flex-end;
+    margin: 0px 35px 10px;
+    text-decoration: none;
+}
+
+.accountBox1 {
+    display: flex;
+    align-items: center;
+}
+
+.checkDefaultAcc {
+    display: flex;
+    font-size: 13.3px;
+    align-items: center;
+    margin: 18px 0px;
+}
+
+#saveBtn {
+    margin: 17px;
+    color: #ffffff;
+    background: black;
+    align-self: center;
+    border-radius: 19px;
+    padding: 10px;
+    width: 65px;
+}
+
+.accountListBox {
+    border: 1px solid #2f2f32;
+    padding: 10px 20px;
+    border-radius: 20px;
+    width: 90%;
+    margin-top: 20px;
+}
+
+.listSubTitle {
+    font-weight: bold;
+    margin-right: 10px;
+    width: 50px;
+}
+
+.listValue {
+    color: #858585;
+}
+
+.modalSubTitle {
+    font-size: 13.3px;
+    margin: 12px 46px 12px 12px;
 }
