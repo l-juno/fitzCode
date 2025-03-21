@@ -36,10 +36,10 @@ public class SecurityConfig implements WebMvcConfigurer {
         return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 
-//    @Bean
-//    public AuthenticationSuccessHandler successHandler() {
-//        return new CustomAuthenticationSuccessHandler(userService);
-//    }
+    //    @Bean
+    //    public AuthenticationSuccessHandler successHandler() {
+    //        return new CustomAuthenticationSuccessHandler(userService);
+    //    }
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
@@ -105,10 +105,12 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/inquiry/searchOrderList",
                                     "/inquiry/selectedProduct",
                                     "/community/list/**",
-                                    "community/form/**",
-                                    "community/detail/**",
+                                    "/community/form/**",
+                                    "/community/detail/**",
                                     "/api/community/search-products",
-                                    "community/modify/**"
+                                    "/community/modify/**",
+                                    "/checkEmail",                  // 이메일 중복 확인
+                                    "/checkNickname"                // 닉네임 중복 확인
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")

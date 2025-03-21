@@ -47,6 +47,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
+// 이메일 유효성 검사 함수
+function isValidEmail(email) {
+    // 이메일 형식 정규 표현식
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
 
 // 이메일 중복 체크
 function checkEmail() {
@@ -60,16 +66,37 @@ function checkEmail() {
         return;
     }
 
-    // 이메일이 비어있지 않으면 중복 체크
-    fetch(`/checkEmail?email=${email}`)
-        .then(response => response.text())
-        .then(data => {
-            messageElement.textContent = data;
-            messageElement.style.color = data.includes("사용 가능") ? "green" : "red";
-        })
-        .catch(error => console.error("Error:", error));
-}
+    // 이메일 형식 유효성 검사
+    if (!isValidEmail(email)) {
+        messageElement.textContent = "유효한 이메일 형식이 아닙니다.";
+        messageElement.style.color = "red";
+        return;
+    }
 
+    fetch(`/checkEmail?email=${encodeURIComponent(email)}`, {
+        method: 'GET'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.available) {
+                messageElement.textContent = "사용 가능한 이메일입니다.";
+                messageElement.style.color = "green";
+            } else {
+                messageElement.textContent = "이미 사용 중인 이메일입니다.";
+                messageElement.style.color = "red";
+            }
+        })
+        .catch(error => {
+            console.error("이메일 중복 확인 오류:", error);
+            messageElement.textContent = "이메일 중복 확인 중 오류가 발생했습니다.";
+            messageElement.style.color = "red";
+        });
+}
 
 // 닉네임 중복 체크
 function checkNickname() {
@@ -83,12 +110,34 @@ function checkNickname() {
         return;
     }
 
-    // 닉네임이 비어있지 않으면 중복 체크
-    fetch(`/checkNickname?nickname=${nickname}`)
-        .then(response => response.text())
-        .then(data => {
-            messageElement.textContent = data;
-            messageElement.style.color = data.includes("사용 가능") ? "green" : "red";
+    // 닉네임 길이 3글자 이상인지 확인
+    if (nickname.length < 3) {
+        messageElement.textContent = "닉네임은 3글자 이상이어야 합니다.";
+        messageElement.style.color = "red";
+        return;
+    }
+
+    fetch(`/checkNickname?nickname=${encodeURIComponent(nickname)}`, {
+        method: 'GET'
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답 오류: ' + response.status);
+            }
+            return response.json();
         })
-        .catch(error => console.error("Error:", error));
+        .then(data => {
+            if (data.available) {
+                messageElement.textContent = "사용 가능한 닉네임입니다.";
+                messageElement.style.color = "green";
+            } else {
+                messageElement.textContent = "이미 사용 중인 닉네임입니다.";
+                messageElement.style.color = "red";
+            }
+        })
+        .catch(error => {
+            console.error("닉네임 중복 확인 오류:", error);
+            messageElement.textContent = "닉네임 중복 확인 중 오류가 발생했습니다.";
+            messageElement.style.color = "red";
+        });
 }
