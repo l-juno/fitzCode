@@ -80,9 +80,15 @@ public class OrderApiController {
         // mark coupon as used
         couponService.markCouponAsUsed(userId, couponId, orderId);
 
-
-
+        // add order details
         userOrderDetailService.addOrderDetailToOrder(batchInsertList);
+
+        // decrease product amount by 1
+        userOrderDetailService.decrementProductCount(productId, sizeCode);
+
+        // send email
+
+
         return ResponseEntity.ok(orderDTO);
     }
 
@@ -153,6 +159,8 @@ public class OrderApiController {
                 paramMap.put("couponId", stringObjectMap.get("couponId"));
                 couponService.markCouponAsUsed(userId, (Integer) stringObjectMap.get("couponId"), orderId);
                 batchInsertList.add(paramMap);
+                // decrease product amount by 1
+                userOrderDetailService.decrementProductCount((Integer) stringObjectMap.get("productId"), (Integer) stringObjectMap.get("sizeCode"));
             }
             log.info("batchInsertList::::::::::::::: {}", batchInsertList);
             userOrderDetailService.addOrderDetailToOrder(batchInsertList);

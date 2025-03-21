@@ -19,7 +19,7 @@
 <div class="container">
     
    <div class="title">
-       <h2>Cart</h2>
+       <h2>장바구니</h2>
    </div>
     
     <div class="cart-list" id="cart-list">
@@ -51,12 +51,25 @@
     </div>
     
     <!-- Checkout Button -->
-    <button id="showSummaryButton" class="btn">Checkout</button>
-
-
-
+    <button class="btn_action buy_button sticky-buy-button showSummaryButton" onclick="showSummary()">구매</button>
+    
+    
+    <!-- Sticky Bar 폼임 -->
+    <div class="sticky-container" id="stickyBar">
+        <div class="info">
+            <div class="number-of-items"></div>
+            <div class="finalPrice"></div>
+        </div>
+        <!-- 버튼 영역 -->
+        <div class="btn_area">
+            <button class="btn_action buy_button sticky-buy-button showSummaryButton" onclick="showSummary()">
+                구매
+            </button>
+        </div>
+    </div>
 
 </div>
+
 
 
 
@@ -100,7 +113,8 @@
         cartItems.forEach(cartItem => {
             const itemElement = document.createElement("div");
             itemElement.classList.add("cart-item");
-            
+            itemElement.id = `cart-item-${cartItem.cartId}`;
+
             let couponOptions = `<option value="none">No Coupon</option>`;
             if (userCoupons.length > 0) {
                 couponOptions += userCoupons.map(coupon =>
@@ -109,46 +123,57 @@
             }
 
             itemElement.innerHTML = `
-            <input type="checkbox" class="cart-item-checkbox" id="${cartItem.cartId}">
-            <div class="productId" data-productId="${cartItem.productId}"></div>
             <div class="cart-item-content">
+            <div class="productId" data-productId="${cartItem.productId}"></div>
+            <input type="checkbox" class="cart-item-checkbox" id="${cartItem.cartId}">
                 <img src="${cartItem.imageUrl}" alt="Product Image" class="cart-item-image">
                 
                 <div class="cart-item-details">
-                    <div class="cart-item-header">
-                        <p class="cart-item-name">${cartItem.productName}</p>
-                        <p class="cart-item-date">${cartItem.formattedCreatedAt}</p>
+                    <div class="cart-item-top">
+                        <div class="cart-item-header">
+                            <p class="cart-item-name">${cartItem.productName}</p>
+                            <p class="cart-item-date">${cartItem.formattedCreatedAt}</p>
+                        </div>
+                        
+                        <p class="cart-item-description">${cartItem.description}</p>
                     </div>
                     
-                    <p class="cart-item-description">${cartItem.description}</p>
-                    
-                    <p class="cart-item-price">Price:
-                        <span class="item-price" data-price="${cartItem.discountedPrice}">₩${cartItem.formattedDiscountedPrice}</span>
+                    <p class="cart-item-price">
+                        <span class="item-price" data-price="${cartItem.discountedPrice}">${cartItem.formattedDiscountedPrice + '원'}</span>
                     </p>
                     
-                    <select class="cart-item-size-selector">
-                        ${cartItem.productSizes
-                .filter(size => size.stock >= 0)
-                .map(size =>
-                    `<option value="${size.sizeName}" data-sizecode="${size.sizeCode}"
-                                    ${size.sizeCode === cartItem.sizeCode ? "selected" : ""}>
-                                    ${size.sizeDescription} (Stock: ${size.stock})
-                                </option>`
-                ).join("")}
-                    </select>
-
-                    <div class="cart-item-quantity">
-                        <button class="quantity-btn decrease">-</button>
-                        <input type="number" class="quantity-input" value="${cartItem.quantity}" min="1" max="${cartItem.stock}">
-                        <button class="quantity-btn increase">+</button>
+                    <div class="dropdowns">
+                        <div class="dropdown-top">
+                            <label>Size:</label>
+                            <select class="cart-item-size-selector">
+                                ${cartItem.productSizes
+                                    .filter(size => size.stock >= 0)
+                                    .map(size =>
+                                        `<option value="${size.sizeName}" data-sizecode="${size.sizeCode}"
+                                            ${size.sizeCode === cartItem.sizeCode ? "selected" : ""}>
+                                            ${size.sizeDescription} (Stock: ${size.stock})
+                                        </option>`
+                                    ).join("")}
+                            </select>
+                    
+                            <label>Coupon:</label>
+                            <select class="cart-item-coupon">
+                                ${couponOptions}
+                            </select>
+                        </div>
+                    
+                        <div class="cart-item-quantity">
+                            <button class="quantity-btn decrease">-</button>
+                            <input type="number" class="quantity-input" value="${cartItem.quantity}" min="1" max="${cartItem.stock}">
+                            <button class="quantity-btn increase">+</button>
+                        </div>
                     </div>
                     
-                    <label>Coupon:</label>
-                    <select class="cart-item-coupon">
-                        ${couponOptions}
-                    </select>
-                    
-                    <p class="cart-item-final-price">Final Price: <span class="final-price">₩${cartItem.discountedPrice}</span></p>
+                    <div class="cart-item-footer">
+                        <p class="cart-item-final-price"><span class="final-price">${cartItem.discountedPrice + '원'}</span></p>
+                        <button class="delete-cart-item" data-cartId="${cartItem.cartId}">삭제</button>
+                    </div>
+
                 </div>
             </div>
         `;
@@ -168,6 +193,7 @@
             const checkbox = cartItem.querySelector(".cart-item-checkbox");
             const sizeSelector = cartItem.querySelector(".cart-item-size-selector");
             const couponSelect = cartItem.querySelector(".cart-item-coupon");
+            const deleteBtn = cartItem.querySelector(".delete-cart-item");
 
 
             const updateFinalPrice = async () => {
@@ -196,7 +222,7 @@
                 }
 
                 let totalPrice = basePrice * quantity;
-                finalPriceElement.textContent = `₩${totalPrice.toLocaleString("ko-KR")}`;
+                finalPriceElement.textContent = `${totalPrice.toLocaleString("ko-KR")}원`;
 
                 updateCouponAvailability();
 
@@ -206,6 +232,10 @@
             };
 
 
+            deleteBtn.addEventListener("click", function () {
+                const cartId = this.getAttribute("data-cartId"); // Get cart ID from button
+                deleteCartItem(cartId);
+            });
 
 
             couponSelect.addEventListener("change", function () {
@@ -266,6 +296,7 @@
                 event.target.closest(".quantity-input") ||
                 event.target.closest(".cart-item-coupon") ||
                 event.target.closest(".cart-item-size-selector") ||
+                event.target.closest(".delete-cart-item") ||
                 event.target.tagName === "INPUT";
         }
 
@@ -308,7 +339,28 @@
             }
 
             console.log("Selected Items:", Array.from(selectedItems.values()));
+            updateStickyBar();
         }
+        
+        function updateStickyBar() {
+            let stickyBar = document.getElementById("stickyBar");
+            let totalItems = selectedItems.size;
+            let totalPrice = 0;
+
+            selectedItems.forEach((item) => {
+                totalPrice += item.finalPrice;
+            });
+            console.log(`Total Items: ${totalItems}, Total Price: ₩${totalPrice.toLocaleString()}`);
+
+            if (totalItems >= 1) {  // Show when at least one item is selected
+                stickyBar.style.display = "flex";
+                document.querySelector(".number-of-items").textContent = `선택한 상품: ${totalItems}개`;
+                document.querySelector(".finalPrice").textContent = `총 가격: ₩${totalPrice.toLocaleString()}`;
+            } else {
+                stickyBar.style.display = "none";
+            }
+        }
+        
 
 
     }
@@ -428,8 +480,13 @@
 
 
     let totalPrice = 0;
-
-    document.getElementById("showSummaryButton").addEventListener("click", function() {
+    
+    
+    
+    function showSummary() {
+        let stickyBar = document.getElementById("stickyBar");
+        stickyBar.style.display = "none";
+        console.log("showing summary");
         const modal = document.getElementById("orderSummaryModal");
         const orderItemsContainer = document.getElementById("orderItemsContainer");
         const totalPriceElement = document.getElementById("totalPrice");
@@ -438,7 +495,7 @@
         // Clear previous order items
         orderItemsContainer.innerHTML = '';
         totalPrice = 0;
-        
+
 
         // Loop through the selected items and populate the order summary
         selectedItems.forEach(item => {
@@ -465,7 +522,9 @@
 
         // Show the modal
         modal.style.display = "block";
-    });
+    }
+    
+    
 
     // Close the modal when the user clicks the close button
     document.getElementById("closeModal").addEventListener("click", function() {
@@ -622,6 +681,38 @@
             }
         );
     }
+
+
+
+    function deleteCartItem(cartId) {
+        console.log("Deleting cart item with ID:", cartId);
+
+        
+
+        $.ajax({
+            url: "/api/cart/delete",
+            data: { cartId: cartId },
+            type: "POST",
+            success: function (response) {
+                console.log(response);
+                const cartItemElement = document.querySelector(`#cart-item-${cartId}`).closest(".cart-item");
+
+                if (cartItemElement) {
+                    cartItemElement.remove();
+                }
+            },
+            error: function () {
+                console.log("Error deleting cart item");
+            }
+        });
+    }
+
+
+
+
+    
+
+
     
 
 

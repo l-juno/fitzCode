@@ -18,4 +18,9 @@ public interface UserOrderDetailMapper {
     List<UserOrderDetailDTO> getOrderDetailByUserId(int userId);
 
     void updateRequestRefundStatus(int orderDetailId);
+
+    void decrementProductCountInProductSize(int productId, int sizeCode);
+
+    void decrementProductCountInProduct(int productId);
+
 }

@@ -3,6 +3,7 @@ package kr.co.fitzcode.user.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import kr.co.fitzcode.common.dto.EmailMessageDTO;
+import kr.co.fitzcode.common.dto.OrderDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -77,5 +78,32 @@ public class EmailService {
         log.info("생성된 코드 : " + key.toString());
         return key.toString();
     }
+
+
+    public String sendOrderConfirmationEmail(EmailMessageDTO emailMessage, OrderDTO orderDTO) {
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper mimeMessageHelper =
+                    new MimeMessageHelper(mimeMessage, false, "UTF-8");
+            mimeMessageHelper.setTo(emailMessage.getTo());
+            mimeMessageHelper.setSubject(emailMessage.getSubject());
+            mimeMessageHelper.setText(setOrderContext(orderDTO), true);
+            mailSender.send(mimeMessage);
+            return "Order confirmation email sent successfully!";
+        } catch (MessagingException e) {
+            log.info("메일 발송 실패");
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    private String setOrderContext(OrderDTO orderDTO) {
+        Context context = new Context();
+        context.setVariable("orderDTO", orderDTO);  // order details
+        return templateEngine.process("order/orderConfirmationEmail", context);  // Specify template name
+    }
+
 
 }

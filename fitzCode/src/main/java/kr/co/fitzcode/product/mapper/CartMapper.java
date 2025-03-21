@@ -16,4 +16,6 @@ public interface CartMapper {
     List<CartProductDTO> getCartInformationByUserId(int userId);
 
     int getCartCount(@Param("userId") int userId);
+
+    void deleteByCartId(int cartId);
 }

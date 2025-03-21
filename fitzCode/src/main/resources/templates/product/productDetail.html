@@ -64,11 +64,19 @@
             <div class="product-name" th:text="${product.productName}">Product Name</div>
             <div class="product-description" th:text="${product.description}">This is a brief description of the product.</div>
             <div class="row">
-                <div class="product-salePercent" th:text="${product.formattedDiscountPercentage + '%'}"></div>
-                <div class="price-container">
-                    <div class="product-originalPrice" th:text="${product.formattedPrice + ' 원'}"></div>
-                    <div class="product-price" th:text="${product.formattedDiscountedPrice + ' 원'}"></div>
-                </div>
+                <th:block th:if="${product.formattedDiscountPercentage != '0'}">
+                    <div class="product-salePercent" th:text="${product.formattedDiscountPercentage + '%'}"></div>
+                    <div class="price-container">
+                        <div class="product-originalPrice" th:text="${product.formattedPrice + ' 원'}"></div>
+                        <div class="product-price" th:text="${product.formattedDiscountedPrice + ' 원'}"></div>
+                    </div>
+                </th:block>
+                <th:block th:if="${product.formattedDiscountPercentage == '0'}">
+                    <div class="price-container">
+                        <div class="product-price" th:text="${product.formattedDiscountedPrice + ' 원'}"></div>
+                    </div>
+                </th:block>
+                
             </div>
 
             <!-- 구분선 -->
@@ -77,8 +85,8 @@
             <!-- 상품 세부 정보 -->
             <dl class="product-details">
                 <div class="detail">
-                    <div class="text">모델번호</div>
-                    <span th:text="${product.productId}">12345</span>
+<!--                    <div class="text">모델번호</div>-->
+<!--                    <span th:text="${product.productId}">12345</span>-->
                 </div>
                 <div class="detail">
                     <div class="text">출시일</div>

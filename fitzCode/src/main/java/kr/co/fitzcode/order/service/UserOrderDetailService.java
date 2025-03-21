@@ -12,5 +12,7 @@ public interface UserOrderDetailService {
     List<UserOrderDetailDTO> getOrderDetailByUserId(int userId);
 
     void updateRequestRefundStatus(int orderDetailId);
+
+    void decrementProductCount(int productId, int sizeCode);
 }
 

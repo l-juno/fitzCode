@@ -32,4 +32,9 @@ public class CartServiceImple implements CartService {
     public int getCartCount(int userId) {
         return cartMapper.getCartCount(userId);
     }
+
+    @Override
+    public void deleteByCartId(int cartId) {
+        cartMapper.deleteByCartId(cartId);
+    }
 }

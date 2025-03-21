@@ -5,7 +5,7 @@
     flex-direction: column; /* Ensures children stack vertically */
     align-items: center; /* Center-align the content horizontally */
     margin-top: 100px;
-
+    font-family: 'Apple SD Gothic Neo', sans-serif;
 }
 
 .title {
@@ -65,6 +65,7 @@
 
 .cart-item-name {
     font-size: 18px;
+    margin-bottom: 0px;
 }
 
 .cart-item-date {
@@ -75,18 +76,19 @@
 .cart-item-description {
     font-size: 16px;
     color: #333;
+    margin-top: 0px;
 }
 
 .cart-item-price {
     font-size: 18px;
     font-weight: bold;
-    color: red;
+    color: #151515;
 }
 
 .cart-item-options {
     display: flex;
     gap: 20px;
-    flex-wrap: wrap;
+    flex-wrap: wrap;margin-bottom: 0px;
     align-items: center;
 }
 
@@ -98,6 +100,50 @@
     background: #fff;
     cursor: pointer;
 }
+
+.dropdowns {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    gap: 10px;
+}
+
+.dropdown-top {
+    display: flex;
+    gap: 15px; /* Adjust spacing between size and coupon dropdowns */
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.cart-item-quantity {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-start; /* Align to left */
+}
+.cart-item-footer {
+    display: flex;
+    justify-content: space-between; /* Pushes the delete button to the right */
+    align-items: flex-end; /* Aligns content at the bottom */
+    width: 100%; /* Ensures full width of the container */
+}
+
+.delete-cart-item {
+    background-color: #1e1e1e; /* Red color for delete */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-left: auto; /* Pushes it to the right */
+}
+
+.delete-cart-item:hover {
+    background-color: #474747; /* Darker red on hover */
+}
+
+
+
 
 .cart-item-quantity {
     display: flex;
@@ -129,7 +175,7 @@
 .cart-item-final-price {
     font-size: 18px;
     font-weight: bold;
-    color: #333;
+    color: #f40303;
     margin-top: 10px;
 }
 
@@ -179,3 +225,79 @@
 
 
 
+
+.sticky-container {
+    width: 1280px;
+    height: 90px;
+    position: fixed;
+    bottom: 0; /* Move it to the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fff;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000;
+    box-sizing: border-box;
+}
+
+
+
+
+
+.btn_area {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    height: 50px;
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 80px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.btn_wish2 {
+    color: #222;
+    border: 1px solid #ddd;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.btn_action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    width: 80px;
+    color: #fff;
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.buy_button {
+    background-color: #0b0b0b;
+}
+
+.sell_button {
+    background-color: #41b979;
+}
+
+.price {
+    font-size: 12px;
+}

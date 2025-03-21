@@ -13,4 +13,5 @@ public interface CartService {
 
     int getCartCount(int userId);
 
+    void deleteByCartId(int cartId);
 }

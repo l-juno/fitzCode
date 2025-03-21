@@ -13,7 +13,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -125,6 +127,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
                             .anyRequest().authenticated();
                 })
+                .requestCache(requestCache -> requestCache
+                        .requestCache(new HttpSessionRequestCache()) // for login redirection
+                )
                 .formLogin(formLogin -> {
                     formLogin
                             .loginPage("/login")

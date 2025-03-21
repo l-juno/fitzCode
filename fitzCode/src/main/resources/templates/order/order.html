@@ -94,7 +94,7 @@
         <p><strong>Address:</strong> <span id="addressInfo" th:text="${orderDTO.addressId}"></span></p>
         <p><strong>Total Price:</strong> <span th:text="${orderDTO.formattedTotalPrice}"></span></p>
         <p><strong>Order Status:</strong> <span th:text="${orderDTO.orderStatusTranslated}"></span></p>
-        <p><strong>Ordered At:</strong> <span th:text="${orderDTO.createdAt}"></span></p>
+        <p><strong>Ordered At:</strong> <span th:text="${orderDTO.formattedCreatedAt}"></span></p>
     </div>
     
     <h3>Order Items</h3>
