@@ -76,10 +76,6 @@
             <!-- 상품 세부 정보 -->
             <dl class="product-details">
                 <div class="detail">
-                    <div class="text">모델번호</div>
-                    <span th:text="${product.productId}"></span>
-                </div>
-                <div class="detail">
                     <div class="text">출시일</div>
                     <span th:text="${product.formattedCreatedAt}"></span>
                 </div>
@@ -244,7 +240,6 @@
 </div>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
-
 </body>
 
 <!-- check if user exists -->
@@ -256,6 +251,15 @@
 </script>
 
 <script>
+    <!-- check if user exists -->
+    <script th:if="${#authentication.principal == 'anonymousUser'}">
+        var isAuthenticated = false;
+    </script>
+    <script th:unless="${#authentication.principal == 'anonymousUser'}">
+        var isAuthenticated = true;
+    </script>
+
+<script>
     // 사용자 인증 여부 확인
     var isAuthenticated = false;
     if ("${#authentication.principal}" !== "anonymousUser") {
@@ -265,9 +269,11 @@
     const productId = [[${product?.productId ?: 0}]];
     const retailPrice = [[${product?.discountedPrice ?: 0}]];
     let finalPrice = [[${product?.discountedPrice ?: 0}]];
+    const productCategoryId = [[${product?.categoryId ?: 0}]]; // 상품의 카테고리 ID 추가 (가정)
     console.log("final price: " + finalPrice);
-
     console.log("Product ID:", productId);
+    console.log("Product Category ID:", productCategoryId);
+
     const cartBtn = document.querySelector('.cart-button');
     const buyBtn = document.querySelector('.buy-button');
     const stickyCartBtn = document.querySelector('.sticky-cart-button');
@@ -441,7 +447,17 @@
             success: function (response) {
                 console.log(response);
                 if (response.length > 0) {
-                    renderCouponDropdown(response);
+                    // 현재 상품의 카테고리와 쿠폰의 applicable_categories 비교
+                    const filteredCoupons = response.filter(coupon => {
+                        if (!coupon.applicableCategories || coupon.applicableCategories === '[]') return true; // 전체 적용 가능 쿠폰
+                        const categories = JSON.parse(coupon.applicableCategories);
+                        return categories.includes(String(productCategoryId)); // 현재 상품 카테고리와 일치 여부
+                    });
+                    if (filteredCoupons.length > 0) {
+                        renderCouponDropdown(filteredCoupons);
+                    } else {
+                        $("#userCoupon").html("<option value=''>이 상품에 사용 가능한 쿠폰이 없습니다.</option>");
+                    }
                 } else {
                     $("#userCoupon").html("<option value=''>사용할 수 있는 쿠폰이 없습니다.</option>");
                 }
@@ -1395,6 +1411,7 @@
         }, 10);
     }
 </script>
+
 <script th:src="@{/js/admin/notifications.js}"></script>
 <script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

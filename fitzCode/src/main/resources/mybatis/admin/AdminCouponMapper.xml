@@ -4,7 +4,7 @@
 
     <!-- 쿠폰 추가 -->
     <insert id="insertCoupon" parameterType="CouponDTO" useGeneratedKeys="true" keyProperty="couponId">
-        INSERT INTO COUPON (coupon_code, description, coupon_type, discount_amount, discount_percentage, minimum_order_amount, expiry_date, is_active, created_at)
+        INSERT INTO COUPON (coupon_code, description, coupon_type, discount_amount, discount_percentage, minimum_order_amount, expiry_date, is_active, created_at, applicable_categories)
         VALUES (
         #{couponCode},
         #{description},
@@ -14,7 +14,8 @@
         #{minimumOrderAmount},
         #{expiryDate},
         #{isActive},
-        #{createdAt}
+        #{createdAt},
+        #{applicableCategories}
         )
     </insert>
 
@@ -30,7 +31,8 @@
         minimum_order_amount AS minimumOrderAmount,
         expiry_date AS expiryDate,
         is_active AS isActive,
-        created_at AS createdAt
+        created_at AS createdAt,
+        applicable_categories AS applicableCategories
         FROM COUPON
         ORDER BY created_at DESC
         LIMIT #{pageSize} OFFSET #{offset}
@@ -48,7 +50,8 @@
         minimum_order_amount AS minimumOrderAmount,
         expiry_date AS expiryDate,
         is_active AS isActive,
-        created_at AS createdAt
+        created_at AS createdAt,
+        applicable_categories AS applicableCategories
         FROM COUPON
         WHERE coupon_id = #{couponId}
     </select>
@@ -64,7 +67,8 @@
         discount_percentage = #{discountPercentage},
         minimum_order_amount = #{minimumOrderAmount},
         expiry_date = #{expiryDate},
-        is_active = #{isActive}
+        is_active = #{isActive},
+        applicable_categories = #{applicableCategories}
         WHERE coupon_id = #{couponId}
     </update>
 
