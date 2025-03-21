@@ -33,16 +33,6 @@ public class MypageServiceImpl implements MypageService {
     @Override
     public List<OrderDTO> getMypageOrderList(int userId) {
         List<OrderDTO> orderDTOList = mypageMapper.getMypageOrderList(userId);
-        for (OrderDTO orderDTO1 : orderDTOList) {
-            log.info(">>>>>>>>>>>>>> getOrderId : {} ", orderDTO1.getOrderId());
-            log.info(">>>>>>>>>>>>>> getShippedAt : {} ", orderDTO1.getShippedAt());
-            log.info(">>>>>>>>>>>>>> getOrderStatus : {} ", orderDTO1.getOrderStatus());
-            log.info(">>>>>>>>>>>>>> getTotalPrice : {} ", orderDTO1.getTotalPrice());
-            log.info(">>>>>>>>>>>>>> getTrackingNumber : {} ", orderDTO1.getTrackingNumber());
-            log.info(">>>>>>>>>>>>>> getDeliveryStatus : {} ", orderDTO1.getDeliveryStatus());
-            log.info(">>>>>>>>>>>>>> getDeliveredAt : {} ", orderDTO1.getDeliveredAt());
-            log.info(">>>>>>>>>>>>>> getFormattedTotalPrice : {} ", orderDTO1.getFormattedTotalPrice());
-        }
         return orderDTOList;
 //        return mypageMapper.getOrderList(userId);
     }
@@ -85,7 +75,6 @@ public class MypageServiceImpl implements MypageService {
     public void updateUserInfo(UserDTO userDTO) {
         // 비밀번호 암호화
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        log.info(">>>>>>>>>>> updateUserInfo : {}", userDTO.getPassword() );
         mypageMapper.updateUserInfo(userDTO);
     }
 

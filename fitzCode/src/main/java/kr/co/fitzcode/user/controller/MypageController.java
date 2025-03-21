@@ -1,5 +1,6 @@
 package kr.co.fitzcode.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.user.service.MypageService;
@@ -9,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.List;
 
 @Slf4j
@@ -23,12 +23,9 @@ public class MypageController {
     // 내 프로필
     @GetMapping("/myInfo")
     public String mypage(Model model) {
-
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
         List<OrderDTO> orderDTO = mypageService.getMypageOrderList(userId);
-
-        // 권한가져오기
 
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("orderDTO", orderDTO);
@@ -100,28 +97,33 @@ public class MypageController {
     }
 
     // 회원정보 수정 전 인증 페이지
-    @GetMapping("/verifyIdentity")
-    public String verifyIdentity(Model model) {
+    @GetMapping("/verifyUser")
+    public String verifyIdentity(Model model, HttpServletRequest request) {
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
         model.addAttribute("dto", userDTO);
+
+        // 로그인 인증 후 갈 페이지 session 에 담기
+        String targetUrl = "http://localhost:8080/mypage/verifiedUser";
+        request.getSession().setAttribute("prevPage", targetUrl);
         return "user/mypage/verifyIdentity";
     }
 
-    // 회원정보 수정 전 인증확인 -> 회원정보 수정 폼으로 이동
-    @PostMapping("/verifyUser")
-    public String verifyUser(@ModelAttribute UserDTO userDTO, Model model) {
-        UserDTO dto = mypageService.verifyUser(userDTO);
-        model.addAttribute("dto", dto);
+    // 회원 인증 확인 후 -> 회원정보 수정 폼으로 이동
+    @GetMapping("/verifiedUser")
+    public String verifyUser(Model model) {
+        int userId = securityUtils.getUserId();
+        UserDTO userDTO = mypageService.getMyInfo(userId);
+        model.addAttribute("dto", userDTO);
         return "user/mypage/updateInfo";
     }
 
     // 수정된 회원 정보 저장
     @PostMapping("/updateInfo")
     public String updateInfo(@ModelAttribute UserDTO userDTO) {
-//        log.info(">>>>>>>>>>> updateInfo : {}", userDTO.getPassword() );
+        log.info("userDTO: {}", userDTO.getPassword());
         mypageService.updateUserInfo(userDTO);
-        return "redirect:user/mypage/updateInfo";
+        return "redirect:/mypage/verifiedUser";
     }
 
     // 사용자 쿠폰

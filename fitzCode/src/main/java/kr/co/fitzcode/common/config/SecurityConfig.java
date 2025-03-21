@@ -1,5 +1,6 @@
 package kr.co.fitzcode.common.config;
 
+import kr.co.fitzcode.admin.handler.CustomLoginSuccessHandler;
 import kr.co.fitzcode.user.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,7 @@ public class SecurityConfig implements WebMvcConfigurer {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final UserDetailsService userDetailsService;
+    private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -131,6 +133,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
                             .requestMatchers("/admin/products/{productId}", "/admin/products/{productId}/**")
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
+                            .requestMatchers("/mypage/verifiedUser").authenticated()
                             .anyRequest().authenticated();
                 })
                 .formLogin(formLogin -> {
@@ -139,7 +142,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .loginProcessingUrl("/login")
                             .usernameParameter("email")
                             .passwordParameter("password")
-                            .successHandler(successHandler())
+                            .successHandler(customLoginSuccessHandler) // customLoginSuccessHandler 등록
                             .failureHandler(failureHandler())
                             .permitAll();
                 })
@@ -191,6 +194,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                                 .defaultSuccessUrl("/", true)
                                 .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig.userService(customOAuth2UserService))
+                                .successHandler(customLoginSuccessHandler) // customLoginSuccessHandler 등록
                 );
 
         return http.build();

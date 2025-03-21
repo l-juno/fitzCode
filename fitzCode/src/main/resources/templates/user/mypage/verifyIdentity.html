@@ -20,11 +20,11 @@
         <h2>회원정보 변경</h2>
         <div id="hr"></div>
 
-        <form th:action="@{/mypage/verifyUser}" method="post" class="verifyContent">
+        <form action="/login" method="post" class="verifyContent">
             <div class="myInfo">
                 <th:block th:if="${dto.password != null}">
                 <div class="verifyForm">
-                    <div><p>이메일</p><input type="text" name="email" th:value="${dto.email}" readonly></div>
+                    <div><p>이메일</p><input type="text" name="email"></div>
                     <div><p>비밀번호</p><input type="password" name="password"></div>
                     <button type="submit">인증하기</button>
                 </div>
@@ -40,6 +40,7 @@
                 <a href="/oauth2/authorization/google"><img class="google-icon" src="/img/google_icon.png" alt="Google Logo"></a>
                 <a href="/oauth2/authorization/naver"><img class="naver-icon" src="/img/naver_icon.png" alt="Naver Logo"></a>
             </div>
+            <input type="hidden" th:value="${session.prevPage}">
         </form>
     </div>
 

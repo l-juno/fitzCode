@@ -32,34 +32,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // 계좌 추가
-    document.getElementById("saveBtn").addEventListener("click", () => {
-        let accountHolder = document.getElementById("addAccountHolder").value;
-        let bankName = document.getElementById("addBankName").value;
-        let accountNumber = document.getElementById("addAccountNumber").value;
-        let userId = document.getElementById("userId").value;
-        console.log(accountHolder);
-        console.log(bankName);
-        console.log(accountNumber);
-        console.log(userId);
-        let data = {
-            accountHolder: accountHolder,
-            bankName: bankName,
-            accountNumber: accountNumber,
-            userId: userId,
-            isDefault: false
-        };
-
-        fetch("http://localhost:8080/mypage/insertAccount", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-            .then(data => {
-                location.href = "http://localhost:8080/mypage/account";  // 리다이렉트
-            })
-
-    });
+    // document.getElementById("saveBtn").addEventListener("click", () => {
+    //     let accountHolder = document.getElementById("addAccountHolder").value;
+    //     let bankName = document.getElementById("addBankName").value;
+    //     let accountNumber = document.getElementById("addAccountNumber").value;
+    //     let userId = document.getElementById("userId").value;
+    //     console.log(accountHolder);
+    //     console.log(bankName);
+    //     console.log(accountNumber);
+    //     console.log(userId);
+    //     let data = {
+    //         accountHolder: accountHolder,
+    //         bankName: bankName,
+    //         accountNumber: accountNumber,
+    //         userId: userId,
+    //         isDefault: false
+    //     };
+    //
+    //     fetch("http://localhost:8080/mypage/insertAccount", {
+    //         method: "POST",
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         },
+    //         body: JSON.stringify(data)
+    //     })
+    //         .then(data => {
+    //             location.href = "http://localhost:8080/mypage/account";  // 리다이렉트
+    //         })
+    //
+    // });
 
 });
