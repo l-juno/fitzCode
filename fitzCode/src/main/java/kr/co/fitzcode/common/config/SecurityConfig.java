@@ -36,10 +36,8 @@ public class SecurityConfig implements WebMvcConfigurer {
 
 //    @Bean
 //    public AuthenticationSuccessHandler successHandler() {
-//        return (request, response, authentication) -> {
-//            System.out.println("Login successful: " + authentication.getName());
-//            response.sendRedirect("/");
-//        };
+//        return new CustomAuthenticationSuccessHandler(userService);
+//    }
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
