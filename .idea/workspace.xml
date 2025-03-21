@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="merge" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$/fitzCode">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="fitzCode" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="spring-beans.schema" />
+        <option value="Enum" />
+        <option value="HTML File" />
+        <option value="CSS File" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Merge.Settings">
+    <option name="BRANCH" value="origin/feature/community-post" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;dotaeng&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/HyeongYoon/fitzCode.git&quot;,
+    &quot;accountId&quot;: &quot;bc192577-ce1f-4ced-b9cd-d2e13ed09e41&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="2u7DYaEMN4eR2De1eDlfIxnUnim" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "Gradle.fitzCode 빌드.executor": "Run",
+    "RequestMappingsPanelOrder0": "0",
+    "RequestMappingsPanelOrder1": "1",
+    "RequestMappingsPanelWidth0": "75",
+    "RequestMappingsPanelWidth1": "75",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "Spring Boot.FitzCodeApplication.executor": "Run",
+    "git-widget-placeholder": "feature/community-post",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/doyxxn/fitzCode/fitzCode/src/main/resources/static/img",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql_aurora"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="kr.co.fitzcode.common.dto" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/fitzCode/src/main/resources/static/img" />
+      <recent name="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto" />
+      <recent name="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/user/service" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="FitzCodeApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <envs>
+        <env name="ENCRYPTOR_KEY" value="FitzCode1234" />
+        <env name="mail.username" value="haribojellyam" />
+        <env name="mail.password" value="sdhd vvkh nijy miis" />
+      </envs>
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+      <module name="fitzCode.main" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="kr.co.fitzcode.FitzCodeApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-fdfe4dae3a2d-intellij.indexing.shared.core-IU-243.22562.218" />
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-IU-243.22562.218" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="" />
+      <created>1741590768772</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1741590768772</updated>
+      <workItem from="1741590769769" duration="18701000" />
+      <workItem from="1741668598056" duration="57494000" />
+      <workItem from="1742112271862" duration="9813000" />
+      <workItem from="1742122415452" duration="74065000" />
+      <workItem from="1742539094382" duration="27000" />
+    </task>
+    <task id="LOCAL-00001" summary="0310 소셜로그인(네이버)">
+      <option name="closed" value="true" />
+      <created>1741596236963</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1741596236963</updated>
+    </task>
+    <task id="LOCAL-00002" summary="도연 커밋">
+      <option name="closed" value="true" />
+      <created>1741657853248</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1741657853248</updated>
+    </task>
+    <task id="LOCAL-00003" summary="도연 커밋">
+      <option name="closed" value="true" />
+      <created>1741668568261</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1741668568261</updated>
+    </task>
+    <task id="LOCAL-00004" summary="도연 커밋">
+      <option name="closed" value="true" />
+      <created>1741678778712</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1741678778712</updated>
+    </task>
+    <task id="LOCAL-00005" summary="도연 커밋">
+      <option name="closed" value="true" />
+      <created>1741679372424</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1741679372424</updated>
+    </task>
+    <task id="LOCAL-00006" summary="[commit] 카카오 로그인 수정">
+      <option name="closed" value="true" />
+      <created>1741791685628</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1741791685628</updated>
+    </task>
+    <task id="LOCAL-00007" summary="[commit] 커뮤니티 추가">
+      <option name="closed" value="true" />
+      <created>1741835329947</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1741835329947</updated>
+    </task>
+    <task id="LOCAL-00008" summary="[commit] 커뮤니티 추가">
+      <option name="closed" value="true" />
+      <created>1741852436906</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1741852436906</updated>
+    </task>
+    <task id="LOCAL-00009" summary="[commit] 커뮤니티 리스트 수정">
+      <option name="closed" value="true" />
+      <created>1741917631522</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1741917631522</updated>
+    </task>
+    <task id="LOCAL-00010" summary="[commit] 커뮤니티 리스트 수정">
+      <option name="closed" value="true" />
+      <created>1741918354939</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1741918354939</updated>
+    </task>
+    <task id="LOCAL-00011" summary="[commit] 커뮤니티 내 로그인 수정">
+      <option name="closed" value="true" />
+      <created>1741918838290</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1741918838290</updated>
+    </task>
+    <task id="LOCAL-00012" summary="[commit] 커뮤니티 수정">
+      <option name="closed" value="true" />
+      <created>1742110257824</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1742110257824</updated>
+    </task>
+    <task id="LOCAL-00013" summary="[commit] 커뮤니티 수정">
+      <option name="closed" value="true" />
+      <created>1742122360004</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1742122360004</updated>
+    </task>
+    <task id="LOCAL-00014" summary="[commit] 커뮤니티 수정">
+      <option name="closed" value="true" />
+      <created>1742123374926</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1742123374926</updated>
+    </task>
+    <task id="LOCAL-00015" summary="[commit] 커뮤니티 수정">
+      <option name="closed" value="true" />
+      <created>1742436227511</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1742436227511</updated>
+    </task>
+    <task id="LOCAL-00016" summary="[commit] user 수정">
+      <option name="closed" value="true" />
+      <created>1742537446309</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1742537446309</updated>
+    </task>
+    <task id="LOCAL-00017" summary=".">
+      <option name="closed" value="true" />
+      <created>1742538142805</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1742538142805</updated>
+    </task>
+    <task id="LOCAL-00018" summary=".">
+      <option name="closed" value="true" />
+      <created>1742538151849</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1742538151849</updated>
+    </task>
+    <task id="LOCAL-00019" summary=".">
+      <option name="closed" value="true" />
+      <created>1742538441800</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1742538441800</updated>
+    </task>
+    <task id="LOCAL-00020" summary="merge">
+      <option name="closed" value="true" />
+      <created>1742539018047</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1742539018047</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="0310 소셜로그인(네이버)" />
+    <MESSAGE value="도연 커밋" />
+    <MESSAGE value="[commit] 카카오 로그인 수정" />
+    <MESSAGE value="[commit] 커뮤니티 추가" />
+    <MESSAGE value="[commit] 커뮤니티 리스트 수정" />
+    <MESSAGE value="[commit] 커뮤니티 내 로그인 수정" />
+    <MESSAGE value="[commit] 커뮤니티 수정" />
+    <MESSAGE value="[commit] user 수정" />
+    <MESSAGE value="." />
+    <MESSAGE value="merge" />
+    <option name="LAST_COMMIT_MESSAGE" value="merge" />
+  </component>
+</project>
