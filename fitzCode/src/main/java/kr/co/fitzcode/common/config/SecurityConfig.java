@@ -193,7 +193,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .oauth2Login(oauth2 ->
                         oauth2.loginPage("/login")
                                 .successHandler(customLoginSuccessHandler)
-                                .defaultSuccessUrl("/", true)
+//                                .defaultSuccessUrl("/", true)
                                 .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig.userService(customOAuth2UserService))
                 );
