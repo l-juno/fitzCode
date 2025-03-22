@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fitzCode</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" th:href="@{/css/user/joinForm.css}"/>
 </head>
 <body>
@@ -17,21 +18,21 @@
         <form th:action="joinForm" method="post" id="signupForm" onsubmit="return validateForm()" th:object="${dto}">
             <div class="form-group">
                 <label for="email">이메일 (ID)</label>
-                <input type="email" id="email" name="email" th:field="*{email}" required placeholder="이메일 입력"> &nbsp;&nbsp;
+                <input type="email" id="email" name="email" th:field="*{email}" required placeholder="이메일 입력">   
                 <button type="button" onclick="checkEmail()" class="btn-email">중복 확인</button>
-                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red"></span>
-                <span id="emailMessage"></span>
-<!--                <span th:if="${emailCheckError}" style="color: red; font-size: 12px;" th:text="${emailCheckError}"></span>-->
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+                <span id="emailMessage" class="message"></span>
+                <!--                <span th:if="${emailCheckError}" style="color: red; font-size: 12px;" th:text="${emailCheckError}"></span>-->
             </div>
             <div class="form-group">
                 <label for="password">비밀번호</label>
                 <input type="password" id="password" name="password" required placeholder="비밀번호 입력 (최소 8자 이상 최대 16자)">
-                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></span>
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
             </div>
             <div class="form-group">
                 <label for="password_confirm">비밀번호 확인</label>
                 <input type="password" id="password_confirm" name="password_confirm" required placeholder="비밀번호 재입력">
-                <span id="passwordError"></span>
+                <span id="passwordError" class="message"></span>
             </div>
             <div class="form-group">
                 <label for="userName">이름</label>
@@ -39,20 +40,20 @@
             </div>
             <div class="form-group">
                 <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" name="nickname" required> &nbsp;&nbsp;
+                <input type="text" id="nickname" name="nickname" required>   
                 <button type="button" onclick="checkNickname()" class="btn-nickname">중복 확인</button>
-                <span id="nicknameMessage"></span>
-<!--                <span th:if="${nickNameCheckError}" style="color: red; font-size: 12px;" th:text="${nickNameCheckError}"></span>-->
+                <span id="nicknameMessage" class="message"></span>
+                <!--                <span th:if="${nickNameCheckError}" style="color: red; font-size: 12px;" th:text="${nickNameCheckError}"></span>-->
             </div>
             <div class="form-group">
                 <label for="phoneNumber">전화번호</label>
                 <input type="text" id="phoneNumber" name="phoneNumber" required placeholder="전화번호 입력 ('-' 포함 13자리 입력)">
-<!--                <span th:if="${phoneNumberCheckError}" style="color: red; font-size: 12px;" th:text="${phoneNumberCheckError}"></span>-->
+                <!--                <span th:if="${phoneNumberCheckError}" style="color: red; font-size: 12px;" th:text="${phoneNumberCheckError}"></span>-->
             </div>
 
             <div class="form-group">
                 <label for="birthDate">생년월일</label>
-                <span th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" style="color: red"></span>
+                <span th:if="${#fields.hasErrors('birthDate')}" th:errors="*{birthDate}" class="error-message"></span>
                 <div class="birthdate-inputs" id="birthDate">
                     <input type="text" name="birthDate" required placeholder="생년월일 입력 (8자리)">
                 </div>
@@ -68,7 +69,7 @@
                 <div class="terms-box">
                     <p><strong>[필수] 이용약관 동의</strong></p>
                     <p>본 약관은 쇼핑몰 이용과 관련하여 회사와 회원 간의 권리, 의무 및 책임사항을 규정합니다.</p>
-                    <p>회사는 약관을 변경할 수 있으며, 변경 시 사전 고지 후 시행됩니다.</p>
+                    <p>회사는 약관을 변경할 수 있으며, 변경 시 사전 고지 후 시행됩니다。</p>
                     <label>
                         <input type="checkbox" class="agree-check" data-required="true">
                         이용약관에 동의하십니까?
@@ -77,7 +78,7 @@
 
                 <div class="terms-box">
                     <p><strong>[필수] 개인정보 수집 및 이용 동의</strong></p>
-                    <p>회사는 회원의 원활한 서비스 이용을 위해 최소한의 개인정보를 수집하며, 목적 달성 후 파기합니다.</p>
+                    <p>회사는 회원의 원활한 서비스 이용을 위해 최소한의 개인정보를 수집하며, 목적 달성 후 파기합니다。</p>
                     <p>수집 항목: 성명, 이메일, 전화번호, 주소 등</p>
                     <label>
                         <input type="checkbox" class="agree-check" data-required="true">
@@ -87,8 +88,8 @@
 
                 <div class="terms-box">
                     <p><strong>[선택] 쇼핑정보 수신 동의</strong></p>
-                    <p>할인쿠폰, 이벤트, 신상품 소식 등 다양한 혜택 정보를 SMS 또는 이메일로 받아보실 수 있습니다.</p>
-                    <p>단, 주문/거래 정보 및 주요 정책 관련 내용은 수신 동의 여부와 관계없이 발송됩니다.</p>
+                    <p>할인쿠폰, 이벤트, 신상품 소식 등 다양한 혜택 정보를 SMS 또는 이메일로 받아보실 수 있습니다。</p>
+                    <p>단, 주문/거래 정보 및 주요 정책 관련 내용은 수신 동의 여부와 관계없이 발송됩니다。</p>
                     <label>
                         <input type="checkbox" class="agree-check">
                         쇼핑정보 수신에 동의하십니까?
@@ -114,4 +115,6 @@
     alert("[[${phoneNumberCheckError}]]");
 </script>
 <script th:src="@{/js/user/joinForm.js}"></script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

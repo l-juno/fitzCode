@@ -1,6 +1,5 @@
 package kr.co.fitzcode.admin.mapper;
 
-
 import kr.co.fitzcode.common.dto.PickProductDTO;
 import kr.co.fitzcode.common.dto.ProductCategoryDTO;
 import kr.co.fitzcode.common.dto.ProductDTO;
@@ -8,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface AdminProductMapper {
@@ -71,6 +71,12 @@ public interface AdminProductMapper {
 
     // 카테고리 검증
     int countCategoryById(Long categoryId);
+
+    // 상품 검색 필터 적용 조회
+    List<ProductDTO> getProductsByFilter(Map<String, Object> params);
+
+    // 상품 검색 필터 적용 개수 조회
+    int getProductsCountByFilter(Map<String, Object> params);
 
     List<PickProductDTO> selectPickProducts();
     void deleteAllPickProducts();

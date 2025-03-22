@@ -157,18 +157,14 @@ function search(keyword) {
     $.ajax({
         url: '/search',
         type: 'POST',
-        data: {keyword: keyword},
+        data: { keyword: keyword },
         dataType: 'json',
         success: function (result) {
-            if (result.success) {
-                window.location.href = '/search/result?keyword=' + encodeURIComponent(keyword);
-            } else {
-                alert('검색 처리에 실패했습니다: ' + (result.message || '알 수 없는 오류'));
-            }
+            window.location.href = '/search/result?keyword=' + encodeURIComponent(keyword);
         },
         error: function (xhr, status, error) {
             console.error('검색 오류:', error);
-            alert('검색 중 오류가 발생했습니다: ' + error);
+            window.location.href = '/search/result?keyword=' + encodeURIComponent(keyword);
         }
     });
 }

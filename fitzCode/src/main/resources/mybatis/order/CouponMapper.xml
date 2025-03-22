@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="kr.co.fitzcode.order.mapper.CouponMapper">
-
     <select id="getUsersValidCoupon" resultType="CouponDTO">
-        select c.coupon_id, c.coupon_code, c.description, c.coupon_type, c.discount_amount, c.discount_percentage,
-        c.minimum_order_amount, c.expiry_date, c.is_active, c.created_at
-        from COUPON c join USER_COUPON uc on c.coupon_id = uc.coupon_id
-        where expiry_date > now() and uc.valid_until > now() and uc.is_used = false and uc.user_id=#{userId};
+        SELECT c.coupon_id, c.coupon_code, c.description, c.coupon_type, c.discount_amount, c.discount_percentage,
+        c.minimum_order_amount, c.expiry_date, c.is_active, c.created_at, c.applicable_categories
+        FROM COUPON c
+        JOIN USER_COUPON uc ON c.coupon_id = uc.coupon_id
+        WHERE c.expiry_date > NOW()
+        AND uc.valid_until > NOW()
+        AND uc.is_used = false
+        AND uc.user_id = #{userId}
     </select>
 
     <insert id="markCouponAsUsed">
@@ -23,5 +24,4 @@
         SET is_used = 1, used_at = NOW()
         WHERE user_id = #{userId} AND coupon_id = #{couponId}
     </update>
-
 </mapper>
