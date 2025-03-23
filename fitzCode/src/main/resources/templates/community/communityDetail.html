@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>communityDetail2</title>
+    <title>communityDetail</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,6 @@
             margin: 20px auto;
             padding: 20px;
         }
-
 
         .style-container {
             background: white;
@@ -57,18 +56,13 @@
         }
 
         .edit-btn {
-            margin-left: auto;
-            padding: 10px 20px;
+            padding: 10px 10px;
             background-color: #ffffff;
-            border: 1px solid #cfcfcf;
             color: #4a4a4a;
             border-radius: 5px;
             font-weight: bold;
             cursor: pointer;
-        }
-
-        .edit-btn:hover {
-            background-color: #ededed;
+            border: none;
         }
 
         .style-content {
@@ -151,15 +145,15 @@
         }
 
         .community-action {
-            min-height: 60px; /* 최소 높이 설정으로 높이 넓힘 */
+            min-height: 60px;
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* 콘텐츠를 오른쪽 정렬 */
-            padding: 15px 0; /* 상하 패딩 추가 */
-            margin-bottom: 10px;
-            border-top: 1px solid #eee; /* 상단 경계선 추가 */
-            border-bottom: 1px solid #eee; /* 하단 경계선 추가 */
-            gap: 20px;
+            justify-content: flex-end;
+            padding: 15px 35px 15px 0;
+            margin-bottom: 20px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            gap: 30px;
         }
 
         .product-tags h3 {
@@ -211,15 +205,17 @@
 
         .style-list {
             display: flex;
-            gap: 20px;
+            gap: 10px;
         }
 
         .style-thumbnail {
-            width: 100%;
-            height: auto;
-            border-radius: 7px;
-        }
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 5px;
+            text-align: center;
+            width: 25%;
 
+        }
 
         /* From Uiverse.io by Galahhad */
         .ui-bookmark {
@@ -298,7 +294,6 @@
         }
 
         /* actions */
-
         .ui-bookmark:hover .bookmark {
             fill: var(--icon-hover-color);
         }
@@ -421,7 +416,6 @@
         }
 
         /* 좋아요 스타일 */
-        /* From Uiverse.io by Tsiangana */
         .ui-bookmark2 {
             --icon-size: 24px;
             --icon-secondary-color: rgb(77, 77, 77);
@@ -499,7 +493,6 @@
         }
 
         /* actions */
-
         .ui-bookmark2:hover .bookmark {
             fill: var(--icon-hover-color);
         }
@@ -622,7 +615,6 @@
         }
 
         /* 댓글 스타일 */
-        /* From Uiverse.io by Tsiangana */
         .ui-bookmark3 {
             --icon-size: 24px;
             --icon-secondary-color: rgb(77, 77, 77);
@@ -700,7 +692,6 @@
         }
 
         /* actions */
-
         .ui-bookmark3:hover .bookmark {
             fill: var(--icon-hover-color);
         }
@@ -822,6 +813,92 @@
             }
         }
 
+        .menu {
+            --icon-size: 24px;
+            --icon-secondary-color: rgb(77, 77, 77);
+            --icon-hover-color: rgb(97, 97, 97);
+            --icon-primary-color: rgb(101, 101, 101);
+            --icon-circle-border: 1px solid var(--icon-primary-color);
+            --icon-circle-size: 35px;
+            --icon-anmt-duration: 0.3s;
+            position: relative;
+        }
+
+        .menu input[type="button"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            display: none;
+        }
+
+        .menu .bookmark {
+            width: var(--icon-size);
+            height: auto;
+            fill: var(--icon-secondary-color);
+            cursor: pointer;
+            -webkit-transition: all 0.2s ease;
+            -o-transition: all 0.2s ease;
+            transition: all 0.2s ease;
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            position: relative;
+            -webkit-transform-origin: top;
+            -ms-transform-origin: top;
+            transform-origin: top;
+        }
+
+        .menu:hover .bookmark {
+            fill: var(--icon-hover-color);
+        }
+
+        .menu input[type="button"]:active + .bookmark {
+            -webkit-transform: scale(0.9);
+            -ms-transform: scale(0.9);
+            transform: scale(0.9);
+            fill: var(--icon-primary-color);
+            -webkit-transition: all 0.1s ease;
+            -o-transition: all 0.1s ease;
+            transition: all 0.1s ease;
+        }
+
+        .menu .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .menu .dropdown-item {
+            background: none;
+            border: none;
+            padding: 8px 15px;
+            font-size: 14px;
+            color: #333;
+            text-align: left;
+            cursor: pointer;
+            width: 100px;
+        }
+
+        .menu .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .menu.active .dropdown-menu {
+            display: flex;
+        }
     </style>
 </head>
 <body>
@@ -834,11 +911,23 @@
                  class="profile-img">
             <div>
                 <strong th:text="${username}">사용자:</strong>
-                <p th:text="'작성일: ' + ${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm:ss')}">작성일:</p>
+                <p th:text="'작성일: ' + ${#temporals.format(post['created_at'].toLocalDateTime(), 'yyyy-MM-dd HH:mm')}"
+                   style="margin-top: 4px;">작성일:</p>
             </div>
-            <button class="edit-btn" th:if="${currentUser.userId == post.userId}"
-                    th:onclick="|location.href='/community/modify/${post.postId}'|">스타일 수정하기
-            </button>
+            <div style="margin-left: auto;">
+                <button class="edit-btn" th:if="${currentUser != null and currentUser.userId == post['user_id']}"
+                        th:onclick="|location.href='/community/modify/${post['post_id']}'|"><img src="/img/create.png"
+                                                                                                 alt=""
+                                                                                                 style="width: 20px; height: 20px;">
+                </button>
+                <form th:if="${currentUser != null and currentUser.userId == post['user_id']}"
+                      th:action="@{/community/delete/{postId}(postId=${post['post_id']})}" method="post"
+                      style="display: inline;">
+                    <button type="submit" class="edit-btn">
+                        <img src="/img/delete.png" alt="" style="width: 16px; height: 16px;">
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
     <div class="style-container">
@@ -849,7 +938,6 @@
                         <div class="slide" th:each="image : ${postImages}">
                             <img th:src="@{${image != null && image.getPostImageUrl() != null ? image.postImageUrl : '/img/default-style.jpg'}}"
                                  alt="게시물 이미지" class="style-img">
-                            <img src="/img/default-style.jpg" class="style-img" alt="">
                         </div>
                     </div>
                     <button class="slider-btn prev-btn" id="prevBtn"><img src="/img/arrow-left.png" alt="Previous">
@@ -861,13 +949,13 @@
             <div th:unless="${postImages != null and not #lists.isEmpty(postImages)}">
                 <img th:src="@{/img/default-style.jpg}" alt="기본 이미지" class="style-img">
             </div>
-            <h2 th:text="${post.title}">스타일 테스트입니다-제목-</h2>
-            <p th:text="${post.content}">스타일 테스트입니다-내용-</p>
+            <h2 th:text="${post['title']}">스타일 테스트입니다-제목-</h2>
+            <p th:text="${post['content']}">스타일 테스트입니다-내용-</p>
+            <p th:text="${post['style_category']}" style="color: #acacac; margin-top: 5px; font-size: 13px;">스타일
+                테스트입니다-스타일 카테고리-</p>
         </div>
 
         <div class="community-action">
-
-
             <!-- 댓글 -->
             <label class="ui-bookmark3">
                 <input type="checkbox">
@@ -876,28 +964,19 @@
                 </div>
             </label>
 
-
-            <!-- From Uiverse.io by Tsiangana -->
+            <!-- 좋아요 -->
             <label class="ui-bookmark2">
                 <input type="checkbox"/>
                 <div class="bookmark">
-                    <svg
-                            viewBox="0 0 16 16"
-                            style="margin-top:4px"
-                            class="bi bi-heart-fill"
-                            height="25"
-                            width="25"
-                            xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                                d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
-                                fill-rule="evenodd"
-                        ></path>
+                    <svg viewBox="0 0 16 16" style="margin-top:4px" class="bi bi-heart-fill" height="25" width="25"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"
+                              fill-rule="evenodd"></path>
                     </svg>
                 </div>
             </label>
 
-            <!-- From Uiverse.io by Galahhad -->
+            <!-- 북마크 -->
             <label class="ui-bookmark">
                 <input type="checkbox">
                 <div class="bookmark">
@@ -909,14 +988,23 @@
                 </div>
             </label>
 
-
+            <!-- 메뉴바 -->
+            <label class="menu">
+                <input type="button">
+                <div class="bookmark">
+                    <img src="/img/more.png" alt="" style="width: 25px; height: 25px;">
+                </div>
+                <div class="dropdown-menu">
+                    <button class="dropdown-item">신고하기</button>
+                </div>
+            </label>
         </div>
 
         <div class="product-tags">
             <h3 th:text="'상품태그 ' + ${#lists.size(productTags)} + '개'">상품태그 2개</h3>
             <div class="product-list">
                 <div class="product-item" th:each="product : ${productTags}">
-                    <img th:src="${product.imageUrl != null ? product.imageUrl : '/img/default-product.jpg'}"
+                    <img th:src="${product.imageUrl != null ? product.imageUrl : '/img/default-style.jpg'}"
                          alt="상품 이미지" class="product-img">
                     <p th:text="${product.productName}">상품이름:</p>
                 </div>
@@ -939,12 +1027,11 @@
 <div th:replace="~{fragments/footer}"></div>
 
 <script>
-    // 슬라이더 기능 구현
     document.addEventListener('DOMContentLoaded', function () {
         const slider = document.getElementById('imageSlider');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const slides = slider.getElementsByClassName('slide'); // slide 클래스로 변경
+        const slides = slider.getElementsByClassName('slide');
         let currentIndex = 0;
 
         function updateSlider() {
@@ -965,8 +1052,22 @@
             }
         });
 
-        // 초기 슬라이더 위치 설정
         updateSlider();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const menuButton = document.querySelector('.menu input[type="button"]');
+        const menuLabel = document.querySelector('.menu');
+
+        menuButton.addEventListener('click', function () {
+            menuLabel.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function (event) {
+            if (!menuLabel.contains(event.target)) {
+                menuLabel.classList.remove('active');
+            }
+        });
     });
 </script>
 </body>

@@ -16,12 +16,17 @@ public interface CommunityMapper {
     void insertPost(PostDTO postDTO);
     void insertPostImage(PostImageDTO postImageDTO);
     void insertPostTags(Map<String, Object> params);
-    PostDTO getPostDetail(int postId);
+    //    PostDTO getPostDetail(int postId);
+    Map<String, Object> getPostDetail(int postId);
     List<ProductTag> getProductTagsByPostId(int postId);
-    List<PostDTO> getOtherStylesByUserId(Map<String, Object> params);
+    List<Map<String, Object>>
+
+    getOtherStylesByUserId(Map<String, Object> params);
     List<PostImageDTO> getPostImagesByPostId(int postId);
-    List<PostDTO> getAllPosts();
+    List<Map<String, Object>> getAllPosts(String styleCategory);
     PostDTO getPostById(int id);
     void updatePost(PostDTO postDTO, List<Long> productIdList, List<MultipartFile> images) throws IOException;
+    List<PostDTO> findByStyleCategory(String styleCategory);
+    void deletePost(int postId);
 }
 
