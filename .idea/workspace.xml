@@ -4,19 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="[commit] 페이지 추가">
+    <list default="true" id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="[commit] 페이지 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fitzCode/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/PostLikeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/PostLikeDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityApiController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommentMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommunityMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommunityMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommentServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/mybatis/community/CommunityMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/mybatis/community/CommunityMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityDetail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -170,7 +160,9 @@
       <workItem from="1742539094382" duration="27000" />
       <workItem from="1742539128274" duration="3894000" />
       <workItem from="1742804551721" duration="1282000" />
-      <workItem from="1742805840769" duration="2620000" />
+      <workItem from="1742805840769" duration="2675000" />
+      <workItem from="1742808526858" duration="37000" />
+      <workItem from="1742808567721" duration="67000" />
     </task>
     <task id="LOCAL-00001" summary="0310 소셜로그인(네이버)">
       <option name="closed" value="true" />
@@ -364,7 +356,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742805833681</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="[commit] 페이지 수정">
+      <option name="closed" value="true" />
+      <created>1742808514746</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1742808514746</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -395,7 +395,8 @@
     <MESSAGE value="[commit] 복구 커밋" />
     <MESSAGE value="[commit] 복구 커밋2" />
     <MESSAGE value="[commit] 페이지 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="[commit] 페이지 추가" />
+    <MESSAGE value="[commit] 페이지 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="[commit] 페이지 수정" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
