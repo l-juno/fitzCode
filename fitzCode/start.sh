@@ -27,5 +27,7 @@ echo "=> Run container with environment variables..."
 docker run -d -p ${PORT_HOST}:${PORT_CONTAINER} \
     --name ${APP_CONTAINER_NAME} \
     -e ENCRYPTOR_KEY="${ENCRYPTOR_KEY}" \
+    -e MAIL_USERNAME="${MAIL_USERNAME}" \
+    -e MAIL_PASSWORD="${MAIL_PASSWORD}" \
     ${APP_IMAGE_NAME}:${VERSION}
 echo "=> Done! Check http://${EC2_PUBLIC_IP}:${PORT_HOST} or http://${DOMAIN}"
