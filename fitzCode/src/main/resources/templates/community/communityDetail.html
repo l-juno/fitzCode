@@ -900,6 +900,147 @@
         .menu.active .dropdown-menu {
             display: flex;
         }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 7px;
+            width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .comment-input {
+            display: flex;
+            flex-direction: column;
+            margin-top: 10px;
+        }
+
+        .comment-input textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+            font-size: 14px;
+        }
+
+        .comment-input button {
+            align-self: flex-end;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background-color: #2f2f32;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .comment-input button:hover {
+            background-color: #444;
+        }
+
+        /* 댓글 리스트 스타일 */
+        .comment-list {
+            margin-top: 20px;
+        }
+
+        .comment-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .comment-item .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comment-item .comment-profile-img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+
+        .comment-item .comment-username {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .comment-item .comment-content {
+            margin-top: 5px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .comment-item .reply-btn {
+            font-size: 12px;
+            color: #777;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .comment-item .reply-input {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .comment-item .reply-input textarea {
+            width: 100%;
+            height: 50px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+        }
+
+        .comment-item .reply-input button {
+            margin-top: 5px;
+            padding: 5px 10px;
+            background-color: #2f2f32;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .comment-item .replies {
+            margin-left: 40px;
+            margin-top: 10px;
+        }
+
+        /* 좋아요 버튼 스타일 재사용 */
+        .comment-item .ui-bookmark2 {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -954,6 +1095,21 @@
             <p th:text="${post['content']}">스타일 테스트입니다-내용-</p>
             <p th:text="${post['style_category']}" style="color: #acacac; margin-top: 5px; font-size: 13px;">스타일
                 테스트입니다-스타일 카테고리-</p>
+        </div>
+
+        <!-- 모달창 -->
+        <div id="commentModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>댓글</h2>
+                <div class="comment-input">
+                    <textarea id="commentText" placeholder="댓글을 입력하세요..."></textarea>
+                    <button id="submitComment">전송</button>
+                </div>
+                <div id="commentList" class="comment-list">
+                    <!-- 동적으로 댓글 추가 -->
+                </div>
+            </div>
         </div>
 
         <div class="community-action">
@@ -1069,6 +1225,143 @@
                 menuLabel.classList.remove('active');
             }
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // 기존 슬라이더 코드 유지
+        const slider = document.getElementById('imageSlider');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slides = slider.getElementsByClassName('slide');
+        let currentIndex = 0;
+
+        function updateSlider() {
+            slider.style.transform = `translateX(-${currentIndex * 100}%)`;
+        }
+
+        prevBtn.addEventListener('click', function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlider();
+            }
+        });
+
+        nextBtn.addEventListener('click', function () {
+            if (currentIndex < slides.length - 1) {
+                currentIndex++;
+                updateSlider();
+            }
+        });
+
+        updateSlider();
+
+        // 메뉴 드롭다운 코드 유지
+        const menuButton = document.querySelector('.menu input[type="button"]');
+        const menuLabel = document.querySelector('.menu');
+        menuButton.addEventListener('click', function () {
+            menuLabel.classList.toggle('active');
+        });
+        document.addEventListener('click', function (event) {
+            if (!menuLabel.contains(event.target)) {
+                menuLabel.classList.remove('active');
+            }
+        });
+
+        // 댓글 모달 관련 코드
+        const commentIcon = document.querySelector('.ui-bookmark3 input');
+        const modal = document.getElementById('commentModal');
+        const closeModal = document.querySelector('.close');
+        const submitCommentBtn = document.getElementById('submitComment');
+        const commentText = document.getElementById('commentText');
+        const commentList = document.getElementById('commentList');
+
+        // 현재 사용자 정보 (예시로 하드코딩, 실제로는 서버에서 가져와야 함)
+        const currentUser = {
+            userId: 1, // 예시 사용자 ID
+            username: 'exampleUser',
+            profileImage: '/img/default-profile.jpg'
+        };
+
+        // 댓글 아이콘 클릭 시 모달 띄우기
+        commentIcon.addEventListener('click', function () {
+            modal.style.display = 'flex';
+        });
+
+        // 모달 닫기
+        closeModal.addEventListener('click', function () {
+            modal.style.display = 'none';
+        });
+
+        // 모달 외부 클릭 시 닫기
+        window.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // 댓글 전송
+        submitCommentBtn.addEventListener('click', function () {
+            const content = commentText.value.trim();
+            if (content) {
+                addComment(content, null); // 부모 댓글 ID는 null
+                commentText.value = ''; // 입력창 초기화
+            }
+        });
+
+        // 댓글 추가 함수
+        function addComment(content, parentCommentId) {
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment-item');
+            commentDiv.dataset.commentId = Date.now(); // 임시 ID
+
+            commentDiv.innerHTML = `
+            <div class="comment-header">
+                <img src="${currentUser.profileImage}" alt="프로필" class="comment-profile-img">
+                <span class="comment-username">${currentUser.username}</span>
+            </div>
+            <div class="comment-content">${content}</div>
+            <span class="reply-btn">답글</span>
+            <div class="reply-input">
+                <textarea placeholder="답글을 입력하세요..."></textarea>
+                <button>전송</button>
+            </div>
+            <div class="replies"></div>
+            <label class="ui-bookmark2">
+                <input type="checkbox">
+                <div class="bookmark">
+                    <svg viewBox="0 0 16 16" style="margin-top:4px" class="bi bi-heart-fill" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" fill-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </label>
+        `;
+
+            if (parentCommentId) {
+                const parentComment = document.querySelector(`.comment-item[data-comment-id="${parentCommentId}"] .replies`);
+                parentComment.appendChild(commentDiv);
+            } else {
+                commentList.appendChild(commentDiv);
+            }
+
+            // 대댓글 버튼 이벤트
+            const replyBtn = commentDiv.querySelector('.reply-btn');
+            const replyInput = commentDiv.querySelector('.reply-input');
+            replyBtn.addEventListener('click', function () {
+                replyInput.style.display = replyInput.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // 대댓글 전송
+            const replySubmitBtn = commentDiv.querySelector('.reply-input button');
+            const replyText = commentDiv.querySelector('.reply-input textarea');
+            replySubmitBtn.addEventListener('click', function () {
+                const replyContent = replyText.value.trim();
+                if (replyContent) {
+                    addComment(replyContent, commentDiv.dataset.commentId);
+                    replyText.value = '';
+                    replyInput.style.display = 'none';
+                }
+            });
+        }
     });
 </script>
 </body>
