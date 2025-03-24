@@ -1,5 +1,6 @@
 package kr.co.fitzcode.community.controller;
 
+import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.community.service.CommunityService;
@@ -13,7 +14,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/community")
 @RequiredArgsConstructor
@@ -21,21 +24,24 @@ public class CommunityController {
 
     private final CommunityService communityService;
 
+    // 게시물 리스트 이동
     @GetMapping("/list")
-    public String list(Model model, HttpSession session) {
-        UserDTO user = (UserDTO) session.getAttribute("dto");
-        List<PostDTO> posts = communityService.getAllPosts();
-        model.addAttribute("username", user.getUserName());
-        model.addAttribute("profileImage", user.getProfileImage());
+    public String getCommunityList(
+            @RequestParam(value = "category", required = false, defaultValue = "All") String category,
+            Model model) {
+        String styleCategory = category.equals("All") ? null : category;
+        List<Map<String, Object>> posts = communityService.getAllPosts(styleCategory);
         model.addAttribute("posts", posts);
         return "community/communityList";
     }
 
+    // 게시물 작성 이동
     @GetMapping("/form")
     public String form() {
         return "community/communityForm";
     }
 
+    // 게시물 작성
     @PostMapping("/writeForm")
     public String createPost(
             @RequestParam("title") String title,
@@ -74,29 +80,36 @@ public class CommunityController {
         return "redirect:/community/detail/{postId}";
     }
 
+    // 상세 페이지 이동
     @GetMapping("/detail/{postId}")
     public String getPostDetail(@PathVariable("postId") int postId, Model model, HttpSession session) {
-        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
-        if (userDTO == null) {
-            throw new IllegalStateException("사용자 정보가 세션에 없음");
+        // 게시물 정보 조회
+        Map<String, Object> post = communityService.getPostDetail(postId);
+        if (post == null) {
+            return "error";
         }
 
-        PostDTO postDetail = communityService.getPostDetail(postId);
         List<ProductTag> productTags = communityService.getProductTagsByPostId(postId);
-        List<PostDTO> otherStyles = communityService.getOtherStylesByUserId(postDetail.getUserId(), postId);
+        List<Map<String, Object>> otherStyles = communityService.getOtherStylesByUserId((Integer) post.get("user_id"), postId);
         List<PostImageDTO> postImages = communityService.getPostImagesByPostId(postId);
+        PostDTO dto = communityService.getPostById(postId);
 
-        model.addAttribute("post", postDetail);
+        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
+
+        System.out.println("Post user_id>>>>>>>>>>>>>> "+ dto.getUserId());
+
+        model.addAttribute("post", post);
         model.addAttribute("productTags", productTags);
         model.addAttribute("otherStyles", otherStyles);
         model.addAttribute("postImages", postImages);
         model.addAttribute("currentUser", userDTO);
-        model.addAttribute("username", userDTO.getUserName());
-        model.addAttribute("profileImage", userDTO.getProfileImage());
+        model.addAttribute("username", post.get("user_name"));
+        model.addAttribute("profileImage", post.get("profile_image"));
 
         return "community/communityDetail";
     }
 
+    // 게시물 수정 페이지 이동
     @GetMapping("/modify/{id}")
     public String showModifyForm(@PathVariable("id") int postId, Model model) {
         PostDTO post = communityService.getPostById(postId);
@@ -109,10 +122,11 @@ public class CommunityController {
         return "community/communityModify";
     }
 
+    // 게시물 수정
     @PostMapping("/modify/{id}")
     public String modifyPost(
             @PathVariable("id") int id,
-            @ModelAttribute("post") PostDTO postDTO, // 폼 데이터를 PostDTO로 바인딩
+            @ModelAttribute("post") PostDTO post,
             @RequestParam(value = "images", required = false) List<MultipartFile> images,
             @RequestParam(value = "productIds", required = false) String productIds,
             HttpSession session,
@@ -123,16 +137,14 @@ public class CommunityController {
             throw new IllegalStateException("사용자 정보가 세션에 없음");
         }
 
-        PostDTO existingPost = communityService.getPostById(id);
-        if (existingPost.getUserId() != userDTO.getUserId()) {
+        PostDTO postDTO1 = communityService.getPostById(id);
+        if (postDTO1.getUserId() != userDTO.getUserId()) {
             throw new IllegalStateException("수정 권한이 없습니다.");
         }
 
-        // PostDTO에 postId 설정
-        postDTO.setPostId(id);
-        postDTO.setUserId(existingPost.getUserId()); // 기존 사용자 ID 유지
+        post.setPostId(id);
+        post.setUserId(postDTO1.getUserId());
 
-        // productIds를 List<Long>으로 변환
         List<Long> productIdList = productIds != null && !productIds.isEmpty()
                 ? Arrays.stream(productIds.split(","))
                 .filter(s -> !s.isEmpty())
@@ -140,10 +152,16 @@ public class CommunityController {
                 .toList()
                 : null;
 
-        // 서비스 호출
-        communityService.updatePost(postDTO, productIdList, images);
+        communityService.updatePost(post, productIdList, images);
 
         redirectAttributes.addAttribute("postId", id);
         return "redirect:/community/detail/{postId}";
+    }
+
+    // 게시물 삭제
+    @PostMapping("/delete/{postId}")
+    public String deletePost(@PathVariable("postId") int postId) {
+        communityService.deletePost(postId);
+        return "redirect:/community/list";
     }
 }

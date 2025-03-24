@@ -22,6 +22,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 10px;
+            margin-top: 7%;
         }
 
         /* 필터 스타일 */
@@ -247,12 +248,13 @@
 
 <div class="container">
     <div class="filter-container">
-        <button class="filter-btn active">All</button>
-        <button class="filter-btn">Casual</button>
-        <button class="filter-btn">Street</button>
-        <button class="filter-btn">Modern</button>
-        <button class="filter-btn">Vintage</button>
-        <button class="filter-btn">Gorpcore</button>
+        <a th:href="@{/community/list(category='All')}"><button class="filter-btn">All</button></a>
+        <a th:href="@{/community/list(category='캐주얼')}"><button class="filter-btn">Casual</button></a>
+        <a th:href="@{/community/list(category='스트릿')}"><button class="filter-btn">Street</button></a>
+        <a th:href="@{/community/list(category='모던')}"><button class="filter-btn">Modern</button></a>
+        <a th:href="@{/community/list(category='빈티지')}"><button class="filter-btn">Vintage</button></a>
+        <a th:href="@{/community/list(category='고프코어')}"><button class="filter-btn">Gorpcore</button></a>
+
         <a href="/community/form" style="text-decoration: none; margin-left: auto">
             <button type="button" class="button">
                 <span class="button__text">POST</span>
@@ -268,23 +270,25 @@
 
     <div class="style-grid">
         <div class="card" th:each="post : ${posts}">
-            <a th:href="@{/community/detail/{postId}(postId=${post.postId})}">
+            <a th:href="@{/community/detail/{postId}(postId=${post.post_id})}">
                 <div class="card-header">
-                    <img th:src="${post.thumbnailImageUrl != null} ? ${post.thumbnailImageUrl} : '/img/default-style.jpg'"
+                    <img th:src="${post.thumbnail_image_url != null} ? ${post.thumbnail_image_url} : '/img/default-style.jpg'"
                          th:alt="'스타일 이미지 - ' + ${post.title}"
                          th:onerror="'this.src=\'/img/default-style.jpg\''"/>
                     <label class="label_container">
                         <input type="checkbox">
                         <svg id="Layer_1" version="1.0" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <path d="M16.4,4C14.6,4,13,4.9,12,6.3C11,4.9,9.4,4,7.6,4C4.5,4,2,6.5,2,9.6C2,14,12,22,12,22s10-8,10-12.4C22,6.5,19.5,4,16.4,4z"></path>
-                        </svg>
+                        <path d="M16.4,4C14.6,4,13,4.9,12,6.3C11,4.9,9.4,4,7.6,4C4.5,4,2,6.5,2,9.6C2,14,12,22,12,22s10-8,10-12.4C22,6.5,19.5,4,16.4,4z"></path>
+                    </svg>
                     </label>
                 </div>
                 <div class="card-content">
-                    <span class="card-content-profile">
-                        <img th:src="${profileImage}" alt="프로필 이미지">
-                    </span>
-                    <span th:text="${username}"></span>
+                <span class="card-content-profile">
+                    <img th:src="${post.profile_image != null} ? ${post.profile_image} : '/img/default-profile.jpg'"
+                         alt="프로필 이미지"
+                         th:onerror="'this.src=\'/img/default-profile.jpg\''"/>
+                </span>
+                    <span th:text="${post.user_name}"></span>
                 </div>
                 <div class="card-footer">
                     <p th:text="${post.title}">스타일 테스트입니다 - 제목</p>
@@ -298,10 +302,30 @@
 <div th:replace="~{fragments/footer}"></div>
 
 <script>
-    document.querySelectorAll('.filter-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
+    document.addEventListener('DOMContentLoaded', function () {
+        // URL 파라미터에서 category 값을 가져옴
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCategory = urlParams.get('category') || 'All';
+
+        // 버튼 텍스트와 URL 파라미터 값을 매핑
+        const categoryMap = {
+            'All': 'All',
+            'Casual': '캐주얼',
+            'Street': '스트릿',
+            'Modern': '모던',
+            'Vintage': '빈티지',
+            'Gorpcore': '고프코어'
+        };
+
+        // 모든 버튼의 active 클래스 제거 후, 선택된 카테고리에 맞는 버튼에 active 클래스 추가
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            const buttonText = button.textContent;
+            const mappedCategory = categoryMap[buttonText];
+            if (mappedCategory === selectedCategory) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
         });
     });
 </script>
