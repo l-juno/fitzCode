@@ -1,5 +1,6 @@
 package kr.co.fitzcode.community.controller;
 
+import kr.co.fitzcode.common.dto.PostLikeDTO;
 import kr.co.fitzcode.common.dto.ProductTag;
 
 import kr.co.fitzcode.community.service.CommunityService;
@@ -21,5 +22,7 @@ public class CommunityApiController {
         List<ProductTag> products = communityService.searchProductsByName(productName);
         return ResponseEntity.ok(products);
     }
+
+
 
 }

@@ -105,7 +105,8 @@ public class CommunityController {
         model.addAttribute("currentUser", userDTO);
         model.addAttribute("username", post.get("user_name"));
         model.addAttribute("profileImage", post.get("profile_image"));
-
+        model.addAttribute("isLiked", communityService.isLiked(postId, userDTO != null ? userDTO.getUserId() : 0));
+        model.addAttribute("likeCount", communityService.countPostLikes(postId));
         return "community/communityDetail";
     }
 
@@ -163,5 +164,26 @@ public class CommunityController {
     public String deletePost(@PathVariable("postId") int postId) {
         communityService.deletePost(postId);
         return "redirect:/community/list";
+    }
+
+
+    // 좋아요 추가
+    @PostMapping("/like/{postId}")
+    public boolean likePost(@PathVariable int postId, @RequestBody PostLikeDTO postLikeDTO,
+                            HttpSession session) {
+        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
+        postLikeDTO.setPostId(postId);
+        postLikeDTO.setUserId(userDTO.getUserId());
+        return communityService.insertPostLike(postLikeDTO);
+    }
+
+    // 좋아요 삭제
+    @PostMapping("/unlike/{postId}")
+    public boolean unlikePost(@PathVariable int postId, @RequestBody PostLikeDTO postLikeDTO,
+                              HttpSession session) {
+        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
+        postLikeDTO.setPostId(postId);
+        postLikeDTO.setUserId(userDTO.getUserId());
+        return communityService.deletePostLike(postLikeDTO);
     }
 }

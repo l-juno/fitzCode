@@ -114,4 +114,31 @@
         DELETE FROM POST
         WHERE post_id = #{postId}
     </delete>
+
+    <!-- 좋아요 추가 -->
+    <insert id="insertPostLike" parameterType="PostLikeDTO">
+        INSERT INTO POST_LIKE (post_id, user_id, liked_at)
+        VALUES (#{postId}, #{userId}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deletePostLike" parameterType="PostLikeDTO">
+        DELETE FROM POST_LIKE
+        WHERE post_id = #{postId} AND user_id = #{userId}
+    </delete>
+
+    <!-- 좋아요 수 조회 -->
+    <select id="countPostLikes" parameterType="int" resultType="int">
+        SELECT COUNT(*)
+        FROM POST_LIKE
+        WHERE post_id = #{postId}
+    </select>
+
+
+    <!-- 좋아요 상태 확인 -->
+    <select id="existsPostLike" parameterType="kr.co.fitzcode.common.dto.PostLikeDTO" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM POST_LIKE
+        WHERE post_id = #{postId} AND user_id = #{userId}
+    </select>
 </mapper>

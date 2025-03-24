@@ -4,23 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="[commit] 복구 커밋">
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/CommentDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/CommentLikeDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/PostLikeDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/PostSaveDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommentMapper.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommentService.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommentServiceImpl.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/mybatis/community/CommentMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/25__3__16___5_07__________.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/25__3__16__오후_5_07,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/buildOutputCleanup.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/25__3__16__오후_5_07,_체크아웃_전에_커밋되지_않은_변경_내용_[변경]/shelved.patch" beforeDir="false" />
+    <list default="true" id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="[commit] 페이지 추가">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fitzCode/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/build/reports/problems/problems-report.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/build/reports/problems/problems-report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/build/resources/main/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/build/resources/main/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/PostLikeDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/common/dto/PostLikeDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommentMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommentMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommunityMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/mapper/CommunityMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommentServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommentServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityService.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/service/CommunityServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/mybatis/community/CommunityMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/mybatis/community/CommunityMapper.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityDetail.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -95,37 +91,37 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Gradle.fitzCode 빌드.executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "Spring Boot.FitzCodeApplication.executor": "Run",
-    "git-widget-placeholder": "feature/community-social",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/doyxxn/fitzCode/fitzCode/src/main/resources/static/img",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "모듈",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Gradle.fitzCode 빌드.executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;Spring Boot.FitzCodeApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/community-social&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/doyxxn/fitzCode/fitzCode/src/main/resources/static/img&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql_aurora"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql_aurora&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="kr.co.fitzcode.common.dto" />
@@ -173,7 +169,8 @@
       <workItem from="1742122415452" duration="74065000" />
       <workItem from="1742539094382" duration="27000" />
       <workItem from="1742539128274" duration="3894000" />
-      <workItem from="1742804551721" duration="1248000" />
+      <workItem from="1742804551721" duration="1282000" />
+      <workItem from="1742805840769" duration="2620000" />
     </task>
     <task id="LOCAL-00001" summary="0310 소셜로그인(네이버)">
       <option name="closed" value="true" />
@@ -359,7 +356,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742728390735</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="[commit] 페이지 추가">
+      <option name="closed" value="true" />
+      <created>1742805833681</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1742805833681</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -389,7 +394,8 @@
     <MESSAGE value="merge" />
     <MESSAGE value="[commit] 복구 커밋" />
     <MESSAGE value="[commit] 복구 커밋2" />
-    <option name="LAST_COMMIT_MESSAGE" value="[commit] 복구 커밋2" />
+    <MESSAGE value="[commit] 페이지 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="[commit] 페이지 추가" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

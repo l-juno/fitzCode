@@ -2,6 +2,7 @@ package kr.co.fitzcode.community.service;
 
 import kr.co.fitzcode.common.dto.PostDTO;
 import kr.co.fitzcode.common.dto.PostImageDTO;
+import kr.co.fitzcode.common.dto.PostLikeDTO;
 import kr.co.fitzcode.common.dto.ProductTag;
 import kr.co.fitzcode.common.service.S3Service;
 import kr.co.fitzcode.community.mapper.CommunityMapper;
@@ -184,5 +185,40 @@ public class CommunityServiceImpl implements CommunityService {
 
         communityMapper.deletePost(postId);
         log.info("게시물 삭제 완료, postId: {}", postId);
+    }
+
+    @Override
+    public boolean insertPostLike(PostLikeDTO postLikeDTO) {
+        try {
+            communityMapper.insertPostLike(postLikeDTO);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deletePostLike(PostLikeDTO postLikeDTO) {
+        try {
+            communityMapper.deletePostLike(postLikeDTO);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public int countPostLikes(int postId) {
+        return communityMapper.countPostLikes(postId);
+    }
+
+
+    @Override
+    public boolean isLiked(int postId, int userId) {
+        PostLikeDTO postLikeDTO = PostLikeDTO.builder()
+                .postId(postId)
+                .userId(userId)
+                .build();
+        return communityMapper.existsPostLike(postLikeDTO);
     }
 }
