@@ -19,21 +19,22 @@
 
     <!-- 메인 콘텐츠 -->
     <div class="mypageContent">
-        <h2>1:1 문의 등록</h2>
+        <h2>1:1 문의 수정</h2>
         <div id="hr"></div>
         <div class="inquiryContainer">
             <form th:action="@{/inquiry/modify}" method="post" enctype="multipart/form-data">
                 <div class="inquiryContent">
-                    <span id="subject" th:text="${inquiryDTO.subject}"></span>
-                    <div th:text="'문의 유형 : ' + ${inquiryDTO.category.description}"
-                         style="display: flex; flex-direction: row-reverse;"></div>
+                    <div class="subTitle">
+                        <div th:text="'[' + ${inquiryDTO.category.description} + '] '" id="categoryCode"/>
+                        <input type="text" name="subject" placeholder="제목을 입력해주세요" id="subject">
+                    </div>
                     <div class="inquiryData">
                         <br>
                         <span th:text="'작성자 : ' + ${userDTO.getUserName()} + ' | 연락처 : ' + ${userDTO.phoneNumber}"
                               id="userInfo"></span>
                         <textarea id="content" name="content" placeholder="문의사항" rows="6" cols="58"></textarea>
                         <div class="buttons">
-                            <span>문의할 상품 선택하기 >>></span>
+                            <span>문의할 상품 선택하기 >>> </span>
                             <span>
                                 <button type="button" class="btn btn-outline-secondary"
                                         id="searchProduct">상품검색해서 찾기</button>
@@ -54,10 +55,8 @@
                             <input type="file" id="images" name="files">
                         </div>
                     </div>
-                    <input type="hidden" name="categoryCode" th:value="${inquiryDTO.categoryCode}">
-                    <input type="hidden" name="statusCode" value="1">
-                    <input type="hidden" name="subject" th:value="${inquiryDTO.subject}">
                     <input type="hidden" name="inquiryId" th:value="${inquiryDTO.inquiryId}">
+                    <input type="hidden" name="userId" th:value="${userDTO.userId}" id="userId">
                 </div>
                 <div class="finalButtons">
                     <a th:href="@{inquiryList}">목록으로</a>

@@ -23,27 +23,25 @@
         <div class="inquiryContainer">
             <div class="inquiryContent">
                 <div class="inquiryListInfo">
-                    <span th:text="${dto.subject}" id="subject"></span>
                     <div class="inquiryData">
-                        <span> 문의 유형 <span class="data" th:text="${dto.category.description}"/></span>
-                        <span> 문의 상태 <span class="data" th:text="${dto.status.description}"/> </span>
-                        <span> 등록 날짜 <span class="data"
-                                           th:text="${#temporals.format(dto.createdAt, 'yyyy/MM/dd')}"/></span>
+                        <div th:text="'[' + ${dto.category.description} + '] ' + ${dto.subject}" id="subject"></div>
+                        <div>
+                            <span class="data"
+                                  th:text="${dto.status.description} + '  |  ' +  ${#temporals.format(dto.createdAt, 'yyyy/MM/dd')}"/>
+                        </div>
                     </div>
-                    <div class="inquiryData">
-                        <span>작성자 <span class="data" th:text="${dto.userName}"/></span>
-                        <span>연락처 <span class="data" th:text="${dto.phoneNumber}"/></span>
-                    </div>
+<!--                    <div style="display: flex; flex-direction: row-reverse;">-->
+<!--                        <div class="data" th:text="${dto.userName} + ' / ' + ${dto.phoneNumber}"/>-->
+<!--                    </div>-->
                     <br>
-                    <h3> 문의 내용</h3>
+<!--                    <h3> 문의 내용</h3>-->
                     <div th:text="${dto.content}" class="content"></div>
                     <!-- 문의 이미지 -->
                     <div class="imageContainer" th:if="${list != null and list.size() > 0}">
                         <table>
                             <tr th:each="image : ${list}">
                                 <td rowspan="4">
-                                    <img th:src="${image.imageUrl}" th:alt="${image.imageUrl}"
-                                         style="height: 75px; width: 75px;">
+                                    <img th:src="${image.imageUrl}" th:alt="${image.imageUrl}" id="inquiryImg">
                                 </td>
                             </tr>
                         </table>

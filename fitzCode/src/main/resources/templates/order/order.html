@@ -8,121 +8,50 @@
     <th:block th:replace="~{fragments/footer :: footer-head}"></th:block>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" th:href="@{/css/order/orderDetail.css}">
 </head>
-
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f8f8f8;
-        padding: 0;
-        margin-top: 140px;
-    }
-
-    .container {
-        
-        width: 80%;
-        max-width: 900px;
-        margin: 20px auto;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h2, h3 {
-        text-align: center;
-        color: #333;
-    }
-
-    .order-summary {
-        background: #f4f4f4;
-        padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-    }
-
-    .order-summary p {
-        font-size: 16px;
-        margin: 5px 0;
-    }
-
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-    }
-
-    table, th, td {
-        border: 1px solid #ddd;
-    }
-
-    th, td {
-        padding: 10px;
-        text-align: center;
-    }
-
-    th {
-        background: #333;
-        color: white;
-    }
-
-    img {
-        max-width: 80px;
-        border-radius: 5px;
-    }
-
-    tbody tr:nth-child(even) {
-        background: #f9f9f9;
-    }
-
-    tbody tr:hover {
-        background: #eaeaea;
-        transition: 0.3s;
-    }
-
-</style>
-
 
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
+<br><br><br><br>
+<div class="mypageContainer">
+    <!-- navi -->
+    <div th:replace="~{fragments/mypageNavi}"></div>
 
-<div class="container">
-    <h2>Order Details</h2>
-    
-    <div class="order-summary">
-        <p><strong>Order ID:</strong> <span th:text="${orderDTO.orderId}"></span></p>
-        <p><strong>Address:</strong> <span id="addressInfo" th:text="${orderDTO.addressId}"></span></p>
-        <p><strong>Total Price:</strong> <span th:text="${orderDTO.formattedTotalPrice}"></span></p>
-        <p><strong>Order Status:</strong> <span th:text="${orderDTO.orderStatusTranslated}"></span></p>
-        <p><strong>Ordered At:</strong> <span th:text="${orderDTO.createdAt}"></span></p>
+    <div class="mypageContent">
+        <h2>주문 상세</h2>
+        <div id="hr"></div>
+        <div class="orderList">
+            <div class="orderInfoBox">
+                <p><span th:text="${orderDTO.formattedCreatedAt}" class="subTitle"/></p>
+                <p><span th:text="'주문번호 ' + ${orderDTO.orderId}" class="orderInfoData"></span></p>
+            </div>
+            <div class="orderInfoBox">
+                <p><strong>받는 곳</strong><span id="addressInfo" th:text="${orderDTO.addressId}" class="orderInfo"></span>
+                </p>
+                <p><strong>총 결제 금액</strong><span th:text="${orderDTO.formattedTotalPrice}" class="orderInfo"></span></p>
+                <p><strong>주문 상태</strong><span th:text="${orderDTO.orderStatusTranslated}" class="orderInfo"></span></p>
+            </div>
+            <table border="1">
+                <tbody>
+                <tr th:each="detail : ${orderDetailList}">
+                    <td><img th:src="${detail.imageUrl}" alt="Product Image" width="100"></td>
+                    <td style="width: 280px; text-align: justify">
+                        <div id="orderDetailList">
+                            <h4 th:text="${detail.productName}"></h4>
+                            <div th:text="${detail.formattedSizeCode} + ' / ' + ${detail.quantity} + '개'"></div>
+                        </div>
+                    </td>
+                    <td th:text="${detail.formattedPrice} + '원'"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+
     </div>
-    
-    <h3>Order Items</h3>
-    <table border="1">
-        <thead>
-        <tr>
-            <th>Product Image</th>
-            <th>Product Name</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Size</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="detail : ${orderDetailList}">
-            <td><img th:src="${detail.imageUrl}" alt="Product Image" width="100"></td>
-            <td th:text="${detail.productName}"></td>
-            <td th:text="${detail.quantity}"></td>
-            <td th:text="${detail.formattedPrice}"></td>
-            <td th:text="${detail.formattedSizeCode}"></td>
-        </tr>
-        </tbody>
-    </table>
 </div>
-
-
-
-
+<br><br><br><br>
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 <script>
@@ -132,8 +61,8 @@
     document.addEventListener("DOMContentLoaded", function () {
         getUserAddressByAddressId();
     });
-    
-    
+
+
     function getUserAddressByAddressId() {
         console.log("getting user address");
         $.ajax({
@@ -149,7 +78,7 @@
             }
         });
     }
-    
+
 </script>
 <script th:src="@{/js/admin/notifications.js}"></script>
 <script th:src="@{/js/admin/headerNotification.js}"></script>

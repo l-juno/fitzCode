@@ -40,7 +40,8 @@
                                 <tr th:if="${dto.minimumOrderAmount != 0}">
                                     <td>
                                         <p>최소주문 금액</p>
-                                        <div th:text="${dto.formattedMinimumOrderAmount}"></div>
+                                        <div th:if="${dto.formattedMinimumOrderAmount != null}" th:text="${dto.formattedMinimumOrderAmount}"></div>
+                                        <div th:unless="${dto.formattedMinimumOrderAmount != null}">제한 없음</div>
                                     </td>
                                 </tr>
                                 <tr th:unless="${dto.minimumOrderAmount != 0}">

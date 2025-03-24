@@ -35,6 +35,5 @@ public interface MypageService {
     // 계좌 삭제
     void deleteAccount(int accountId);
 
-    // 일반계좌 -> 기본계좌
-    void toDefaultAccount(int accountId, int userId);
+
 }

@@ -88,14 +88,6 @@ public class MypageController {
         return "redirect:/mypage/account";
     }
 
-    // 일반계좌 -> 기본계좌
-    @GetMapping("/toDefaultAccount{accountId}")
-    public String toDefaultAccount(@PathVariable("accountId") int accountId) {
-        int userId = securityUtils.getUserId();
-        mypageService.toDefaultAccount(accountId, userId);
-        return "redirect:/mypage/account";
-    }
-
     // 회원정보 수정 전 인증 페이지
     @GetMapping("/verifyUser")
     public String verifyIdentity(Model model, HttpServletRequest request) {

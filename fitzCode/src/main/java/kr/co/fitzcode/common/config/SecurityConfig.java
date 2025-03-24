@@ -97,12 +97,11 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/search/result",               // 검색 결과
                                     "/api/pick-products",           // 주목받는 상품 API
                                     "/api/discount-products",       // 할인 상품 API
-                                    "/mypage/insertAccount",
-                                    "/mypage/insertAddress",
-                                    "/inquiry/searchProduct",
-                                    "/inquiry/searchOrderList",
-                                    "/inquiry/selectedProduct",
-                                    "/community/list/**",
+                                    "/mypage/insertAccount",        // 계좌 추가
+                                    "/mypage/insertAddress",        // 주소 추가
+                                    "/inquiry/searchProduct",       // 상품 검색
+                                    "/inquiry/searchOrderList",     // 주문내역
+                                    "/inquiry/selectedProduct",     // 선택한 상품
                                     "community/form/**",
                                     "community/detail/**",
                                     "/api/community/search-products",

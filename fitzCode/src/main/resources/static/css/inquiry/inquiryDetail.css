@@ -39,27 +39,27 @@
 
 
 .inquiryData {
-    display: flex;
+    display: flex
+;
     flex-direction: row;
-    align-items: flex-start;
-    padding: 0px 5px 15px 0px;
+    align-items: flex-end;
+    padding: 0px 5px 5px 0px;
     justify-content: space-between;
-    margin: 23px 0px 15px;
-    border-bottom: 1px gray solid;
+    margin-top: 23px;
+    /*border-bottom: 1px gray solid;*/
 }
 
 .data {
-    color: darkgray;
     margin-left: 10px;
 }
 
 .content {
     width: 98%;
-    border: 1px gray solid;
-    height: 110px;
-    border-radius: 20px;
-    margin: 10px 0px;
+    height: 152px;
     padding: 10px;
+    border: 1px solid #cdcdcd;
+    border-top: 5px solid #2f2f32;
+    margin: 10px 0px;
 }
 
 .reply-container {
@@ -75,7 +75,7 @@
 .reply-container h3 {
     padding-bottom: 10px;
     margin: 10px 0px;
-    border-bottom: 1px black solid;
+    border-bottom: 1px #949494 solid;
 }
 
 
@@ -91,4 +91,9 @@
 
 a {
     color: #2f2f32;
+}
+#inquiryImg{
+    height: 75px;
+    width: 75px;
+    border-radius: 10px;
 }

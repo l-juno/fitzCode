@@ -14,8 +14,7 @@
 }
 
 .inquiryContainer {
-    display: flex
-;
+    display: flex;
     font-size: 13.3px;
     margin: 30px 20px;
     padding: 27px 0px;
@@ -25,7 +24,6 @@
 }
 
 /*여기까지 공통*/
-
 
 
 /*모달관련*/
@@ -149,22 +147,17 @@ h2 {
 
 .inquiryData {
     display: flex;
+    align-items: stretch;;
     flex-direction: column;
-    align-items: flex-start;
     padding: 0px 5px;
 }
 
-.inquiryContainer input {
-    width: 450px;
-    height: 40px;
-}
+/*.inquiryContainer input {*/
+/*    width: 450px;*/
+/*    height: 40px;*/
+/*}*/
 
-#subject {
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: inline-block;
-}
+
 
 #userInfo {
     font-size: 13.3px;
@@ -234,6 +227,7 @@ h2 {
     color: gray;
     border: 0px;
     background: white;
+    cursor: pointer;
 }
 
 .uploadFile img {
@@ -242,9 +236,29 @@ h2 {
 }
 
 #content {
-    border: 1px lightgray solid;
-    margin-top: 13px;
-    border-radius: 10px;
+    width: 98%;
+    height: 152px;
     padding: 10px;
-    width: 97%;
+    border: 1px solid #cdcdcd;
+    border-top: 5px solid #2f2f32;
+    margin: 10px 0px;
+}
+
+#categoryCode {
+    font-size: 17px;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+#subject {
+    border: none;
+    font-size: 15px;
+}
+
+
+.subTitle{
+    display: flex
+;
+    align-items: center;
+    padding-bottom: 10px;
 }

@@ -32,34 +32,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     // 계좌 추가
-    // document.getElementById("saveBtn").addEventListener("click", () => {
-    //     let accountHolder = document.getElementById("addAccountHolder").value;
-    //     let bankName = document.getElementById("addBankName").value;
-    //     let accountNumber = document.getElementById("addAccountNumber").value;
-    //     let userId = document.getElementById("userId").value;
-    //     console.log(accountHolder);
-    //     console.log(bankName);
-    //     console.log(accountNumber);
-    //     console.log(userId);
-    //     let data = {
-    //         accountHolder: accountHolder,
-    //         bankName: bankName,
-    //         accountNumber: accountNumber,
-    //         userId: userId,
-    //         isDefault: false
-    //     };
-    //
-    //     fetch("http://localhost:8080/mypage/insertAccount", {
-    //         method: "POST",
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         },
-    //         body: JSON.stringify(data)
-    //     })
-    //         .then(data => {
-    //             location.href = "http://localhost:8080/mypage/account";  // 리다이렉트
-    //         })
-    //
-    // });
+    document.getElementById("saveBtn").addEventListener("click", () => {
+        let accountHolder = document.getElementById("addAccountHolder").value;
+        let bankName = document.getElementById("addBankName").value;
+        let accountNumber = document.getElementById("addAccountNumber").value;
+        let userId = document.getElementById("userId").value;
+        console.log(accountHolder);
+        console.log(bankName);
+        console.log(accountNumber);
+        console.log(userId);
+        let data = {
+            accountHolder: accountHolder,
+            bankName: bankName,
+            accountNumber: accountNumber,
+            userId: userId,
+            isDefault: false
+        };
+
+        fetch("http://localhost:8080/mypage/insertAccount", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+            .then(data => {
+                location.href = "http://localhost:8080/mypage/account";  // 리다이렉트
+            })
+
+    });
+
+    // 클립보드 계좌 복사
+    var defaultAccountClipboard = new ClipboardJS('.copyDefaultAccountNumberBtn');
+
+    defaultAccountClipboard.on('success', function(e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+
+        e.clearSelection();
+    });
+
+    defaultAccountClipboard.on('error', function(e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
+
+    var accountClipboard = new ClipboardJS('.copyAccountNumberBtn');
+
+    accountClipboard.on('success', function(e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+        alert("계좌번호가 복사되었습니다!")
+
+        e.clearSelection();
+    });
+
+    accountClipboard.on('error', function(e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
 
 });

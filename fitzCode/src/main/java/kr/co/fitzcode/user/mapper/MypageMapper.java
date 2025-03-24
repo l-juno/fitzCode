@@ -41,10 +41,4 @@ public interface MypageMapper {
 
     // 계좌 삭제
     void deleteAccount(@Param("accountId") int accountId);
-
-    // 기본 계좌 -> 일반 계좌
-    void toUserAccount(@Param("userId") int userId);
-
-    // 일반계좌 -> 기본계좌
-    void toDefaultAccount(@Param("accountId") int accountId);
 }

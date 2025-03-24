@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Data
 @Builder
@@ -52,7 +53,13 @@ public class UserOrderDTO {
     }
 
 
-
+    public String getFormattedCreatedAt(){
+        if (createdAt != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return createdAt.format(formatter);
+        }
+        return "";
+    }
 
 
 }
