@@ -285,3 +285,6 @@ build/
 # Gradle 자동 생성 파일 무시
 fitzCode/.gradle/
 fitzCode/build/
+
+# .env 파일
+.env
