@@ -28,9 +28,18 @@ public class CommunityController {
     @GetMapping("/list")
     public String getCommunityList(
             @RequestParam(value = "category", required = false, defaultValue = "All") String category,
-            Model model) {
+            Model model, HttpSession session) {
         String styleCategory = category.equals("All") ? null : category;
         List<Map<String, Object>> posts = communityService.getAllPosts(styleCategory);
+        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
+        int userId = (userDTO != null) ? userDTO.getUserId() : -1;
+
+        for (Map<String, Object> post : posts) {
+            int postId = (int) post.get("post_id");
+            boolean isLiked = userId != -1 && communityService.isLiked(postId, userId);
+            post.put("isLiked", isLiked);
+        }
+
         model.addAttribute("posts", posts);
         return "community/communityList";
     }
@@ -89,15 +98,36 @@ public class CommunityController {
             return "error";
         }
 
+        // 현재 로그인한 사용자 정보
+        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
+        int currentUserId = (userDTO != null) ? userDTO.getUserId() : -1;
+
+        // 게시물 작성자의 user_id
+        int postUserId = ((Number) post.get("user_id")).intValue();
+        System.out.println("Post user_id>>>>>>>>>>>>>> " + postUserId);
+
+        // 본인의 게시물인지 여부 확인
+        boolean isOwnPost = currentUserId != -1 && currentUserId == postUserId;
+
+        // 팔로우 여부 확인 (본인의 게시물이 아닌 경우에만 확인)
+        boolean isFollowing = false;
+        if (!isOwnPost && currentUserId != -1) {
+            isFollowing = communityService.isFollowing(currentUserId, postUserId);
+        }
+
+        // 게시물 관련 데이터 조회
         List<ProductTag> productTags = communityService.getProductTagsByPostId(postId);
-        List<Map<String, Object>> otherStyles = communityService.getOtherStylesByUserId((Integer) post.get("user_id"), postId);
+        List<Map<String, Object>> otherStyles = communityService.getOtherStylesByUserId(postUserId, postId);
         List<PostImageDTO> postImages = communityService.getPostImagesByPostId(postId);
         PostDTO dto = communityService.getPostById(postId);
 
-        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
+        // 좋아요 및 저장 여부 확인
+        boolean isLiked = currentUserId != -1 && communityService.isLiked(postId, currentUserId);
+        int likeCount = communityService.countPostLikes(postId);
+        boolean isSaved = currentUserId != -1 && communityService.isSaved(postId, currentUserId);
+        int saveCount = communityService.countPostSaves(postId);
 
-        System.out.println("Post user_id>>>>>>>>>>>>>> "+ dto.getUserId());
-
+        // 모델에 데이터 추가
         model.addAttribute("post", post);
         model.addAttribute("productTags", productTags);
         model.addAttribute("otherStyles", otherStyles);
@@ -105,8 +135,13 @@ public class CommunityController {
         model.addAttribute("currentUser", userDTO);
         model.addAttribute("username", post.get("user_name"));
         model.addAttribute("profileImage", post.get("profile_image"));
-        model.addAttribute("isLiked", communityService.isLiked(postId, userDTO != null ? userDTO.getUserId() : 0));
-        model.addAttribute("likeCount", communityService.countPostLikes(postId));
+        model.addAttribute("isLiked", isLiked);
+        model.addAttribute("likeCount", likeCount);
+        model.addAttribute("isSaved", isSaved);
+        model.addAttribute("saveCount", saveCount);
+        model.addAttribute("isFollowing", isFollowing);
+        model.addAttribute("isOwnPost", isOwnPost);
+
         return "community/communityDetail";
     }
 
@@ -164,26 +199,5 @@ public class CommunityController {
     public String deletePost(@PathVariable("postId") int postId) {
         communityService.deletePost(postId);
         return "redirect:/community/list";
-    }
-
-
-    // 좋아요 추가
-    @PostMapping("/like/{postId}")
-    public boolean likePost(@PathVariable int postId, @RequestBody PostLikeDTO postLikeDTO,
-                            HttpSession session) {
-        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
-        postLikeDTO.setPostId(postId);
-        postLikeDTO.setUserId(userDTO.getUserId());
-        return communityService.insertPostLike(postLikeDTO);
-    }
-
-    // 좋아요 삭제
-    @PostMapping("/unlike/{postId}")
-    public boolean unlikePost(@PathVariable int postId, @RequestBody PostLikeDTO postLikeDTO,
-                              HttpSession session) {
-        UserDTO userDTO = (UserDTO) session.getAttribute("dto");
-        postLikeDTO.setPostId(postId);
-        postLikeDTO.setUserId(userDTO.getUserId());
-        return communityService.deletePostLike(postLikeDTO);
     }
 }

@@ -276,7 +276,7 @@
                          th:alt="'스타일 이미지 - ' + ${post.title}"
                          th:onerror="'this.src=\'/img/default-style.jpg\''"/>
                     <label class="label_container">
-                        <input type="checkbox">
+                        <input type="checkbox"  th:checked="${post.isLiked}" th:data-post-id="${post.post_id}" class="like-checkbox">
                         <svg id="Layer_1" version="1.0" viewBox="0 0 24 24" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                         <path d="M16.4,4C14.6,4,13,4.9,12,6.3C11,4.9,9.4,4,7.6,4C4.5,4,2,6.5,2,9.6C2,14,12,22,12,22s10-8,10-12.4C22,6.5,19.5,4,16.4,4z"></path>
                     </svg>
@@ -301,13 +301,11 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
-<script>
+<script th:inline="javascript">
     document.addEventListener('DOMContentLoaded', function () {
-        // URL 파라미터에서 category 값을 가져옴
         const urlParams = new URLSearchParams(window.location.search);
         const selectedCategory = urlParams.get('category') || 'All';
 
-        // 버튼 텍스트와 URL 파라미터 값을 매핑
         const categoryMap = {
             'All': 'All',
             'Casual': '캐주얼',
@@ -317,7 +315,6 @@
             'Gorpcore': '고프코어'
         };
 
-        // 모든 버튼의 active 클래스 제거 후, 선택된 카테고리에 맞는 버튼에 active 클래스 추가
         document.querySelectorAll('.filter-btn').forEach(button => {
             const buttonText = button.textContent;
             const mappedCategory = categoryMap[buttonText];
@@ -326,6 +323,40 @@
             } else {
                 button.classList.remove('active');
             }
+        });
+    });
+
+    // 좋아요 체크박스 이벤트 처리
+    document.querySelectorAll('.like-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const postId = this.getAttribute('data-post-id');
+            const isChecked = this.checked;
+            const url = isChecked ? `/api/community/like/${postId}` : `/api/community/unlike/${postId}`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ postId: postId }) // userId는 서버에서 세션으로 처리
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json(); // boolean 값 파싱
+                })
+                .then(success => {
+                    if (!success) {
+                        alert('좋아요 처리에 실패했습니다.');
+                        this.checked = !isChecked; // 실패 시 원래 상태로 복구
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    this.checked = !isChecked; // 오류 시 원래 상태로 복구
+                    alert('네트워크 오류가 발생했습니다.');
+                });
         });
     });
 </script>

@@ -1,9 +1,6 @@
 package kr.co.fitzcode.community.service;
 
-import kr.co.fitzcode.common.dto.PostDTO;
-import kr.co.fitzcode.common.dto.PostImageDTO;
-import kr.co.fitzcode.common.dto.PostLikeDTO;
-import kr.co.fitzcode.common.dto.ProductTag;
+import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.common.service.S3Service;
 import kr.co.fitzcode.community.mapper.CommunityMapper;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +32,9 @@ public class CommunityServiceImpl implements CommunityService {
 
         if (images != null && !images.isEmpty()) {
             if (images.size() == 1 && !images.get(0).isEmpty()) {
-                // 하나의 파일 업로드
                 String imageUrl = s3Service.uploadFile(images.get(0), "community");
                 imageUrls.add(imageUrl);
             } else {
-                // 여러 개 파일 업로드
                 imageUrls = s3Service.uploadFiles(images, "community");
             }
             postDTO.setThumbnailImageUrl(imageUrls.get(0));
@@ -80,7 +70,6 @@ public class CommunityServiceImpl implements CommunityService {
             communityMapper.insertPostTags(map);
         }
 
-        log.info("게시물 생성 완료, postId: {}", postDTO.getPostId());
         return postDTO.getPostId();
     }
 
@@ -137,18 +126,15 @@ public class CommunityServiceImpl implements CommunityService {
             }
         }
 
-        // 이미지 업데이트: 새 이미지만 추가 (기존 이미지 유지)
         if (images != null && !images.isEmpty()) {
             List<PostImageDTO> existingImages = communityMapper.getPostImagesByPostId(postDTO.getPostId());
-            int nextImageOrder = existingImages.size(); // 기존 이미지 다음 순서부터 시작
+            int nextImageOrder = existingImages.size();
 
             List<String> newImageUrls;
             if (images.size() == 1 && !images.get(0).isEmpty()) {
-                // 하나의 파일 업로드
                 String imageUrl = s3Service.uploadFile(images.get(0), "community");
                 newImageUrls = Collections.singletonList(imageUrl);
             } else {
-                // 여러 개 파일 업로드
                 newImageUrls = s3Service.uploadFiles(images, "community");
             }
 
@@ -167,7 +153,6 @@ public class CommunityServiceImpl implements CommunityService {
         }
 
         communityMapper.updatePost(postDTO, productIdList, null);
-        log.info("게시물 수정 완료, postId: {}", postDTO.getPostId());
     }
 
     @Override
@@ -184,34 +169,34 @@ public class CommunityServiceImpl implements CommunityService {
         }
 
         communityMapper.deletePost(postId);
-        log.info("게시물 삭제 완료, postId: {}", postId);
     }
 
     @Override
-    public boolean insertPostLike(PostLikeDTO postLikeDTO) {
-        try {
+    @Transactional
+    public PostDTO insertPostLike(PostLikeDTO postLikeDTO) {
+        if (!communityMapper.existsPostLike(postLikeDTO)) {
             communityMapper.insertPostLike(postLikeDTO);
-            return true;
-        } catch (Exception e) {
-            return false;
+            int likeCount = communityMapper.countPostLikes(postLikeDTO.getPostId());
+            communityMapper.updateLikeCount(Map.of("postId", postLikeDTO.getPostId(), "likeCount", likeCount));
         }
+        return communityMapper.getPostById(postLikeDTO.getPostId());
     }
 
     @Override
-    public boolean deletePostLike(PostLikeDTO postLikeDTO) {
-        try {
+    @Transactional
+    public PostDTO deletePostLike(PostLikeDTO postLikeDTO) {
+        if (communityMapper.existsPostLike(postLikeDTO)) {
             communityMapper.deletePostLike(postLikeDTO);
-            return true;
-        } catch (Exception e) {
-            return false;
+            int likeCount = communityMapper.countPostLikes(postLikeDTO.getPostId());
+            communityMapper.updateLikeCount(Map.of("postId", postLikeDTO.getPostId(), "likeCount", likeCount));
         }
+        return communityMapper.getPostById(postLikeDTO.getPostId());
     }
 
     @Override
     public int countPostLikes(int postId) {
         return communityMapper.countPostLikes(postId);
     }
-
 
     @Override
     public boolean isLiked(int postId, int userId) {
@@ -220,5 +205,68 @@ public class CommunityServiceImpl implements CommunityService {
                 .userId(userId)
                 .build();
         return communityMapper.existsPostLike(postLikeDTO);
+    }
+
+    @Override
+    @Transactional
+    public PostDTO insertPostSave(PostSaveDTO postSaveDTO) {
+        if (!communityMapper.existsPostSave(postSaveDTO)) {
+            communityMapper.insertPostSave(postSaveDTO);
+            int saveCount = communityMapper.countPostSaves(postSaveDTO.getPostId());
+            communityMapper.updateSaveCount(Map.of("postId", postSaveDTO.getPostId(), "saveCount", saveCount));
+        }
+        return communityMapper.getPostById(postSaveDTO.getPostId());
+    }
+
+    @Override
+    @Transactional
+    public PostDTO deletePostSave(PostSaveDTO postSaveDTO) {
+        if (communityMapper.existsPostSave(postSaveDTO)) {
+            communityMapper.deletePostSave(postSaveDTO);
+            int saveCount = communityMapper.countPostSaves(postSaveDTO.getPostId());
+            communityMapper.updateSaveCount(Map.of("postId", postSaveDTO.getPostId(), "saveCount", saveCount));
+        }
+        return communityMapper.getPostById(postSaveDTO.getPostId());
+    }
+
+    @Override
+    public int countPostSaves(int postId) {
+        return communityMapper.countPostSaves(postId);
+    }
+
+    @Override
+    public boolean isSaved(int postId, int userId) {
+        PostSaveDTO postSaveDTO = PostSaveDTO.builder()
+                .postId(postId)
+                .userId(userId)
+                .build();
+        return communityMapper.existsPostSave(postSaveDTO);
+    }
+
+    @Override
+    public void addFollow(int followerId, int followingId) {
+        FollowDTO followDTO = FollowDTO.builder()
+                .followerId(followerId)
+                .followingId(followingId)
+                .build();
+        communityMapper.addFollow(followDTO);
+    }
+
+    @Override
+    public void deleteFollow(int followerId, int followingId) {
+        FollowDTO followDTO = FollowDTO.builder()
+                .followerId(followerId)
+                .followingId(followingId)
+                .build();
+        communityMapper.deleteFollow(followDTO);
+    }
+
+    @Override
+    public boolean isFollowing(int followerId, int followingId) {
+        FollowDTO followDTO = FollowDTO.builder()
+                .followerId(followerId)
+                .followingId(followingId)
+                .build();
+        return communityMapper.isFollowing(followDTO);
     }
 }
