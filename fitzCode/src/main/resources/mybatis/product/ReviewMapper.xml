@@ -96,4 +96,12 @@
         WHERE review_id = #{reviewId}
     </delete>
 
+    <select id="getRatingCounts">
+        SELECT rating, COUNT(*) AS rating_count
+        FROM REVIEW
+        WHERE product_id = #{productId}
+        GROUP BY rating
+        ORDER BY rating
+    </select>
+
 </mapper>

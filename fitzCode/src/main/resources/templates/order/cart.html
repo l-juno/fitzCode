@@ -38,15 +38,23 @@
             <div id="orderItemsContainer"></div>
             <!--  get address of user using ajax call -->
             <div class="address">
-                <p>
-                    배송지:<span id="userAddress">불러오는 중...</span>
-                </p>
+                <!-- 배송지 선택 -->
+                <div class="address-section">
+                    <h3>배송지</h3>
+                    <div class="address-selection">
+                        <select id="userAddress">
+                            <option value="">배송지 선택</option>
+                        </select>
+                        <button id="changeAddressBtn" onclick="changeAddress()">변경</button>
+                    </div>
+                </div>
             </div>
-            <button id="changeAddressBtn" onclick="changeAddress()">변경</button>
-            <div>
-                <strong>Total Price: </strong><span id="totalPrice">₩0</span>
+            <div class="final-price-section">
+                <p>최종 결제 가격: <span id="totalPrice"></span></p>
             </div>
-            <button id="confirmCheckout" class="btn">Confirm Checkout</button>
+            <button id="confirmCheckout" class="btn">결제하기</button>
+            
+            
         </div>
     </div>
     

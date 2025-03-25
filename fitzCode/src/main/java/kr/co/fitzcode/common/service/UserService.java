@@ -11,4 +11,6 @@ public interface UserService {
     List<Integer> getUserRolesByUserId(int userId);
 
     List<UserRole> findRolesInStringByUserId(int userId);
+
+    String getUserEmailByUserId(int userId);
 }
