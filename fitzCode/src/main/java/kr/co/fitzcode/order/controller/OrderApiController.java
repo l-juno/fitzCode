@@ -3,9 +3,7 @@ package kr.co.fitzcode.order.controller;
 import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.common.service.UserService;
 import kr.co.fitzcode.common.util.SecurityUtils;
-import kr.co.fitzcode.order.service.CouponService;
-import kr.co.fitzcode.order.service.OrderService;
-import kr.co.fitzcode.order.service.UserOrderDetailService;
+import kr.co.fitzcode.order.service.*;
 import kr.co.fitzcode.user.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +24,8 @@ public class OrderApiController {
     private final CouponService couponService;
     private final EmailService emailService;
     private final UserService userService;
+    private final RefundService refundService;
+    private final PaymentService paymentService;
 
     @GetMapping("/getUserAddress")
     public ResponseEntity<List<AddressDTO>> order() {
@@ -47,7 +47,8 @@ public class OrderApiController {
                                           @RequestParam("postalCode") String postalCode,
                                           @RequestParam("sizeCode") int sizeCode,
                                           @RequestParam("price") int price,
-                                          @RequestParam(value = "couponId", required = false) Integer couponId
+                                          @RequestParam(value = "couponId", required = false) Integer couponId,
+                                          @RequestParam("impUid") String impUid
                                           ) {
 
         int userId = SecurityUtils.getUserId();
@@ -67,6 +68,10 @@ public class OrderApiController {
 
         int orderId = orderService.insertNewOrder(orderDTO);
         log.info("orderId just made::::::::::::::: {}", orderId);
+
+        log.info("impUid::::::::::::::::::: {}", impUid);
+        addImpUid(impUid, price, orderId);
+
 
         // create a product map
         List<Map<String, Object>> batchInsertList = new ArrayList<>();
@@ -176,6 +181,8 @@ public class OrderApiController {
             log.info("batchInsertList::::::::::::::: {}", batchInsertList);
             userOrderDetailService.addOrderDetailToOrder(batchInsertList);
 
+
+
             //send email
             String email = userService.getUserEmailByUserId(userId);
             List<UserOrderDetailDTO> list = userOrderDetailService.getOrderDetailByOrderId(orderId);
@@ -228,6 +235,7 @@ public class OrderApiController {
     public ResponseEntity<String> orderRefund(@RequestParam("orderDetailId") int orderDetailId) {
         log.info("orderDetailId::::: {}", orderDetailId);
         userOrderDetailService.updateRequestRefundStatus(orderDetailId);
+        refundService.requestRefund(orderDetailId);
         return ResponseEntity.ok("Order refunded successfully");
     }
 }
