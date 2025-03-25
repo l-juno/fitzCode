@@ -173,6 +173,7 @@
         WHERE p.product_id = #{productId}
     </select>
 
+<<<<<<< HEAD
     <select id="getParentCategoryId" resultType="long">
         select parent_id from CATEGORY where category_id = #{categoryId}
     </select>
@@ -180,5 +181,10 @@
 
 
 
+=======
+    <select id="getParentCategoryId" parameterType="Long" resultType="Long">
+        SELECT parent_id FROM CATEGORY WHERE category_id = #{categoryId}
+    </select>
+>>>>>>> 8ef48c507955293ec2c5376eb89bb6008b4c18f0
 
 </mapper>

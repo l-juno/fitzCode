@@ -2,10 +2,12 @@ package kr.co.fitzcode.user.service;
 
 import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.common.enums.UserRole;
+import kr.co.fitzcode.common.service.CouponService;
 import kr.co.fitzcode.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,13 +18,23 @@ public class UserServiceImpl implements UserService {
 
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final CouponService couponService;
 
     @Override
+    @Transactional
     public void registerUser(UserDTO dto) {
         // 비밀번호 암호화
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+        // 사용자 저장
         userMapper.insertUser(dto);
+        // userId 설정되었는지 확인
+        if (dto.getUserId() == 0) {
+            throw new IllegalStateException("User ID가 설정되지 않았습니다.");
+        }
+        // 사용자 등급 설정
         userMapper.insertUserTier(dto.getNickname());
+        // 회원가입 후 쿠폰 ID 7번 지급
+        couponService.issueWelcomeCoupon(dto.getUserId());
     }
 
     @Override

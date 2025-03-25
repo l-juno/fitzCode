@@ -63,25 +63,29 @@ public class ProductDTO {
     @Schema(description = "할인율 (%)")
     private String discountPercentage;
 
+    // discountedPrice가 null일 경우 price와 동일하게 설정
+    public Integer getDiscountedPrice() {
+        return discountedPrice != null ? discountedPrice : price;
+    }
+
     public String getFormattedPrice() {
         DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(price);
+        return price != null ? df.format(price) : "0";
     }
 
     public String getFormattedDiscountedPrice() {
-        if (this.discountedPrice != null && this.discountedPrice instanceof Number) {
-            return new DecimalFormat("#,###").format(this.discountedPrice);
-        }
-        return "N/A";
+        Integer effectiveDiscountedPrice = getDiscountedPrice();
+        return effectiveDiscountedPrice != null ? new DecimalFormat("#,###").format(effectiveDiscountedPrice) : "0";
     }
 
     public String getFormattedDiscountPercentage() {
-        if (price != 0) {
-            double discountPercentage = ((double)(price - discountedPrice) / price) * 100;
-            DecimalFormat df = new DecimalFormat("#");
-            return df.format(discountPercentage);
+        Integer effectiveDiscountedPrice = getDiscountedPrice();
+        if (price == null || price == 0 || effectiveDiscountedPrice == null || effectiveDiscountedPrice >= price) {
+            return "0";
         }
-        return "0";
+        double discount = ((double)(price - effectiveDiscountedPrice) / price) * 100;
+        DecimalFormat df = new DecimalFormat("#");
+        return df.format(discount);
     }
 
     public String getFormattedCreatedAt() {
@@ -94,8 +98,9 @@ public class ProductDTO {
 
     // 할인율 계산 및 discountPercentage 설정
     public void calculateDiscountPercentage() {
-        if (price != null && discountedPrice != null && price > 0) {
-            double discount = ((double)(price - discountedPrice) / price) * 100;
+        Integer effectiveDiscountedPrice = getDiscountedPrice();
+        if (price != null && effectiveDiscountedPrice != null && price > 0) {
+            double discount = ((double)(price - effectiveDiscountedPrice) / price) * 100;
             DecimalFormat df = new DecimalFormat("#");
             this.discountPercentage = df.format(discount);
         } else {
