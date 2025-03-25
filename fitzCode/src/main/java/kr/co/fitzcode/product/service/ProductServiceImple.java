@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -127,4 +128,5 @@ public class ProductServiceImple implements ProductService {
     public Long getParentCategoryId(Long categoryId) {
         return productMapper.getParentCategoryId(categoryId); // 매퍼에서 상위 카테고리 조회
     }
+
 }

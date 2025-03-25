@@ -173,6 +173,10 @@
         WHERE p.product_id = #{productId}
     </select>
 
+    <select id="getParentCategoryId" resultType="long">
+        select parent_id from CATEGORY where category_id = #{categoryId}
+    </select>
+
 
 
 

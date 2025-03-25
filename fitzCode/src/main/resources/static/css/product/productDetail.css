@@ -1106,3 +1106,23 @@
         padding: 10px 0;
     }
 }
+
+#reviewDoughnutChart {
+    display: block;
+    box-sizing: border-box;
+    height: 300px !important;
+    width: 300px;
+}
+.chart-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.averageRating {
+    margin-top: 10px;
+    font-size: xx-large;
+    font-weight: bold;
+}
+.numberOfReviews {
+    text-align: center;
+}

@@ -7,4 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface CommonUserMapper {
 
     UserDTO getUserByEmail(String email);
+
+    String getUserEmailByUserId(int id);
 }

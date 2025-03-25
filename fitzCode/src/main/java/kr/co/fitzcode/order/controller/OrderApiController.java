@@ -1,12 +1,12 @@
 package kr.co.fitzcode.order.controller;
 
-import kr.co.fitzcode.common.dto.AddressDTO;
-import kr.co.fitzcode.common.dto.OrderDTO;
-import kr.co.fitzcode.common.dto.PaymentDTO;
+import kr.co.fitzcode.common.dto.*;
+import kr.co.fitzcode.common.service.UserService;
 import kr.co.fitzcode.common.util.SecurityUtils;
 import kr.co.fitzcode.order.service.CouponService;
 import kr.co.fitzcode.order.service.OrderService;
 import kr.co.fitzcode.order.service.UserOrderDetailService;
+import kr.co.fitzcode.user.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,8 @@ public class OrderApiController {
     private final OrderService orderService;
     private final UserOrderDetailService userOrderDetailService;
     private final CouponService couponService;
+    private final EmailService emailService;
+    private final UserService userService;
 
     @GetMapping("/getUserAddress")
     public ResponseEntity<List<AddressDTO>> order() {
@@ -87,7 +89,15 @@ public class OrderApiController {
         userOrderDetailService.decrementProductCount(productId, sizeCode);
 
         // send email
-
+        String email = userService.getUserEmailByUserId(userId);
+        List<UserOrderDetailDTO> list = userOrderDetailService.getOrderDetailByOrderId(orderId);
+        log.info("email::::::::::::::::: {}", email);
+        EmailMessageDTO emailMessageDTO = EmailMessageDTO.builder()
+                .to(email)
+                .subject("Purchase complete")
+                .build();
+        String send = emailService.sendOrderConfirmationEmail(emailMessageDTO, orderDTO, list);
+        log.info("send::::::::::::::::::: {}", send);
 
         return ResponseEntity.ok(orderDTO);
     }
@@ -159,11 +169,25 @@ public class OrderApiController {
                 paramMap.put("couponId", stringObjectMap.get("couponId"));
                 couponService.markCouponAsUsed(userId, (Integer) stringObjectMap.get("couponId"), orderId);
                 batchInsertList.add(paramMap);
+
                 // decrease product amount by 1
                 userOrderDetailService.decrementProductCount((Integer) stringObjectMap.get("productId"), (Integer) stringObjectMap.get("sizeCode"));
             }
             log.info("batchInsertList::::::::::::::: {}", batchInsertList);
             userOrderDetailService.addOrderDetailToOrder(batchInsertList);
+
+            //send email
+            String email = userService.getUserEmailByUserId(userId);
+            List<UserOrderDetailDTO> list = userOrderDetailService.getOrderDetailByOrderId(orderId);
+            log.info("email::::::::::::::::: {}", email);
+            EmailMessageDTO emailMessageDTO = EmailMessageDTO.builder()
+                    .to(email)
+                    .subject("Purchase complete")
+                    .build();
+            String send = emailService.sendOrderConfirmationEmail(emailMessageDTO, orderDTO, list);
+            log.info("send::::::::::::::::::: {}", send);
+
+
 
             return ResponseEntity.ok(orderDTO);
 

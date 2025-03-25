@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface ReviewMapper {
@@ -19,4 +20,6 @@ public interface ReviewMapper {
     List<ReviewDTO> findByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
     void deleteReview(@Param("reviewId") Long reviewId);
     void deleteReviewImages(@Param("reviewId") Long reviewId);
+    List<Map<String, Object>> getRatingCounts(@Param("productId") int productId);
+
 }

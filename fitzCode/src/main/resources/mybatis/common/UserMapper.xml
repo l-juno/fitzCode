@@ -8,4 +8,9 @@
         SELECT * FROM USER
         WHERE email = #{email}
     </select>
+
+    <select id="getUserEmailByUserId" resultType="String">
+        SELECT email from USER where user_id = #{userId}
+    </select>
+
 </mapper>
