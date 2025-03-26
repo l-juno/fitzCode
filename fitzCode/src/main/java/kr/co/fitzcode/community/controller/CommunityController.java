@@ -98,36 +98,30 @@ public class CommunityController {
             return "error";
         }
 
-        // 현재 로그인한 사용자 정보
         UserDTO userDTO = (UserDTO) session.getAttribute("dto");
         int currentUserId = (userDTO != null) ? userDTO.getUserId() : -1;
 
-        // 게시물 작성자의 user_id
         int postUserId = ((Number) post.get("user_id")).intValue();
         System.out.println("Post user_id>>>>>>>>>>>>>> " + postUserId);
 
-        // 본인의 게시물인지 여부 확인
         boolean isOwnPost = currentUserId != -1 && currentUserId == postUserId;
 
-        // 팔로우 여부 확인 (본인의 게시물이 아닌 경우에만 확인)
         boolean isFollowing = false;
         if (!isOwnPost && currentUserId != -1) {
             isFollowing = communityService.isFollowing(currentUserId, postUserId);
         }
 
-        // 게시물 관련 데이터 조회
         List<ProductTag> productTags = communityService.getProductTagsByPostId(postId);
         List<Map<String, Object>> otherStyles = communityService.getOtherStylesByUserId(postUserId, postId);
         List<PostImageDTO> postImages = communityService.getPostImagesByPostId(postId);
         PostDTO dto = communityService.getPostById(postId);
 
-        // 좋아요 및 저장 여부 확인
         boolean isLiked = currentUserId != -1 && communityService.isLiked(postId, currentUserId);
         int likeCount = communityService.countPostLikes(postId);
         boolean isSaved = currentUserId != -1 && communityService.isSaved(postId, currentUserId);
         int saveCount = communityService.countPostSaves(postId);
 
-        // 모델에 데이터 추가
+        // 모델에 데이터 추가..
         model.addAttribute("post", post);
         model.addAttribute("productTags", productTags);
         model.addAttribute("otherStyles", otherStyles);
