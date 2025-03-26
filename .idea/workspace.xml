@@ -5,15 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f7a84a0f-ba81-43ac-aea2-983b9b838dc2" name="변경" comment="[commit] community 수정">
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/static/css/community/communityForm.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/static/css/community/communityList.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/static/css/community/communityModify.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityController.java" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/java/kr/co/fitzcode/community/controller/CommunityController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fitzCode/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityForm.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityForm.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityList.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityList.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityModify.html" beforeDir="false" afterPath="$PROJECT_DIR$/fitzCode/src/main/resources/templates/community/communityModify.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -405,7 +398,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742972614764</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="[commit] community 수정">
+      <option name="closed" value="true" />
+      <created>1742972881556</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1742972881556</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
