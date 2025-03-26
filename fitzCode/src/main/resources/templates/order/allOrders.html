@@ -25,20 +25,10 @@
                 <div class="subTitle">
                 <p><span th:text="${firstItem.formattedCreatedAt}" style="font-size: 17px;
     font-weight: bold; "></span> </p>
-                    <a th:href="@{/order/{orderId}(orderId=${firstItem.orderId})}">주문 상세</a>
+                    <a th:href="@{/order/{orderId}(orderId=${firstItem.orderId})}" style="color: #888888">주문 상세</a>
 
                 </div>
                 <table>
-<!--                    <thead>-->
-<!--                    <tr>-->
-<!--                        <th colspan="2">상품명</th>-->
-<!--                        <th>주문 수량</th>-->
-<!--                        <th>가격</th>-->
-<!--                        <th>사이즈</th>-->
-<!--                        <th>리뷰 작성</th>-->
-<!--                        <th>환불 요청</th>-->
-<!--                    </tr>-->
-<!--                    </thead>-->
                     <tbody>
                     <tr th:each="detail : ${orderDetails}">
                         <td><img th:src="${detail.imageUrl}" alt="Product Image" width="100"></td>
@@ -121,4 +111,6 @@
         });
     }
 </script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

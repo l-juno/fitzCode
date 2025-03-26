@@ -242,3 +242,12 @@ img {
     text-decoration: underline;
     cursor: pointer;
 }
+.accountNumber{
+    display: flex;
+}
+.copyDefaultAccountNumberBtn,
+.copyAccountNumberBtn {
+    padding: 0px
+;
+
+}

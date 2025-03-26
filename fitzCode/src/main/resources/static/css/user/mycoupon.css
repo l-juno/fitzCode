@@ -46,8 +46,8 @@ table {
 
 td {
     display: flex;
-    align-items: center;
     padding: 8px 0px;
+    align-items: flex-end;
 }
 
 td p {

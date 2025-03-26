@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.info('Action:', e.action);
         console.info('Text:', e.text);
         console.info('Trigger:', e.trigger);
+        alert("계좌번호가 복사되었습니다!");
 
         e.clearSelection();
     });

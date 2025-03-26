@@ -242,4 +242,5 @@ input[type="text"]:focus {
     cursor: pointer;
     text-decoration: underline;
     color: #9e9e9e;
+    margin-top: 10px;
 }
