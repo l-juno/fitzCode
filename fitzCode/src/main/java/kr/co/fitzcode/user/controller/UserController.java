@@ -8,12 +8,15 @@ import kr.co.fitzcode.user.service.EmailService;
 import kr.co.fitzcode.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Controller
@@ -23,6 +26,10 @@ public class UserController {
 
     private final UserService userService;
     private final EmailService emailService;
+
+    // base-url
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     // 로그인 페이지 이동
     @GetMapping("/login")
@@ -37,7 +44,7 @@ public class UserController {
 
         // prevPage 가 없거나 "/login"을 포함하면 기본 홈 페이지로 설정
         if (prevPage == null || prevPage.contains("/login")) {
-            prevPage = "http://localhost:8080/";
+            prevPage = baseUrl + "/"; // 동적으로 baseUrl 사용
         }
         log.info(">>> 최종 prevPage: {}", prevPage);
         request.getSession().setAttribute("prevPage", prevPage);
@@ -147,7 +154,7 @@ public class UserController {
 
     // 비밀번호 재설정 이메일 발송
     @PostMapping("/pwEmail")
-    public String pwEmail(@RequestParam("email") String email, UserDTO dto, Model model, HttpSession session) {
+    public String pwEmail(@RequestParam("email") String email, UserDTO dto, Model model, HttpSession session, HttpServletRequest request) {
         boolean checkEmail = userService.emailDuplicate(email);
 
         if (!checkEmail) {
@@ -155,12 +162,19 @@ public class UserController {
             return "user/findpwEmail";
         }
 
+        // EmailMessageDTO에 모델 데이터 추가
         EmailMessageDTO emailMessage = EmailMessageDTO.builder()
                 .to(email)
                 .subject("비밀번호 재설정 메일 발송")
                 .build();
 
-        String code = emailService.sendEmail(emailMessage, "user/findpwEmailView");
+        // 템플릿에 전달할 모델 데이터
+        Map<String, Object> modelData = new HashMap<>();
+        modelData.put("email", email);
+        modelData.put("baseUrl", baseUrl); // baseUrl을 모델에 추가
+        log.info("pwEmail 메서드에서 전달하는 email 값: {}", email);
+
+        String code = emailService.sendEmail(emailMessage, "user/findpwEmailView", modelData);
         model.addAttribute("email", email);
         model.addAttribute("dto", dto);
 
@@ -188,20 +202,27 @@ public class UserController {
     // 비밀번호 재설정
     @PostMapping("/resetPwSuccess")
     public String resetPw(@ModelAttribute("dto") UserDTO dto, BindingResult bindingResult,
-                          @RequestParam("email") String email,
-                          RedirectAttributes redirectAttributes, Model model) {
+                          HttpSession session, RedirectAttributes redirectAttributes, Model model) {
         if (bindingResult.hasErrors()) {
             return "user/resetPw";
         }
 
+        String email = (String) session.getAttribute("email");
         if (email == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
             return "redirect:/pwEmail";
         }
 
+        // DTO에 email 설정
+        dto.setEmail(email);
         dto.setPassword(dto.getPassword());
         userService.updatePw(dto);
-        model.addAttribute("userName", dto.getUserName());
+
+        // userEmail을 모델에 추가
+        model.addAttribute("userEmail", email);
+
+        // 비밀번호 재설정 후 세션에서 email 제거
+        session.removeAttribute("email");
 
         return "user/resetPwSuccess";
     }

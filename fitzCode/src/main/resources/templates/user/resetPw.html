@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <title>fitzCode</title>
     <style>
-
-        .body-container{
+        .body-container {
             font-family: 'Apple SD Gothic Neo', sans-serif;
             background: white;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* 위쪽부터 배치 */
+            align-items: flex-start;
             min-height: 90vh;
             margin: 0;
-            padding: 70px 20px; /* 위쪽 여백을 더 늘림 */
+            padding: 70px 20px;
             box-sizing: border-box;
             overflow-y: auto;
         }
@@ -27,13 +26,11 @@
         .container {
             width: 100%;
             max-width: 500px;
-            margin-top: 5% ;
+            margin-top: 5%;
             padding: 20px;
             background-color: #ffffff;
             border-radius: 8px;
             text-align: center;
-            /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
-
         }
 
         .container p {
@@ -58,6 +55,7 @@
             font-size: 16px;
             color: #333;
         }
+
         .form-group input::placeholder {
             color: #aaa;
             font-size: 13px;
@@ -66,9 +64,7 @@
         input[type="password"] {
             width: 70%;
             padding: 7px;
-            /*border: 1px solid #ddd;*/
             border: none;
-            /*border-radius: 5px;*/
             font-size: 16px;
             box-sizing: border-box;
             margin-top: 10%;
@@ -110,8 +106,6 @@
             font-size: 13px;
             color: #9a9a9a;
         }
-
-
     </style>
 </head>
 <body>
@@ -122,10 +116,10 @@
 <div class="body-container">
     <div class="container">
         <h2>비밀번호 재설정</h2>
-        <p>새로운 비밀번호를 입력해주세요 </p>
-
+        <p>새로운 비밀번호를 입력해주세요</p>
 
         <form action="/resetPwSuccess" method="post" th:object="${dto}" onsubmit="return validateForm()">
+            <input type="hidden" name="email" th:value="${email}"/>
             <div class="form-group">
                 <div class="form-group">
                     <label for="password">비밀번호</label>
@@ -138,18 +132,17 @@
                     <span id="passwordError" style="color: red"></span>
                 </div>
                 <div class="info">
-                    -  비밀번호 재설정이 불가능한 경우, 고객센터로 연락바랍니다.
+                    - 비밀번호 재설정이 불가능한 경우, 고객센터로 연락바랍니다.
                 </div>
             </div>
 
             <div class="form-group">
                 <button type="submit">비밀번호 재설정</button>
             </div>
-
         </form>
-
     </div>
 </div>
+
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
