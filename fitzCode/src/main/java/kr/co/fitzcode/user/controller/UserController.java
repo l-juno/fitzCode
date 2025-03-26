@@ -103,6 +103,15 @@ public class UserController {
         return "user/joinEmail";
     }
 
+    // 회원가입 성공 GET 요청 추가했음 (회원가입 시 로그인하러 가기 리다이렉트 에러 해결)
+    @GetMapping("/joinSuccess")
+    public String joinSuccessGet(HttpSession session, Model model) {
+        if (!model.containsAttribute("userName")) {
+            return "redirect:/joinForm";
+        }
+        return "user/joinSuccess";
+    }
+
     @PostMapping("/joinSuccess")
     public String joinEmailCode(@RequestParam("authCode") String authCode, HttpSession session, Model model) {
         String sessionCode = (String) session.getAttribute("authCode");

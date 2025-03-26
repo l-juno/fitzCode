@@ -53,12 +53,12 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
             String targetUrl = savedRequest.getRedirectUrl();
             log.info(">>> redirectUrl: {}", targetUrl);
             redirectStrategy.sendRedirect(request, response, targetUrl);
-
         } else { // 로그인 페이지에서 접근한 경우
             HttpSession session = request.getSession();
             String prevPage = (String) session.getAttribute("prevPage");
 
-            String redirectUrl = (prevPage != null) ? prevPage : "/"; // prevPage가 null이면 "/"
+            // prevPage가 "/joinSuccess"인 경우 "/"로 리다이렉션
+            String redirectUrl = (prevPage != null && !prevPage.contains("/joinSuccess")) ? prevPage : "/";
             log.info(">>> prevPage redirectUrl: {}", redirectUrl);
 
             redirectStrategy.sendRedirect(request, response, redirectUrl);
