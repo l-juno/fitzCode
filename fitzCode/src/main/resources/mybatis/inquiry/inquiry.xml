@@ -164,7 +164,7 @@
         subject = #{inquiryDTO.subject},
         content = #{inquiryDTO.content},
         order_id = #{inquiryDTO.orderId},
-        product_id = #{inquiryDTO.productId},
+        product_id = #{inquiryDTO.productId}
         WHERE inquiry_id = #{inquiryDTO.inquiryId}
     </update>
 
