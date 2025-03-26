@@ -2,6 +2,7 @@ package kr.co.fitzcode.user.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import kr.co.fitzcode.common.dto.AccountDTO;
 import kr.co.fitzcode.common.dto.EmailMessageDTO;
 import kr.co.fitzcode.common.dto.UserDTO;
 import kr.co.fitzcode.user.service.EmailService;
@@ -40,7 +41,7 @@ public class UserController {
 
         // 사용자가 로그인 페이지로 이동하기 전의 페이지 URL 저장 ("Referer" : 이전 페이지 URL 정보)
         String prevPage = request.getHeader("Referer");
-        log.info(">>> prevPage:{}", prevPage);
+        log.info(">>> prevPage: {}", prevPage);
 
         // prevPage 가 없거나 "/login"을 포함하면 기본 홈 페이지로 설정
         if (prevPage == null || prevPage.contains("/login")) {
@@ -162,6 +163,10 @@ public class UserController {
             return "user/findpwEmail";
         }
 
+        // 세션에 이메일과 링크 사용 여부 저장
+        session.setAttribute("resetEmail", email);
+        session.setAttribute("resetLinkUsed", false);
+
         // EmailMessageDTO에 모델 데이터 추가
         EmailMessageDTO emailMessage = EmailMessageDTO.builder()
                 .to(email)
@@ -171,7 +176,7 @@ public class UserController {
         // 템플릿에 전달할 모델 데이터
         Map<String, Object> modelData = new HashMap<>();
         modelData.put("email", email);
-        modelData.put("baseUrl", baseUrl); // baseUrl을 모델에 추가
+        modelData.put("baseUrl", baseUrl);
         log.info("pwEmail 메서드에서 전달하는 email 값: {}", email);
 
         String code = emailService.sendEmail(emailMessage, "user/findpwEmailView", modelData);
@@ -186,16 +191,30 @@ public class UserController {
     // 비밀번호 재설정 페이지 이동
     @GetMapping("/resetPw")
     public String resetPw(HttpSession session, UserDTO dto, Model model) {
-        String email = (String) session.getAttribute("email");
+        String email = (String) session.getAttribute("resetEmail");
+        Boolean linkUsed = (Boolean) session.getAttribute("resetLinkUsed");
 
-        if (email == null) {
+        // 이메일 또는 링크 사용 여부 확인
+        if (email == null || linkUsed == null) {
+            log.warn("세션이 만료되었습니다. 이메일: {}", email);
             model.addAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
             return "redirect:/pwEmail";
         }
 
+        // 링크가 이미 사용되었는지 확인
+        if (linkUsed) {
+            log.warn("이미 사용된 링크로 접근 시도 - 이메일: {}", email);
+            model.addAttribute("errorMessage", "이 링크는 이미 사용되었습니다. 새로 비밀번호 재설정 링크를 요청해주세요.");
+            return "redirect:/pwEmail";
+        }
+
+        // 링크 사용 처리
+        session.setAttribute("resetLinkUsed", true);
+        log.info("비밀번호 재설정 링크 사용 - 이메일: {}", email);
+
         model.addAttribute("email", email);
         model.addAttribute("dto", dto);
-        System.out.println("email>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> " + email);
+        log.info("비밀번호 재설정 페이지로 이동 - 이메일: {}", email);
         return "user/resetPw";
     }
 
@@ -207,8 +226,9 @@ public class UserController {
             return "user/resetPw";
         }
 
-        String email = (String) session.getAttribute("email");
+        String email = (String) session.getAttribute("resetEmail");
         if (email == null) {
+            log.warn("세션이 만료되어 비밀번호 재설정 실패 - 이메일: {}", email);
             redirectAttributes.addFlashAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
             return "redirect:/pwEmail";
         }
@@ -221,8 +241,11 @@ public class UserController {
         // userEmail을 모델에 추가
         model.addAttribute("userEmail", email);
 
-        // 비밀번호 재설정 후 세션에서 email 제거
+        // 비밀번호 재설정 후 세션에서 관련 데이터 제거
+        session.removeAttribute("resetEmail");
+        session.removeAttribute("resetLinkUsed");
         session.removeAttribute("email");
+        log.info("비밀번호 재설정 완료 - 이메일: {}", email);
 
         return "user/resetPwSuccess";
     }
@@ -242,8 +265,10 @@ public class UserController {
         if (email != null) {
             model.addAttribute("email", email);
             model.addAttribute("userName", userName);
+            log.info("이메일 찾기 성공 - 사용자: {}, 이메일: {}", userName, email);
             return "user/findEmailSuccess";
         } else {
+            log.warn("이메일 찾기 실패 - 사용자: {}, 전화번호: {}", userName, phoneNumber);
             model.addAttribute("errorMessage", "해당 전화번호와 이름에 대한 이메일을 찾을 수 없습니다.");
             return "redirect:/user/findEmail";
         }

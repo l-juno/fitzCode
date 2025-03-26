@@ -54,6 +54,9 @@
         .container label {
             font-size: 16px;
             color: #333;
+            display: inline-block;
+            width: 120px;
+            text-align: left;
         }
 
         .form-group input::placeholder {
@@ -67,7 +70,7 @@
             border: none;
             font-size: 16px;
             box-sizing: border-box;
-            margin-top: 10%;
+            margin-top: 5px;
             background-color: #fff;
             box-shadow: inset 0 -2px 0 0 rgb(228, 228, 228);
             transition: box-shadow 0.3s ease;
@@ -98,7 +101,15 @@
         .container .error-message {
             color: red;
             font-size: 12px;
-            margin-top: 10px;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .container .success-message {
+            color: green;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
         }
 
         .info {
@@ -125,11 +136,13 @@
                     <label for="password">비밀번호</label>
                     <input type="password" id="password" name="password" required placeholder="비밀번호 입력 (최소 8자 이상 최대 16자)">
                     <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" style="color: red"></span>
+                    <span id="passwordFormatError" class="error-message"></span>
                 </div>
                 <div class="form-group">
                     <label for="password_confirm">비밀번호 확인</label>
                     <input type="password" id="password_confirm" name="password_confirm" required placeholder="비밀번호 재입력">
-                    <span id="passwordError" style="color: red"></span>
+                    <span id="passwordError" class="error-message"></span>
+                    <span id="passwordMatch" class="success-message"></span>
                 </div>
                 <div class="info">
                     - 비밀번호 재설정이 불가능한 경우, 고객센터로 연락바랍니다.
@@ -146,21 +159,73 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 
-</body>
 <script>
-    // 비밀번호와 비밀번호 확인 일치 체크
-    function validateForm() {
-        var password = document.getElementById('password').value;
-        var passwordConfirm = document.getElementById('password_confirm').value;
-        var passwordError = document.getElementById('passwordError');
+    let passwordTimeout;
+    let confirmTimeout;
 
-        if (password !== passwordConfirm) {
-            passwordError.textContent = '비밀번호와 비밀번호 확인이 일치하지 않습니다.';
-            return false;
-        } else {
-            passwordError.textContent = '';
+    // 비밀번호 유효성 검사 (최소 8자, 최대 16자)
+    document.getElementById('password').addEventListener('input', function () {
+        clearTimeout(passwordTimeout);
+        const password = this.value;
+        const passwordFormatError = document.getElementById('passwordFormatError');
+
+        // 입력이 변경되면 에러 메시지 즉시 제거
+        passwordFormatError.textContent = '';
+
+        // 1초 후 유효성 검사
+        passwordTimeout = setTimeout(() => {
+            if (password.length < 8 || password.length > 16) {
+                passwordFormatError.textContent = '비밀번호는 최소 8자 최대 16자 입니다.';
+            }
+        }, 1000);
+    });
+
+    // 비밀번호 확인 일치 여부 검사
+    document.getElementById('password_confirm').addEventListener('input', function () {
+        clearTimeout(confirmTimeout);
+        const password = document.getElementById('password').value;
+        const passwordConfirm = this.value;
+        const passwordError = document.getElementById('passwordError');
+        const passwordMatch = document.getElementById('passwordMatch');
+
+        // 입력이 변경되면 메시지 즉시 제거
+        passwordError.textContent = '';
+        passwordMatch.textContent = '';
+
+        // 비밀번호와 비밀번호 확인이 일치하는 경우 즉시 표시
+        if (password === passwordConfirm && passwordConfirm.length > 0) {
+            passwordMatch.textContent = '비밀번호가 일치합니다.';
+        } else if (passwordConfirm.length > 0) {
+            // 1초 후 불일치 메시지 표시
+            confirmTimeout = setTimeout(() => {
+                if (password !== passwordConfirm) {
+                    passwordError.textContent = '비밀번호와 비밀번호 확인이 일치하지 않습니다.';
+                }
+            }, 1000);
         }
+    });
+
+    // 비밀번호와 비밀번호 확인 일치 체크 (제출 시)
+    function validateForm() {
+        const password = document.getElementById('password').value;
+        const passwordConfirm = document.getElementById('password_confirm').value;
+        const passwordError = document.getElementById('passwordError');
+        const passwordFormatError = document.getElementById('passwordFormatError');
+
+        // 비밀번호 형식 검증
+        if (password.length < 8 || password.length > 16) {
+            passwordFormatError.textContent = '비밀번호는 최소 8자 최대 16자 입니다.';
+            return false;
+        }
+
+        // 비밀번호 & 비밀번호 확인 일치 체크
+        if (password !== passwordConfirm) {
+            passwordError.textContent = '비밀번호가 일치하지 않습니다.';
+            return false;
+        }
+
         return true;
     }
 </script>
+</body>
 </html>

@@ -16,6 +16,7 @@
             padding: 20px;
             background-color: #ffffff;
             width: 100%;
+            text-align: center;
         }
         .header-line {
             border-top: 5px solid #2f2f32;
@@ -59,7 +60,7 @@
         .reset-button {
             display: inline-block;
             padding: 12px 25px;
-            background-color: #2f2f2f;
+            background-color: #2f2f32;
             color: #ffffff !important;
             font-size: 16px;
             font-weight: 500;
@@ -70,7 +71,26 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             align-items: center;
         }
+        .reset-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const resetButton = document.querySelector(".reset-button");
+            resetButton.addEventListener("click", () => {
+                resetButton.setAttribute("disabled", "true");
+                resetButton.style.backgroundColor = "#cccccc";
+                resetButton.style.cursor = "not-allowed";
+                const message = document.createElement("p");
+                message.textContent = "링크가 만료되었습니다. 새 링크를 요청해주세요.";
+                message.style.color = "red";
+                message.style.marginTop = "10px";
+                resetButton.parentNode.appendChild(message);
+            });
+        });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -82,7 +102,7 @@
         fitzCode를 이용해 주셔서 진심으로 감사드립니다.<br>
         아래 '비밀번호 재설정' 버튼을 클릭하여 새 비밀번호를 설정하세요. <br>
     </div>
-    <a th:href="${baseUrl} + '/resetPw?email=' + ${email}" class="reset-button">비밀번호 재설정</a>
+    <a th:href="${baseUrl} + '/resetPw'" class="reset-button">비밀번호 재설정</a>
 </div>
 </body>
 </html>
