@@ -398,15 +398,19 @@ h3 {
     align-items: flex-start;
 }
 
-#userAddress,
 #addressSelect {
-    padding: 8px;
-    margin-bottom: 10px;
-    font-size: 14px;
-    border: 1px solid #333; /* Dark border */
-    border-radius: 4px;
-    width: 100%; /* Full width for select boxes */
-    background-color: #f9f9f9; /* Slight grey for input fields */
+    flex: 1;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20width='16'%20height='16'%3E%3Cpath%20d='M7%2010l5%205%205-5H7z'%20fill='%23333'/%3E%3C/svg%3E");
+    background-position: right 10px center;
+    background-size: 16px;
+    padding-right: 30px;
 }
 
 #changeAddressBtn {
@@ -416,6 +420,7 @@ h3 {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 #changeAddressBtn:hover {
