@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <title>communityModify</title>
+  <link th:fragment="header-head" rel="stylesheet" th:href="@{/css/community/communityModify.css}"/>
+</head>
+<body>
+<div th:replace="~{fragments/header}"></div>
+
+<form th:action="@{/community/modify/{id}(id=${post.postId})}" id="postForm" method="post" enctype="multipart/form-data">
+  <main>
+    <h1>커뮤니티 글 수정</h1>
+    <div class="line"></div>
+    <br>
+    <div class="form-group">
+      <label for="title">제목</label>
+      <input type="text" id="title" name="title" th:value="${post.title}" placeholder="제목을 입력하세요" required>
+      <div class="error" id="titleError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="content">내용</label>
+      <textarea id="content" name="content" placeholder="내용을 입력하세요" required th:text="${post.content}"></textarea>
+      <div class="error" id="contentError"></div>
+    </div>
+
+    <div class="form-group">
+      <label for="images">이미지 첨부</label>
+      <div id="existingImages" class="image-preview-container">
+        <th:block th:each="image : ${postImages}">
+          <img th:src="${image.postImageUrl}" alt="Existing Image">
+        </th:block>
+      </div>
+      <input type="file" id="images" name="images" accept="image/*" multiple>
+      <div id="imagePreviewContainer" class="image-preview-container"></div>
+      <ul id="fileNameList" class="file-name-list"></ul>
+    </div>
+
+    <div class="form-group">
+      <label for="tags">상품 태그</label>
+      <div class="tag-input">
+        <button type="button" id="addTagButton">태그 추가</button>
+      </div>
+      <br><br>
+      <div id="tagList" class="tag-list" th:data-existing-tags="${productTags}">
+        <th:block th:each="tag : ${productTags}">
+          <div class="selected-product" th:data-product-id="${tag.productId}">
+            <img th:src="${tag.imageUrl}" th:alt="${tag.productName}">
+            <span th:text="${tag.productName}"></span>
+          </div>
+        </th:block>
+      </div>
+      <input type="hidden" id="productIds" name="productIds" th:value="${productTags != null ? #strings.arrayJoin(productTags.![productId], ',') : ''}">
+    </div>
+
+    <div id="productModal" class="modal">
+      <div class="modal-content">
+        <span class="close">×</span>
+        <h2>상품 검색</h2>
+        <p style="color: #818181; font-size: 12px">최대 3개까지 태그 가능</p>
+        <div class="search-container">
+          <input type="text" id="productName" name="productName" placeholder="상품을 검색하세요">
+          <button type="button" id="searchButton" class="search-icon">🔍</button>
+        </div>
+        <p id="searchResultTitle"></p>
+        <div id="productList" class="search-results"></div>
+        <div id="selectedItems" class="selected-items">
+          <div id="selectedItemsList"></div>
+        </div>
+        <button type="button" id="addSelectedButton">추가</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>스타일 태그 (최대 2개 선택 가능)</label>
+      <div id="styleTagContainer">
+        <button type="button" class="style-tag" data-style="캐주얼" th:classappend="${#strings.contains(post.styleCategory, '캐주얼')} ? 'selected'">캐주얼</button>
+        <button type="button" class="style-tag" data-style="스트릿" th:classappend="${#strings.contains(post.styleCategory, '스트릿')} ? 'selected'">스트릿</button>
+        <button type="button" class="style-tag" data-style="시크" th:classappend="${#strings.contains(post.styleCategory, '시크')} ? 'selected'">시크</button>
+        <button type="button" class="style-tag" data-style="고프코어" th:classappend="${#strings.contains(post.styleCategory, '고프코어')} ? 'selected'">고프코어</button>
+        <button type="button" class="style-tag" data-style="클래식" th:classappend="${#strings.contains(post.styleCategory, '클래식')} ? 'selected'">클래식</button>
+      </div>
+      <input type="hidden" id="styleCategory" name="styleCategory" th:value="${post.styleCategory}">
+    </div>
+    <br>
+    <div class="form-group">
+      <button type="submit" class="submit-button">수정 완료</button>
+    </div>
+  </main>
+</form>
+
+<div th:replace="~{fragments/footer}"></div>
+
+<script>
+  document.getElementById("images").addEventListener("change", function (event) {
+    const files = event.target.files;
+    const imagePreviewContainer = document.getElementById("imagePreviewContainer");
+    const fileNameList = document.getElementById("fileNameList");
+
+    imagePreviewContainer.innerHTML = "";
+    fileNameList.innerHTML = "";
+
+    if (files) {
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const imgContainer = document.createElement("div");
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.classList.add("image-preview");
+          imgContainer.appendChild(img);
+          imagePreviewContainer.appendChild(imgContainer);
+        };
+        reader.readAsDataURL(file);
+
+        const fileNameItem = document.createElement("li");
+        fileNameItem.textContent = file.name;
+        fileNameList.appendChild(fileNameItem);
+      });
+    }
+  });
+
+  document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("addTagButton").addEventListener("click", function () {
+      const modal = document.getElementById("productModal");
+      modal.style.display = "block";
+      document.body.classList.add('modal-open');
+      document.body.style.top = `-${window.scrollY}px`;
+    });
+
+    document.querySelector(".close").addEventListener("click", function () {
+      const modal = document.getElementById("productModal");
+      modal.style.display = "none";
+      document.body.classList.remove('modal-open');
+      window.scrollTo(0, parseInt(document.body.style.top || "0") * -1);
+      document.body.style.position = "";
+      document.body.style.top = "";
+    });
+
+    window.addEventListener("click", function (event) {
+      const modal = document.getElementById("productModal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+        document.body.classList.remove('modal-open');
+        window.scrollTo(0, parseInt(document.body.style.top || "0") * -1);
+        document.body.style.position = "";
+        document.body.style.top = "";
+      }
+    });
+
+    const styleButtons = document.querySelectorAll(".style-tag");
+    let selectedStyles = document.getElementById("styleCategory").value.split(",").filter(s => s.trim());
+
+    styleButtons.forEach(button => {
+      button.addEventListener("click", function () {
+        const style = button.getAttribute("data-style");
+        if (selectedStyles.includes(style)) {
+          selectedStyles = selectedStyles.filter(s => s !== style);
+          button.classList.remove("selected");
+        } else if (selectedStyles.length < 2) {
+          selectedStyles.push(style);
+          button.classList.add("selected");
+        }
+        document.getElementById("styleCategory").value = selectedStyles.join(",");
+        console.log("선택된 스타일:", selectedStyles);
+      });
+    });
+  });
+
+  $(document).ready(function () {
+    let selectedProducts = /*[[${productTags}]]*/ []; // ProductTag 리스트로 초기화
+
+    function updateSelectedItems() {
+      let html = '';
+      selectedProducts.forEach(product => {
+        html += '<div class="selected-product" data-product-id="' + product.productId + '">';
+        html += '<img src="' + product.imageUrl + '" alt="' + product.productName + '">';
+        html += '<span>' + product.productName + '</span>';
+        html += '</div>';
+      });
+      $('#selectedItemsList').html(html);
+    }
+
+    function performSearch() {
+      var productName = $('#productName').val();
+      $.ajax({
+        url: '/api/community/search-products',
+        method: 'GET',
+        data: { productName: productName },
+        dataType: 'json',
+        success: function (data) {
+          var resultCount = Array.isArray(data) ? data.length : 0;
+          $('#searchResultTitle').text(productName + ' 검색 결과 (' + resultCount + ')');
+
+          var html = '';
+          if (Array.isArray(data) && data.length > 0) {
+            data.forEach(function (product) {
+              const isSelected = selectedProducts.some(p => p.productId === product.productId);
+              html += '<div class="product-item' + (isSelected ? ' selected' : '') + '" data-product-id="' + product.productId + '">';
+              html += '<img src="' + product.imageUrl + '" alt="' + product.productName + '">';
+              html += '<h3>' + product.productName + '</h3>';
+              html += '</div>';
+            });
+          } else {
+            html = '<p>검색 결과가 없습니다.</p>';
+          }
+          $('#productList').html(html);
+
+          $('.product-item').off('click').on('click', function () {
+            const productId = $(this).data('product-id');
+            const product = data.find(p => p.productId === productId);
+
+            if ($(this).hasClass('selected')) {
+              selectedProducts = selectedProducts.filter(p => p.productId !== productId);
+              $(this).removeClass('selected');
+            } else if (selectedProducts.length < 3) {
+              selectedProducts.push(product);
+              $(this).addClass('selected');
+            } else {
+              alert('최대 3개까지만 선택할 수 있습니다.');
+            }
+            updateSelectedItems();
+          });
+        },
+        error: function (xhr, status, error) {
+          console.error("AJAX 오류:", status, error);
+          $('#productList').html('<p>서버 오류가 발생했습니다.</p>');
+        }
+      });
+    }
+
+    $('#searchButton').on('click', function () {
+      performSearch();
+    });
+
+    $('#productName').on('keypress', function (e) {
+      if (e.which === 13) {
+        e.preventDefault();
+        performSearch();
+      }
+    });
+
+    $('#addSelectedButton').on('click', function () {
+      if (selectedProducts.length > 0) {
+        let tagHtml = '';
+        selectedProducts.forEach(product => {
+          tagHtml += '<div class="selected-product" data-product-id="' + product.productId + '">';
+          tagHtml += '<img src="' + product.imageUrl + '" alt="' + product.productName + '">';
+          tagHtml += '<span>' + product.productName + '</span>';
+          tagHtml += '</div>';
+        });
+        $('#tagList').html(tagHtml);
+        $('#productIds').val(selectedProducts.map(p => p.productId).join(','));
+        const modal = document.getElementById("productModal");
+        modal.style.display = "none";
+        document.body.classList.remove('modal-open');
+        window.scrollTo(0, parseInt(document.body.style.top || "0") * -1);
+        document.body.style.top = "";
+        document.body.style.position = "";
+        updateSelectedItems();
+      } else {
+        alert('선택된 상품이 없습니다.');
+      }
+    });
+
+    $('#postForm').on('submit', function (e) {
+      const title = $('#title').val().trim();
+      const content = $('#content').val().trim();
+
+      if (!title || !content) {
+        alert('제목과 내용은 필수입니다.');
+        e.preventDefault();
+      }
+    });
+
+    updateSelectedItems();
+  });
+</script>
+</body>
+</html>
