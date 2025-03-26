@@ -5,7 +5,7 @@ $(() => {
         console.log("버튼 눌림");
         searchTrackingModal.removeClass("hidden");
         document.body.style.overflow = 'hidden';
-        var t_key = "SUXr60hetBnVCS6h5UjeOw";
+        var t_key = "xpzQhmiulhxaYdHfd4ml0g";
         var t_code = "04";
         var t_invoice = document.querySelector('#trackingNumber').value;
         console.log(t_invoice);

@@ -1,9 +1,13 @@
 package kr.co.fitzcode.community.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import kr.co.fitzcode.common.dto.*;
 import kr.co.fitzcode.community.service.CommunityService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/community")
 @RequiredArgsConstructor
@@ -22,7 +27,7 @@ public class CommunityController {
     private final CommunityService communityService;
 
     @GetMapping("/list")
-    public String list(Model model, HttpSession session) {
+    public String list(Model model, HttpSession session, HttpServletRequest request) {
         UserDTO user = (UserDTO) session.getAttribute("dto");
         List<PostDTO> posts = communityService.getAllPosts();
         model.addAttribute("username", user.getUserName());

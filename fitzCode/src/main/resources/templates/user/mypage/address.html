@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>fitzCode</title>
     <link rel="stylesheet" th:href="@{/css/user/address.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -51,8 +52,8 @@
                                    id="checkDefault-btn">기본배송지 설정</a>
                             </div>
                         </th:block>
+                        <input type="submit" id="deleteBtn" value="삭제">
                     </div>
-                    <input type="submit" id="deleteBtn" value="삭제">
                 </th:block>
             </form>
         </div>
@@ -115,6 +116,9 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 </body>
+<!-- 카카오 주소 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script th:src="@{/js/user/address.js}"></script>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

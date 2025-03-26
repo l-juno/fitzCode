@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>fitzCode</title>
     <link rel="stylesheet" th:href="@{/css/user/myInfo.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
 
@@ -47,13 +49,14 @@
                         <table>
                             <tr>
                                 <th>주문 번호</th>
-                                <th>주문 금액</th>
                                 <th>주문 상태</th>
+                                <th>주문 날짜</th>
+                                <th>배송 현황</th>
+                                <th>배송 현황</th>
                                 <th></th>
                             </tr>
                             <tr th:each="dto : ${orderDTO}">
                                 <td th:text="${dto.orderId}"></td> <!-- 주문 번호 -->
-<!--                                <td th:text="${dto.formattedTotalPrice}"></td> &lt;!&ndash; 총 금액 &ndash;&gt;-->
                                 <td th:text="${dto.getStatus().description}"></td> <!-- 배송 상태 -->
                                 <th:block th:if="${dto.trackingNumber != null}"> <!-- 운송장 번호 -->
                                     <td style="padding: 0px">
@@ -99,10 +102,13 @@
 
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
+</body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<!-- 스마트 택배 API -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <script th:src="@{/js/user/delivery.js}"></script>
-</body>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

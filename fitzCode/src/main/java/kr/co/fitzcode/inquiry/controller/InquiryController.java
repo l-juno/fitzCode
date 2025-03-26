@@ -32,7 +32,6 @@ public class InquiryController {
     public String inquiryForm(Model model) {
         int userId = securityUtils.getUserId();
         InquiryDTO dto = inquiryService.getUserOne(userId);
-        model.addAttribute("dto", new InquiryDTO());
         model.addAttribute("userDTO", dto);
         return "inquiry/inquiryForm";
     }
@@ -40,12 +39,7 @@ public class InquiryController {
     // 문의 데이터 저장
     @PostMapping("/inquiryForm")
     public String inquiryForm(@Valid @ModelAttribute("dto") InquiryDTO inquiryDTO,
-                              @RequestParam(value = "files", required = false) List<MultipartFile> imageFiles,
-                              BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "inquiry/inquiryForm";
-        }
-
+                              @RequestParam(value = "files", required = false) List<MultipartFile> imageFiles) {
         // 비어있는 파일을 제외한 이미지 리스트
         List<MultipartFile> nonEmptyFiles = imageFiles.stream()
                 .filter(file -> !file.isEmpty())

@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import kr.co.fitzcode.common.dto.EmailMessageDTO;
 import kr.co.fitzcode.common.dto.OrderDTO;
+import kr.co.fitzcode.common.dto.UserOrderDetailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -80,7 +83,7 @@ public class EmailService {
     }
 
 
-    public String sendOrderConfirmationEmail(EmailMessageDTO emailMessage, OrderDTO orderDTO) {
+    public String sendOrderConfirmationEmail(EmailMessageDTO emailMessage, OrderDTO orderDTO, List<UserOrderDetailDTO> orderDetailList) {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
@@ -89,7 +92,7 @@ public class EmailService {
                     new MimeMessageHelper(mimeMessage, false, "UTF-8");
             mimeMessageHelper.setTo(emailMessage.getTo());
             mimeMessageHelper.setSubject(emailMessage.getSubject());
-            mimeMessageHelper.setText(setOrderContext(orderDTO), true);
+            mimeMessageHelper.setText(setOrderContext(orderDTO, orderDetailList), true);
             mailSender.send(mimeMessage);
             return "Order confirmation email sent successfully!";
         } catch (MessagingException e) {
@@ -99,9 +102,10 @@ public class EmailService {
     }
 
 
-    private String setOrderContext(OrderDTO orderDTO) {
+    private String setOrderContext(OrderDTO orderDTO, List<UserOrderDetailDTO> orderDetailList) {
         Context context = new Context();
-        context.setVariable("orderDTO", orderDTO);  // order details
+        context.setVariable("orderDTO", orderDTO);  // order dto
+        context.setVariable("orderDetailList", orderDetailList);  // order details
         return templateEngine.process("order/orderConfirmationEmail", context);  // Specify template name
     }
 

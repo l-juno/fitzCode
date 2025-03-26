@@ -29,4 +29,10 @@ public class UserServiceImple implements UserService {
     public List<UserRole> findRolesInStringByUserId(int userId) {
         return userRoleMapper.findRolesInStringByUserId(userId);
     }
+
+    @Override
+    public String getUserEmailByUserId(int userId) {
+        return userMapper.getUserEmailByUserId(userId);
+    }
+
 }

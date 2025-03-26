@@ -4,6 +4,7 @@ import kr.co.fitzcode.common.dto.ReviewDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ReviewService {
     List<ReviewDTO> getReviews(Long productId, String filter);
@@ -12,4 +13,5 @@ public interface ReviewService {
     ReviewDTO getReviewById(Long reviewId);
     void deleteReview(Long reviewId);
     List<ReviewDTO> getUserReviews(Long userId, Long productId);
+    Map<Integer, Integer> getRatingCounts(int productId);
 }

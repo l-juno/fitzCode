@@ -74,21 +74,6 @@
         #{accountDTO.isDefault})
     </insert>
 
-    <!-- 기본계좌 -> 일반계좌 -->
-    <select id="toUserAccount" parameterType="int">
-        UPDATE USER_ACCOUNT SET
-        is_default = false
-        WHERE user_id = #{userId} AND is_default = true
-    </select>
-
-    <!-- 일반계좌 -> 기본계좌 -->
-    <select id="toDefaultAccount" parameterType="int">
-        UPDATE USER_ACCOUNT SET
-        is_default = true
-        WHERE account_id = #{accountId}
-    </select>
-
-
     <!-- 계좌 삭제 -->
     <delete id="deleteAccount" parameterType="int">
         DELETE

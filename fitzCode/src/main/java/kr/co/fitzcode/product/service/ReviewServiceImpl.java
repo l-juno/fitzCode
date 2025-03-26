@@ -1,7 +1,9 @@
 package kr.co.fitzcode.product.service;
 
 import kr.co.fitzcode.common.dto.ReviewDTO;
+import kr.co.fitzcode.common.enums.InquiryStatus;
 import kr.co.fitzcode.product.mapper.ReviewMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,12 +14,11 @@ import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Transactional
+@Slf4j
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewMapper reviewMapper;
@@ -159,5 +160,22 @@ public class ReviewServiceImpl implements ReviewService {
             key.append(parts[i]);
         }
         return key.toString();
+    }
+
+
+    @Override
+    public Map<Integer, Integer> getRatingCounts(int productId) {
+
+        Map<Integer, Integer> counts = new HashMap<>();
+        List<Map<String, Object>> getRatingCounts = reviewMapper.getRatingCounts(productId);
+        log.info("getRatingCounts: {}", getRatingCounts);
+
+        for (Map<String, Object> result : getRatingCounts) {
+            Integer rating = (Integer) result.get("rating");
+            Integer count = ((Number) result.get("rating_count")).intValue();
+            counts.put(rating, count);
+        }
+        log.info("Counts: {}", counts);
+        return counts;
     }
 }
