@@ -251,8 +251,8 @@
         <a th:href="@{/community/list(category='All')}"><button class="filter-btn">All</button></a>
         <a th:href="@{/community/list(category='캐주얼')}"><button class="filter-btn">Casual</button></a>
         <a th:href="@{/community/list(category='스트릿')}"><button class="filter-btn">Street</button></a>
-        <a th:href="@{/community/list(category='모던')}"><button class="filter-btn">Modern</button></a>
-        <a th:href="@{/community/list(category='빈티지')}"><button class="filter-btn">Vintage</button></a>
+        <a th:href="@{/community/list(category='클래식')}"><button class="filter-btn">Classic</button></a>
+        <a th:href="@{/community/list(category='시크')}"><button class="filter-btn">Chic</button></a>
         <a th:href="@{/community/list(category='고프코어')}"><button class="filter-btn">Gorpcore</button></a>
 
         <a href="/community/form" style="text-decoration: none; margin-left: auto">
@@ -310,8 +310,8 @@
             'All': 'All',
             'Casual': '캐주얼',
             'Street': '스트릿',
-            'Modern': '모던',
-            'Vintage': '빈티지',
+            'Classic': '클래식',
+            'Chic': '시크',
             'Gorpcore': '고프코어'
         };
 
@@ -338,23 +338,23 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ postId: postId }) // userId는 서버에서 세션으로 처리
+                body: JSON.stringify({ postId: postId })
             })
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
-                    return response.json(); // boolean 값 파싱
+                    return response.json();
                 })
                 .then(success => {
                     if (!success) {
                         alert('좋아요 처리에 실패했습니다.');
-                        this.checked = !isChecked; // 실패 시 원래 상태로 복구
+                        this.checked = !isChecked;
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    this.checked = !isChecked; // 오류 시 원래 상태로 복구
+                    this.checked = !isChecked;
                     alert('네트워크 오류가 발생했습니다.');
                 });
         });
