@@ -56,12 +56,6 @@ public class UserController {
         redirectAttributes.addFlashAttribute("error", "입력한 이메일 또는 비밀번호가 잘못되었습니다.");
         return "redirect:/login";
     }
-    // 로그아웃 (Spring Security가 처리하므로 별도 구현 불필요)
-    // @GetMapping("/logout") -> 제거, Spring Security의 /logout 사용
-    // public String logout(HttpSession session) {
-    //     session.invalidate();
-    //     return "redirect:/";
-    // }
 
     // 회원가입 페이지 이동
     @GetMapping("/joinForm")
@@ -119,7 +113,14 @@ public class UserController {
             return "user/joinEmail";
         }
 
-        userService.registerUser(userDTO);
+        try {
+            userService.registerUser(userDTO);
+            log.info("회원가입 성공 - 사용자: {}, 쿠폰 지급 완료 (쿠폰 ID: 7)", userDTO.getEmail());
+        } catch (Exception e) {
+            log.error("회원가입 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("error", "회원가입 중 오류가 발생했습니다: " + e.getMessage());
+            return "user/joinEmail";
+        }
 
         session.removeAttribute("authCode");
         session.removeAttribute("userDTO");
@@ -166,7 +167,7 @@ public class UserController {
 
         if (email == null) {
             model.addAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
-            return "redirect:/pwEmail"; // /user 제거 (컨텍스트 경로 통일)
+            return "redirect:/pwEmail";
         }
 
         model.addAttribute("email", email);
@@ -186,7 +187,7 @@ public class UserController {
 
         if (email == null) {
             redirectAttributes.addFlashAttribute("errorMessage", "세션이 만료되었습니다. 이메일을 다시 입력해주세요.");
-            return "redirect:/pwEmail"; // /user 제거
+            return "redirect:/pwEmail";
         }
 
         dto.setPassword(dto.getPassword());
@@ -211,10 +212,10 @@ public class UserController {
         if (email != null) {
             model.addAttribute("email", email);
             model.addAttribute("userName", userName);
-            return "user/findEmailSuccess"; // 이메일을 찾았을 때 이메일 화면 반환
+            return "user/findEmailSuccess";
         } else {
             model.addAttribute("errorMessage", "해당 전화번호와 이름에 대한 이메일을 찾을 수 없습니다.");
-            return "redirect:/user/findEmail"; // 이메일을 찾지 못했을 때 다시 찾기 페이지로 리다이렉트
+            return "redirect:/user/findEmail";
         }
     }
 }

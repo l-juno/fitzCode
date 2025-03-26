@@ -81,7 +81,9 @@ public class ProductServiceImpl implements ProductService {
     // 전체 상품 개수 조회
     @Override
     public int countAllProducts(String keyword) {
-        return productMapper.countAllProducts(keyword);
+        Map<String, Object> params = new HashMap<>();
+        params.put("searchText", keyword);
+        return productMapper.getProductsCountByFilter(params);
     }
 
     // 특정 카테고리 상품 개수 조회
@@ -240,17 +242,23 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    // 상품 검색 조회
+    // 상품 검색 조회 (사용자 페이지)
     @Override
     public List<ProductDTO> searchProducts(String keyword, int page, int pageSize) {
         int offset = (page - 1) * pageSize;
-        return productMapper.getAllProducts(offset, pageSize, "default", keyword);
+        Map<String, Object> params = new HashMap<>();
+        params.put("searchText", keyword);
+        params.put("offset", offset);
+        params.put("pageSize", pageSize); // LIMIT에 사용
+        return productMapper.getProductsByFilter(params);
     }
 
-    // 검색어 상품 개수 조회
+    // 검색어 상품 개수 조회 (사용자 페이지)
     @Override
     public int countSearchProducts(String keyword) {
-        return productMapper.countAllProducts(keyword);
+        Map<String, Object> params = new HashMap<>();
+        params.put("searchText", keyword);
+        return productMapper.getProductsCountByFilter(params);
     }
 
     // 주목받는 상품 조회

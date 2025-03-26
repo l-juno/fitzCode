@@ -6,6 +6,7 @@ import kr.co.fitzcode.common.dto.ProductImageDTO;
 import kr.co.fitzcode.common.dto.ProductSizeDTO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProductService {
     List<ProductDTO> getProductsByPage(int pageNum);
@@ -32,4 +33,7 @@ public interface ProductService {
     int getPriceOfProductByProductId(int productId);
 
     int getPriceOfProductWithCoupon(int productId, int couponId);
+
+    Long getParentCategoryId(Long categoryId);
+
 }

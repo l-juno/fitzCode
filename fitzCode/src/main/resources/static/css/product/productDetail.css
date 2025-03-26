@@ -15,8 +15,8 @@
 .product-image-section {
     width: 50%;
     position: sticky;
-    top: 20px;
-    height: calc(100vh - 40px);
+    top: 0px;
+    height: 800px;
     overflow: hidden;
     z-index: 10;
     display: flex;
@@ -96,13 +96,13 @@
 }
 
 .product-name {
-    font-size: 32px;
+    font-size: 28px;
     font-weight: bold;
     margin: 10px 0;
 }
 
 .product-description {
-    font-size: 24px;
+    font-size: 19px;
     color: #555;
     margin-bottom: 20px;
 }
@@ -173,7 +173,7 @@
     align-items: center;
     gap: 10px;
     max-width: 200px;
-    font-family: Arial, sans-serif;
+    font-family: 'Apple SD Gothic Neo', sans-serif;
 }
 
 #size-options {
@@ -1105,4 +1105,24 @@
         font-size: 14px;
         padding: 10px 0;
     }
+}
+
+#reviewDoughnutChart {
+    display: block;
+    box-sizing: border-box;
+    height: 300px !important;
+    width: 300px;
+}
+.chart-box {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.averageRating {
+    margin-top: 10px;
+    font-size: xx-large;
+    font-weight: bold;
+}
+.numberOfReviews {
+    text-align: center;
 }

@@ -1,12 +1,10 @@
 package kr.co.fitzcode.order.controller;
 
-import kr.co.fitzcode.common.dto.AddressDTO;
-import kr.co.fitzcode.common.dto.OrderDTO;
-import kr.co.fitzcode.common.dto.PaymentDTO;
+import kr.co.fitzcode.common.dto.*;
+import kr.co.fitzcode.common.service.UserService;
 import kr.co.fitzcode.common.util.SecurityUtils;
-import kr.co.fitzcode.order.service.CouponService;
-import kr.co.fitzcode.order.service.OrderService;
-import kr.co.fitzcode.order.service.UserOrderDetailService;
+import kr.co.fitzcode.order.service.*;
+import kr.co.fitzcode.user.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,6 +22,10 @@ public class OrderApiController {
     private final OrderService orderService;
     private final UserOrderDetailService userOrderDetailService;
     private final CouponService couponService;
+    private final EmailService emailService;
+    private final UserService userService;
+    private final RefundService refundService;
+    private final PaymentService paymentService;
 
     @GetMapping("/getUserAddress")
     public ResponseEntity<List<AddressDTO>> order() {
@@ -45,7 +47,8 @@ public class OrderApiController {
                                           @RequestParam("postalCode") String postalCode,
                                           @RequestParam("sizeCode") int sizeCode,
                                           @RequestParam("price") int price,
-                                          @RequestParam(value = "couponId", required = false) Integer couponId
+                                          @RequestParam(value = "couponId", required = false) Integer couponId,
+                                          @RequestParam("impUid") String impUid
                                           ) {
 
         int userId = SecurityUtils.getUserId();
@@ -66,6 +69,10 @@ public class OrderApiController {
         int orderId = orderService.insertNewOrder(orderDTO);
         log.info("orderId just made::::::::::::::: {}", orderId);
 
+        log.info("impUid::::::::::::::::::: {}", impUid);
+        addImpUid(impUid, price, orderId);
+
+
         // create a product map
         List<Map<String, Object>> batchInsertList = new ArrayList<>();
         Map<String, Object> paramMap = new HashMap<>();
@@ -80,9 +87,23 @@ public class OrderApiController {
         // mark coupon as used
         couponService.markCouponAsUsed(userId, couponId, orderId);
 
-
-
+        // add order details
         userOrderDetailService.addOrderDetailToOrder(batchInsertList);
+
+        // decrease product amount by 1
+        userOrderDetailService.decrementProductCount(productId, sizeCode);
+
+        // send email
+        String email = userService.getUserEmailByUserId(userId);
+        List<UserOrderDetailDTO> list = userOrderDetailService.getOrderDetailByOrderId(orderId);
+        log.info("email::::::::::::::::: {}", email);
+        EmailMessageDTO emailMessageDTO = EmailMessageDTO.builder()
+                .to(email)
+                .subject("Purchase complete")
+                .build();
+        String send = emailService.sendOrderConfirmationEmail(emailMessageDTO, orderDTO, list);
+        log.info("send::::::::::::::::::: {}", send);
+
         return ResponseEntity.ok(orderDTO);
     }
 
@@ -153,9 +174,27 @@ public class OrderApiController {
                 paramMap.put("couponId", stringObjectMap.get("couponId"));
                 couponService.markCouponAsUsed(userId, (Integer) stringObjectMap.get("couponId"), orderId);
                 batchInsertList.add(paramMap);
+
+                // decrease product amount by 1
+                userOrderDetailService.decrementProductCount((Integer) stringObjectMap.get("productId"), (Integer) stringObjectMap.get("sizeCode"));
             }
             log.info("batchInsertList::::::::::::::: {}", batchInsertList);
             userOrderDetailService.addOrderDetailToOrder(batchInsertList);
+
+
+
+            //send email
+            String email = userService.getUserEmailByUserId(userId);
+            List<UserOrderDetailDTO> list = userOrderDetailService.getOrderDetailByOrderId(orderId);
+            log.info("email::::::::::::::::: {}", email);
+            EmailMessageDTO emailMessageDTO = EmailMessageDTO.builder()
+                    .to(email)
+                    .subject("Purchase complete")
+                    .build();
+            String send = emailService.sendOrderConfirmationEmail(emailMessageDTO, orderDTO, list);
+            log.info("send::::::::::::::::::: {}", send);
+
+
 
             return ResponseEntity.ok(orderDTO);
 
@@ -196,6 +235,7 @@ public class OrderApiController {
     public ResponseEntity<String> orderRefund(@RequestParam("orderDetailId") int orderDetailId) {
         log.info("orderDetailId::::: {}", orderDetailId);
         userOrderDetailService.updateRequestRefundStatus(orderDetailId);
+        refundService.requestRefund(orderDetailId);
         return ResponseEntity.ok("Order refunded successfully");
     }
 }

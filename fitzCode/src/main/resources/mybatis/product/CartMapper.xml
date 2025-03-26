@@ -31,4 +31,8 @@
         WHERE user_id = #{userId}
     </select>
 
+    <delete id="deleteByCartId">
+        delete from CART where cart_id = #{cartId}
+    </delete>
+
 </mapper>

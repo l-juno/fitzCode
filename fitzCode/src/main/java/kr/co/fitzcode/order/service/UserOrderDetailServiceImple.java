@@ -37,4 +37,10 @@ public class UserOrderDetailServiceImple implements UserOrderDetailService {
     public void updateRequestRefundStatus(int orderDetailId) {
         userOrderDetailMapper.updateRequestRefundStatus(orderDetailId);
     }
+
+    @Override
+    public void decrementProductCount(int productId, int sizeCode) {
+        userOrderDetailMapper.decrementProductCountInProductSize(productId, sizeCode);
+        userOrderDetailMapper.decrementProductCountInProduct(productId);
+    }
 }

@@ -77,4 +77,12 @@ public class CartApiController {
         }
         return ResponseEntity.ok().body(list);
     }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteCart(@RequestParam int cartId) {
+        int userId = securityUtils.getUserId();
+        cartService.deleteByCartId(cartId);
+        return ResponseEntity.ok("delete success");
+
+    }
 }

@@ -37,6 +37,19 @@
         update ORDER_DETAIL set refund_status = 1 where order_detail_id = #{orderDetailId}
     </update>
 
+    <update id="decrementProductCountInProductSize">
+        update PRODUCT_SIZE set stock = stock - 1
+        where product_id = #{productId}
+        and size_code = #{sizeCode}
+    </update>
+
+    <update id="decrementProductCountInProduct">
+        update PRODUCT set stock = stock - 1
+        where product_id = #{productId}
+    </update>
+
+
+
 
 
 

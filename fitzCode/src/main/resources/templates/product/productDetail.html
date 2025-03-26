@@ -11,6 +11,7 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div th:replace="~{fragments/header :: header}"></div>
@@ -63,11 +64,19 @@
             <div class="product-name" th:text="${product.productName}">Product Name</div>
             <div class="product-description" th:text="${product.description}">This is a brief description of the product.</div>
             <div class="row">
-                <div class="product-salePercent" th:text="${product.formattedDiscountPercentage + '%'}"></div>
-                <div class="price-container">
-                    <div class="product-originalPrice" th:text="${product.formattedPrice + ' 원'}"></div>
-                    <div class="product-price" th:text="${product.formattedDiscountedPrice + ' 원'}"></div>
-                </div>
+                <th:block th:if="${product.formattedDiscountPercentage != '0'}">
+                    <div class="product-salePercent" th:text="${product.formattedDiscountPercentage + '%'}"></div>
+                    <div class="price-container">
+                        <div class="product-originalPrice" th:text="${product.formattedPrice + ' 원'}"></div>
+                        <div class="product-price" th:text="${product.formattedDiscountedPrice + ' 원'}"></div>
+                    </div>
+                </th:block>
+                <th:block th:if="${product.formattedDiscountPercentage == '0'}">
+                    <div class="price-container">
+                        <div class="product-price" th:text="${product.formattedDiscountedPrice + ' 원'}"></div>
+                    </div>
+                </th:block>
+
             </div>
 
             <!-- 구분선 -->
@@ -143,6 +152,14 @@
                     </div>
                 </div>
                 <div class="review-content">
+                    <div class="chart-box">
+                        <div th:replace="~{product/productReviewDoughnut :: reviewDoughnut(reviewCounts=${reviewCounts})}"></div>
+                        <div class="rating-summary">
+                            <div class="averageRating" th:text="${'평균: ' + averageRating + '점'}" th:if="${averageRating != 0}"></div>
+                            <div class="numberOfReviews" th:text="${totalReviews + '개'}"></div>
+                        </div>
+                       
+                    </div>
                     <!-- 상품후기 보기 탭 -->
                     <div id="review-view" class="tab-content active">
                         <div id="review-loading" style="display: none;">로딩 중...</div>
@@ -155,7 +172,7 @@
                         <form id="review-form">
                             <div class="form-group rating-group">
                                 <label for="review-rating">평점</label>
-                                <div class="rating">
+                                <div class="rating" id="review-rating">
                                     <input type="radio" id="star5" name="rating" value="5" checked />
                                     <label for="star5" title="5 stars"></label>
                                     <input type="radio" id="star4" name="rating" value="4" />
@@ -250,45 +267,47 @@
     var isAuthenticated = true;
 </script>
 
-<script>
-    <!-- check if user exists -->
-    <script th:if="${#authentication.principal == 'anonymousUser'}">
-        var isAuthenticated = false;
-    </script>
-    <script th:unless="${#authentication.principal == 'anonymousUser'}">
-        var isAuthenticated = true;
-    </script>
+<!--<script>-->
+<!--    &lt;!&ndash; check if user exists &ndash;&gt;-->
+<!--    <script th:if="${#authentication.principal == 'anonymousUser'}">-->
+<!--        var isAuthenticated = false;-->
+<!--</script>-->
+<!--<script th:unless="${#authentication.principal == 'anonymousUser'}">-->
+<!--    var isAuthenticated = true;-->
+<!--</script>-->
+
+<!--<script>-->
+<!--    &lt;!&ndash; check if user exists &ndash;&gt;-->
+<!--    <script th:if="${#authentication.principal == 'anonymousUser'}">-->
+<!--        var isAuthenticated = false;-->
+<!--</script>-->
+<!--<script th:unless="${#authentication.principal == 'anonymousUser'}">-->
+<!--    var isAuthenticated = true;-->
+<!--</script>-->
 
 <script>
-    // 사용자 인증 여부 확인
-    var isAuthenticated = false;
-    if ("${#authentication.principal}" !== "anonymousUser") {
-        isAuthenticated = true;
-    }
-
     const productId = [[${product?.productId ?: 0}]];
     const retailPrice = [[${product?.discountedPrice ?: 0}]];
     let finalPrice = [[${product?.discountedPrice ?: 0}]];
-    const productCategoryId = [[${product?.categoryId ?: 0}]]; // 상품의 카테고리 ID 추가 (가정)
+    const productCategoryId = [[${product?.categoryId ?: 0}]];
+    const parentCategoryId = [[${parentCategoryId ?: 0}]];
     console.log("final price: " + finalPrice);
     console.log("Product ID:", productId);
     console.log("Product Category ID:", productCategoryId);
+    console.log("Parent Category ID:", parentCategoryId);
 
     const cartBtn = document.querySelector('.cart-button');
     const buyBtn = document.querySelector('.buy-button');
     const stickyCartBtn = document.querySelector('.sticky-cart-button');
     const stickyBuyBtn = document.querySelector('.sticky-buy-button');
 
-    // 페이지네이션 관련 변수
-    const reviewsPerPage = 5; // 한 페이지당 상품후기 수
-    let currentPage = 1; // 현재 페이지
-    let totalReviews = 0; // 전체 상품후기 수
-    let allReviews = []; // 모든 상품후기 데이터를 저장
+    const reviewsPerPage = 5;
+    let currentPage = 1;
+    let totalReviews = 0;
+    let allReviews = [];
 
-    // 사이즈 정보를 저장할 변수
     let productSizes = [];
 
-    // productId가 유효한지 확인
     if (!productId || productId === 0) {
         console.error("Product ID is invalid or not provided");
         alert("상품 정보를 불러올 수 없습니다.");
@@ -297,7 +316,6 @@
     document.addEventListener("DOMContentLoaded", () => {
         IMP.init("imp44587248");
         console.log("imp loaded");
-        // js for the sticky bar
         const stickyBar = document.getElementById("stickyBar");
         window.addEventListener("scroll", () => {
             const scrollY = window.scrollY || window.pageYOffset;
@@ -307,9 +325,9 @@
                 stickyBar.style.display = "none";
             }
         });
-        fetchAvailableSizes(); // 사이즈 정보 로드
+        fetchAvailableSizes();
         setupReviewTabs();
-        loadReviews(); // 페이지 로드 시 리뷰를 바로 로드
+        loadReviews();
     });
 
     function displayModal() {
@@ -332,19 +350,19 @@
     });
 
     buyBtn.addEventListener('click', () => {
-        if (isAuthenticated) {
-            checkIfSizeSelected(1);
-        } else {
+        if (!isAuthenticated) {
             window.location.href = '/login';
+            return;
         }
+        checkIfSizeSelected(1);
     });
 
-    stickyCartBtn.addEventListener('click', () => {
-        if (isAuthenticated) {
-            checkIfSizeSelected();
-        } else {
+    stickyBuyBtn.addEventListener('click', () => {
+        if (!isAuthenticated) {
             window.location.href = '/login';
+            return;
         }
+        checkIfSizeSelected(1);
     });
 
     stickyBuyBtn.addEventListener('click', () => {
@@ -438,6 +456,7 @@
 
     let couponId;
     let minOrderAmount;
+
     function getUserCoupon() {
         console.log("getting user coupons");
         $.ajax({
@@ -445,14 +464,24 @@
             type: "GET",
             dataType: "json",
             success: function (response) {
-                console.log(response);
+                console.log("All Coupons:", response);
                 if (response.length > 0) {
-                    // 현재 상품의 카테고리와 쿠폰의 applicable_categories 비교
                     const filteredCoupons = response.filter(coupon => {
-                        if (!coupon.applicableCategories || coupon.applicableCategories === '[]') return true; // 전체 적용 가능 쿠폰
+                        console.log("Checking coupon:", coupon.couponId, "with applicableCategories:", coupon.applicableCategories);
+                        if (!coupon.applicableCategories || coupon.applicableCategories === '[]') {
+                            console.log("Coupon", coupon.couponId, "has no category restriction - included");
+                            return true; // 카테고리 제한 없는 쿠폰 포함
+                        }
                         const categories = JSON.parse(coupon.applicableCategories);
-                        return categories.includes(String(productCategoryId)); // 현재 상품 카테고리와 일치 여부
+                        const isMatch = categories.includes(String(productCategoryId)) ||
+                            (parentCategoryId !== 0 && categories.includes(String(parentCategoryId)));
+                        console.log("Coupon", coupon.couponId, "match result:", isMatch,
+                            "Categories:", categories,
+                            "Product Category ID:", productCategoryId,
+                            "Parent Category ID:", parentCategoryId);
+                        return isMatch;
                     });
+                    console.log("Filtered Coupons:", filteredCoupons);
                     if (filteredCoupons.length > 0) {
                         renderCouponDropdown(filteredCoupons);
                     } else {
@@ -491,7 +520,7 @@
         });
 
         if (addressList.length > 0) {
-            $select.val("0").trigger("change"); // 첫 번째 주소를 기본 선택
+            $select.val("0").trigger("change");
         }
     }
 
@@ -505,9 +534,13 @@
 
         couponList.forEach((coupon, index) => {
             let isValid = validCoupon(coupon);
+            let couponText = coupon.description;
+            if (coupon.minimumOrderAmount !== null && coupon.minimumOrderAmount !== undefined) {
+                couponText += ` (최소금액: ${coupon.minimumOrderAmount})`;
+            }
             $select.append($("<option>", {
                 value: index,
-                text: `${coupon.description} (최소금액: ${coupon.minimumOrderAmount})`,
+                text: couponText,
                 disabled: !isValid
             }));
         });
@@ -517,7 +550,6 @@
             if (selectedIndex !== "") {
                 updateSelectedCoupon(couponList[selectedIndex]);
             } else {
-                // 쿠폰 선택 해제 시 원래 가격으로 복구
                 finalPrice = retailPrice;
                 updateFinalPrice();
             }
@@ -530,7 +562,7 @@
     }
 
     function validCoupon(coupon) {
-        return coupon.minimumOrderAmount <= retailPrice;
+        return coupon.minimumOrderAmount === null || coupon.minimumOrderAmount === undefined || coupon.minimumOrderAmount <= retailPrice;
     }
 
     function updateSelectedAddress(address) {
@@ -564,7 +596,7 @@
             },
             error: function () {
                 console.error("Failed to calculate price with coupon");
-                finalPrice = retailPrice; // 에러 시 원래 가격으로 복구
+                finalPrice = retailPrice;
                 updateFinalPrice();
             }
         });
@@ -607,7 +639,7 @@
             url: "/payment/getPostOneInfo",
             type: "POST",
             dataType: "json",
-            data: {totalPrice: finalPrice},
+            data: { totalPrice: finalPrice },
             success: function (response) {
                 requestPayment(response);
             },
@@ -618,7 +650,6 @@
     }
 
     function requestPayment(paymentInfo) {
-        // call portOne
         IMP.request_pay(
             {
                 channelKey: paymentInfo.channelKey,
@@ -640,13 +671,11 @@
     function createOrder(response) {
         console.log("creating order");
         console.log(response);
-
-        // create order
         $.ajax({
             url: "/api/order/createOrderFromDetailPage",
             method: "POST",
             data: {
-                impUid: response.impUid,
+                impUid: response.imp_uid,
                 addressLine1: addressLine1,
                 postalCode: postalCode,
                 productId: productId,
@@ -658,7 +687,6 @@
             success: function (data) {
                 console.log("success");
                 console.log(data);
-                // redirect to order page with orderId
                 window.location.href = `/order/${data.orderId}`;
             },
             error: function (xhr, status, error) {
@@ -678,14 +706,14 @@
             success: function (data) {
                 console.log("success");
                 console.log(data);
-                productSizes = data; // 사이즈 정보를 전역 변수에 저장
+                productSizes = data;
                 updateSizeOptions(data);
-                setupSizeTabs(); // 사이즈 정보를 받아온 후 탭 설정
+                setupSizeTabs();
             },
             error: function (xhr, status, error) {
                 console.error("Error fetching products:", error);
                 isLoading = false;
-                setupSizeTabs(); // 에러 발생 시에도 탭 설정 진행 (기본 탭으로 설정됨)
+                setupSizeTabs();
             }
         });
     }
@@ -733,23 +761,19 @@
         updateImagePosition();
     });
 
-    // 결제하기 버튼
     document.getElementById("paymentBtn").addEventListener("click", () => {
         closeModal();
         loadPortOne();
     });
 
-    // 변경 버튼
     document.getElementById("changeAddressBtn").addEventListener("click", () => {
         changeAddress();
     });
 
-    // 닫기 버튼
     document.querySelector(".close").addEventListener("click", () => {
         closeModal();
     });
 
-    // 상품후기 탭 전환
     function setupReviewTabs() {
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -757,22 +781,14 @@
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.getAttribute('data-tab');
-
-                // 로그인 여부 확인
                 if ((tabId === 'write' || tabId === 'my-reviews') && !isAuthenticated) {
                     window.location.href = '/login';
                     return;
                 }
-
-                // 모든 탭 버튼과 콘텐츠 비활성화
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 tabContents.forEach(content => content.classList.remove('active'));
-
-                // 선택한 탭 활성화
                 button.classList.add('active');
                 document.getElementById(`review-${tabId}`).classList.add('active');
-
-                // 탭에 따라 데이터 로드
                 if (tabId === 'view') {
                     loadReviews();
                 } else if (tabId === 'my-reviews') {
@@ -781,24 +797,20 @@
             });
         });
 
-        // 상품후기 필터링 드롭다운
         const filterSelect = document.getElementById('review-filter');
         filterSelect.addEventListener('change', () => {
             loadReviews(filterSelect.value);
         });
 
-        // 상품후기 쓰기 폼 제출 이벤트
         const reviewForm = document.getElementById('review-form');
         reviewForm.addEventListener('submit', (e) => {
             e.preventDefault();
             submitReview();
         });
 
-        // 이미지 미리보기 이벤트
         document.getElementById('review-image').addEventListener('change', function (event) {
             const preview = document.getElementById('image-preview');
             preview.innerHTML = '';
-
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
@@ -811,19 +823,16 @@
             }
         });
 
-        // 페이지 로드 시 "상품후기 보기" 탭이 활성화된 상태로 리뷰 로드
         const defaultTab = document.querySelector('.tab-button[data-tab="view"]');
         defaultTab.classList.add('active');
         document.getElementById('review-view').classList.add('active');
-        loadReviews(); // 페이지 로드 시 리뷰를 바로 로드
+        loadReviews();
     }
 
-    // 상품후기 로드
     function loadReviews(filter = 'all', page = 1) {
-        currentPage = page; // 현재 페이지 업데이트
+        currentPage = page;
         const reviewLoading = document.getElementById('review-loading');
-        reviewLoading.style.display = 'block'; // 로딩 표시
-
+        reviewLoading.style.display = 'block';
         $.ajax({
             url: "/api/reviews",
             method: "GET",
@@ -831,8 +840,8 @@
             dataType: "json",
             success: function (response) {
                 console.log("Reviews loaded:", response);
-                allReviews = response; // 모든 상품후기 데이터 저장
-                totalReviews = response.length; // 전체 상품후기 수
+                allReviews = response;
+                totalReviews = response.length;
                 renderReviewsWithPagination('view');
             },
             error: function (xhr, status, error) {
@@ -846,17 +855,15 @@
                 $("#review-list").html(`<p>${errorMessage}</p>`);
             },
             complete: function () {
-                reviewLoading.style.display = 'none'; // 로딩 숨김
+                reviewLoading.style.display = 'none';
             }
         });
     }
 
-    // 사용자가 작성한 상품후기 로드
     function loadMyReviews(page = 1) {
-        currentPage = page; // 현재 페이지 업데이트
+        currentPage = page;
         const myReviewLoading = document.getElementById('my-review-loading');
-        myReviewLoading.style.display = 'block'; // 로딩 표시
-
+        myReviewLoading.style.display = 'block';
         $.ajax({
             url: "/api/reviews/my-reviews",
             method: "GET",
@@ -864,8 +871,8 @@
             dataType: "json",
             success: function (response) {
                 console.log("My reviews loaded:", response);
-                allReviews = response; // 모든 상품후기 데이터 저장
-                totalReviews = response.length; // 전체 상품후기 수
+                allReviews = response;
+                totalReviews = response.length;
                 renderReviewsWithPagination('my-reviews');
             },
             error: function (xhr, status, error) {
@@ -880,12 +887,11 @@
                 $("#my-review-list").html(`<p>${errorMessage}</p>`);
             },
             complete: function () {
-                myReviewLoading.style.display = 'none'; // 로딩 숨김
+                myReviewLoading.style.display = 'none';
             }
         });
     }
 
-    // 상품후기 렌더링 및 페이지네이션
     function renderReviewsWithPagination(tabId) {
         const reviewList = tabId === 'view' ? document.getElementById('review-list') : document.getElementById('my-review-list');
         reviewList.innerHTML = '';
@@ -895,7 +901,6 @@
             return;
         }
 
-        // 현재 페이지에 표시할 상품후기 계산
         const startIndex = (currentPage - 1) * reviewsPerPage;
         const endIndex = Math.min(startIndex + reviewsPerPage, totalReviews);
         const currentReviews = allReviews.slice(startIndex, endIndex);
@@ -903,50 +908,40 @@
         currentReviews.forEach(review => {
             const reviewElement = document.createElement('div');
             reviewElement.classList.add('review');
-
-            // 이름, 작성일, 별점, 삭제 버튼
             let reviewHTML = `
-    <div class="review-meta">
-        <span class="review-author">${review.userName}</span>
-        <span class="review-date">${review.createdAtStr}</span>
-    `;
+                <div class="review-meta">
+                    <span class="review-author">${review.userName}</span>
+                    <span class="review-date">${review.createdAtStr}</span>
+            `;
             if (tabId === 'my-reviews') {
                 reviewHTML += `
-        <button class="delete-review-btn" data-review-id="${review.reviewId}" title="리뷰 삭제">×</button>
-        `;
+                    <button class="delete-review-btn" data-review-id="${review.reviewId}" title="리뷰 삭제">×</button>
+                `;
             }
             reviewHTML += `
-        <div class="review-rating">
-    `;
-
-            // 별점
+                <div class="review-rating">
+            `;
             for (let i = 5; i >= 1; i--) {
                 reviewHTML += `
-        <input type="radio" id="star${i}-${review.reviewId}" name="rate-${review.reviewId}" value="${i}" ${i === review.rating ? 'checked' : ''} disabled />
-        <label for="star${i}-${review.reviewId}" title="${i} stars" class="${i <= review.rating ? 'filled' : ''}"></label>
-    `;
+                    <input type="radio" id="star${i}-${review.reviewId}" name="rate-${review.reviewId}" value="${i}" ${i === review.rating ? 'checked' : ''} disabled />
+                    <label for="star${i}-${review.reviewId}" title="${i} stars" class="${i <= review.rating ? 'filled' : ''}"></label>
+                `;
             }
             reviewHTML += '</div></div>';
-
-            // 이미지가 있으면 이미지 표시
             if (review.imageUrls && review.imageUrls.length > 0) {
                 reviewHTML += `
-        <div class="review-image">
-            <img src="${review.imageUrls[0]}" alt="Review Image">
-        </div>
-    `;
+                    <div class="review-image">
+                        <img src="${review.imageUrls[0]}" alt="Review Image">
+                    </div>
+                `;
             }
-
-            // 텍스트
             reviewHTML += `
-    <div class="review-content">${review.content}</div>
-`;
-
+                <div class="review-content">${review.content}</div>
+            `;
             reviewElement.innerHTML = reviewHTML;
             reviewList.appendChild(reviewElement);
         });
 
-        // 삭제 버튼 이벤트
         if (tabId === 'my-reviews') {
             document.querySelectorAll('.delete-review-btn').forEach(button => {
                 button.addEventListener('click', () => {
@@ -956,22 +951,19 @@
             });
         }
 
-        // 페이지네이션 렌더링
         renderPagination(tabId);
     }
 
-    // 리뷰 삭제
     function deleteReview(reviewId) {
         if (!confirm("이 리뷰를 삭제하시겠습니까?")) {
             return;
         }
-
         $.ajax({
             url: `/api/reviews/${reviewId}`,
             method: "DELETE",
             success: function () {
                 alert("리뷰가 삭제되었습니다.");
-                loadMyReviews(currentPage); // 현재 페이지 새로고침
+                loadMyReviews(currentPage);
             },
             error: function (xhr, status, error) {
                 console.error("Error deleting review:", error);
@@ -991,11 +983,8 @@
         });
     }
 
-    // 페이지네이션
     function renderPagination(tabId) {
         const reviewList = tabId === 'view' ? document.getElementById('review-list') : document.getElementById('my-review-list');
-
-        // 기존 페이지네이션 제거
         const existingPagination = reviewList.parentElement.querySelector('.pagination');
         if (existingPagination) {
             existingPagination.remove();
@@ -1006,7 +995,6 @@
 
         const totalPages = Math.ceil(totalReviews / reviewsPerPage);
 
-        // 이전
         const prevButton = document.createElement('button');
         prevButton.textContent = '<';
         prevButton.classList.add('pagination-button');
@@ -1024,7 +1012,6 @@
         });
         paginationContainer.appendChild(prevButton);
 
-        // 페이지 번호
         for (let i = 1; i <= totalPages; i++) {
             const pageButton = document.createElement('button');
             pageButton.textContent = i;
@@ -1042,7 +1029,6 @@
             paginationContainer.appendChild(pageButton);
         }
 
-        // 다음
         const nextButton = document.createElement('button');
         nextButton.textContent = '>';
         nextButton.classList.add('pagination-button');
@@ -1063,9 +1049,7 @@
         reviewList.insertAdjacentElement('afterend', paginationContainer);
     }
 
-    // 상품후기 제출
     function submitReview() {
-        // 폼 유효성 검사
         const ratingInput = document.querySelector('input[name="rating"]:checked');
         const content = document.getElementById('review-content').value.trim();
         const imageInput = document.getElementById('review-image');
@@ -1081,7 +1065,6 @@
         }
 
         const rating = ratingInput.value;
-
         const formData = new FormData();
         formData.append('productId', productId);
         formData.append('rating', rating);
@@ -1090,7 +1073,6 @@
             formData.append('image', imageInput.files[0]);
         }
 
-        // 상품후기 제출 중 로딩 표시
         const submitButton = document.querySelector('#review-form button[type="submit"]');
         const originalButtonText = submitButton.textContent;
         submitButton.textContent = '등록 중...';
@@ -1105,9 +1087,8 @@
             success: function (response) {
                 console.log("Review submitted:", response);
                 alert("상품후기가 등록되었습니다.");
-                // 상품후기 보기 탭으로 전환
                 document.querySelector('.tab-button[data-tab="view"]').click();
-                loadReviews(); // 새로고침
+                loadReviews();
                 document.getElementById('review-form').reset();
                 document.getElementById('image-preview').innerHTML = '';
             },
@@ -1120,9 +1101,9 @@
                 } else if (xhr.status === 403) {
                     const response = xhr.responseJSON;
                     if (response && response.error === "not_purchased") {
-                        errorMessage = response.message; // "상품을 구매한 사람만 리뷰를 작성할 수 있습니다."
+                        errorMessage = response.message;
                     } else if (response && response.error === "already_reviewed") {
-                        errorMessage = response.message; // "이미 등록된 리뷰가 있습니다."
+                        errorMessage = response.message;
                     } else {
                         errorMessage = "상품후기 등록 권한이 없습니다.";
                     }
@@ -1140,7 +1121,6 @@
         });
     }
 
-    // 사이즈 탭 설정
     function setupSizeTabs() {
         const sizeTabButtons = document.querySelectorAll('.size-tab-button');
         const sizeTabContents = document.querySelectorAll('.size-tab-content');
@@ -1148,24 +1128,18 @@
         sizeTabButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const tabId = button.getAttribute('data-tab');
-
-                // 모든 탭 버튼과 콘텐츠 비활성화
                 sizeTabButtons.forEach(btn => btn.classList.remove('active'));
                 sizeTabContents.forEach(content => {
                     content.classList.remove('active');
-                    content.innerHTML = ''; // 초기화
+                    content.innerHTML = '';
                 });
-
-                // 선택한 탭 활성화
                 button.classList.add('active');
                 const activeContent = document.getElementById(`size-${tabId}`);
                 activeContent.classList.add('active');
-
                 loadSizeTable(tabId, activeContent);
             });
         });
 
-        // 사이즈에 220~260이 포함되어 있는지 확인해서 포함되어있으면 신발탭 활성화
         let isShoes = false;
         if (productSizes && productSizes.length > 0) {
             for (let size of productSizes) {
@@ -1177,7 +1151,6 @@
             }
         }
 
-        // 기본 탭 설정
         let defaultTab;
         if (isShoes) {
             defaultTab = document.querySelector('.size-tab-button[data-tab="shoes"]');
@@ -1187,221 +1160,56 @@
         defaultTab.click();
     }
 
-    // 사이즈 표
     function loadSizeTable(tabId, container) {
         container.innerHTML = '<p>로딩 중...</p>';
-
-        // 의류 탭
         const clothingData = `
-        <table class="size-table">
-            <thead>
-                <tr>
-                    <th>구분</th>
-                    <th>한국</th>
-                    <th colspan="2">미국</th>
-                    <th>영국</th>
-                    <th colspan="2">일본</th>
-                    <th>프랑스</th>
-                    <th>유럽</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>XS</td>
-                    <td>85</td>
-                    <td>85-90</td>
-                    <td>14</td>
-                    <td>0</td>
-                    <td>S</td>
-                    <td>36</td>
-                    <td>36</td>
-                    <td>40</td>
-                </tr>
-                <tr>
-                    <td>S</td>
-                    <td>90</td>
-                    <td>90-95</td>
-                    <td>15</td>
-                    <td>1</td>
-                    <td>M</td>
-                    <td>38</td>
-                    <td>38</td>
-                    <td>42, 44</td>
-                </tr>
-                <tr>
-                    <td>M</td>
-                    <td>95</td>
-                    <td>95-100</td>
-                    <td>15.5-16</td>
-                    <td>2</td>
-                    <td>L</td>
-                    <td>40</td>
-                    <td>40</td>
-                    <td>46, 48</td>
-                </tr>
-                <tr>
-                    <td>L</td>
-                    <td>100</td>
-                    <td>100-105</td>
-                    <td>16.5</td>
-                    <td>3</td>
-                    <td>LL, XL</td>
-                    <td>42</td>
-                    <td>42</td>
-                    <td>50, 52</td>
-                </tr>
-                <tr>
-                    <td>XL</td>
-                    <td>105</td>
-                    <td>105-110</td>
-                    <td>17.5</td>
-                    <td>4</td>
-                    <td>-</td>
-                    <td>44</td>
-                    <td>44</td>
-                    <td>54, 56, 58</td>
-                </tr>
-                <tr>
-                    <td>XXL</td>
-                    <td>110</td>
-                    <td>110-</td>
-                    <td>-</td>
-                    <td>5</td>
-                    <td>-</td>
-                    <td>46</td>
-                    <td>46</td>
-                    <td>60, 62</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-
-        // 신발 탭
+            <table class="size-table">
+                <thead>
+                    <tr>
+                        <th>구분</th>
+                        <th>한국</th>
+                        <th colspan="2">미국</th>
+                        <th>영국</th>
+                        <th colspan="2">일본</th>
+                        <th>프랑스</th>
+                        <th>유럽</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>XS</td><td>85</td><td>85-90</td><td>14</td><td>0</td><td>S</td><td>36</td><td>36</td><td>40</td></tr>
+                    <tr><td>S</td><td>90</td><td>90-95</td><td>15</td><td>1</td><td>M</td><td>38</td><td>38</td><td>42, 44</td></tr>
+                    <tr><td>M</td><td>95</td><td>95-100</td><td>15.5-16</td><td>2</td><td>L</td><td>40</td><td>40</td><td>46, 48</td></tr>
+                    <tr><td>L</td><td>100</td><td>100-105</td><td>16.5</td><td>3</td><td>LL, XL</td><td>42</td><td>42</td><td>50, 52</td></tr>
+                    <tr><td>XL</td><td>105</td><td>105-110</td><td>17.5</td><td>4</td><td>-</td><td>44</td><td>44</td><td>54, 56, 58</td></tr>
+                    <tr><td>XXL</td><td>110</td><td>110-</td><td>-</td><td>5</td><td>-</td><td>46</td><td>46</td><td>60, 62</td></tr>
+                </tbody>
+            </table>
+        `;
         const shoesData = `
-        <table class="size-table">
-            <thead>
-                <tr>
-                    <th>한국(mm)</th>
-                    <th>일본(cm)</th>
-                    <th colspan="2">국제 사이즈</th>
-                    <th colspan="2">미국</th>
-                    <th colspan="2">영국</th>
-                    <th colspan="2">유럽</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>220</td>
-                    <td>22</td>
-                    <td>남</td>
-                    <td>-</td>
-                    <td>-</td>
-                    <td>5</td>
-                    <td>-</td>
-                    <td>3</td>
-                    <td>-</td>
-                    <td>36</td>
-                </tr>
-                <tr>
-                    <td>225</td>
-                    <td>22.5</td>
-                    <td>여</td>
-                    <td>XXXS</td>
-                    <td>-</td>
-                    <td>5.5</td>
-                    <td>-</td>
-                    <td>3.5</td>
-                    <td>-</td>
-                    <td>36.5</td>
-                </tr>
-                <tr>
-                    <td>230</td>
-                    <td>23</td>
-                    <td>남</td>
-                    <td>XXXS</td>
-                    <td>-</td>
-                    <td>6</td>
-                    <td>-</td>
-                    <td>4</td>
-                    <td>-</td>
-                    <td>37</td>
-                </tr>
-                <tr>
-                    <td>235</td>
-                    <td>23.5</td>
-                    <td>여</td>
-                    <td>XXS</td>
-                    <td>-</td>
-                    <td>6.5</td>
-                    <td>-</td>
-                    <td>4.5</td>
-                    <td>-</td>
-                    <td>37.5</td>
-                </tr>
-                <tr>
-                    <td>240</td>
-                    <td>24</td>
-                    <td>남</td>
-                    <td>XS</td>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>5</td>
-                    <td>-</td>
-                    <td>38</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>245</td>
-                    <td>24.5</td>
-                    <td>여</td>
-                    <td>XS</td>
-                    <td>6.5</td>
-                    <td>7.5</td>
-                    <td>-</td>
-                    <td>5.5</td>
-                    <td>38.5</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>250</td>
-                    <td>25</td>
-                    <td>남</td>
-                    <td>S</td>
-                    <td>7</td>
-                    <td>8</td>
-                    <td>6</td>
-                    <td>-</td>
-                    <td>39</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>255</td>
-                    <td>25.5</td>
-                    <td>여</td>
-                    <td>-</td>
-                    <td>7.5</td>
-                    <td>8.5</td>
-                    <td>6.5</td>
-                    <td>-</td>
-                    <td>39.5</td>
-                    <td>-</td>
-                </tr>
-                <tr>
-                    <td>260</td>
-                    <td>26</td>
-                    <td>남</td>
-                    <td>-</td>
-                    <td>8</td>
-                    <td>9</td>
-                    <td>7</td>
-                    <td>-</td>
-                    <td>40</td>
-                    <td>-</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-
+            <table class="size-table">
+                <thead>
+                    <tr>
+                        <th>한국(mm)</th>
+                        <th>일본(cm)</th>
+                        <th colspan="2">국제 사이즈</th>
+                        <th colspan="2">미국</th>
+                        <th colspan="2">영국</th>
+                        <th colspan="2">유럽</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>220</td><td>22</td><td>남</td><td>-</td><td>-</td><td>5</td><td>-</td><td>3</td><td>-</td><td>36</td></tr>
+                    <tr><td>225</td><td>22.5</td><td>여</td><td>XXXS</td><td>-</td><td>5.5</td><td>-</td><td>3.5</td><td>-</td><td>36.5</td></tr>
+                    <tr><td>230</td><td>23</td><td>남</td><td>XXXS</td><td>-</td><td>6</td><td>-</td><td>4</td><td>-</td><td>37</td></tr>
+                    <tr><td>235</td><td>23.5</td><td>여</td><td>XXS</td><td>-</td><td>6.5</td><td>-</td><td>4.5</td><td>-</td><td>37.5</td></tr>
+                    <tr><td>240</td><td>24</td><td>남</td><td>XS</td><td>6</td><td>7</td><td>5</td><td>-</td><td>38</td><td>-</td></tr>
+                    <tr><td>245</td><td>24.5</td><td>여</td><td>XS</td><td>6.5</td><td>7.5</td><td>-</td><td>5.5</td><td>38.5</td><td>-</td></tr>
+                    <tr><td>250</td><td>25</td><td>남</td><td>S</td><td>7</td><td>8</td><td>6</td><td>-</td><td>39</td><td>-</td></tr>
+                    <tr><td>255</td><td>25.5</td><td>여</td><td>-</td><td>7.5</td><td>8.5</td><td>6.5</td><td>-</td><td>39.5</td><td>-</td></tr>
+                    <tr><td>260</td><td>26</td><td>남</td><td>-</td><td>8</td><td>9</td><td>7</td><td>-</td><td>40</td><td>-</td></tr>
+                </tbody>
+            </table>
+        `;
         setTimeout(() => {
             if (tabId === 'clothing') {
                 container.innerHTML = clothingData;

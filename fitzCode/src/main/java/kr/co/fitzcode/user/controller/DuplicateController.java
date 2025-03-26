@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 public class DuplicateController {
@@ -14,24 +17,18 @@ public class DuplicateController {
     private final UserService userService;
 
     @GetMapping("/checkEmail")
-    public ResponseEntity<String> checkEmail(@RequestParam String email) {
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        Map<String, Boolean> response = new HashMap<>();
         boolean isDuplicate = userService.emailDuplicate(email);
-        if (isDuplicate) {
-            return ResponseEntity.ok().body("사용 중인 이메일입니다.");
-        } else {
-            return ResponseEntity.ok().body("사용 가능한 이메일입니다!");
-        }
+        response.put("available", !isDuplicate);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/checkNickname")
-    public ResponseEntity<String> checkNickname(@RequestParam String nickname) {
+    public ResponseEntity<Map<String, Boolean>> checkNickname(@RequestParam String nickname) {
+        Map<String, Boolean> response = new HashMap<>();
         boolean isDuplicate = userService.nicknameDuplicate(nickname);
-        if (isDuplicate) {
-            return ResponseEntity.ok().body("사용 중인 닉네임입니다.");
-        } else {
-            return ResponseEntity.ok().body("사용 가능한 닉네임입니다!");
-        }
+        response.put("available", !isDuplicate);
+        return ResponseEntity.ok(response);
     }
-
-
 }

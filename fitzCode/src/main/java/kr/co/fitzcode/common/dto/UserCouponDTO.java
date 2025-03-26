@@ -15,6 +15,7 @@ public class UserCouponDTO {
     private int userCouponId;
     private int userId;
     private int couponId;
+    private boolean isUsed;
     private LocalDateTime usedAt;
     private LocalDateTime validUntil;
 }

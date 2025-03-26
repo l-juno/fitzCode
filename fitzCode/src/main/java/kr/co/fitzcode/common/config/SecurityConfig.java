@@ -14,7 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -34,10 +36,10 @@ public class SecurityConfig implements WebMvcConfigurer {
         return (request, response, accessDeniedException) -> response.sendRedirect("/access-denied");
     }
 
-    @Bean
-    public AuthenticationSuccessHandler successHandler() {
-        return new CustomAuthenticationSuccessHandler(userService);
-        };
+    //    @Bean
+    //    public AuthenticationSuccessHandler successHandler() {
+    //        return new CustomAuthenticationSuccessHandler(userService);
+    //    }
 
     @Bean
     public AuthenticationFailureHandler failureHandler() {
@@ -97,15 +99,18 @@ public class SecurityConfig implements WebMvcConfigurer {
                                     "/search/result",               // 검색 결과
                                     "/api/pick-products",           // 주목받는 상품 API
                                     "/api/discount-products",       // 할인 상품 API
-                                    "/mypage/insertAccount",        // 계좌 추가
-                                    "/mypage/insertAddress",        // 주소 추가
-                                    "/inquiry/searchProduct",       // 상품 검색
-                                    "/inquiry/searchOrderList",     // 주문내역
-                                    "/inquiry/selectedProduct",     // 선택한 상품
-                                    "community/form/**",
-                                    "community/detail/**",
+                                    "/mypage/insertAccount",
+                                    "/mypage/insertAddress",
+                                    "/inquiry/searchProduct",
+                                    "/inquiry/searchOrderList",
+                                    "/inquiry/selectedProduct",
+                                    "/community/list/**",
+                                    "/community/form/**",
+                                    "/community/detail/**",
                                     "/api/community/search-products",
-                                    "community/modify/**"
+                                    "/community/modify/**",
+                                    "/checkEmail",                  // 이메일 중복 확인
+                                    "/checkNickname"                // 닉네임 중복 확인
                             ).permitAll()
                             // 권한별 경로
                             .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
@@ -135,6 +140,9 @@ public class SecurityConfig implements WebMvcConfigurer {
                             .hasAnyAuthority("ROLE_ADMIN", "ROLE_LOGISTICS")
                             .anyRequest().authenticated();
                 })
+                .requestCache(requestCache -> requestCache
+                        .requestCache(new HttpSessionRequestCache()) // for login redirection
+                )
                 .formLogin(formLogin -> {
                     formLogin
                             .loginPage("/login")
@@ -192,7 +200,7 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .oauth2Login(oauth2 ->
                         oauth2.loginPage("/login")
                                 .successHandler(customLoginSuccessHandler)
-//                                .defaultSuccessUrl("/", true)
+                                .defaultSuccessUrl("/", true)
                                 .userInfoEndpoint(userInfoEndpointConfig ->
                                         userInfoEndpointConfig.userService(customOAuth2UserService))
                 );
