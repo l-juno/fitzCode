@@ -28,6 +28,7 @@ public class OrderController {
     private final OrderService orderService;
     private final UserOrderDetailService userOrderDetailService;
 
+    // 주문 상세보기
     @GetMapping("/order/{orderId}")
     public String order(@PathVariable int orderId, Model model) {
 
@@ -41,6 +42,7 @@ public class OrderController {
         return "order/order";
     }
 
+    // 주문 내역
     @GetMapping("/orders")
     public String orders(Model model) {
         int userId = SecurityUtils.getUserId();

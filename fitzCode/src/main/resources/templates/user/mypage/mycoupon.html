@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>fitzCode</title>
     <link rel="stylesheet" th:href="@{/css/user/mycoupon.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
 
@@ -39,7 +40,8 @@
                                 <tr th:if="${dto.minimumOrderAmount != 0}">
                                     <td>
                                         <p>최소주문 금액</p>
-                                        <div th:text="${dto.formattedMinimumOrderAmount}"></div>
+                                        <div th:if="${dto.formattedMinimumOrderAmount != null}" th:text="${dto.formattedMinimumOrderAmount}"></div>
+                                        <div th:unless="${dto.formattedMinimumOrderAmount != null}">제한 없음</div>
                                     </td>
                                 </tr>
                                 <tr th:unless="${dto.minimumOrderAmount != 0}">
@@ -70,4 +72,6 @@
 <!-- footer -->
 <div th:replace="~{fragments/footer}"></div>
 </body>
+<script th:src="@{/js/admin/notifications.js}"></script>
+<script th:src="@{/js/admin/headerNotification.js}"></script>
 </html>

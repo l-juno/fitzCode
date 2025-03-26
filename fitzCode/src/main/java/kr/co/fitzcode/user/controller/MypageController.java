@@ -21,7 +21,7 @@ public class MypageController {
     private final MypageService mypageService;
 
     // 내 프로필
-    @GetMapping("/myInfo")
+    @GetMapping("/myProfile")
     public String mypage(Model model) {
         int userId = securityUtils.getUserId();
         UserDTO userDTO = mypageService.getMyInfo(userId);
@@ -29,7 +29,7 @@ public class MypageController {
 
         model.addAttribute("userDTO", userDTO);
         model.addAttribute("orderDTO", orderDTO);
-        return "user/mypage/myInfo";
+        return "user/mypage/myProfile";
     }
 
     // 프로필 수정 폼으로 이동
@@ -47,7 +47,7 @@ public class MypageController {
     public String updateProfile(@ModelAttribute UserDTO userDTO,
                                 @RequestParam(value = "profileImgUrl", required = false) MultipartFile profileImage) {
         mypageService.updateProfile(userDTO, profileImage);
-        return "redirect:/mypage/myInfo";
+        return "redirect:/mypage/myProfile";
     }
 
     // 계좌 관리
@@ -85,14 +85,6 @@ public class MypageController {
     @GetMapping("/deleteAccount/{accountId}")
     public String deleteAccount(@PathVariable("accountId") int accountId) {
         mypageService.deleteAccount(accountId);
-        return "redirect:/mypage/account";
-    }
-
-    // 일반계좌 -> 기본계좌
-    @GetMapping("/toDefaultAccount{accountId}")
-    public String toDefaultAccount(@PathVariable("accountId") int accountId) {
-        int userId = securityUtils.getUserId();
-        mypageService.toDefaultAccount(accountId, userId);
         return "redirect:/mypage/account";
     }
 

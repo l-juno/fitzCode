@@ -52,16 +52,14 @@ public class UserOrderDTO {
         return OrderStatus.fromCode(this.orderStatus).getDescription();
     }
 
-    public String getFormattedCreatedAt() {
+
+    public String getFormattedCreatedAt(){
         if (createdAt != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             return createdAt.format(formatter);
         }
-        return "N/A";
+        return "";
     }
-
-
-
 
 
 }

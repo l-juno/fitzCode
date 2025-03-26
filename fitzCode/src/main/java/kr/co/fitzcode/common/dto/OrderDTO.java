@@ -5,6 +5,7 @@ import kr.co.fitzcode.common.enums.OrderStatus;
 import lombok.*;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 
 @Getter
@@ -48,11 +49,8 @@ public class OrderDTO {
     @Schema(description = "배송 완료 날짜")
     private LocalDateTime deliveredAt;
 
-    public String getFormattedTotalPrice() {
-        DecimalFormat df = new DecimalFormat("#,###원");
-        return df.format(totalPrice);
-    }
 
+    // 배송상태
     public OrderStatus getStatus() {
         return OrderStatus.fromCode(orderStatus);
     }

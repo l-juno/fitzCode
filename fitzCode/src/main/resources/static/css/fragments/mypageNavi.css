@@ -33,6 +33,7 @@ a:visited, a:active, a:hover {
     font-weight: bold;
 }
 
+/*본문 관련 공통 CSS*/
 
 .mypageContainer {
     display: flex;

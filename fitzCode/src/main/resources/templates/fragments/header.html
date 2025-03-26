@@ -23,8 +23,7 @@
                 <a th:if="${session.dto != null and (session.dto.getRoleId() == 2 or session.dto.getRoleId() == 3 or session.dto.getRoleId() == 4)}"
                    th:href="@{/admin/dashboard}">관리자 대시보드</a>
                 <a th:href="@{/notice}">고객센터</a>
-                <!-- 마이페이지: 로그인 했을 때만 표시 -->
-                <a th:if="${session.dto != null}" th:href="@{/mypage/myInfo}">마이페이지</a>
+                <a th:href="@{/mypage/myProfile}">마이페이지</a>
                 <a th:if="${session.dto == null}" th:href="@{/login}">로그인</a>
                 <a th:if="${session.dto != null}" th:href="@{/logout}">
                     <span th:text="${session.dto.getUserName()} + ' 님'" style="font-weight: bold;"></span>

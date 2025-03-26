@@ -55,14 +55,6 @@ public class MypageServiceImpl implements MypageService {
         mypageMapper.deleteAccount(accountId);
     }
 
-    // 일반계좌 -> 기본계좌
-    @Transactional
-    @Override
-    public void toDefaultAccount(int accountId, int userId) {
-        mypageMapper.toUserAccount(userId);                   // 기본계좌 -> 일반 계좌
-        mypageMapper.toDefaultAccount(accountId);                       // 일반계좌 -> 기본 계좌
-    }
-
 
     // 사용자 쿠폰 정보
     @Override

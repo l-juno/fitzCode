@@ -1,6 +1,7 @@
 package kr.co.fitzcode.common.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import kr.co.fitzcode.common.enums.BankIcon;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,5 +28,13 @@ public class AccountDTO {
 
     public boolean isDefault() {
         return isDefault;
+    }
+
+    public BankIcon getBankIcon() {
+        return BankIcon.valueOf(this.bankName);
+    }
+
+    public BankIcon getBankIcon(String bankName) {
+        return BankIcon.fromBankName(bankName);
     }
 }
