@@ -16,7 +16,7 @@
                  class="profile-img">
             <div>
                 <strong th:text="${username}">사용자: </strong>
-                <img id="followBtn" th:src="${isFollowing ? '/img/remove-user.png' : '/img/add-user.png'}" alt="팔로우 버튼"
+                <img id="followBtn" th:src="${isFollowing ? '/img/removeuser.png' : '/img/adduser.png'}" alt="팔로우 버튼"
                      style="width: 20px; margin-left: 7px; cursor: pointer;"
                      th:data-following-id="${post['user_id']}">
                 <p th:text="'작성일: ' + ${#temporals.format(post['created_at'].toLocalDateTime(), 'yyyy-MM-dd HH:mm')}"
@@ -158,7 +158,7 @@
         const commentCountSpan = document.getElementById('commentCount');
         const followBtn = document.getElementById('followBtn');
 
-        // 팔로우 버튼 초기 상태 설정
+        // 팔로우 버튼 설정
         if (currentUserId) {
             fetch(`/api/community/check/${followingId}`, {
                 method: 'GET',
@@ -167,7 +167,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        followBtn.src = data.isFollowing ? '/img/remove-user.png' : '/img/add-user.png';
+                        followBtn.src = data.isFollowing ? '/img/removeuser.png' : '/img/adduser.png';
                     }
                 })
                 .catch(error => {
@@ -175,14 +175,14 @@
                 });
         }
 
-        // 팔로우 버튼 클릭 이벤트
+        // 팔로우 버튼 클릭
         followBtn.addEventListener('click', function () {
             if (!currentUserId) {
                 alert('로그인이 필요합니다.');
                 return;
             }
 
-            const isFollowing = followBtn.src.includes('remove-user.png');
+            const isFollowing = followBtn.src.includes('removeuser.png');
             const url = isFollowing ? `/api/community/unfollow/${followingId}` : `/api/community/follow/${followingId}`;
             const method = isFollowing ? 'DELETE' : 'POST';
 
@@ -193,7 +193,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        followBtn.src = data.isFollowing ? '/img/remove-user.png' : '/img/add-user.png';
+                        followBtn.src = data.isFollowing ? '/img/removeuser.png' : '/img/adduser.png';
                         showNotification(isFollowing ? '팔로우가 취소되었습니다.' : '팔로우되었습니다.');
                     } else {
                         alert(data.message || '팔로우 처리 실패');
@@ -205,7 +205,7 @@
                 });
         });
 
-        // 알림 표시 함수
+        // 알림 표시
         function showNotification(message) {
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -222,7 +222,7 @@
             }, 2000);
         }
 
-        // 슬라이더 코드
+        // 슬라이더
         const slider = document.getElementById('imageSlider');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -414,7 +414,10 @@
             commentDiv.classList.add('comment-item');
             commentDiv.dataset.commentId = commentId;
 
+            console.log('currentUserId:', currentUserId, 'comment userId:', userId);
             const isOwner = currentUserId && userId === currentUserId;
+            console.log('isOwner:', isOwner);
+
             const isLikedBoolean = Boolean(isLiked);
             console.log(`Comment ID: ${commentId}, isLiked: ${isLikedBoolean}, likeCount: ${likeCount}, isOwner: ${isOwner}`);
 
@@ -437,7 +440,7 @@
                 </div>
                 <div class="replies"></div>
                 <label class="ui-bookmark2">
-                    <input type="checkbox" class="like-checkbox" ${isLikedBoolean ? 'checked' : ''} ${isOwner ? 'disabled' : ''}>
+                    <input type="checkbox" class="like-checkbox" ${isLikedBoolean ? 'checked' : ''}>
                     <div class="bookmark">
                         <svg viewBox="0 0 16 16" style="margin-top:4px" class="bi bi-heart-fill" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
                             <path d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" fill-rule="evenodd"></path>
@@ -450,30 +453,30 @@
             // 댓글 좋아요 이벤트
             const likeCheckbox = commentDiv.querySelector('.like-checkbox');
             const likeCountSpan = commentDiv.querySelector('.like-count');
-            if (!isOwner) {
-                likeCheckbox.addEventListener('change', function () {
-                    const isChecked = this.checked;
-                    const url = isChecked ? `/api/comment/like/${commentId}` : `/api/comment/unlike/${commentId}`;
-                    fetch(url, {
-                        method: isChecked ? 'POST' : 'DELETE',
-                        headers: { 'Content-Type': 'application/json' }
-                    })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                likeCountSpan.textContent = data.likeCount;
-                            } else {
-                                this.checked = !isChecked;
-                                alert(data.message || '좋아요 처리 실패');
-                            }
-                        })
-                        .catch(error => {
+            likeCheckbox.addEventListener('change', function () {
+                console.log('Like checkbox changed for commentId:', commentId, 'isOwner:', isOwner);
+                const isChecked = this.checked;
+                const url = isChecked ? `/api/comment/like/${commentId}` : `/api/comment/unlike/${commentId}`;
+                console.log('Requesting:', url, 'Method:', isChecked ? 'POST' : 'DELETE');
+                fetch(url, {
+                    method: isChecked ? 'POST' : 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            likeCountSpan.textContent = data.likeCount;
+                        } else {
                             this.checked = !isChecked;
-                            console.error('Error:', error);
-                            alert('네트워크 오류');
-                        });
-                });
-            }
+                            alert(data.message || '좋아요 처리 실패');
+                        }
+                    })
+                    .catch(error => {
+                        this.checked = !isChecked;
+                        console.error('Error:', error);
+                        alert('네트워크 오류');
+                    });
+            });
 
             if (parentCommentId) {
                 const parentComment = document.querySelector(`.comment-item[data-comment-id="${parentCommentId}"] .replies`);

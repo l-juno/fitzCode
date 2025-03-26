@@ -68,6 +68,12 @@
         WHERE post_id = #{postId}
     </update>
 
+    <!-- 댓글 좋아요 추가 -->
+    <insert id="addCommentLike" parameterType="CommentLikeDTO">
+        INSERT INTO COMMENT_LIKE (comment_id, user_id)
+        VALUES (#{commentId}, #{userId})
+    </insert>
+
     <!-- 댓글 좋아요 삭제 -->
     <delete id="deleteCommentLike" parameterType="CommentLikeDTO">
         DELETE FROM COMMENT_LIKE

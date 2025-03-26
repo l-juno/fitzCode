@@ -51,6 +51,8 @@ public class CommentController {
         int currentUserId = userDTO.getUserId();
 
         List<Map<String, Object>> rawComments = commentService.getCommentsByPostId(postId);
+        System.out.println("Fetching comments for postId: " + postId + ", currentUserId: " + currentUserId);
+        rawComments.forEach(comment -> System.out.println("Comment: " + comment));
         return rawComments.stream().map(rawComment -> {
             Map<String, Object> mappedComment = new HashMap<>();
             mappedComment.put("commentId", rawComment.get("comment_id"));
@@ -117,11 +119,17 @@ public class CommentController {
         }
 
         try {
+            System.out.println("Liking commentId: " + commentId + ", userId: " + userDTO.getUserId()); // 디버깅 로그
             commentService.addCommentLike(commentId, userDTO.getUserId());
             int likeCount = commentService.countCommentLikes(commentId);
             return Map.of("success", true, "likeCount", likeCount);
+        } catch (IllegalArgumentException e) {
+            return Map.of("success", false, "message", e.getMessage());
+        } catch (IllegalStateException e) {
+            return Map.of("success", false, "message", e.getMessage());
         } catch (Exception e) {
-            return Map.of("success", false, "message", "본인 댓글에는 좋아요를 달 수 없습니다.");
+            System.out.println("Unexpected error: " + e.getMessage()); // 디버깅 로그
+            return Map.of("success", false, "message", "좋아요 처리 중 오류 발생: " + e.getMessage());
         }
     }
 
