@@ -1,49 +1,51 @@
-# FitzCode - 의류 쇼핑몰 플랫폼
+# FitzCode — Clothing E-commerce Platform
 
-FitzCode는 다양한 브랜드의 의류를 한 곳에서 비교하고, 간편하게 구매할 수 있는 온라인 쇼핑몰 플랫폼입니다.  
-사용자 친화적인 UI와 안정적인 백엔드 시스템을 통해 원활한 쇼핑 경험을 제공합니다.
+FitzCode is an online shopping platform where users can compare apparel from various brands in one place and purchase conveniently.  
+With a user-friendly UI and a reliable backend system, it provides a smooth shopping experience.
+
 
 ---
 
-## 기술 스택
+## Tech Stack
 
-### 웹 인터페이스
+### Web Interface
 - Thymeleaf
 - HTML, CSS, JavaScript
 - Ajax, Fetch API, jQuery
 - Figma
 
-### 서버 개발
+### Backend
 - Java 17
 - Spring Boot 3.4.3
 - SSE
 
-### 데이터 관리
+### Data Management
 - MySQL 8.0.39
 - Amazon RDS
 
-### 배포 및 인프라
+### Deployment & Infrastructure
 - Docker
 - Jenkins
 - Amazon EC2
 - Amazon S3
 
-### 외부 API / 연동 서비스
+### External API / Connected Services
 - PortOne
-- 스마트택배 API
-- 카카오 로그인 (OAuth2)
-- 네이버 로그인 (OAuth2)
-- 카카오 지도 API
+- Smart Delivery API
+- Kakao login (OAuth2)
+- Naver login (OAuth2)
+- Kakao Map API
 
-### 라이브러리
-- Apache POI (엑셀/오피스 문서 처리)
-- Jasypt (암호화/복호화)
-- Swagger (API 문서 자동화)
-- Spring Security (인증/인가)
-- Spring Batch (대용량 배치 처리)
-- MyBatis (SQL 매퍼 프레임워크)
+### Libraries
+- Apache POI (Excel/Office document processing)  
+- Jasypt (Encryption/Decryption)  
+- Swagger (API documentation automation)  
+- Spring Security (Authentication/Authorization)  
+- Spring Batch (Large-scale batch processing)  
+- MyBatis (SQL mapping framework)  
 
-### 도구
+
+### DevTools
 - IntelliJ
 - DataGrip
 - Git, GitKraken
@@ -52,102 +54,105 @@ FitzCode는 다양한 브랜드의 의류를 한 곳에서 비교하고, 간편�
 
 ---
 
-## 주요 기능
+## Key Features
 
-### 1. 사용자 관리
+### 1. User Management
 
-- 사용자 등록 및 인증  
-  이메일, 전화번호, 소셜 로그인(카카오, 네이버)을 통해 회원가입 및 로그인 가능  
-  비밀번호와 역할(role_id)을 통해 사용자와 관리자를 구분  
-  회원가입 시 이메일 인증을 통해 가입 완료  
-  이메일 인증을 통한 비밀번호 찾기 기능 제공
+- **User Registration & Authentication**  
+  - Sign up and log in via email, phone number, or social login (Kakao, Naver)  
+  - Differentiate users and admins by password and role (`role_id`)  
+  - Email verification required to complete registration  
+  - Password recovery via email verification  
 
-- 사용자 정보 관리  
-  프로필 이미지, 닉네임, 생년월일 등 사용자 정보 관리  
-  계좌 정보와 배송지 정보를 등록 및 관리  
-  회원 등급 시스템: 총 구매 금액에 따라 등급(BRONZE, SILVER, GOLD, PLATINUM) 자동 부여 (트리거 사용)
-
----
-
-### 2. 상품 관리
-
-- 상품 등록 및 카테고리 관리  
-  상품 정보(이름, 가격, 재고 등) 등록 및 계층 구조 카테고리(신발 → 운동화 등) 분류  
-  상품 상세 이미지와 사이즈별 재고 관리  
-  Apache POI를 이용한 대량 상품 Excel 업로드 기능
-
-- 관리자 상품 추천  
-  관리자가 선택한 10개의 상품을 사용자에게 추천
-
-- 상품 Q&A  
-  사용자가 상품에 대해 질문하고 관리자가 답변
-
-- 상품 리뷰  
-  구매한 사용자가 별점(1~5), 텍스트, 이미지 포함하여 리뷰 작성 가능
+- **User Information Management**  
+  - Manage profile details such as profile image, nickname, date of birth  
+  - Register and manage bank account and shipping address information  
+  - Membership tier system: Automatically assigns BRONZE, SILVER, GOLD, or PLATINUM status based on total purchase amount (via trigger)  
 
 ---
 
-### 3. 장바구니 및 주문
+### 2. Product Management
 
-- 장바구니 기능  
-  사용자가 원하는 상품을 장바구니에 추가하고 수량 관리 가능
+- **Product & Category Management**  
+  - Register product details (name, price, stock, etc.) and classify into hierarchical categories (e.g., Shoes → Sneakers)  
+  - Manage detailed images and stock by size  
+  - Bulk product upload via Excel using Apache POI  
 
-- 주문 및 결제  
-  배송지 선택 후 결제(카드, 계좌이체, 간편결제) 가능  
-  쿠폰 적용 및 결제 완료 후 사용자 이메일로 결제 확인 메일 전송
+- **Admin Recommendations**  
+  - Admins can recommend 10 products to users  
 
-- 배송 관리  
-  주문 후 배송 상태 추적 및 알림 발송 (스마트택배 API 연동)
+- **Product Q&A**  
+  - Users can ask questions about products and admins can provide answers  
 
----
-
-### 4. 환불 및 고객 지원
-
-- 환불 처리  
-  전체 주문 또는 개별 상품 환불 요청 및 상태(요청, 진행중, 완료) 관리
-
-- 문의 및 고객 지원  
-  일반 문의, 상품 문의, 환불 문의 등을 등록하고 관리자가 답변
+- **Product Reviews**  
+  - Verified purchasers can leave reviews with ratings (1–5), text, and images  
 
 ---
 
-### 5. 커뮤니티 기능
+### 3. Cart & Orders
 
-- 게시물 작성 및 관리  
-  스타일 카테고리별 게시물 작성  
-  썸네일 및 추가 이미지 업로드  
-  게시물에 상품 태그 추가 가능
+- **Shopping Cart**  
+  - Add products to cart and manage quantities  
 
-- 좋아요 및 댓글  
-  게시물과 댓글에 좋아요 기능  
-  대댓글 작성 가능
+- **Orders & Payments**  
+  - Choose shipping address and pay via credit card, bank transfer, or simple payment methods  
+  - Apply coupons, and receive order confirmation emails after payment  
 
-- 게시물 북마크 및 팔로우  
-  관심 게시물 북마크, 사용자 팔로우 가능
+- **Shipping Management**  
+  - Track delivery status after order placement and receive notifications (integrated with Smart Delivery API)  
 
 ---
 
-### 6. 알림 및 통계
+### 4. Refunds & Customer Support
 
-- 푸시 알림  
-  공지사항, 1:1 문의 답변, 배송 상태 변경 시 실시간 알림 (SSE 기반)
+- **Refund Processing**  
+  - Request refunds for entire orders or individual items  
+  - Manage refund status (Requested, In Progress, Completed)  
 
-- 검색 및 방문 통계  
-  사용자 검색어 및 방문 로그 저장  
-  Spring Batch + Scheduler로 전날/오늘 인기 검색어 비교
-
-- 에러 로그  
-  시스템 오류 기록 및 유지보수에 활용
+- **Customer Inquiries**  
+  - Submit and manage general inquiries, product inquiries, and refund inquiries with admin responses  
 
 ---
 
-### 7. 관리자 기능
+### 5. Community Features
 
-- 공지사항 관리  
-  공지사항 작성 및 이미지/첨부 파일 업로드
+- **Posts & Management**  
+  - Create posts by style category  
+  - Upload thumbnails and additional images  
+  - Tag products in posts  
 
-- 권한 관리  
-  사용자 역할(사용자, 관리자, 물류 담당자 등) 관리 및 메뉴 접근 권한 설정
+- **Likes & Comments**  
+  - Like posts and comments  
+  - Write nested comments  
 
-- 거래 로그  
-  구매, 환불, 주문 취소 등의 거래 내역 기록
+- **Bookmarks & Follows**  
+  - Bookmark favorite posts  
+  - Follow other users  
+
+---
+
+### 6. Notifications & Analytics
+
+- **Push Notifications**  
+  - Real-time notifications (via SSE) for announcements, inquiry responses, and shipping updates  
+
+- **Search & Visit Analytics**  
+  - Log user searches and visits  
+  - Compare trending searches (yesterday vs today) using Spring Batch + Scheduler  
+
+- **Error Logs**  
+  - Record system errors for maintenance purposes  
+
+---
+
+### 7. Admin Features
+
+- **Announcements**  
+  - Create announcements with images/attachments  
+
+- **Role & Access Management**  
+  - Manage user roles (user, admin, logistics manager, etc.) and configure menu access permissions  
+
+- **Transaction Logs**  
+  - Record purchase, refund, and order cancellation history  
+
